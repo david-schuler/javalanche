@@ -10,19 +10,39 @@ import org.softevo.mutation.replaceIntegerConstant.RicTransformer;
 
 public class RicFileTransformer implements ClassFileTransformer {
 
-	Logger logger = Logger.getLogger(RicFileTransformer.class.getName());
+	private static Logger logger = Logger.getLogger(RicFileTransformer.class
+			.getName());
 
 	private static Mutations mutations = Mutations.fromXML();
+
+	static {
+		logger.info(mutations.toString());
+	}
 
 	private static RicTransformer ricTransformer = new RicTransformer(mutations);
 
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
-		System.out.println("Transforming: " + className);
-		if (mutations.containsClass(className)) {
-			return ricTransformer.transformBytecode(classfileBuffer);
+
+		String classNameWithDots = className.replace('/', '.');
+		if (mutations.containsClass(classNameWithDots)) {
+			logger.info("Transforming: " + classNameWithDots);
+			byte[] transformedBytecode = null;
+			try {
+				transformedBytecode = ricTransformer
+						.transformBytecode(classfileBuffer);
+			} catch (Exception e) {
+				logger.info("Exception thrown" + e);
+				e.printStackTrace();
+			}
+			logger.info("Class transformed: " + classNameWithDots);
+
+			return transformedBytecode;
 		}
+		// if (className.contains("Advice")) {
+		// logger.info("Advice: " + className);
+		// }
 		return classfileBuffer;
 	}
 

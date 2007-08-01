@@ -4,14 +4,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.DirectoryWalker;
 
 public class HtmlFileSource extends DirectoryWalker{
 
-	public static List<File> getHtmlFiles(File startDirectory) throws IOException {
-		List<File> results = new ArrayList<File>();
+	public static Collection<File> getHtmlFiles(File startDirectory) throws IOException {
+		Set<File> results = new HashSet<File>();
 		HtmlFileSource source = new HtmlFileSource();
 		source.walk(startDirectory, results);
 		return results;

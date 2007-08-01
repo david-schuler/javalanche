@@ -32,10 +32,14 @@ public class Mutations implements Iterable<MutationPossibility> {
 				lineList = new ArrayList<MutationPossibility>();
 				classPossibilityMap.put(mp.getLineNumber(), lineList);
 			}
+			lineList.add(mp);
 		}
 	}
 
 	public boolean contains(String className, int lineNumber) {
+		if(className.contains("/")){
+			throw new IllegalArgumentException("class name contains / "+ className);
+		}
 		if (map.containsKey(className)) {
 			Map<Integer, List<MutationPossibility>> classPossibilityMap = map
 					.get(className);
@@ -44,6 +48,20 @@ public class Mutations implements Iterable<MutationPossibility> {
 			}
 		}
 		return false;
+	}
+
+	public MutationPossibility get(String className, int lineNumber) {
+		if(className.contains("/")){
+			throw new IllegalArgumentException("class name contains / "+ className);
+		}
+		if (map.containsKey(className)) {
+			Map<Integer, List<MutationPossibility>> classPossibilityMap = map
+					.get(className);
+			if (classPossibilityMap.containsKey(lineNumber)) {
+				return classPossibilityMap.get(lineNumber).get(0);
+			}
+		}
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -58,6 +76,26 @@ public class Mutations implements Iterable<MutationPossibility> {
 
 	public Iterator<MutationPossibility> iterator() {
 		return muationList.iterator();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (String className : map.keySet()) {
+			sb.append("Mutations for class" + className);
+			sb.append('\n');
+			Map<Integer, List<MutationPossibility>> tempMap = map
+					.get(className);
+			for (Integer i : tempMap.keySet()) {
+				sb.append("in line: " + i);
+				sb.append('\n');
+				for (MutationPossibility mp : tempMap.get(i)) {
+					sb.append(mp.toString());
+					sb.append('\n');
+				}
+			}
+		}
+		return sb.toString();
 	}
 
 }

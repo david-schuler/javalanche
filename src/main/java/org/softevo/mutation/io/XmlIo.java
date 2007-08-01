@@ -39,7 +39,7 @@ public class XmlIo {
 			}
 
 			XStream xStream = new XStream();
-//			System.out.println(sb);
+			logger.info("Reading object from xml file: " + file.getAbsoluteFile());
 			resultObject = xStream.fromXML(sb.toString());
 			bufferedReader.close();
 		} catch (IOException e) {

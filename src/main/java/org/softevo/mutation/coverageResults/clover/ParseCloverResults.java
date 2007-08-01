@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,24 +115,19 @@ public class ParseCloverResults {
 
 	public static Map<String, CoverageResult> parseResults() {
 		Map<String, CoverageResult> results = new HashMap<String, CoverageResult>();
-		List<File> files = null;
+		Collection<File> files = null;
 		try {
 			files = HtmlFileSource.getHtmlFiles(new File(
 					MutationProperties.CLOVER_REPORT_DIR));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		for (File f : files) {
+		for (File file : files) {
 			try {
-				String classname = getClassname(f.getAbsolutePath());
-				logger.log(Level.INFO, "ClassName" + classname);
-				TestSaxHandler testSaxHandler = new TestSaxHandler();
-//				if (!classname.contains("$") && !classname.contains("default")
-//						&& !classname.contains("fluffy")) {
-					parseXmlFile(f, testSaxHandler);
-//				}
-				Map<String, String> testIDs = testSaxHandler.getTestCases();
-				BufferedReader in = new BufferedReader(new FileReader(f));
+				String classname = getClassname(file.getAbsolutePath());
+				logger.log(Level.INFO, "ClassName: " + classname);
+				Map<String, String> testIDs = null;
+				BufferedReader in = new BufferedReader(new FileReader(file));
 				boolean collectLines = false;
 				CoverageResult coverageResult = new CoverageResult(classname);
 				String testName = null;
@@ -144,11 +140,17 @@ public class ParseCloverResults {
 					if (collectLines) {
 						if (line.contains("\"test_")) {
 							id = getTestID(line);
+							if (testIDs == null) {
+								testIDs = getTestIds(file);
+							}
 							assert testIDs.containsKey(id);
 
 						}
 						if (line.contains("\"name\"")) {
 							testName = getTestName(line);
+							if (testIDs == null) {
+								testIDs = getTestIds(file);
+							}
 							logger.log(Level.INFO, id + " --- " + testName
 									+ " --- " + testIDs.get(id));
 							assert testIDs.get(id).contains(testName);
@@ -171,6 +173,13 @@ public class ParseCloverResults {
 			}
 		}
 		return results;
+	}
+
+	private static Map<String, String> getTestIds(File f) {
+		TestSaxHandler testSaxHandler = new TestSaxHandler();
+		parseXmlFile(f, testSaxHandler);
+		Map<String, String> testIDs = testSaxHandler.getTestCases();
+		return testIDs;
 	}
 
 	private static String getTestID(String line) {
@@ -250,7 +259,7 @@ public class ParseCloverResults {
 
 	public static void main(String[] args) {
 		Object o = parseResults();
-		XmlIo.toXML(o, new File(MutationProperties.TEST_FILE));
+		XmlIo.toXML(o, new File(MutationProperties.CLOVER_RESULTS_FILE));
 		logger.info("Parsing Finished");
 	}
 }

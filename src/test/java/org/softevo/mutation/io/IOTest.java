@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.softevo.mutation.io.ClassFileSource;
 import org.softevo.mutation.properties.MutationProperties;
 
-
 public class IOTest {
 
 	@Test
@@ -22,7 +21,7 @@ public class IOTest {
 			System.out.println(l.size());
 			for (Object o : l) {
 				assertTrue(o.toString().endsWith(".class"));
-				System.out.println(o + "   "+ ((File)o).length());
+				// System.out.println(o + " "+ ((File)o).length());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

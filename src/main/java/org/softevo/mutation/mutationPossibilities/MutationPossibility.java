@@ -2,6 +2,10 @@ package org.softevo.mutation.mutationPossibilities;
 
 public class MutationPossibility {
 
+	private static final String PREFIX = "mutationId";
+
+	static int mutionIdGenerator  = 0;
+
 	public enum Mutation {
 		REPLACE_INTEGER_CONSTANT
 	};
@@ -12,16 +16,21 @@ public class MutationPossibility {
 
 	private Mutation mutation;
 
+	private int mutionId;
+
 	public MutationPossibility(String className, int line, Mutation mutation) {
 		super();
 		if (className == null || line < 0 || mutation == null) {
 			throw new IllegalArgumentException(String.format(
 					"Arguments were: %s - %d - %s", className, line, mutation));
 		}
-
+		if (className.contains("/")) {
+			className = className.replace('/', '.');
+		}
 		this.className = className;
 		this.line = line;
 		this.mutation = mutation;
+		mutionId = mutionIdGenerator++;
 	}
 
 	@Override
@@ -37,5 +46,17 @@ public class MutationPossibility {
 	public int getLineNumber() {
 		return line;
 	}
+
+	/**
+	 * @return the mutionId
+	 */
+	public int getMutionId() {
+		return mutionId;
+	}
+
+	public String getMutationVariable(){
+		return PREFIX + "_" + mutionId;
+	}
+
 
 }
