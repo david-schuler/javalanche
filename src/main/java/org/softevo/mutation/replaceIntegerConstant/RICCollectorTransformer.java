@@ -2,7 +2,6 @@ package org.softevo.mutation.replaceIntegerConstant;
 
 import java.io.PrintWriter;
 
-import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;

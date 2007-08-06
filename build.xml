@@ -1,0 +1,107 @@
+<project name="Mutation Test" default="compile" basedir=".">
+
+	<!-- Name of project and version -->
+	<property name="proj.name" value="Mutation Test" />
+	<property name="proj.shortname" value="mutation" />
+	<property name="version" value="1.0" />
+
+	<!-- Global properties for this build -->
+	<property name="database.dir" value="database" />
+	<property name="src.java.dir" value="src/main/java" />
+	<property name="lib.dir" value="lib" />
+	<property name="build.dir" value="target" />
+
+	<!-- Classpath declaration -->
+	<path id="project.classpath">
+		<fileset dir="/Users/schuler/workspace2/Hibernate/lib/">
+			<include name="**/*.jar" />
+			<include name="**/*.zip" />
+		</fileset>
+		<!--<filelist>
+    		<file name="/Users/schuler/workspace2/Hibernate/lib/hibernate-tools.jar"/>
+    	</filelist>-->
+	</path>
+
+	<!-- Useful shortcuts -->
+	<patternset id="meta.files">
+		<include name="**/*.xml" />
+		<include name="**/*.properties" />
+	</patternset>
+
+	<!-- Clean up -->
+	<target name="clean" description="Clean the build directory">
+		<delete dir="${build.dir}" />
+		<mkdir dir="${build.dir}" />
+	</target>
+
+	<!-- Compile Java source -->
+	<target name="compile">
+		<mkdir dir="${build.dir}" />
+		<javac srcdir="${src.java.dir}" destdir="${build.dir}" debug="true" classpathref="project.classpath" />
+	</target>
+
+	<!-- Copy metadata to build classpath -->
+	<target name="copymetafiles">
+		<mkdir dir="${build.dir}" />
+		<copy todir="${build.dir}">
+			<fileset dir="${src.java.dir}">
+				<patternset refid="meta.files" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Run HelloWorld -->
+	<target name="run" depends="compile, copymetafiles" description="Build and run HelloWorld">
+		<java fork="true" classname="hello.HelloWorld" classpathref="project.classpath">
+			<classpath path="${build.dir}" />
+		</java>
+	</target>
+
+	<!-- Hibernate Tools import -->
+	<taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" classpathref="project.classpath" />
+
+	<!-- Export the database schema -->
+	<target name="schemaexport" depends="" description="Exports a generated schema to DB and file">
+
+		<hibernatetool destdir="${basedir}">
+			<classpath path="target/classes/" />
+			<annotationconfiguration configurationfile="/Users/schuler/workspace2/mutationTest2/src/main/resources/hibernate.cfg.xml" />
+			<hbm2ddl drop="true" create="true" export="true" outputfilename="${proj.shortname}-ddl.sql" delimiter=";" format="true" />
+		</hibernatetool>
+	</target>
+
+	<!-- Start the HSQL DB server -->
+	<target name="startdb" description="Run HSQL database server with clean DB">
+		<!-- Delete database files -->
+		<!-- <delete dir="${database.dir}"/>-->
+		<java classname="org.hsqldb.Server" fork="yes" classpathref="project.classpath" failonerror="true">
+			<arg value="-database.0" />
+			<arg value="file:${database.dir}/db" />
+		</java>
+	</target>
+
+	<!-- Start the HSQL DB browser tool -->
+	<target name="dbmanager" description="Start HSQL DB manager">
+		<java classname="org.hsqldb.util.DatabaseManagerSwing" fork="yes" classpathref="project.classpath" failonerror="true">
+			<arg value="-url" />
+			<arg value="jdbc:hsqldb:hsql://localhost/" />
+			<arg value="-driver" />
+			<arg value="org.hsqldb.jdbcDriver" />
+		</java>
+	</target>
+
+
+
+	<target name="generateDDL" depends="">
+		<mkdir dir="${basedir}/target/generated-sources/schema" />
+		<hibernatetool destdir="${basedir}/target/generated-sources">
+			<classpath refid="maven.compile.classpath" />
+			<classpath refid="maven.plugin.classpath" />
+			<classpath path="target/classes/" />
+			<annotationconfiguration configurationfile="${basedir}/src/main/resources/hibernate.cfg.xml" />
+			<hbm2ddl drop="true" create="true" export="false" outputfilename="schema.ddl" delimiter=";" format="true" />
+		</hibernatetool>
+		<echo message="ddl build"/>
+	</target>
+
+</project>

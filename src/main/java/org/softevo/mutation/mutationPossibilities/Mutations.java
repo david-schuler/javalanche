@@ -9,30 +9,31 @@ import java.util.Map;
 
 import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.properties.MutationProperties;
+import org.softevo.mutation.results.Mutation;
 
-public class Mutations implements Iterable<MutationPossibility> {
+public class Mutations implements Iterable<Mutation> {
 
-	private Map<String, Map<Integer, List<MutationPossibility>>> map = new HashMap<String, Map<Integer, List<MutationPossibility>>>();
+	private Map<String, Map<Integer, List<Mutation>>> mutationMap = new HashMap<String, Map<Integer, List<Mutation>>>();
 
-	private List<MutationPossibility> muationList;
+	private List<Mutation> muationList;
 
-	public Mutations(List<MutationPossibility> possibilities) {
+	public Mutations(List<Mutation> possibilities) {
 		super();
 		this.muationList = possibilities;
-		for (MutationPossibility mp : possibilities) {
-			Map<Integer, List<MutationPossibility>> classPossibilityMap = map
-					.get(mp.getClassName());
+		for (Mutation mutation : possibilities) {
+			Map<Integer, List<Mutation>> classPossibilityMap = mutationMap
+					.get(mutation.getClassName());
 			if (classPossibilityMap == null) {
-				classPossibilityMap = new HashMap<Integer, List<MutationPossibility>>();
-				map.put(mp.getClassName(), classPossibilityMap);
+				classPossibilityMap = new HashMap<Integer, List<Mutation>>();
+				mutationMap.put(mutation.getClassName(), classPossibilityMap);
 			}
-			List<MutationPossibility> lineList = classPossibilityMap.get(mp
+			List<Mutation> lineList = classPossibilityMap.get(mutation
 					.getLineNumber());
 			if (lineList == null) {
-				lineList = new ArrayList<MutationPossibility>();
-				classPossibilityMap.put(mp.getLineNumber(), lineList);
+				lineList = new ArrayList<Mutation>();
+				classPossibilityMap.put(mutation.getLineNumber(), lineList);
 			}
-			lineList.add(mp);
+			lineList.add(mutation);
 		}
 	}
 
@@ -40,8 +41,8 @@ public class Mutations implements Iterable<MutationPossibility> {
 		if(className.contains("/")){
 			throw new IllegalArgumentException("class name contains / "+ className);
 		}
-		if (map.containsKey(className)) {
-			Map<Integer, List<MutationPossibility>> classPossibilityMap = map
+		if (mutationMap.containsKey(className)) {
+			Map<Integer, List<Mutation>> classPossibilityMap = mutationMap
 					.get(className);
 			if (classPossibilityMap.containsKey(lineNumber)) {
 				return true;
@@ -50,12 +51,12 @@ public class Mutations implements Iterable<MutationPossibility> {
 		return false;
 	}
 
-	public MutationPossibility get(String className, int lineNumber) {
+	public Mutation get(String className, int lineNumber) {
 		if(className.contains("/")){
 			throw new IllegalArgumentException("class name contains / "+ className);
 		}
-		if (map.containsKey(className)) {
-			Map<Integer, List<MutationPossibility>> classPossibilityMap = map
+		if (mutationMap.containsKey(className)) {
+			Map<Integer, List<Mutation>> classPossibilityMap = mutationMap
 					.get(className);
 			if (classPossibilityMap.containsKey(lineNumber)) {
 				return classPossibilityMap.get(lineNumber).get(0);
@@ -66,31 +67,31 @@ public class Mutations implements Iterable<MutationPossibility> {
 
 	@SuppressWarnings("unchecked")
 	public static Mutations fromXML() {
-		return new Mutations((List<MutationPossibility>) XmlIo
+		return new Mutations((List<Mutation>) XmlIo
 				.fromXml(new File(MutationProperties.MUTATIONS_TO_APPLY_FILE)));
 	}
 
 	public boolean containsClass(String className) {
-		return map.containsKey(className);
+		return mutationMap.containsKey(className);
 	}
 
-	public Iterator<MutationPossibility> iterator() {
+	public Iterator<Mutation> iterator() {
 		return muationList.iterator();
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for (String className : map.keySet()) {
+		for (String className : mutationMap.keySet()) {
 			sb.append("Mutations for class" + className);
 			sb.append('\n');
-			Map<Integer, List<MutationPossibility>> tempMap = map
+			Map<Integer, List<Mutation>> tempMap = mutationMap
 					.get(className);
 			for (Integer i : tempMap.keySet()) {
 				sb.append("in line: " + i);
 				sb.append('\n');
-				for (MutationPossibility mp : tempMap.get(i)) {
-					sb.append(mp.toString());
+				for (Mutation mutation : tempMap.get(i)) {
+					sb.append(mutation.toString());
 					sb.append('\n');
 				}
 			}

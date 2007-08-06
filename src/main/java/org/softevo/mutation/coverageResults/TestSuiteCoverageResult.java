@@ -9,9 +9,9 @@ import java.util.Set;
 
 import org.softevo.mutation.io.Io;
 import org.softevo.mutation.io.XmlIo;
-import org.softevo.mutation.mutationPossibilities.MutationPossibility;
 import org.softevo.mutation.mutationPossibilities.Mutations;
 import org.softevo.mutation.properties.MutationProperties;
+import org.softevo.mutation.results.Mutation;
 
 
 public class TestSuiteCoverageResult {
@@ -46,8 +46,8 @@ public class TestSuiteCoverageResult {
 		Mutations mutations = Mutations.fromXML();
 		StringBuilder sb = new StringBuilder();
 		Set<String> testNames = new HashSet<String>();
-		for (MutationPossibility mp : mutations) {
-			List<String> tests = ts.getTestsForLine(mp.getClassName(), mp
+		for (Mutation mutation : mutations) {
+			List<String> tests = ts.getTestsForLine(mutation.getClassName(), mutation
 					.getLineNumber());
 			for (String testName : tests) {
 				testNames.add(testName);

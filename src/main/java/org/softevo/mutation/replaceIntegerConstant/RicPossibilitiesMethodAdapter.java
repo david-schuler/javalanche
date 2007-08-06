@@ -1,14 +1,8 @@
 package org.softevo.mutation.replaceIntegerConstant;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.softevo.mutation.mutationPossibilities.MutationPossibility;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
+import org.softevo.mutation.results.Mutation;
 
 public class RicPossibilitiesMethodAdapter extends AbstractRicMethodAdapter {
 
@@ -26,10 +20,10 @@ public class RicPossibilitiesMethodAdapter extends AbstractRicMethodAdapter {
 
 
 	private void countMutation() {
-		MutationPossibility mp = new MutationPossibility(className,
+		Mutation mutation = new Mutation(className,
 				getLineNumber(),
-				MutationPossibility.Mutation.REPLACE_INTEGER_CONSTANT);
-		mutationPossibilityCollector.addPossibility(mp);
+				Mutation.MutationType.REPLACE_INTEGER_CONSTANT);
+		mutationPossibilityCollector.addPossibility(mutation);
 	}
 
 	@Override
@@ -58,10 +52,9 @@ public class RicPossibilitiesMethodAdapter extends AbstractRicMethodAdapter {
 
 	@Override
 	protected void ldc(Object constant) {
-		Number number = (Number) constant;
-		MutationPossibility mp = new MutationPossibility(className,
+		Mutation mp = new Mutation(className,
 				getLineNumber(),
-				MutationPossibility.Mutation.REPLACE_INTEGER_CONSTANT);
+				Mutation.MutationType.REPLACE_INTEGER_CONSTANT);
 		mutationPossibilityCollector.addPossibility(mp);
 	}
 

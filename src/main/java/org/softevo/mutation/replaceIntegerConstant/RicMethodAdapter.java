@@ -3,15 +3,14 @@ package org.softevo.mutation.replaceIntegerConstant;
 import java.util.logging.Logger;
 
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.softevo.mutation.mutationPossibilities.MutationPossibility;
 import org.softevo.mutation.mutationPossibilities.Mutations;
+import org.softevo.mutation.results.Mutation;
 
 public class RicMethodAdapter extends LineNumberAdapter {
 
-	Logger logger = Logger.getLogger(RicMethodAdapter.class.getName());
+	static Logger logger = Logger.getLogger(RicMethodAdapter.class.getName());
 
 	Mutations mutationsToApply;
 
@@ -23,18 +22,7 @@ public class RicMethodAdapter extends LineNumberAdapter {
 
 	}
 
-	@Override
-	public void visitCode() {
-		super.visitCode();
-		// super.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out",
-		// "Ljava/io/PrintStream;");
-		// super.visitLdcInsn("[Mutation] Method " + methodName + " is called");
-		// super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream",
-		// "println", "(Ljava/lang/String;)V");
-	}
-
 	public void visitInsn(int opcode) {
-		// super.visitInsn(opcode);
 		switch (opcode) {
 		case Opcodes.ICONST_M1:
 			intConstant(-1);
@@ -90,11 +78,11 @@ public class RicMethodAdapter extends LineNumberAdapter {
 		insertPrintStatements("Double");
 	}
 
-	private void insertPrintStatements(String message) {
-		super.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "err",
+	private static void insertPrintStatements(MethodVisitor mv, String message) {
+		mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "err",
 				"Ljava/io/PrintStream;");
-		super.visitLdcInsn("[Mutation] " + message);
-		super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream",
+		mv.visitLdcInsn("[MutationType] " + message);
+		mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream",
 				"println", "(Ljava/lang/String;)V");
 	}
 
@@ -108,85 +96,59 @@ public class RicMethodAdapter extends LineNumberAdapter {
 		insertPrintStatements("long");
 	}
 
-	private void intConstant(int i) {
-		logger.info("int constant for line: " + getLineNumber());
-		MutationPossibility mp = getMutation();
-		if (mp != null) {
+	private void insertPrintStatements(String message) {
+		insertPrintStatements(mv, message);
+	}
 
-			super.visitLdcInsn(mp.getMutationVariable());
-			super.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/System",
-					"getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
-			Label l1 = new Label();
-			super.visitJumpInsn(Opcodes.IFNULL, l1);
-			Label l2 = new Label();
-			super.visitLabel(l2);
-			insertPrintStatements("[Mutation] Mutation " + mp.getMutionId()
-					+ " is enabled");
-			super.visitLdcInsn(new Integer(i + 1));
-			Label l3 = new Label();
-			super.visitJumpInsn(Opcodes.GOTO, l3);
-			super.visitLabel(l1);
-			super.visitLdcInsn(new Integer(i));
-			super.visitLabel(l3);
+	private void intConstant(final int i) {
+		logger.info("int constant for line: " + getLineNumber());
+		Mutation mutation = getMutation();
+		if (mutation != null) {
+
+			insertIfElse( mv,mutation, new MutationIfElse() {
+
+
+				public void ifBlock(MethodVisitor mv) {
+					mv.visitLdcInsn(new Integer(i + 1));
+				}
+
+				public void elseBlock(MethodVisitor mv) {
+					mv.visitLdcInsn(new Integer(i));
+				}
+
+			});
 			logger.info("Applying mutation constant + 1 in line: "
 					+ getLineNumber());
 		} else {
 			logger.info("Applying no mutation for line: " + getLineNumber());
-			// super.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System",
-			// "out",
-			// "Ljava/io/PrintStream;");
-			// super.visitLdcInsn("[Mutation] Mutation for line " +
-			// getLineNumber()
-			// + " is not enabled");
-			// super.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
-			// "java/io/PrintStream",
-			// "println", "(Ljava/lang/String;)V");
 			super.visitLdcInsn(new Integer(i));
 		}
 	}
 
-	// @Override
-	// protected void biOrSiPush(int operand) {
-	// //mv.visitLdcInsn(operand);
-	// }
-	//
-	// @Override
-	// protected void doubleConstant(int i) {
-	// //mv.visitLdcInsn(i);
-	// }
-	//
-	// @Override
-	// protected void floatConstant(int i) {
-	// //mv.visitLdcInsn(i);
-	// }
-	//
-	// @Override
-	// protected void intConstant(int i) {
-	// if (shouldApplyMutation()) {
-	// logger.info("Applying mutation constant + 1 in line "
-	// + getLineNumber());
-	// //mv.visitLdcInsn(i);
-	// } else {
-	// //mv.visitLdcInsn(i);
-	// }
-	// }
-
-	private MutationPossibility getMutation() {
+	private Mutation getMutation() {
 		if (mutationsToApply.contains(className, getLineNumber())) {
 			return mutationsToApply.get(className, getLineNumber());
 		}
 		return null;
-
 	}
 
-	// @Override
-	// protected void ldc(Object constant) {
-	// //mv.visitLdcInsn(constant);
-	// }
-	//
-	// @Override
-	// protected void longConstant(int i) {
-	// //mv.visitLdcInsn(i);
-	// }
+	private static void insertIfElse(MethodVisitor mv, Mutation mutation,
+			MutationIfElse mutationIfElse) {
+		mv.visitLdcInsn(mutation.getMutationVariable());
+		mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/System",
+				"getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
+		Label l1 = new Label();
+		mv.visitJumpInsn(Opcodes.IFNULL, l1);
+		Label l2 = new Label();
+		mv.visitLabel(l2);
+		insertPrintStatements(mv,"[MutationType] MutationType "
+				+ mutation.getMutionId() + " is enabled");
+		mutationIfElse.ifBlock(mv);
+		Label l3 = new Label();
+		mv.visitJumpInsn(Opcodes.GOTO, l3);
+		mv.visitLabel(l1);
+		mutationIfElse.elseBlock(mv);
+		mv.visitLabel(l3);
+	}
 
 }

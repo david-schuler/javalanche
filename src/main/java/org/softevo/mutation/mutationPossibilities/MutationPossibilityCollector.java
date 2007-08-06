@@ -6,20 +6,21 @@ import java.util.List;
 
 import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.properties.MutationProperties;
+import org.softevo.mutation.results.Mutation;
 
 public class MutationPossibilityCollector {
 
-	private List<MutationPossibility> possibilities = new ArrayList<MutationPossibility>();
+	private List<Mutation> possibilities = new ArrayList<Mutation>();
 
-	public void addPossibility(MutationPossibility mutationPossibility) {
+	public void addPossibility(Mutation mutationPossibility) {
 		possibilities.add(mutationPossibility);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for(MutationPossibility m :  possibilities){
-			sb.append(m);
+		for(Mutation mutation :  possibilities){
+			sb.append(mutation);
 			sb.append('\n');
 		}
 		return sb.toString();

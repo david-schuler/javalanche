@@ -20,4 +20,6 @@ public interface MutationProperties {
 	static final String CLOVER_RESULTS_FILE = CONFIG_DIR + "/clover-coverage-results.xml";
 
 	static final String TESTS_TO_EXECUTE_FILE = CONFIG_DIR + "/tests-to-execute.txt";
+
+	static final String MUTATION_RESULT_FILE = CONFIG_DIR + "/mutation-results.txt";
 }

@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.softevo.mutation.coverageResults.TestSuiteCoverageResult;
-import org.softevo.mutation.mutationPossibilities.MutationPossibility;
 import org.softevo.mutation.mutationPossibilities.Mutations;
+import org.softevo.mutation.results.Mutation;
 
 public class MutationSwitcher {
 
@@ -17,9 +17,9 @@ public class MutationSwitcher {
 
 	private Mutations mutations = Mutations.fromXML();
 
-	private Iterator<MutationPossibility> iter = mutations.iterator();
+	private Iterator<Mutation> iter = mutations.iterator();
 
-	private MutationPossibility actualMutation;
+	private Mutation actualMutation;
 
 	private TestSuiteCoverageResult testSuiteCoverageResult;
 
@@ -50,7 +50,7 @@ public class MutationSwitcher {
 		return iter.hasNext();
 	}
 
-	public MutationPossibility next() {
+	public Mutation next() {
 		actualMutation = iter.next();
 		return actualMutation;
 	}

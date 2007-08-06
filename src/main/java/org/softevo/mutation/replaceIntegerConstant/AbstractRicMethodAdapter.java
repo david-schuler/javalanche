@@ -3,7 +3,6 @@ package org.softevo.mutation.replaceIntegerConstant;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.softevo.mutation.mutationPossibilities.MutationPossibility;
 
 public abstract class AbstractRicMethodAdapter extends LineNumberAdapter {
 

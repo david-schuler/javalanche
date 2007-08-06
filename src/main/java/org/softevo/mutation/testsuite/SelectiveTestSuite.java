@@ -1,6 +1,7 @@
 package org.softevo.mutation.testsuite;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,7 +14,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.softevo.mutation.io.Io;
 import org.softevo.mutation.properties.MutationProperties;
+import org.softevo.mutation.results.Mutation;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -31,6 +34,8 @@ public class SelectiveTestSuite extends TestSuite {
 			.getLogger(SelectiveTestSuite.class.toString());
 
 	private MutationSwitcher mutationSwitcher = new MutationSwitcher();
+
+	private ResultReporter resultReporter = new ResultReporter();
 
 	static {
 		logger.setLevel(Level.INFO);
@@ -56,25 +61,38 @@ public class SelectiveTestSuite extends TestSuite {
 	public void run(TestResult result) {
 		Map<String, TestCase> allTests = getAllTests(this);
 		logger.log(Level.INFO, "All Tests colleceted");
-//		int debugCount = 5;
+		int debugCount = 5;
 		while (mutationSwitcher.hasNext()) {
-//			if (debugCount-- < 0) {
-//				break;
-//			}
-			mutationSwitcher.next();
+			if (debugCount-- < 0) {
+				break;
+			}
+			Mutation mutation = mutationSwitcher.next();
 			if (result.shouldStop())
 				break;
 			Set<String> tests = mutationSwitcher.getTests();
-			for (String testName : tests) {
-				TestCase test = allTests.get(testName);
-				if (test == null) {
-					throw new RuntimeException("No test found" + testName);
-				}
-				runTest(test, result);
-			}
+			TestResult mutationTestResult = new TestResult();
+			mutationSwitcher.switchOn();
+			runTests(allTests, mutationTestResult, tests);
+			mutationSwitcher.switchOff();
+			TestResult normalTestResult = new TestResult();
+			runTests(allTests, normalTestResult, tests);
+			resultReporter.report(normalTestResult, mutationTestResult,
+					mutation);
 			logger.info(String.format("runs %d failures:%d errors:%d", result
 					.runCount(), result.failureCount(), result.errorCount()));
-			result = new TestResult();
+		}
+		Io.writeFile(resultReporter.toString(), new File(
+				MutationProperties.MUTATION_RESULT_FILE));
+	}
+
+	private void runTests(Map<String, TestCase> allTests,
+			TestResult testResult, Set<String> tests) {
+		for (String testName : tests) {
+			TestCase test = allTests.get(testName);
+			if (test == null) {
+				throw new RuntimeException("No test found" + testName);
+			}
+			runTest(test, testResult);
 		}
 	}
 

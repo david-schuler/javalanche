@@ -1,24 +1,37 @@
-package org.softevo.mutation.mutationPossibilities;
+package org.softevo.mutation.results;
 
-public class MutationPossibility {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
+public class Mutation {
+
+	@Id
+	@GeneratedValue
+	private Long id;
 
 	private static final String PREFIX = "mutationId";
 
 	static int mutionIdGenerator  = 0;
 
-	public enum Mutation {
-		REPLACE_INTEGER_CONSTANT
+	public enum MutationType {
+		REPLACE_INTEGER_CONSTANT, RIC_PLUS_1, RIC_MINUS_1, RIC_ZERO
 	};
 
 	private String className;
 
 	private int line;
 
-	private Mutation mutation;
+	private MutationType mutation;
 
 	private int mutionId;
 
-	public MutationPossibility(String className, int line, Mutation mutation) {
+	private Mutation(){
+
+	}
+
+	public Mutation(String className, int line, MutationType mutation) {
 		super();
 		if (className == null || line < 0 || mutation == null) {
 			throw new IllegalArgumentException(String.format(
@@ -56,6 +69,13 @@ public class MutationPossibility {
 
 	public String getMutationVariable(){
 		return PREFIX + "_" + mutionId;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
 	}
 
 
