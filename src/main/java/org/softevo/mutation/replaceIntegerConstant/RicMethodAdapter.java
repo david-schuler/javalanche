@@ -7,6 +7,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.softevo.mutation.mutationPossibilities.Mutations;
 import org.softevo.mutation.results.Mutation;
+import org.softevo.mutation.results.Mutation.MutationType;
+import org.softevo.mutation.results.persistence.MutationManager;
 
 public class RicMethodAdapter extends LineNumberAdapter {
 
@@ -102,11 +104,10 @@ public class RicMethodAdapter extends LineNumberAdapter {
 
 	private void intConstant(final int i) {
 		logger.info("int constant for line: " + getLineNumber());
-		Mutation mutation = getMutation();
-		if (mutation != null) {
-
+		Mutation mutation = new Mutation(className,getLineNumber(),MutationType.RIC_PLUS_1);
+		if(MutationManager.shouldApplyMutation(mutation))
+		{
 			insertIfElse( mv,mutation, new MutationIfElse() {
-
 
 				public void ifBlock(MethodVisitor mv) {
 					mv.visitLdcInsn(new Integer(i + 1));
@@ -125,12 +126,6 @@ public class RicMethodAdapter extends LineNumberAdapter {
 		}
 	}
 
-	private Mutation getMutation() {
-		if (mutationsToApply.contains(className, getLineNumber())) {
-			return mutationsToApply.get(className, getLineNumber());
-		}
-		return null;
-	}
 
 	private static void insertIfElse(MethodVisitor mv, Mutation mutation,
 			MutationIfElse mutationIfElse) {

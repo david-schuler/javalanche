@@ -3,33 +3,47 @@ package org.softevo.mutation.testsuite;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationResult;
-import org.softevo.mutation.results.SingleTestResult;
-
 import junit.framework.TestResult;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.softevo.mutation.results.Mutation;
+import org.softevo.mutation.results.OldMutationResult;
+import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.persistence.HibernateUtil;
+import org.softevo.mutation.results.persistence.QueryManager;
 
 public class ResultReporter {
 
-	private List<MutationResult> list = new ArrayList<MutationResult>();
+	private List<OldMutationResult> mutationResults = new ArrayList<OldMutationResult>();
 
-	public void report(TestResult normalTestResult,
-			TestResult mutationTestResult,
-			Mutation mutation) {
-		SingleTestResult normal = new SingleTestResult(normalTestResult);
+	public void report(
+			TestResult mutationTestResult, Mutation mutation) {
 		SingleTestResult mutated = new SingleTestResult(mutationTestResult);
-		MutationResult combinedResult = new MutationResult(normal, mutated,
-				mutation);
-		list.add(combinedResult);
+		QueryManager.updateMutation(mutation, mutated);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for (MutationResult cr : list) {
+		for (OldMutationResult cr : mutationResults) {
 			sb.append(cr.toString());
 			sb.append('\n');
 		}
 		return sb.toString();
 	}
+
+	/**
+	 * Save collected results to database
+	 */
+//	public void toDb() {
+//		Session session = HibernateUtil.getSessionFactory().openSession();
+//		Transaction tx = session.beginTransaction();
+//		for (OldMutationResult mr : mutationResults) {
+//			session.save(mr);
+//		}
+//		tx.commit();
+//		session.close();
+//
+//	}
 }

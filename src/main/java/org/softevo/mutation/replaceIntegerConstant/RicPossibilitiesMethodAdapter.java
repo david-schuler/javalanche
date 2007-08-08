@@ -22,7 +22,7 @@ public class RicPossibilitiesMethodAdapter extends AbstractRicMethodAdapter {
 	private void countMutation() {
 		Mutation mutation = new Mutation(className,
 				getLineNumber(),
-				Mutation.MutationType.REPLACE_INTEGER_CONSTANT);
+				Mutation.MutationType.RIC_PLUS_1);
 		mutationPossibilityCollector.addPossibility(mutation);
 	}
 
@@ -54,7 +54,7 @@ public class RicPossibilitiesMethodAdapter extends AbstractRicMethodAdapter {
 	protected void ldc(Object constant) {
 		Mutation mp = new Mutation(className,
 				getLineNumber(),
-				Mutation.MutationType.REPLACE_INTEGER_CONSTANT);
+				Mutation.MutationType.RIC_PLUS_1);
 		mutationPossibilityCollector.addPossibility(mp);
 	}
 

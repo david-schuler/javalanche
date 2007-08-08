@@ -62,7 +62,6 @@
 
 	<!-- Export the database schema -->
 	<target name="schemaexport" depends="" description="Exports a generated schema to DB and file">
-
 		<hibernatetool destdir="${basedir}">
 			<classpath path="target/classes/" />
 			<annotationconfiguration configurationfile="/Users/schuler/workspace2/mutationTest2/src/main/resources/hibernate.cfg.xml" />
@@ -71,11 +70,12 @@
 	</target>
 
 	<!-- Start the HSQL DB server -->
-	<target name="startdb" description="Run HSQL database server with clean DB">
+	<target name="startdb" description="Run HSQL database server">
 		<!-- Delete database files -->
 		<!-- <delete dir="${database.dir}"/>-->
 		<java classname="org.hsqldb.Server" fork="yes" classpathref="project.classpath" failonerror="true">
-			<arg value="-database.0" />
+			<jvmarg value="-Xmx1024m"/>
+			<arg value="-database.2" />
 			<arg value="file:${database.dir}/db" />
 		</java>
 	</target>

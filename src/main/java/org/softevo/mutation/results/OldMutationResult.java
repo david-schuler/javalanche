@@ -3,31 +3,33 @@
  */
 package org.softevo.mutation.results;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 @Entity
-public class MutationResult {
+public class OldMutationResult {
 
 	@Id
 	@GeneratedValue
 	private Long id;
 
-	@OneToOne
+	@OneToOne(cascade= CascadeType.ALL)
 	private SingleTestResult normalResult;
 
-	@OneToOne
+	@OneToOne(cascade= CascadeType.ALL)
 	private SingleTestResult mutatedResult;
 
-	@OneToOne
+	@OneToOne(cascade= CascadeType.ALL)
 	private Mutation mutation;
 
-	private MutationResult() {
+	private OldMutationResult() {
 	}
 
-	public MutationResult(SingleTestResult normal, SingleTestResult mutated,
+	public OldMutationResult(SingleTestResult normal, SingleTestResult mutated,
 			Mutation mutation) {
 		super();
 		this.normalResult = normal;

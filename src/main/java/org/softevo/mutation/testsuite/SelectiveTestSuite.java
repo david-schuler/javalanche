@@ -30,6 +30,8 @@ public class SelectiveTestSuite extends TestSuite {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private static final boolean TESTMODE = true;
+
 	static Logger logger = Logger
 			.getLogger(SelectiveTestSuite.class.toString());
 
@@ -39,6 +41,9 @@ public class SelectiveTestSuite extends TestSuite {
 
 	static {
 		logger.setLevel(Level.INFO);
+		if (TESTMODE) {
+			logger.info("TESTMODE");
+		}
 	}
 
 	public SelectiveTestSuite() {
@@ -61,10 +66,12 @@ public class SelectiveTestSuite extends TestSuite {
 	public void run(TestResult result) {
 		Map<String, TestCase> allTests = getAllTests(this);
 		logger.log(Level.INFO, "All Tests colleceted");
-		int debugCount = 5;
+		int debugCount = 20;
 		while (mutationSwitcher.hasNext()) {
-			if (debugCount-- < 0) {
-				break;
+			if (TESTMODE) {
+				if (debugCount-- < 0) {
+					break;
+				}
 			}
 			Mutation mutation = mutationSwitcher.next();
 			if (result.shouldStop())
@@ -74,15 +81,13 @@ public class SelectiveTestSuite extends TestSuite {
 			mutationSwitcher.switchOn();
 			runTests(allTests, mutationTestResult, tests);
 			mutationSwitcher.switchOff();
-			TestResult normalTestResult = new TestResult();
-			runTests(allTests, normalTestResult, tests);
-			resultReporter.report(normalTestResult, mutationTestResult,
+			resultReporter.report(mutationTestResult,
 					mutation);
 			logger.info(String.format("runs %d failures:%d errors:%d", result
 					.runCount(), result.failureCount(), result.errorCount()));
 		}
-		Io.writeFile(resultReporter.toString(), new File(
-				MutationProperties.MUTATION_RESULT_FILE));
+//		logger.log(Level.INFO, "Writing results to db");
+//		resultReporter.toDb();
 	}
 
 	private void runTests(Map<String, TestCase> allTests,

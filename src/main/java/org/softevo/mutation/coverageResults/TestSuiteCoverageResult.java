@@ -1,18 +1,17 @@
 package org.softevo.mutation.coverageResults;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
-import org.softevo.mutation.io.Io;
+import org.softevo.mutation.coverageResults.db.TestCoverageClassResult;
+import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
 import org.softevo.mutation.io.XmlIo;
-import org.softevo.mutation.mutationPossibilities.Mutations;
 import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.Mutation;
-
+import org.softevo.mutation.results.persistence.QueryManager;
 
 public class TestSuiteCoverageResult {
 
@@ -42,22 +41,29 @@ public class TestSuiteCoverageResult {
 	}
 
 	public static void main(String[] args) {
-		TestSuiteCoverageResult ts = getFromXml();
-		Mutations mutations = Mutations.fromXML();
-		StringBuilder sb = new StringBuilder();
-		Set<String> testNames = new HashSet<String>();
-		for (Mutation mutation : mutations) {
-			List<String> tests = ts.getTestsForLine(mutation.getClassName(), mutation
-					.getLineNumber());
-			for (String testName : tests) {
-				testNames.add(testName);
+		toDB();
+	}
+
+	public static void toDB() {
+		TestSuiteCoverageResult tscr = getFromXml();
+		Set<Entry<String, CoverageResult>> entrySet = tscr.results.entrySet();
+		for (Entry<String, CoverageResult> entry : entrySet) {
+			CoverageResult cr = entry.getValue();
+			String className = entry.getKey();
+			Set<Entry<Integer, List<String>>> lineDataSet = cr.lineData
+					.entrySet();
+			List<TestCoverageLineResult> lineResults = new ArrayList<TestCoverageLineResult>();
+			for (Entry<Integer, List<String>> lineDataEntry : lineDataSet) {
+				int lineNumber = lineDataEntry.getKey();
+				List<String> testNames = lineDataEntry.getValue();
+				TestCoverageLineResult testCoverageLineResult = new TestCoverageLineResult(
+						lineNumber, testNames);
+				lineResults.add(testCoverageLineResult);
+				QueryManager.save(testCoverageLineResult);
 			}
+			TestCoverageClassResult testCoverageClassResult = new TestCoverageClassResult(
+					className, lineResults);
+			QueryManager.save(testCoverageClassResult);
 		}
-		for(String testName : testNames){
-			sb.append(testName);
-			sb.append("\n");
-		}
-		File f = new File(MutationProperties.TESTS_TO_EXECUTE_FILE);
-		Io.writeFile(sb.toString(), f);
 	}
 }
