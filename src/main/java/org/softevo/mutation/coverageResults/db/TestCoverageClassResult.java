@@ -69,4 +69,16 @@ public class TestCoverageClassResult {
 		this.lineResults = lineResults;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("ClassName: "  + className);
+		for(TestCoverageLineResult	 tclr : lineResults){
+				sb.append(tclr);
+				sb.append('\n');
+		}
+		return sb.toString();
+
+	}
+
 }

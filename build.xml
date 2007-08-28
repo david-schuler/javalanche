@@ -75,9 +75,15 @@
 		<!-- <delete dir="${database.dir}"/>-->
 		<java classname="org.hsqldb.Server" fork="yes" classpathref="project.classpath" failonerror="true">
 			<jvmarg value="-Xmx1024m"/>
-			<arg value="-database.2" />
+			<arg value="-database.0" />
 			<arg value="file:${database.dir}/db" />
 		</java>
+	</target>
+
+
+	<!-- Start the HSQL DB server -->
+	<target name="deletedb" description="delete the db files">
+		 <delete dir="${database.dir}"/>
 	</target>
 
 	<!-- Start the HSQL DB browser tool -->

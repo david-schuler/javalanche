@@ -96,4 +96,9 @@ public class TestCoverageTestCaseName {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return testCaseName;
+	}
+
 }

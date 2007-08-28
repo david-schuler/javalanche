@@ -1,5 +1,6 @@
 package org.softevo.mutation.testsuite;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +27,7 @@ public class MutationSwitcher {
 
 	private Mutation actualMutation;
 
-	private TestSuiteCoverageResult testSuiteCoverageResult;
+//	private TestSuiteCoverageResult testSuiteCoverageResult;
 
 	public MutationSwitcher() {
 		initMutations();
@@ -42,22 +43,21 @@ public class MutationSwitcher {
 	}
 
 	public Set<String> getTests() {
-		if (testSuiteCoverageResult == null) {
-			try {
-				testSuiteCoverageResult = TestSuiteCoverageResult.getFromXml();
-			} catch (OutOfMemoryError e) {
-				System.err
-						.println("Not enough memory for reading coverage results");
-				throw e;
-			}
-		}
-		Set<String> testNames = new HashSet<String>();
-		List<String> tests = testSuiteCoverageResult.getTestsForLine(
-				actualMutation.getClassName(), actualMutation.getLineNumber());
-		for (String testName : tests) {
-			testNames.add(testName);
-		}
-		return testNames;
+//		if (testSuiteCoverageResult == null) {
+//			try {
+//				testSuiteCoverageResult = TestSuiteCoverageResult.getFromXml();
+//			} catch (OutOfMemoryError e) {
+//				System.err.println("Not enough memory for reading coverage results");
+//				throw e;
+//			}
+//		}
+//		Set<String> testNames = new HashSet<String>();
+//		List<String> tests = testSuiteCoverageResult.getTestsForLine(
+//				actualMutation.getClassName(), actualMutation.getLineNumber());
+//		for (String testName : tests) {
+//			testNames.add(testName);
+//		}
+		return new HashSet<String>(Arrays.asList(QueryManager.getTestCases(actualMutation.getClassName(), actualMutation.getLineNumber())));
 	}
 
 	public boolean hasNext() {

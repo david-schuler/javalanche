@@ -75,4 +75,17 @@ public class TestCoverageLineResult {
 	public Long getId() {
 		return id;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder db = new StringBuilder();
+		db.append(" line "+ lineNumber );
+		db.append(" - Testcases: [");
+		for(TestCoverageTestCaseName name : testCases){
+			db.append(name);
+			db.append(", ");
+		}
+		db.append(']');
+		return db.toString();
+	}
 }

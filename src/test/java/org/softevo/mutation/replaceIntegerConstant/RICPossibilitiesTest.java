@@ -26,7 +26,6 @@ public class RICPossibilitiesTest {
 		FileTransformer ft = new FileTransformer(new File(MutationProperties.SAMPLE_FILE));
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 		ft.process(new RICCollectorTransformer(mpc));
-		mpc.toXML();
 	}
 	private static class RICTransformer extends BytecodeTransformer{
 

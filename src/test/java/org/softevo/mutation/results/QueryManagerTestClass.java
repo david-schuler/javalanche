@@ -73,6 +73,6 @@ public class QueryManagerTestClass {
 	@Test public void testTestsForLine(){
 		String className = "org.aspectj.ajdt.internal.compiler.lookup.EclipseFactory";
 		int lineNumber  = 218;
-		QueryManager.getLineNumber(className, lineNumber);
+		QueryManager.getTestCases(className, lineNumber);
 	}
 }
