@@ -6,7 +6,6 @@ import org.softevo.mutation.results.Mutation;
 
 public class RicPossibilitiesMethodAdapter extends AbstractRicMethodAdapter {
 
-
 	private int possibilities = 0;
 
 	MutationPossibilityCollector mutationPossibilityCollector;
@@ -14,16 +13,15 @@ public class RicPossibilitiesMethodAdapter extends AbstractRicMethodAdapter {
 	public RicPossibilitiesMethodAdapter(MethodVisitor mv, String className,
 			String methodName,
 			MutationPossibilityCollector mutationPossibilityCollector) {
-		super(mv, className, methodName,true);
+		super(mv, className, methodName, true);
 		this.mutationPossibilityCollector = mutationPossibilityCollector;
 	}
 
-
 	private void countMutation() {
-		Mutation mutation = new Mutation(className,
-				getLineNumber(),
+		Mutation mutation = new Mutation(className, getLineNumber(),
 				Mutation.MutationType.RIC_PLUS_1);
 		mutationPossibilityCollector.addPossibility(mutation);
+		possibilities++;
 	}
 
 	@Override
@@ -35,6 +33,7 @@ public class RicPossibilitiesMethodAdapter extends AbstractRicMethodAdapter {
 	protected void doubleConstant(int i) {
 		countMutation();
 	}
+
 	@Override
 	protected void floatConstant(int i) {
 		countMutation();
@@ -52,10 +51,10 @@ public class RicPossibilitiesMethodAdapter extends AbstractRicMethodAdapter {
 
 	@Override
 	protected void ldc(Object constant) {
-		Mutation mp = new Mutation(className,
-				getLineNumber(),
+		Mutation mp = new Mutation(className, getLineNumber(),
 				Mutation.MutationType.RIC_PLUS_1);
 		mutationPossibilityCollector.addPossibility(mp);
+		possibilities++;
 	}
 
 	/**
@@ -64,6 +63,5 @@ public class RicPossibilitiesMethodAdapter extends AbstractRicMethodAdapter {
 	public int getPossibilities() {
 		return possibilities;
 	}
-
 
 }

@@ -11,7 +11,7 @@ import org.softevo.mutation.properties.MutationProperties;
 
 public class RicTest {
 
-	private static Mutations mutations = Mutations.fromXML();
+//	private static Mutations mutations = Mutations.fromXML();
 
 	private static class HelperLoader extends ClassLoader {
 
@@ -30,7 +30,7 @@ public class RicTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		RicTransformer ricTransformer = new RicTransformer(mutations);
+		RicTransformer ricTransformer = new RicTransformer();
 		byte[] bytes = ricTransformer.transformBytecode(classReader);
 		HelperLoader helperLoader = new HelperLoader();
 		helperLoader.define(MutationProperties.SAMPLE_FILE_NAME, bytes);

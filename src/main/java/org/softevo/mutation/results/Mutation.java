@@ -27,8 +27,6 @@ public class Mutation {
 
 	private MutationType mutationType;
 
-	private int mutionId;
-
 	@OneToOne(cascade= CascadeType.ALL)
 	private SingleTestResult mutationResult;
 
@@ -48,7 +46,6 @@ public class Mutation {
 		this.className = className;
 		this.lineNumber = line;
 		this.mutationType = mutation;
-		mutionId = mutionIdGenerator++;
 	}
 
 	@Override
@@ -65,15 +62,9 @@ public class Mutation {
 		return lineNumber;
 	}
 
-	/**
-	 * @return the mutionId
-	 */
-	public int getMutionId() {
-		return mutionId;
-	}
 
 	public String getMutationVariable(){
-		return PREFIX + "_" + mutionId;
+		return PREFIX + "_" + id;
 	}
 
 	/**
@@ -112,13 +103,6 @@ public class Mutation {
 	}
 
 	/**
-	 * @param mutionId the mutionId to set
-	 */
-	public void setMutionId(int mutionId) {
-		this.mutionId = mutionId;
-	}
-
-	/**
 	 * @return the mutationResult
 	 */
 	public SingleTestResult getMutationResult() {
@@ -142,7 +126,6 @@ public class Mutation {
 		result = PRIME * result + ((className == null) ? 0 : className.hashCode());
 		result = PRIME * result + lineNumber;
 		result = PRIME * result + ((mutationType == null) ? 0 : mutationType.hashCode());
-		result = PRIME * result + mutionId;
 		return result;
 	}
 
@@ -169,8 +152,6 @@ public class Mutation {
 			if (other.mutationType != null)
 				return false;
 		} else if (!mutationType.equals(other.mutationType))
-			return false;
-		if (mutionId != other.mutionId)
 			return false;
 		return true;
 	}

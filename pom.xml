@@ -117,7 +117,7 @@
 					</execution>
 				</executions>
 			</plugin>
-		
+		<!-- 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>sql-maven-plugin</artifactId>
@@ -154,7 +154,7 @@
 					<autocommit>true</autocommit>
 					<skip>${maven.test.skip}</skip>
 				</configuration>
-			</plugin>
+			</plugin>-->
 		</plugins>
 		
 	

@@ -45,23 +45,24 @@ public class MutationPossibilityCollector {
 	public static void generateUnmutated() {
 		List<Mutation> allMutations = QueryManager.getAllMutations();
 		for (Mutation m : allMutations) {
-			if (!QueryManager.hasUnmutated(m.getClassName(),m.getLineNumber())) {
-				Mutation unmutated  = new Mutation(m.getClassName(), m.getLineNumber(), MutationType.NO_MUTATION);
+			if (!QueryManager.hasUnmutated(m.getClassName(), m.getLineNumber())) {
+				Mutation unmutated = new Mutation(m.getClassName(), m
+						.getLineNumber(), MutationType.NO_MUTATION);
 				QueryManager.saveMutation(unmutated);
 			}
 		}
 
 	}
 
-	public static void generateTestData() {
-		FileTransformer ft = new FileTransformer(new File(
-				MutationProperties.SAMPLE_FILE));
+	public static void generateTestDataInDB(String classFileName) {
+		FileTransformer ft = new FileTransformer(new File(classFileName));
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 		ft.process(new RICCollectorTransformer(mpc));
 		mpc.toDB();
 	}
 
 	public static void main(String[] args) {
-		generateTestData();
+		generateTestDataInDB(MutationProperties.SAMPLE_FILE);
+		generateUnmutated();
 	}
 }

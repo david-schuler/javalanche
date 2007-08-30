@@ -11,18 +11,10 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 import org.softevo.bytecodetransformer.processFiles.BytecodeTransformer;
-import org.softevo.mutation.mutationPossibilities.Mutations;
 
 public class RicTransformer extends BytecodeTransformer {
 
 	private static Logger logger = Logger.getLogger(RicTransformer.class.getName());
-
-	private Mutations mutations;
-
-	public RicTransformer(Mutations mutations) {
-		super();
-		this.mutations = mutations;
-	}
 
 	@Override
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
@@ -36,6 +28,6 @@ public class RicTransformer extends BytecodeTransformer {
 			e.printStackTrace();
 			throw new RuntimeException("could not write to file");
 		}
-		return new RicClassAdapter(cc, mutations);
+		return new RicClassAdapter(cc);
 	}
 }

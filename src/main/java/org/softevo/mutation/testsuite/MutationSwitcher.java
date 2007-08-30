@@ -7,13 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.softevo.mutation.coverageResults.TestSuiteCoverageResult;
-import org.softevo.mutation.mutationPossibilities.Mutations;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 public class MutationSwitcher {
@@ -30,7 +24,7 @@ public class MutationSwitcher {
 //	private TestSuiteCoverageResult testSuiteCoverageResult;
 
 	public MutationSwitcher() {
-		initMutations();
+//		initMutations();
 	}
 
 	private void initMutations() {
@@ -57,16 +51,27 @@ public class MutationSwitcher {
 //		for (String testName : tests) {
 //			testNames.add(testName);
 //		}
-		return new HashSet<String>(Arrays.asList(QueryManager.getTestCases(actualMutation.getClassName(), actualMutation.getLineNumber())));
+		String[] testCases = QueryManager.getTestCases(actualMutation);
+		if(testCases == null){
+			return null;
+		}
+		return new HashSet<String>(Arrays.asList(testCases));
 	}
 
 	public boolean hasNext() {
+		if(iter == null){
+			initMutations();
+		}
 		return iter.hasNext();
 	}
 
 	public Mutation next() {
+		if(iter == null){
+			initMutations();
+		}
 		while (iter.hasNext()) {
 			actualMutation = iter.next();
+
 			if(actualMutation.getMutationResult() == null){
 				return actualMutation;
 			}
@@ -79,7 +84,7 @@ public class MutationSwitcher {
 
 	public void switchOn() {
 		if (actualMutation != null) {
-			logger.info("enabling mutation: " + actualMutation.getMutionId()
+			logger.info("enabling mutation: " + actualMutation.getMutationVariable()
 					+ " in line " + actualMutation.getLineNumber());
 			System.setProperty(actualMutation.getMutationVariable(), "1");
 		}
@@ -88,7 +93,7 @@ public class MutationSwitcher {
 	public void switchOff() {
 		if (actualMutation != null) {
 			System.clearProperty(actualMutation.getMutationVariable());
-			logger.info("disabling mutation: " + actualMutation.getMutionId());
+			logger.info("disabling mutation: " + actualMutation.getMutationVariable());
 		}
 
 	}

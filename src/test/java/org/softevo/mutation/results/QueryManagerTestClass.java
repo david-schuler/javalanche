@@ -1,5 +1,7 @@
 package org.softevo.mutation.results;
 
+import static org.junit.Assert.*;
+
 import java.util.List;
 
 import org.hibernate.Session;
@@ -70,9 +72,23 @@ public class QueryManagerTestClass {
 		Assert.assertNotNull(checkMutation.getMutationResult());
 	}
 
-	@Test public void testTestsForLine(){
+	@Test
+	public void testTestsForLine() {
 		String className = "org.aspectj.ajdt.internal.compiler.lookup.EclipseFactory";
-		int lineNumber  = 218;
+		int lineNumber = 218;
 		QueryManager.getTestCases(className, lineNumber);
+	}
+
+	@Test
+	public void testGetTestCases() {
+		List<Mutation> mutationList = QueryManager.getAllMutations();
+		int totalTests = 0;
+		for (Mutation mutation : mutationList) {
+			String[] testcases = QueryManager.getTestCases(mutation);
+			if (testcases != null) {
+				totalTests += testcases.length;
+			}
+		}
+		assertTrue(totalTests > 20);
 	}
 }

@@ -1,8 +1,10 @@
 package org.softevo.mutation.results.persistence;
 
-import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -14,6 +16,9 @@ import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.Mutation.MutationType;
 
 public class QueryManager {
+
+	private static Logger logger = Logger.getLogger(QueryManager.class
+			.getCanonicalName());
 
 	public static Mutation getMutation(Mutation mutation) {
 		Mutation m = getMutationOrNull(mutation);
@@ -33,7 +38,7 @@ public class QueryManager {
 		}
 		if (m == null) {
 			Query query = session
-					.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and mutationType=:type");
+					.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and m.mutationType=:type");
 			query.setParameter("name", mutation.getClassName());
 			query.setParameter("number", mutation.getLineNumber());
 			query.setParameter("type", mutation.getMutationType());
@@ -59,7 +64,7 @@ public class QueryManager {
 	public static List<Mutation> getAllMutations() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		Query query = session.createQuery("from Mutation");
+		Query query = session.createQuery("from Mutation order by linenumber");
 		List l = query.list();
 		List<Mutation> mutations = (List<Mutation>) l;
 		tx.commit();
@@ -68,45 +73,70 @@ public class QueryManager {
 	}
 
 	public static void saveMutation(Mutation mutation) {
-		save(mutation);
+		Mutation mutationInDb = getMutationOrNull(mutation);
+		if (mutationInDb != null) {
+			logger.info("Mutation already contained - not saving to db: "
+					+ mutation);
+			assert mutationInDb.equals(mutation);
+		} else {
+			save(mutation);
+		}
 	}
 
 	public static void save(Object objectToSave) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		session.save(objectToSave);
+
 		tx.commit();
 		session.close();
+	}
+
+	public static String[] getTestCases(Mutation mutation) {
+		return getTestCases(mutation.getClassName(), mutation.getLineNumber());
 	}
 
 	public static String[] getTestCases(String className, int lineNumber) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-//		Query query = session
-//				.createQuery("from TestCoverageClassResult as clazz where clazz.className=:clname and clazz.lineNumber=:lnumber");
+		// Query query = session
+		// .createQuery("from TestCoverageClassResult as clazz where
+		// clazz.className=:clname and clazz.lineNumber=:lnumber");
 
-//		Query query = session
-//		.createQuery("from TestCoverageClassResult as clazz where clazz.className=:clname");
+		// Query query = session
+		// .createQuery("from TestCoverageClassResult as clazz where
+		// clazz.className=:clname");
 
 		Query query = session
-		.createQuery("from TestCoverageClassResult as clazz join clazz.lineResults as lineres where clazz.className=:clname and lineres.lineNumber=:lnumber");
-		// TODO JOIN TO GET ALL TESTS FOR LINE //
+				.createQuery("from TestCoverageClassResult as clazz join clazz.lineResults as lineres where clazz.className=:clname and lineres.lineNumber=:lnumber");
 		query.setString("clname", className);
 		query.setInteger("lnumber", lineNumber);
 		query.setFetchSize(10);
-		System.out.println(query.getReturnTypes());
 		List l = query.list();
 		assert l.size() <= 1;
-		Object[] array = (Object[]) l.get(0);
-		TestCoverageLineResult lineResult = (TestCoverageLineResult) array[1];
-		List<TestCoverageTestCaseName> testCaseNames = lineResult.getTestCases();
-		List<String> retList = new ArrayList<String>();
-		for(TestCoverageTestCaseName name : testCaseNames){
-			retList.add(name.getTestCaseName());
+
+		List<String> retList = null;
+		if (l.size() >= 1) {
+			Object[] array = (Object[]) l.get(0);
+			if (array.length >= 2) {
+				TestCoverageLineResult lineResult = (TestCoverageLineResult) array[1];
+				List<TestCoverageTestCaseName> testCaseNames = lineResult
+						.getTestCases();
+				retList = new ArrayList<String>();
+				for (TestCoverageTestCaseName name : testCaseNames) {
+					retList.add(name.getTestCaseName());
+				}
+			}
 		}
 		tx.commit();
 		session.close();
-		System.out.println(retList);
+		if (retList == null) {
+			logger.info("no testcases found for line " + lineNumber
+					+ " of class " + className);
+			return null;
+		}
+		logger.info("Found " + retList.size() + " testcases for line "
+				+ lineNumber + " of class " + className);
 		return retList.toArray(new String[0]);
 	}
 
@@ -114,16 +144,55 @@ public class QueryManager {
 		boolean hasUnmutated = false;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		Query query = session.createQuery("from Mutation where classname=:clname and linenumber=:lnumber and mutationtype=:mtype");
+		Query query = session
+				.createQuery("from Mutation where classname=:clname and linenumber=:lnumber and mutationtype=:mtype");
 		query.setString("clname", className);
 		query.setInteger("lnumber", lineNumber);
-		query.setInteger("mtype",MutationType.NO_MUTATION.ordinal());
-		if(query.list().size() == 1){
+		query.setInteger("mtype", MutationType.NO_MUTATION.ordinal());
+		if (query.list().size() == 1) {
 			hasUnmutated = true;
 		}
 		tx.commit();
 		session.close();
 		return hasUnmutated;
+	}
+
+	public static boolean shouldMutateClass(String className) {
+		boolean shouldMutate = false;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+
+		Query query = session
+				.createQuery("from Mutation where classname=:clname");
+		query.setString("clname", className);
+		if (query.list().size() > 1) {
+			shouldMutate = true;
+		}
+		tx.commit();
+		session.close();
+		logger.info("Checking class" + className + " should be mutated: "
+				+ shouldMutate);
+		return shouldMutate;
+	}
+
+	public static Set<String> getClassNamesToMutate() {
+		Set<String> resultSet = new HashSet<String>();
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session.createQuery("select className from Mutation");
+		List results = query.list();
+		for (Object s : results) {
+			resultSet.add(s.toString());
+		}
+		tx.commit();
+		session.close();
+		return resultSet;
+	}
+
+	public static void main(String[] args) {
+		logger.info("Aaa");
+		getClassNamesToMutate();
+		logger.info("Bbb");
 	}
 
 }

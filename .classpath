@@ -27,5 +27,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-commons-annotations/3.3.0.ga/hibernate-commons-annotations-3.3.0.ga.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3.jar" sourcepath="M2_REPO/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3-sources.jar"/>
 	<classpathentry kind="lib" path="/Hibernate/lib/c3p0-0.9.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/TestProjectForMutation"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

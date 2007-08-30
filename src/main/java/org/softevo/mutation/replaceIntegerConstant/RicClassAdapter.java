@@ -10,11 +10,8 @@ public class RicClassAdapter extends ClassAdapter {
 
 	private String className;
 
-	private final Mutations mutationsToApply;
-
-	public RicClassAdapter(ClassVisitor cv, Mutations mutationsToApply) {
+	public RicClassAdapter(ClassVisitor cv) {
 		super(cv);
-		this.mutationsToApply = mutationsToApply;
 	}
 
 	@Override
@@ -29,6 +26,6 @@ public class RicClassAdapter extends ClassAdapter {
 			String signature, String[] exceptions) {
 		MethodVisitor mv = super.visitMethod(access, name, desc, signature,
 				exceptions);
-		return new CheckMethodAdapter(new RicMethodAdapter(mv, className, name, mutationsToApply));
+		return new CheckMethodAdapter(new RicMethodAdapter(mv, className, name));
 	}
 }
