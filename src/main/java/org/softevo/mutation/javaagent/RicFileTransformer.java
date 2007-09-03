@@ -6,7 +6,7 @@ import java.security.ProtectionDomain;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicTransformer;
+import org.softevo.mutation.replaceIntegerConstant.RicTransformer;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 public class RicFileTransformer implements ClassFileTransformer {
