@@ -3,22 +3,17 @@ package org.softevo.mutation.javaagent;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
-import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
-import org.softevo.mutation.mutationPossibilities.Mutations;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.replaceIntegerConstant.RicTransformer;
-import org.softevo.mutation.results.Mutation;
+import org.apache.log4j.Logger;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicTransformer;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 public class RicFileTransformer implements ClassFileTransformer {
 
-	private static Logger logger = Logger.getLogger(RicFileTransformer.class
-			.getName());
+	private static Logger logger = Logger.getLogger(RicFileTransformer.class);
 
-	 private static Set<String> mutations;
+	private static Set<String> mutations;
 
 	static {
 
@@ -36,9 +31,10 @@ public class RicFileTransformer implements ClassFileTransformer {
 			byte[] classfileBuffer) throws IllegalClassFormatException {
 
 		String classNameWithDots = className.replace('/', '.');
-//		logger.info("Processing class: " + classNameWithDots);
-		 if (mutations.contains(classNameWithDots)) {
-//		if (classNameWithDots.equals(MutationProperties.SAMPLE_FILE_NAME)) {
+		// logger.info("Processing class: " + classNameWithDots);
+		if (mutations.contains(classNameWithDots)) {
+			// if
+			// (classNameWithDots.equals(MutationProperties.SAMPLE_FILE_NAME)) {
 			logger.info("Transforming: " + classNameWithDots);
 			byte[] transformedBytecode = null;
 			try {
