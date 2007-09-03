@@ -5,15 +5,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 public class MutationSwitcher {
 
-	private static Logger logger = Logger.getLogger(MutationSwitcher.class
-			.getName());
+	private static Logger logger = Logger.getLogger(MutationSwitcher.class);
 
 	private List<Mutation> mutations;
 
@@ -85,7 +84,7 @@ public class MutationSwitcher {
 	public void switchOn() {
 		if (actualMutation != null) {
 			logger.info("enabling mutation: " + actualMutation.getMutationVariable()
-					+ " in line " + actualMutation.getLineNumber());
+					+ " in line " + actualMutation.getLineNumber()  + " - " +  actualMutation.toString());
 			System.setProperty(actualMutation.getMutationVariable(), "1");
 		}
 	}

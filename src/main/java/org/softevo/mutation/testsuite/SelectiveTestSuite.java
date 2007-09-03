@@ -4,14 +4,14 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.softevo.mutation.results.Mutation;
 
 public class SelectiveTestSuite extends TestSuite {
@@ -24,7 +24,7 @@ public class SelectiveTestSuite extends TestSuite {
 	private static final boolean TESTMODE = false;
 
 	static Logger logger = Logger
-			.getLogger(SelectiveTestSuite.class.toString());
+			.getLogger(SelectiveTestSuite.class);
 
 	private MutationSwitcher mutationSwitcher = new MutationSwitcher();
 
