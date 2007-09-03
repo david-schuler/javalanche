@@ -6,13 +6,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
 
 public class XmlIo {
 
-	private static Logger logger = Logger.getLogger(XmlIo.class.getName());
+	private static Logger logger = Logger.getLogger(XmlIo.class);
 
 	public static void toXML(Object o, File file) {
 		XStream xStream = new XStream();
