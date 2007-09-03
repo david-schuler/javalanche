@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.softevo.bytecodetransformer.processFiles.FileTransformer;
-import org.softevo.mutation.io.XmlIo;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RICCollectorTransformer;
 import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.replaceIntegerConstant.RICCollectorTransformer;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;
@@ -47,7 +46,7 @@ public class MutationPossibilityCollector {
 		for (Mutation m : allMutations) {
 			if (!QueryManager.hasUnmutated(m.getClassName(), m.getLineNumber())) {
 				Mutation unmutated = new Mutation(m.getClassName(), m
-						.getLineNumber(), MutationType.NO_MUTATION);
+						.getLineNumber(),m.getMutationForLine(), MutationType.NO_MUTATION);
 				QueryManager.saveMutation(unmutated);
 			}
 		}
