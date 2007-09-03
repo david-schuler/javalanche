@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -17,8 +17,7 @@ import org.softevo.mutation.results.Mutation.MutationType;
 
 public class QueryManager {
 
-	private static Logger logger = Logger.getLogger(QueryManager.class
-			.getCanonicalName());
+	private static Logger logger = Logger.getLogger(QueryManager.class);
 
 	public static Mutation getMutation(Mutation mutation) {
 		Mutation m = getMutationOrNull(mutation);
@@ -38,10 +37,11 @@ public class QueryManager {
 		}
 		if (m == null) {
 			Query query = session
-					.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and m.mutationType=:type");
+					.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and m.mutationForLine=:mforl and m.mutationType=:type");
 			query.setParameter("name", mutation.getClassName());
 			query.setParameter("number", mutation.getLineNumber());
 			query.setParameter("type", mutation.getMutationType());
+			query.setParameter("mforl", mutation.getMutationForLine());
 			m = (Mutation) query.uniqueResult();
 		}
 		tx.commit();

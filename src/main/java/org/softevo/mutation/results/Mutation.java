@@ -25,6 +25,8 @@ public class Mutation {
 
 	private int lineNumber;
 
+	private int mutationForLine;
+
 	private MutationType mutationType;
 
 	@OneToOne(cascade= CascadeType.ALL)
@@ -34,7 +36,7 @@ public class Mutation {
 
 	}
 
-	public Mutation(String className, int line, MutationType mutation) {
+	public Mutation(String className, int line,int mutationForLine, MutationType mutation) {
 		super();
 		if (className == null || line < 0 || mutation == null) {
 			throw new IllegalArgumentException(String.format(
@@ -45,12 +47,13 @@ public class Mutation {
 		}
 		this.className = className;
 		this.lineNumber = line;
+		this.mutationForLine = mutationForLine;
 		this.mutationType = mutation;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%s - %d - %s %s", className, lineNumber, mutationType
+		return String.format("%s - %d (%d)- %s %s", className, lineNumber, mutationForLine, mutationType
 				.toString(), mutationResult == null ? "No Result": mutationResult.toString());
 	}
 
@@ -154,6 +157,20 @@ public class Mutation {
 		} else if (!mutationType.equals(other.mutationType))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the mutationForLine
+	 */
+	public int getMutationForLine() {
+		return mutationForLine;
+	}
+
+	/**
+	 * @param mutationForLine the mutationForLine to set
+	 */
+	public void setMutationForLine(int mutationForLine) {
+		this.mutationForLine = mutationForLine;
 	}
 
 
