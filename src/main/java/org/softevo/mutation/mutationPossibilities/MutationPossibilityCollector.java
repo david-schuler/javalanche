@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.softevo.bytecodetransformer.processFiles.FileTransformer;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RICCollectorTransformer;
 import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.replaceIntegerConstant.RICCollectorTransformer;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;

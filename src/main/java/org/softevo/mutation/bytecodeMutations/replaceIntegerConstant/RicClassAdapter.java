@@ -1,4 +1,4 @@
-package org.softevo.mutation.replaceIntegerConstant;
+package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
 
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
