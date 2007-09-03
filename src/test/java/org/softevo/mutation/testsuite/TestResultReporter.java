@@ -38,19 +38,16 @@ public class TestResultReporter {
 		tr2.addFailure(test, null);
 		tr2.startTest(test);
 
-		Mutation m = new Mutation("testClass", 1,
-				MutationType.RIC_PLUS_1);
+		Mutation m = new Mutation("testClass", 1, 0, MutationType.RIC_PLUS_1);
 		MutationManager.shouldApplyMutation(m);
-		reporter.report(tr1,  m);
+		reporter.report(tr1, m);
 	}
 
 	@After
-	public void tearDown(){
+	public void tearDown() {
 		new HibernateTest().hibernateDelete();
 
 	}
-
-
 
 	@Test
 	public void testToString() {

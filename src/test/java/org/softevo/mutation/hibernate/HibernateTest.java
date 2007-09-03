@@ -14,7 +14,7 @@ import org.softevo.mutation.results.persistence.HibernateUtil;
 
 public class HibernateTest {
 
-	private Mutation testMutaion = new Mutation("testClass", 21,
+	private Mutation testMutaion = new Mutation("testClass", 21,0,
 			MutationType.RIC_PLUS_1);;
 
 	@Before
@@ -58,7 +58,7 @@ public class HibernateTest {
 			}
 		}
 
-		Mutation m = new Mutation("testClass", 21, MutationType.RIC_PLUS_1);
+		Mutation m = new Mutation("testClass", 21,0, MutationType.RIC_PLUS_1);
 		session.save(m);
 
 		tx.commit();

@@ -7,6 +7,8 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.softevo.bytecodetransformer.processFiles.BytecodeTransformer;
 import org.softevo.bytecodetransformer.processFiles.FileTransformer;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RICCollectorTransformer;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RICPossibilitiesClassAdapter;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.properties.MutationProperties;
 

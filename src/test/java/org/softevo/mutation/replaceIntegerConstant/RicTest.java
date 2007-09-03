@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
-import org.softevo.mutation.mutationPossibilities.Mutations;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicTransformer;
 import org.softevo.mutation.properties.MutationProperties;
 
 public class RicTest {

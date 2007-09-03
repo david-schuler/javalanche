@@ -24,7 +24,7 @@ public class QueryManagerTestClass {
 	private static MutationType testMutationType = MutationType.RIC_MINUS_1;
 
 	private static Mutation testMutation = new Mutation(className,
-			testLineNumber, testMutationType);
+			testLineNumber, 0,testMutationType);
 
 	@Before
 	public void setUp() {
@@ -42,7 +42,7 @@ public class QueryManagerTestClass {
 
 	@Test
 	public void testQueryByValues() {
-		Mutation queryMutation = new Mutation(className, testLineNumber,
+		Mutation queryMutation = new Mutation(className, testLineNumber,0,
 				testMutationType);
 		Mutation resultMutation = QueryManager.getMutation(queryMutation);
 		Assert.assertTrue(resultMutation != null);
