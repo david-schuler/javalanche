@@ -5,11 +5,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 public class CoverageResult {
 
-	private static Logger logger = Logger.getLogger(CoverageResult.class.getName());
+	private static Logger logger = Logger.getLogger(CoverageResult.class);
 
 	String className;
 

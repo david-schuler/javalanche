@@ -9,8 +9,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +16,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.softevo.mutation.coverageResults.CoverageResult;
 import org.softevo.mutation.io.HtmlFileSource;
 import org.softevo.mutation.io.XmlIo;
@@ -29,8 +29,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ParseCloverResults {
 
-	private static Logger logger = Logger.getLogger(ParseCloverResults.class
-			.toString());
+	private static Logger logger = Logger.getLogger(ParseCloverResults.class);
 
 	private static final String RELATIVE_CLOVER_DIR = "run-all-junit-tests/clover_html/";
 
