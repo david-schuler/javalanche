@@ -18,7 +18,7 @@ public class Mutation {
 	static int mutionIdGenerator  = 0;
 
 	public enum MutationType {
-		NO_MUTATION, RIC_PLUS_1, RIC_MINUS_1, RIC_ZERO,
+		NO_MUTATION, RIC_PLUS_1, RIC_MINUS_1, RIC_ZERO, NEGATE_JUMP
 	};
 
 	private String className;

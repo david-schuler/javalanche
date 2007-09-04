@@ -4,7 +4,6 @@ import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckMethodAdapter;
-import org.softevo.mutation.mutationPossibilities.Mutations;
 
 public class RicClassAdapter extends ClassAdapter {
 

@@ -265,9 +265,9 @@ public class RicMethodAdapter extends LineNumberAdapter {
 		 }
 	}
 
-	private void insertPrintStatements(String message) {
-		insertPrintStatements(mv, message);
-	}
+//	private void insertPrintStatements(String message) {
+//		insertPrintStatements(mv, message);
+//	}
 
 	@Override
 	public void visitLineNumber(int line, Label start) {
