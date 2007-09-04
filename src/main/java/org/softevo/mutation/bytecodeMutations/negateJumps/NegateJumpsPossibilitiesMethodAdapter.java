@@ -67,6 +67,12 @@ public class NegateJumpsPossibilitiesMethodAdapter extends LineNumberAdapter {
 		mpc.addPossibility(mutation);
 	}
 
+
+	@Override
+	public void visitLineNumber(int line, Label start) {
+		super.visitLineNumber(line, start);
+		possibilitiesForLine = 0;
+	}
 //case Opcodes.IFEQ:
 //
 //	break;
@@ -121,3 +127,5 @@ public class NegateJumpsPossibilitiesMethodAdapter extends LineNumberAdapter {
 //	break;
 
 }
+
+

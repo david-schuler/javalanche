@@ -4,7 +4,9 @@ import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.softevo.mutation.bytecodeMutations.BytecodeTasks;
 import org.softevo.mutation.bytecodeMutations.LineNumberAdapter;
+import org.softevo.mutation.bytecodeMutations.MutationCode;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.MutationManager;
@@ -50,7 +52,7 @@ public class RicMethodAdapter extends LineNumberAdapter {
 
 	}
 
-	private static int mutationForLine = 0;
+	public static int mutationForLine = 0;
 
 	static Logger logger = Logger.getLogger(RicMethodAdapter.class);
 
@@ -142,7 +144,7 @@ public class RicMethodAdapter extends LineNumberAdapter {
 				}
 
 			};
-			insertIfElse(mv, unmutated, new MutationCode[] {
+			BytecodeTasks.insertIfElse(mv, unmutated, new MutationCode[] {
 					new MutationCode(cm.getPlus1()) {
 
 						@Override
@@ -172,14 +174,6 @@ public class RicMethodAdapter extends LineNumberAdapter {
 		}
 	}
 
-	private static void insertPrintStatements(MethodVisitor mv, String message) {
-		mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "err",
-				"Ljava/io/PrintStream;");
-		mv.visitLdcInsn("[RIC] " + message);
-		mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream",
-				"println", "(Ljava/lang/String;)V");
-	}
-
 	private void floatConstant(final float f) {
 		logger.info("float constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
@@ -193,7 +187,7 @@ public class RicMethodAdapter extends LineNumberAdapter {
 				}
 
 			};
-			insertIfElse(mv, unmutated, new MutationCode[] {
+			BytecodeTasks.insertIfElse(mv, unmutated, new MutationCode[] {
 					new MutationCode(cm.getPlus1()) {
 
 						@Override
@@ -236,7 +230,7 @@ public class RicMethodAdapter extends LineNumberAdapter {
 				}
 
 			};
-			insertIfElse(mv, unmutated, new MutationCode[] {
+			BytecodeTasks.insertIfElse(mv, unmutated, new MutationCode[] {
 					new MutationCode(cm.getPlus1()) {
 
 						@Override
@@ -298,7 +292,7 @@ public class RicMethodAdapter extends LineNumberAdapter {
 		Mutation mutationZeroFromDB = QueryManager.getMutation(mutationZero);
 
 		if (MutationManager.shouldApplyMutation(mutationPlus1)) {
-			insertIfElse(mv, new MutationCode(null) {
+			BytecodeTasks.insertIfElse(mv, new MutationCode(null) {
 
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
@@ -333,30 +327,6 @@ public class RicMethodAdapter extends LineNumberAdapter {
 			logger.info("Applying no mutation for line: " + getLineNumber());
 			super.visitLdcInsn(new Integer(i));
 		}
-	}
-
-	private static void insertIfElse(MethodVisitor mv, MutationCode unMutated,
-			MutationCode[] mutations) {
-		mutationForLine++;
-		Label endLabel = new Label();
-		for (MutationCode mutationCode : mutations) {
-			Mutation mutation = mutationCode.getMutation();
-			mv.visitLdcInsn(mutation.getMutationVariable());
-			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/System",
-					"getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
-			Label l1 = new Label();
-			mv.visitJumpInsn(Opcodes.IFNULL, l1);
-			Label l2 = new Label();
-			mv.visitLabel(l2);
-			insertPrintStatements(mv, "Mutation "
-					+ mutation.getMutationVariable() + " - "
-					+ mutation.getMutationType() + "is enabled");
-			mutationCode.insertCodeBlock(mv);
-			mv.visitJumpInsn(Opcodes.GOTO, endLabel);
-			mv.visitLabel(l1);
-		}
-		unMutated.insertCodeBlock(mv);
-		mv.visitLabel(endLabel);
 	}
 
 	private static ConstantMutations getConstantMutations(String className,

@@ -34,5 +34,7 @@ public class NegateJumpsPossibilitiesClassAdapter extends ClassAdapter {
 				superVisitor, className, name, mpc);
 		return actualAdapter;
 	}
+	
+	
 
 }

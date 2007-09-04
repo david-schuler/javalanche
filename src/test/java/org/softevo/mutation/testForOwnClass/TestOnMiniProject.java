@@ -90,6 +90,7 @@ public class TestOnMiniProject {
 		SelectiveTestSuite selectiveTestSuite = new SelectiveTestSuite();
 		TestSuite suite = new TestSuite(RicClassTest.class);
 		selectiveTestSuite.addTest(suite);
+		@SuppressWarnings("unused")
 		RicClass ric = new RicClass();
 		selectiveTestSuite.run(new TestResult());
 	}

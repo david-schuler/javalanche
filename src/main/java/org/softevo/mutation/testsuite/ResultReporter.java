@@ -5,12 +5,9 @@ import java.util.List;
 
 import junit.framework.TestResult;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.OldMutationResult;
 import org.softevo.mutation.results.SingleTestResult;
-import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 public class ResultReporter {

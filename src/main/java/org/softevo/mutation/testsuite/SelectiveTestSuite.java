@@ -42,13 +42,13 @@ public class SelectiveTestSuite extends TestSuite {
 		super();
 	}
 
-	public SelectiveTestSuite(Class theClass, String name) {
-		super(theClass, name);
-	}
-
-	public SelectiveTestSuite(final Class theClass) {
-		super(theClass);
-	}
+//	public SelectiveTestSuite(Class theClass, String name) {
+//		super(theClass, name);
+//	}
+//
+//	public SelectiveTestSuite(final Class theClass) {
+//		super(theClass);
+//	}
 
 	public SelectiveTestSuite(String name) {
 		super(name);
@@ -68,6 +68,7 @@ public class SelectiveTestSuite extends TestSuite {
 			}
 			Mutation mutation = mutationSwitcher.next();
 			try {
+				@SuppressWarnings("unused")
 				Class c = Class.forName(mutation.getClassName());
 			} catch (ClassNotFoundException e) {
 				logger.info("Class " + mutation.getClassName()

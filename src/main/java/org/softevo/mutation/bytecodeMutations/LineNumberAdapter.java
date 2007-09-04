@@ -22,9 +22,6 @@ public class LineNumberAdapter extends MethodAdapter {
 	@Override
 	public void visitLineNumber(int line, Label start) {
 		super.visitLineNumber(line, start);
-		if(line==272){
-			System.out.println(272);
-		}
 		lineNumber = line;
 	}
 
@@ -33,9 +30,6 @@ public class LineNumberAdapter extends MethodAdapter {
 			throw new RuntimeException(String.format(
 					"Linenumber not available for class: %s method: %s",
 					className, methodName));
-		}
-		if(lineNumber==272){
-			System.out.println("linenumber " + 272);
 		}
 		return lineNumber;
 	}
