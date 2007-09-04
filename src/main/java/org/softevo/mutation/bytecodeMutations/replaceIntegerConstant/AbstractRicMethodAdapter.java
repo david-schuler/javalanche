@@ -2,6 +2,7 @@ package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.softevo.mutation.bytecodeMutations.LineNumberAdapter;
 
 public abstract class AbstractRicMethodAdapter extends LineNumberAdapter {
 

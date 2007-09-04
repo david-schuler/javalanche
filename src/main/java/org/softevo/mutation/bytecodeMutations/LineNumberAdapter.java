@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
+package org.softevo.mutation.bytecodeMutations;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
