@@ -5,8 +5,11 @@ import java.util.Map;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.softevo.mutation.bytecodeMutations.BytecodeTasks;
 import org.softevo.mutation.bytecodeMutations.LineNumberAdapter;
+import org.softevo.mutation.bytecodeMutations.MutationCode;
 import org.softevo.mutation.results.Mutation;
+import org.softevo.mutation.results.persistence.MutationManager;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 public class NegateJumpsMethodAdapter extends LineNumberAdapter {
@@ -67,11 +70,29 @@ public class NegateJumpsMethodAdapter extends LineNumberAdapter {
 		}
 	}
 
-	private void insertMutationJump(int opcode, Label label) {
+	private void insertMutationJump(final int opcode, final Label label) {
 		Mutation queryMutation = new Mutation(className, getLineNumber(),
 				possibilitiesForLine, Mutation.MutationType.NEGATE_JUMP);
 		possibilitiesForLine++;
+
+
 		Mutation mutationFromDB = QueryManager.getMutation(queryMutation);
-		// TODO
+		if(MutationManager.shouldApplyMutation(queryMutation)){
+			MutationCode unMutated = new MutationCode(null) {
+				@Override
+				public void insertCodeBlock(MethodVisitor mv) {
+					mv.visitJumpInsn(opcode, label);
+				}
+
+			};
+
+			MutationCode mutated = new MutationCode(mutationFromDB) {
+				@Override
+				public void insertCodeBlock(MethodVisitor mv) {
+					mv.visitJumpInsn(jumpReplacmentMap.get(opcode), label);
+				}
+			};
+			BytecodeTasks.insertIfElse(mv, unMutated, new MutationCode[]{mutated});
+		}
 	}
 }

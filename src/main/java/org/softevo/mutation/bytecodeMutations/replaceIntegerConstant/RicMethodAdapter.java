@@ -337,7 +337,6 @@ public class RicMethodAdapter extends LineNumberAdapter {
 				mutationForLine, MutationType.RIC_MINUS_1);
 		Mutation mutationZero = new Mutation(className, lineNumber,
 				mutationForLine, MutationType.RIC_ZERO);
-
 		Mutation mutationPlus1FromDB = QueryManager.getMutation(mutationPlus1);
 		Mutation mutationMinus1FromDB = QueryManager.getMutation(mutationMinus);
 		Mutation mutationZeroFromDB = QueryManager.getMutation(mutationZero);

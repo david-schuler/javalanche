@@ -10,6 +10,7 @@ import junit.framework.TestSuite;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.softevo.mutation.coverageResults.db.TestCoverageClassResult;
@@ -28,13 +29,12 @@ public class TestOnMiniProject {
 
 	private static final String TEST_CLASS_TYPE = "org.softevo.mutation.testForOwnClass.ricProject.RicClass";
 
-	private static final String UNITTEST_FOR_TEST_CLASS= "org.softevo.mutation.testForOwnClass.ricProject.RicClassTest";
-
+	private static final String UNITTEST_FOR_TEST_CLASS = "org.softevo.mutation.testForOwnClass.ricProject.RicClassTest";
 
 	private static final String[] testCaseNames = {
-		UNITTEST_FOR_TEST_CLASS + ".testMethod1",
-		UNITTEST_FOR_TEST_CLASS + ".testMethod2",
-		UNITTEST_FOR_TEST_CLASS + ".testMethod3" };
+			UNITTEST_FOR_TEST_CLASS + ".testMethod1",
+			UNITTEST_FOR_TEST_CLASS + ".testMethod2",
+			UNITTEST_FOR_TEST_CLASS + ".testMethod3" };
 
 	private static final int[] linenumbers = { 6, 11, 12, 16, 17 };
 
@@ -46,6 +46,11 @@ public class TestOnMiniProject {
 	public void setup() {
 		deleteTestStuff();
 		generateMutations();
+	}
+
+	@After
+	public void tearDown() {
+		deleteTestStuff();
 	}
 
 	public void deleteTestStuff() {
@@ -76,11 +81,10 @@ public class TestOnMiniProject {
 					.add(new TestCoverageLineResult(number, testCaseNamesList));
 		}
 		TestCoverageClassResult classResult = new TestCoverageClassResult(
-				"ric.RicClass", lineResult);
-		try{
-		QueryManager.save(classResult);
-		}
-		catch(org.hibernate.exception.ConstraintViolationException e){
+				TEST_CLASS_TYPE, lineResult);
+		try {
+			QueryManager.save(classResult);
+		} catch (org.hibernate.exception.ConstraintViolationException e) {
 			// Already contained in db;
 		}
 	}
