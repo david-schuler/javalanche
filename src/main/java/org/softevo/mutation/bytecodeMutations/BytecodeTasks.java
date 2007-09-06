@@ -49,6 +49,6 @@ public class BytecodeTasks {
 				"println", "(Ljava/lang/String;)V");
 	}
 
-	
+
 
 }

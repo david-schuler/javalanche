@@ -1,7 +1,9 @@
 package org.softevo.mutation.bytecodeMutations.negateJumps;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -14,9 +16,11 @@ import org.softevo.mutation.results.persistence.QueryManager;
 
 public class NegateJumpsMethodAdapter extends LineNumberAdapter {
 
+	private static Logger logger = Logger.getLogger(LineNumberAdapter.class);
+
 	private int possibilitiesForLine = 0;
 
-	private static final int replacements[][] = {
+	private static final int[][] replacements = {
 			{ Opcodes.IFEQ, Opcodes.IFNE }, { Opcodes.IFNE, Opcodes.IFEQ },
 			{ Opcodes.IFGE, Opcodes.IFLT }, { Opcodes.IFGT, Opcodes.IFLE },
 			{ Opcodes.IFLE, Opcodes.IFGT }, { Opcodes.IFLT, Opcodes.IFGE },
@@ -31,11 +35,11 @@ public class NegateJumpsMethodAdapter extends LineNumberAdapter {
 			{ Opcodes.IF_ICMPLT, Opcodes.IF_ICMPGE },
 			{ Opcodes.IF_ICMPNE, Opcodes.IF_ICMPEQ } };
 
-	private static Map<Integer, Integer> jumpReplacmentMap;
+	private static Map<Integer, Integer> jumpReplacmentMap = new HashMap<Integer, Integer>();
 
 	static {
-		for (int[] replacement : replacements) {
-			jumpReplacmentMap.put(replacement[0], replacement[1]);
+		for (int i = 0; i < replacements.length; i++) {
+			jumpReplacmentMap.put(replacements[i][0], replacements[i][1]);
 		}
 	}
 
@@ -46,6 +50,7 @@ public class NegateJumpsMethodAdapter extends LineNumberAdapter {
 
 	@Override
 	public void visitJumpInsn(int opcode, Label label) {
+		// super.visitJumpInsn(opcode, label);
 		switch (opcode) {
 		case Opcodes.IFEQ:
 		case Opcodes.IFNE:
@@ -74,10 +79,9 @@ public class NegateJumpsMethodAdapter extends LineNumberAdapter {
 		Mutation queryMutation = new Mutation(className, getLineNumber(),
 				possibilitiesForLine, Mutation.MutationType.NEGATE_JUMP);
 		possibilitiesForLine++;
-
-
+		logger.info("Jump instruction");
 		Mutation mutationFromDB = QueryManager.getMutation(queryMutation);
-		if(MutationManager.shouldApplyMutation(queryMutation)){
+		if (MutationManager.shouldApplyMutation(queryMutation)) {
 			MutationCode unMutated = new MutationCode(null) {
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
@@ -92,7 +96,14 @@ public class NegateJumpsMethodAdapter extends LineNumberAdapter {
 					mv.visitJumpInsn(jumpReplacmentMap.get(opcode), label);
 				}
 			};
-			BytecodeTasks.insertIfElse(mv, unMutated, new MutationCode[]{mutated});
+			BytecodeTasks.insertIfElse(mv, unMutated,
+					new MutationCode[] { mutated });
 		}
+	}
+
+	@Override
+	public void visitLineNumber(int line, Label start) {
+		super.visitLineNumber(line, start);
+		possibilitiesForLine = 0;
 	}
 }

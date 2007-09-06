@@ -28,6 +28,7 @@ public class SelectiveTestSuite extends TestSuite {
 
 	private MutationSwitcher mutationSwitcher = new MutationSwitcher();
 
+	private ResultReporter resultReporter = new ResultReporter();
 
 	static {
 		logger.setLevel(Level.INFO);

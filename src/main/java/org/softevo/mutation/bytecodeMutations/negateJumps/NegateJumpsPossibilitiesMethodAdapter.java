@@ -50,7 +50,6 @@ public class NegateJumpsPossibilitiesMethodAdapter extends LineNumberAdapter {
 
 		case Opcodes.IF_ICMPLE:
 
-
 		case Opcodes.IF_ICMPLT:
 
 		case Opcodes.IF_ICMPNE:
@@ -73,58 +72,6 @@ public class NegateJumpsPossibilitiesMethodAdapter extends LineNumberAdapter {
 		super.visitLineNumber(line, start);
 		possibilitiesForLine = 0;
 	}
-//case Opcodes.IFEQ:
-//
-//	break;
-//
-//case Opcodes.IFNE:
-//
-//	break;
-//case Opcodes.IFGE:
-//
-//	break;
-//case Opcodes.IFGT:
-//
-//	break;
-//case Opcodes.IFLE:
-//
-//	break;
-//case Opcodes.IFLT:
-//
-//	break;
-//case Opcodes.IFNULL:
-//
-//	break;
-//case Opcodes.IFNONNULL:
-//
-//	break;
-//case Opcodes.IF_ACMPEQ:
-//
-//	break;
-//case Opcodes.IF_ACMPNE:
-//
-//	break;
-//case Opcodes.IF_ICMPEQ:
-//
-//	break;
-//case Opcodes.IF_ICMPGE:
-//
-//	break;
-//case Opcodes.IF_ICMPGT:
-//
-//	break;
-//case Opcodes.IF_ICMPLE:
-//
-//	break;
-//
-//case Opcodes.IF_ICMPLT:
-//
-//	break;
-//case Opcodes.IF_ICMPNE:
-//
-//	break;
-//default:
-//	break;
 
 }
 

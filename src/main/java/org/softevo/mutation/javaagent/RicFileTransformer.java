@@ -6,6 +6,7 @@ import java.security.ProtectionDomain;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.softevo.mutation.bytecodeMutations.MutationTransformer;
 import org.softevo.mutation.bytecodeMutations.negateJumps.NegateJumpsTransformer;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicTransformer;
 import org.softevo.mutation.results.persistence.QueryManager;
@@ -25,10 +26,13 @@ public class RicFileTransformer implements ClassFileTransformer {
 		mutations = QueryManager.getClassNamesToMutate();
 	}
 
+	@SuppressWarnings("unused")
 	private static RicTransformer ricTransformer = new RicTransformer();
 
 	private static NegateJumpsTransformer negateJumpsTransformer = new NegateJumpsTransformer();
 
+	@SuppressWarnings("unused")
+	private static MutationTransformer mutationTransformer = new MutationTransformer();
 
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
@@ -37,8 +41,7 @@ public class RicFileTransformer implements ClassFileTransformer {
 		String classNameWithDots = className.replace('/', '.');
 		// logger.info("Processing class: " + classNameWithDots);
 		if (mutations.contains(classNameWithDots)) {
-			// if
-			// (classNameWithDots.equals(MutationProperties.SAMPLE_FILE_NAME)) {
+
 			logger.info("Transforming: " + classNameWithDots);
 			byte[] transformedBytecode = null;
 			try {
