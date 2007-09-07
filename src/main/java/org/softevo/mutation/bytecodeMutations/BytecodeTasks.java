@@ -14,6 +14,8 @@ import org.softevo.mutation.results.Mutation;
  */
 public class BytecodeTasks {
 
+	boolean insertNoops;
+
 	private BytecodeTasks() {
 	}
 
@@ -21,6 +23,9 @@ public class BytecodeTasks {
 			MutationCode[] mutations) {
 		RicMethodAdapter.mutationForLine++;
 		Label endLabel = new Label();
+		Label mutationStartLabel = new Label();
+		mutationStartLabel.info = new MutationMarker(true);
+		mv.visitLabel(mutationStartLabel);
 		for (MutationCode mutationCode : mutations) {
 			Mutation mutation = mutationCode.getMutation();
 			mv.visitLdcInsn(mutation.getMutationVariable());
@@ -32,19 +37,24 @@ public class BytecodeTasks {
 			mv.visitLabel(l2);
 			BytecodeTasks.insertPrintStatements(mv, "Mutation "
 					+ mutation.getMutationVariable() + " - "
-					+ mutation.getMutationType() + "is enabled");
+					+ mutation.getMutationType() + " is enabled");
 			mutationCode.insertCodeBlock(mv);
 			mv.visitJumpInsn(Opcodes.GOTO, endLabel);
 			mv.visitLabel(l1);
 		}
+
+		Label mutationEndLabel = new Label();
+		mutationEndLabel.info = new MutationMarker(false);
+		mv.visitLabel(mutationEndLabel);
 		unMutated.insertCodeBlock(mv);
 		mv.visitLabel(endLabel);
+
 	}
 
 	public static void insertPrintStatements(MethodVisitor mv, String message) {
 		mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "err",
 				"Ljava/io/PrintStream;");
-		mv.visitLdcInsn("[RIC] " + message);
+		mv.visitLdcInsn("[MUTATION] " + message);
 		mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream",
 				"println", "(Ljava/lang/String;)V");
 	}

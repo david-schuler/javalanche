@@ -1,10 +1,13 @@
 package org.softevo.mutation.bytecodeMutations;
 
+import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 
-public class LineNumberAdapter extends MethodAdapter {
+public abstract class AbstractMutationAdapter extends MethodAdapter {
+
+	private static final Logger logger = Logger.getLogger(AbstractMutationAdapter.class);
 
 	private int lineNumber = -1;
 
@@ -12,7 +15,9 @@ public class LineNumberAdapter extends MethodAdapter {
 
 	protected String methodName;
 
-	public LineNumberAdapter(MethodVisitor mv, String className,
+	protected boolean mutationCode = false;
+
+	public AbstractMutationAdapter(MethodVisitor mv, String className,
 			String methodName) {
 		super(mv);
 		this.className = className;
@@ -32,5 +37,15 @@ public class LineNumberAdapter extends MethodAdapter {
 					className, methodName));
 		}
 		return lineNumber;
+	}
+
+	@Override
+	public void visitLabel(Label label) {
+		super.visitLabel(label);
+		if(label.info instanceof MutationMarker){
+			logger.info("Found mutation marker");
+			MutationMarker marker = (MutationMarker) label.info;
+			mutationCode = marker.isStart();
+		}
 	}
 }

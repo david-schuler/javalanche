@@ -2,9 +2,9 @@ package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.softevo.mutation.bytecodeMutations.LineNumberAdapter;
+import org.softevo.mutation.bytecodeMutations.AbstractMutationAdapter;
 
-public abstract class AbstractRicMethodAdapter extends LineNumberAdapter {
+public abstract class AbstractRicMethodAdapter extends AbstractMutationAdapter {
 
 	private final boolean forwardCalls;
 
@@ -16,6 +16,10 @@ public abstract class AbstractRicMethodAdapter extends LineNumberAdapter {
 
 	@Override
 	public void visitInsn(int opcode) {
+		if(mutationCode){
+			super.visitInsn(opcode);
+			return;
+		}
 		if (forwardCalls) {
 			super.visitInsn(opcode);
 		}
@@ -82,6 +86,10 @@ public abstract class AbstractRicMethodAdapter extends LineNumberAdapter {
 
 	@Override
 	public void visitLdcInsn(Object constant) {
+		if(mutationCode){
+			super.visitLdcInsn(constant);
+			return;
+		}
 		if (forwardCalls) {
 			super.visitLdcInsn(constant);
 		}
@@ -95,6 +103,10 @@ public abstract class AbstractRicMethodAdapter extends LineNumberAdapter {
 
 	@Override
 	public void visitIntInsn(int opcode, int operand) {
+		if(mutationCode){
+			super.visitIntInsn(opcode,operand);
+			return;
+		}
 		if (forwardCalls) {
 			super.visitIntInsn(opcode, operand);
 		}

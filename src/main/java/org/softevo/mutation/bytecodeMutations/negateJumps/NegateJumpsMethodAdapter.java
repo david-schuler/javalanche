@@ -8,15 +8,16 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.softevo.mutation.bytecodeMutations.BytecodeTasks;
-import org.softevo.mutation.bytecodeMutations.LineNumberAdapter;
+import org.softevo.mutation.bytecodeMutations.AbstractMutationAdapter;
 import org.softevo.mutation.bytecodeMutations.MutationCode;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.MutationManager;
 import org.softevo.mutation.results.persistence.QueryManager;
 
-public class NegateJumpsMethodAdapter extends LineNumberAdapter {
+public class NegateJumpsMethodAdapter extends AbstractMutationAdapter {
 
-	private static Logger logger = Logger.getLogger(LineNumberAdapter.class);
+	private static Logger logger = Logger
+			.getLogger(AbstractMutationAdapter.class);
 
 	private int possibilitiesForLine = 0;
 
@@ -50,7 +51,10 @@ public class NegateJumpsMethodAdapter extends LineNumberAdapter {
 
 	@Override
 	public void visitJumpInsn(int opcode, Label label) {
-		// super.visitJumpInsn(opcode, label);
+		if (mutationCode) {
+			super.visitJumpInsn(opcode, label);
+			return;
+		}
 		switch (opcode) {
 		case Opcodes.IFEQ:
 		case Opcodes.IFNE:
@@ -71,6 +75,7 @@ public class NegateJumpsMethodAdapter extends LineNumberAdapter {
 			insertMutationJump(opcode, label);
 			break;
 		default:
+			super.visitJumpInsn(opcode, label);
 			break;
 		}
 	}

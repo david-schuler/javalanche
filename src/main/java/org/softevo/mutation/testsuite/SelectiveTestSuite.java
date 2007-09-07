@@ -31,7 +31,6 @@ public class SelectiveTestSuite extends TestSuite {
 	private ResultReporter resultReporter = new ResultReporter();
 
 	static {
-		logger.setLevel(Level.INFO);
 		System.out.println("Selective Test Suite");
 		if (TESTMODE) {
 			logger.info("TESTMODE 1");

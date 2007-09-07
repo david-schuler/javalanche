@@ -5,14 +5,14 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.softevo.mutation.bytecodeMutations.BytecodeTasks;
-import org.softevo.mutation.bytecodeMutations.LineNumberAdapter;
+import org.softevo.mutation.bytecodeMutations.AbstractMutationAdapter;
 import org.softevo.mutation.bytecodeMutations.MutationCode;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.MutationManager;
 import org.softevo.mutation.results.persistence.QueryManager;
 
-public class RicMethodAdapter extends LineNumberAdapter {
+public class RicMethodAdapter extends AbstractMutationAdapter {
 
 	private static class ConstantMutations {
 
