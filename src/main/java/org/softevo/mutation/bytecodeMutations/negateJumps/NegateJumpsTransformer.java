@@ -18,8 +18,7 @@ public class NegateJumpsTransformer extends BytecodeTransformer {
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
 		ClassVisitor cc = new CheckClassAdapter(cw);
 		PrintWriter p = new PrintWriter(System.out);
-		cc = new TraceClassVisitor(cc, p);
-
+//		cc = new TraceClassVisitor(cc, p);
 		NegateJumpsClassAdapter njca = new NegateJumpsClassAdapter(cc);
 		logger.info("return Class visitor" + njca);
 		return njca;

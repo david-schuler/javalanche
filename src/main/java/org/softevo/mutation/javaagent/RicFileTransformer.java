@@ -43,13 +43,13 @@ public class RicFileTransformer implements ClassFileTransformer {
 		if (mutations.contains(classNameWithDots)) {
 
 			logger.info("Transforming: " + classNameWithDots);
-			
+
 			byte[] transformedBytecode = null;
 			try {
 //				transformedBytecode = ricTransformer
 //						.transformBytecode(classfileBuffer);
-//				transformedBytecode = negateJumpsTransformer.transformBytecode(classfileBuffer);
-				transformedBytecode = mutationTransformer.transformBytecode(classfileBuffer);
+				transformedBytecode = negateJumpsTransformer.transformBytecode(classfileBuffer);
+//				transformedBytecode = mutationTransformer.transformBytecode(classfileBuffer);
 			} catch (Exception e) {
 				logger.info("Exception thrown" + e);
 				e.printStackTrace();

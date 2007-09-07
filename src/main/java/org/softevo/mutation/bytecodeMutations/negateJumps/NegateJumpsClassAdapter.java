@@ -6,7 +6,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
 public class NegateJumpsClassAdapter extends ClassAdapter{
-	
+
 	public NegateJumpsClassAdapter(ClassVisitor cv) {
 		super(cv);
 	}
@@ -26,10 +26,10 @@ public class NegateJumpsClassAdapter extends ClassAdapter{
 		// String lastMethodName = name;
 		MethodVisitor superVisitor = super.visitMethod(access, name, desc,
 				signature, exceptions);
-		MethodVisitor actualAdapter = new NegateJumpsMethodAdapter(
-				superVisitor, className, name);
+		MethodVisitor actualAdapter = new NegateJumpsMethodAdapter(new NegateJumpsMethodAdapter(
+				superVisitor, className, name), className ,name);
 		return actualAdapter;
 	}
-	
+
 
 }
