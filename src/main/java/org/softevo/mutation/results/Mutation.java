@@ -18,7 +18,7 @@ public class Mutation {
 	static int mutionIdGenerator  = 0;
 
 	public enum MutationType {
-		NO_MUTATION, RIC_PLUS_1, RIC_MINUS_1, RIC_ZERO, NEGATE_JUMP, A
+		NO_MUTATION, RIC_PLUS_1, RIC_MINUS_1, RIC_ZERO, NEGATE_JUMP, ARITHMETIC_REPLACE
 	};
 
 	private String className;
@@ -36,7 +36,7 @@ public class Mutation {
 
 	}
 
-	public Mutation(String className, int line,int mutationForLine, MutationType mutation) {
+	public Mutation(String className, int line, int mutationForLine, MutationType mutation) {
 		super();
 		if (className == null || line < 0 || mutation == null) {
 			throw new IllegalArgumentException(String.format(
