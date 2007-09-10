@@ -11,9 +11,9 @@ import org.softevo.mutation.bytecodeMutations.negateJumps.NegateJumpsTransformer
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicTransformer;
 import org.softevo.mutation.results.persistence.QueryManager;
 
-public class RicFileTransformer implements ClassFileTransformer {
+public class MutationFileTransformer implements ClassFileTransformer {
 
-	private static Logger logger = Logger.getLogger(RicFileTransformer.class);
+	private static Logger logger = Logger.getLogger(MutationFileTransformer.class);
 
 	private static Set<String> mutations;
 
