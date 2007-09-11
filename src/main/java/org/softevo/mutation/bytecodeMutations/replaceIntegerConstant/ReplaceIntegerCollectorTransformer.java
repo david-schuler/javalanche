@@ -10,11 +10,11 @@ import org.softevo.bytecodetransformer.processFiles.BytecodeTransformer;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 
 
-public class RICCollectorTransformer extends BytecodeTransformer {
+public class ReplaceIntegerCollectorTransformer extends BytecodeTransformer {
 
 	MutationPossibilityCollector mutationPossibilityCollector;
 
-	public RICCollectorTransformer(MutationPossibilityCollector mpc) {
+	public ReplaceIntegerCollectorTransformer(MutationPossibilityCollector mpc) {
 		mutationPossibilityCollector = mpc;
 	}
 
