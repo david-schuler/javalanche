@@ -64,4 +64,8 @@ public class MutationPossibilityCollector {
 		generateTestDataInDB(MutationProperties.SAMPLE_FILE);
 		generateUnmutated();
 	}
+
+	public Object size() {
+		return possibilities.size();
+	}
 }

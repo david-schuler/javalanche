@@ -4,25 +4,30 @@ import java.util.Map;
 
 import org.objectweb.asm.MethodVisitor;
 import org.softevo.mutation.bytecodeMutations.AbstractMutationAdapter;
+import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 public class PossibilitiesAretmeticReplaceMethodAdapter extends
 		AbstractMutationAdapter {
 
 	private static Map replaceMap = ReplaceMap.getReplaceMap();
+
 	private int possForLine;
 
+	private MutationPossibilityCollector mpc;
+
 	public PossibilitiesAretmeticReplaceMethodAdapter(MethodVisitor mv,
-			String className, String methodName) {
+			String className, String methodName,
+			MutationPossibilityCollector mpc) {
 		super(mv, className, className);
+		this.mpc = mpc;
 	}
 
 	@Override
 	public void visitInsn(int opcode) {
 		super.visitInsn(opcode);
-		if(replaceMap.containsKey(opcode)){
+		if (replaceMap.containsKey(opcode)) {
 			addPossibility();
 		}
 		// case Opcodes.SWAP: // TODO
@@ -101,9 +106,9 @@ public class PossibilitiesAretmeticReplaceMethodAdapter extends
 	}
 
 	private void addPossibility() {
-		Mutation m = new Mutation(className, getLineNumber(), possForLine, Mutation.MutationType.ARITHMETIC_REPLACE);
-		QueryManager.saveMutation(m);
+		Mutation m = new Mutation(className, getLineNumber(), possForLine,
+				Mutation.MutationType.ARITHMETIC_REPLACE);
+		mpc.addPossibility(m);
+		possForLine++;
 	}
-
-
 }

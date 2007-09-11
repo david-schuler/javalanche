@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.softevo.mutation.bytecodeMutations.MutationTransformer;
+import org.softevo.mutation.bytecodeMutations.arithmetic.ArithmeticTransformer;
 import org.softevo.mutation.bytecodeMutations.negateJumps.NegateJumpsTransformer;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicTransformer;
 import org.softevo.mutation.results.persistence.QueryManager;
@@ -31,6 +32,9 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	private static NegateJumpsTransformer negateJumpsTransformer = new NegateJumpsTransformer();
 
+	private static ArithmeticTransformer arithmeticTransformer = new ArithmeticTransformer();
+
+
 	@SuppressWarnings("unused")
 	private static MutationTransformer mutationTransformer = new MutationTransformer();
 
@@ -48,7 +52,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			try {
 //				transformedBytecode = ricTransformer
 //						.transformBytecode(classfileBuffer);
-				transformedBytecode = negateJumpsTransformer.transformBytecode(classfileBuffer);
+				transformedBytecode = arithmeticTransformer.transformBytecode(classfileBuffer);
 //				transformedBytecode = mutationTransformer.transformBytecode(classfileBuffer);
 			} catch (Exception e) {
 				logger.info("Exception thrown" + e);
