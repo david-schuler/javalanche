@@ -8,7 +8,7 @@ import org.objectweb.asm.ClassWriter;
 import org.softevo.bytecodetransformer.processFiles.BytecodeTransformer;
 import org.softevo.bytecodetransformer.processFiles.FileTransformer;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.PossibilitiesRicClassAdapter;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RICCollectorTransformer;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicCollectorTransformer;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.properties.MutationProperties;
 
@@ -27,7 +27,7 @@ public class RICPossibilitiesTest {
 	public void testForOneClass2(){
 		FileTransformer ft = new FileTransformer(new File(MutationProperties.SAMPLE_FILE));
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
-		ft.process(new RICCollectorTransformer(mpc));
+		ft.process(new RicCollectorTransformer(mpc));
 	}
 	private static class RICTransformer extends BytecodeTransformer{
 
