@@ -8,7 +8,7 @@ import org.objectweb.asm.ClassWriter;
 import org.softevo.bytecodetransformer.processFiles.BytecodeTransformer;
 import org.softevo.bytecodetransformer.processFiles.FileTransformer;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RICCollectorTransformer;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RICPossibilitiesClassAdapter;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicPossibilitiesClassAdapter;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.properties.MutationProperties;
 
@@ -33,7 +33,7 @@ public class RICPossibilitiesTest {
 
 		@Override
 		protected ClassVisitor classVisitorFactory(ClassWriter cw) {
-			return new RICPossibilitiesClassAdapter(cw,new MutationPossibilityCollector());
+			return new RicPossibilitiesClassAdapter(cw,new MutationPossibilityCollector());
 		}
 
 	}

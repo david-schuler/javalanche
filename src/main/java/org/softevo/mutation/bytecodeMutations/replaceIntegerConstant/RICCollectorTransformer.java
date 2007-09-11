@@ -22,6 +22,6 @@ public class RICCollectorTransformer extends BytecodeTransformer {
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
 		ClassVisitor cc = new CheckClassAdapter(cw);
 		cc = new TraceClassVisitor(cc,new PrintWriter(System.out));
-		return new RICPossibilitiesClassAdapter(cc, mutationPossibilityCollector);
+		return new PossibilitiesRicClassAdapter(cc, mutationPossibilityCollector);
 	}
 }

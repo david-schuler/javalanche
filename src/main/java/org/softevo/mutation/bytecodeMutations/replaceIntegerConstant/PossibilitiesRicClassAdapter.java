@@ -7,10 +7,10 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 
-public class RICPossibilitiesClassAdapter extends ClassAdapter {
+public class PossibilitiesRicClassAdapter extends ClassAdapter {
 
 	private static Logger logger = Logger
-			.getLogger(RICPossibilitiesClassAdapter.class);
+			.getLogger(PossibilitiesRicClassAdapter.class);
 
 	private RicPossibilitiesMethodAdapter actualAdapter;
 
@@ -20,7 +20,7 @@ public class RICPossibilitiesClassAdapter extends ClassAdapter {
 
 	private MutationPossibilityCollector mutationPossibilityCollector;
 
-	public RICPossibilitiesClassAdapter(ClassVisitor cv, MutationPossibilityCollector collector) {
+	public PossibilitiesRicClassAdapter(ClassVisitor cv, MutationPossibilityCollector collector) {
 		super(cv);
 		this.mutationPossibilityCollector =  collector;
 	}
