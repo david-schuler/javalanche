@@ -1,4 +1,4 @@
-package org.softevo.mutation.testForOwnClass;
+package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testForOwnClass;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,28 +13,35 @@ import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
+import org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps;
+import org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.TestJump;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testForOwnClass.ricProject.RicClass;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testForOwnClass.ricProject.RicClassTest;
 import org.softevo.mutation.coverageResults.db.TestCoverageClassResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
-import org.softevo.mutation.testForOwnClass.ricProject.RicClass;
-import org.softevo.mutation.testForOwnClass.ricProject.RicClassTest;
 import org.softevo.mutation.testsuite.SelectiveTestSuite;
 
 public class TestOnMiniProject {
 
-	private static final String TEST_CLASS_FILENAME = "/Users/schuler/workspace2/mutationTest2/target/test-classes/org/softevo/mutation/testForOwnClass/ricProject/RicClass.class";
 
-	private static final String TEST_CLASS_TYPE = "org.softevo.mutation.testForOwnClass.ricProject.RicClass";
+	private static final Class TEST_CLASS = RicClass.class;
 
-	private static final String UNITTEST_FOR_TEST_CLASS = "org.softevo.mutation.testForOwnClass.ricProject.RicClassTest";
+	private static final String TEST_CLASS_NAME = TEST_CLASS.getName();
 
-	private static final String[] testCaseNames = {
-			UNITTEST_FOR_TEST_CLASS + ".testMethod1",
-			UNITTEST_FOR_TEST_CLASS + ".testMethod2",
-			UNITTEST_FOR_TEST_CLASS + ".testMethod3" };
+	private static final String UNITTEST_CLASS_NAME = RicClassTest.class
+			.getName();
+
+	private static final String TEST_CLASS_FILENAME = ByteCodeTestUtils
+			.getFileNameForClass(TEST_CLASS);
+
+	private static String[] testCaseNames = ByteCodeTestUtils
+			.generateTestCaseNames(UNITTEST_CLASS_NAME, 3);
+
 
 	private static final int[] linenumbers = { 6, 11, 12, 16, 17 };
 
@@ -44,49 +51,14 @@ public class TestOnMiniProject {
 
 	@Before
 	public void setup() {
-		deleteTestStuff();
+		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
+		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames, linenumbers);
 		generateMutations();
 	}
 
 	@After
 	public void tearDown() {
-		deleteTestStuff();
-	}
-
-	public void deleteTestStuff() {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		String queryString = String
-				.format("delete Mutation where classname=:clname");
-		Query q = session.createQuery(queryString);
-		q.setString("clname", TEST_CLASS_TYPE);
-		int deletedEntities = q.executeUpdate();
-		System.out.println(deletedEntities + " entities where deleted");
-		tx.commit();
-		session.close();
-
-	}
-
-	@Before
-	public void generateCoverageData() {
-		List<TestCoverageTestCaseName> names = new ArrayList<TestCoverageTestCaseName>();
-		for (String name : testCaseNames) {
-			names.add(TestCoverageTestCaseName
-					.getTestCoverageTestCaseName(name));
-		}
-		List<TestCoverageLineResult> lineResult = new ArrayList<TestCoverageLineResult>();
-		List<String> testCaseNamesList = Arrays.asList(testCaseNames);
-		for (int number : linenumbers) {
-			lineResult
-					.add(new TestCoverageLineResult(number, testCaseNamesList));
-		}
-		TestCoverageClassResult classResult = new TestCoverageClassResult(
-				TEST_CLASS_TYPE, lineResult);
-		try {
-			QueryManager.save(classResult);
-		} catch (org.hibernate.exception.ConstraintViolationException e) {
-			// Already contained in db;
-		}
+		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
 	}
 
 	@Test

@@ -1,4 +1,4 @@
-package org.softevo.mutation.testForOwnClass.ricProject;
+package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testForOwnClass.ricProject;
 
 
 import junit.framework.TestCase;
@@ -21,6 +21,6 @@ public class RicClassTest extends TestCase {
 	public void testMethod3() {
 		assertTrue(ric.method3(4));
 	}
-	
+
 
 }

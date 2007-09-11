@@ -1,4 +1,4 @@
-package org.softevo.mutation.testForOwnClass.ricProject;
+package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testForOwnClass.ricProject;
 
 public class RicClass {
 
