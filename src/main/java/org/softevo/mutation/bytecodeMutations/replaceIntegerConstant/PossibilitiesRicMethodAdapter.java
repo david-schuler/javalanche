@@ -5,7 +5,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
 
-public class RicPossibilitiesMethodAdapter extends AbstractRicMethodAdapter {
+public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 
 	private int possibilities = 0;
 
@@ -13,7 +13,7 @@ public class RicPossibilitiesMethodAdapter extends AbstractRicMethodAdapter {
 
 	MutationPossibilityCollector mutationPossibilityCollector;
 
-	public RicPossibilitiesMethodAdapter(MethodVisitor mv, String className,
+	public PossibilitiesRicMethodAdapter(MethodVisitor mv, String className,
 			String methodName,
 			MutationPossibilityCollector mutationPossibilityCollector) {
 		super(mv, className, methodName, true);

@@ -12,7 +12,7 @@ public class PossibilitiesRicClassAdapter extends ClassAdapter {
 	private static Logger logger = Logger
 			.getLogger(PossibilitiesRicClassAdapter.class);
 
-	private RicPossibilitiesMethodAdapter actualAdapter;
+	private PossibilitiesRicMethodAdapter actualAdapter;
 
 	private String lastMethodName;
 
@@ -37,7 +37,7 @@ public class PossibilitiesRicClassAdapter extends ClassAdapter {
 			String signature, String[] exceptions) {
 		printResultOfLastMethod();
 		lastMethodName = name;
-		actualAdapter = new RicPossibilitiesMethodAdapter(super.visitMethod(
+		actualAdapter = new PossibilitiesRicMethodAdapter(super.visitMethod(
 				access, name, desc, signature, exceptions),className, name,mutationPossibilityCollector);
 		return actualAdapter;
 
