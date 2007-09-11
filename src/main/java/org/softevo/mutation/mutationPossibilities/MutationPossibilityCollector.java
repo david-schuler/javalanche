@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.softevo.bytecodetransformer.processFiles.FileTransformer;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RICCollectorTransformer;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicCollectorTransformer;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.Mutation.MutationType;
@@ -56,7 +56,7 @@ public class MutationPossibilityCollector {
 	public static void generateTestDataInDB(String classFileName) {
 		FileTransformer ft = new FileTransformer(new File(classFileName));
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
-		ft.process(new RICCollectorTransformer(mpc));
+		ft.process(new RicCollectorTransformer(mpc));
 		mpc.toDB();
 	}
 
