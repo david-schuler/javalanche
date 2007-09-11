@@ -14,7 +14,7 @@ import org.softevo.mutation.properties.MutationProperties;
 
 
 
-public class RICPossibilities {
+public class RicPossibilitiesTest {
 
 	@Test
 	public void testForOneClass(){

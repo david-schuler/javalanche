@@ -1,18 +1,14 @@
 package org.softevo.mutation.bytecodeMutations.negateJumps;
 
-import java.io.File;
-
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.softevo.bytecodetransformer.processFiles.FileTransformer;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
 import org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps;
 import org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.TestJump;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.testsuite.SelectiveTestSuite;
 
 public class NegateJumpsTest {
@@ -50,7 +46,7 @@ public class NegateJumpsTest {
 		TestSuite suite = new TestSuite(TestJump.class);
 		selectiveTestSuite.addTest(suite);
 		@SuppressWarnings("unused")
-		Jumps jumps = new Jumps();
+		Jumps jumps = new Jumps(); //ensure that class is loaded
 		selectiveTestSuite.run(new TestResult());
 	}
 
