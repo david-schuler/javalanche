@@ -1,4 +1,4 @@
-package org.softevo.mutation.replaceIntegerConstant;
+package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
 
 import java.io.File;
 
@@ -14,7 +14,7 @@ import org.softevo.mutation.properties.MutationProperties;
 
 
 
-public class RICPossibilitiesTest {
+public class RICPossibilities {
 
 	@Test
 	public void testForOneClass(){
