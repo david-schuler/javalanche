@@ -6,9 +6,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.softevo.mutation.bytecodeMutations.AbstractMutationAdapter;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.persistence.QueryManager;
 
-public class PossibilitiesAretmeticReplaceMethodAdapter extends
+public class PossibilitiesArithmeticReplaceMethodAdapter extends
 		AbstractMutationAdapter {
 
 	private static Map replaceMap = ReplaceMap.getReplaceMap();
@@ -17,7 +16,7 @@ public class PossibilitiesAretmeticReplaceMethodAdapter extends
 
 	private MutationPossibilityCollector mpc;
 
-	public PossibilitiesAretmeticReplaceMethodAdapter(MethodVisitor mv,
+	public PossibilitiesArithmeticReplaceMethodAdapter(MethodVisitor mv,
 			String className, String methodName,
 			MutationPossibilityCollector mpc) {
 		super(mv, className, className);

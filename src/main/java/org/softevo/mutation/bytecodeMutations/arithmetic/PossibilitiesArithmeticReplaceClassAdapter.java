@@ -5,10 +5,10 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 
-public class PossibilitiesAretmeticReplaceClassAdapter extends ClassAdapter {
+public class PossibilitiesArithmeticReplaceClassAdapter extends ClassAdapter {
 	private String className;
 	private final MutationPossibilityCollector mutationPossibilityCollector;
-	public PossibilitiesAretmeticReplaceClassAdapter(ClassVisitor cv, MutationPossibilityCollector mutationPossibilityCollector) {
+	public PossibilitiesArithmeticReplaceClassAdapter(ClassVisitor cv, MutationPossibilityCollector mutationPossibilityCollector) {
 		super(cv);
 		this.mutationPossibilityCollector = mutationPossibilityCollector;
 	}
@@ -23,7 +23,7 @@ public class PossibilitiesAretmeticReplaceClassAdapter extends ClassAdapter {
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String desc,
 			String signature, String[] exceptions) {
-		return new PossibilitiesAretmeticReplaceMethodAdapter(super
+		return new PossibilitiesArithmeticReplaceMethodAdapter(super
 				.visitMethod(access, name, desc, signature, exceptions),className, name, mutationPossibilityCollector);
 	}
 }

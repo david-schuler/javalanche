@@ -17,7 +17,6 @@ public class MutationsClassAdapter extends ClassAdapter {
 
 		private final ClassVisitor cv;
 
-		private final MethodVisitor mv;
 
 		private TestMethodAdapter(int access, String name, String desc,
 				String signature, String[] exceptions, String className,
@@ -25,7 +24,6 @@ public class MutationsClassAdapter extends ClassAdapter {
 			super(access, name, desc, signature, exceptions);
 			this.className = className;
 			this.cv = cv;
-			this.mv = mv;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -105,9 +103,6 @@ public class MutationsClassAdapter extends ClassAdapter {
 
 	private String className;
 
-	// private static Logger logger =
-	// Logger.getLogger(MutationsClassAdapter.class);
-
 	public MutationsClassAdapter(ClassVisitor cv) {
 		super(cv);
 	}
@@ -121,8 +116,6 @@ public class MutationsClassAdapter extends ClassAdapter {
 
 	public MethodVisitor visitMethod(int access, String name, String desc,
 			String signature, final String[] exceptions) {
-		// MethodVisitor superMv =super.visitMethod(access, name, desc,
-		// signature, exceptions);
 		return new TestMethodAdapter(access, name, desc, signature, exceptions,
 				className, cv, null);
 	}
