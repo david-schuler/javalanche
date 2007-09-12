@@ -38,12 +38,12 @@ public class ArithmeticReplaceMethodAdapter extends AbstractMutationAdapter {
 
 	public ArithmeticReplaceMethodAdapter(MethodVisitor mv, String className,
 			String methodName) {
-		super(mv, className, className);
+		super(mv, className, methodName);
 	}
 
 	@Override
 	public void visitInsn(int opcode) {
-		if (replaceMap.containsKey(opcode)) {
+		if (replaceMap.containsKey(opcode) && !mutationCode ) {
 			mutate(opcode);
 		} else {
 			super.visitInsn(opcode);

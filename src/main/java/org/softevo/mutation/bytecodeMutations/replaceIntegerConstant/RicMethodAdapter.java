@@ -130,6 +130,9 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 			Double doubleConstant = (Double) cst;
 			doubleConstant(doubleConstant);
 		}
+		else{
+			mv.visitLdcInsn(cst);
+		}
 	}
 
 	private void doubleConstant(final double doubleConstant) {
@@ -287,11 +290,12 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		Mutation mutationZero = new Mutation(className, getLineNumber(),
 				mutationForLine, MutationType.RIC_ZERO);
 
-		Mutation mutationPlus1FromDB = QueryManager.getMutation(mutationPlus1);
-		Mutation mutationMinus1FromDB = QueryManager.getMutation(mutationMinus);
-		Mutation mutationZeroFromDB = QueryManager.getMutation(mutationZero);
 
 		if (MutationManager.shouldApplyMutation(mutationPlus1)) {
+			Mutation mutationPlus1FromDB = QueryManager.getMutation(mutationPlus1);
+			Mutation mutationMinus1FromDB = QueryManager.getMutation(mutationMinus);
+			Mutation mutationZeroFromDB = QueryManager.getMutation(mutationZero);
+
 			BytecodeTasks.insertIfElse(mv, new MutationCode(null) {
 
 				@Override

@@ -1,107 +1,18 @@
 package org.softevo.mutation.bytecodeMutations;
 
-import java.util.Iterator;
-
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.util.CheckMethodAdapter;
+import org.softevo.mutation.bytecodeMutations.arithmetic.ArithmeticReplaceMethodAdapter;
 import org.softevo.mutation.bytecodeMutations.negateJumps.NegateJumpsMethodAdapter;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicMethodAdapter;
 
 public class MutationsClassAdapter extends ClassAdapter {
 
-	private static final class TestMethodAdapter extends MethodNode {
-		private final String className;
-
-		private final ClassVisitor cv;
-
-
-		private TestMethodAdapter(int access, String name, String desc,
-				String signature, String[] exceptions, String className,
-				ClassVisitor cv, MethodVisitor mv) {
-			super(access, name, desc, signature, exceptions);
-			this.className = className;
-			this.cv = cv;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		// public void visitEnd() {
-		// // System.out.println("instrSize " + instructions.size());
-		// InsnList ins = this.instructions;
-		// Iterator i = ins.iterator();
-		//
-		// MethodNode m = new MethodNode(access, name, desc, signature,
-		// (String[]) exceptions.toArray(new String[0]));
-		//
-		// System.out.println("instrSize " + instructions.size());
-		// while (i.hasNext()) {
-		// m.instructions.add((AbstractInsnNode) i.next());
-		// }
-		//
-		// // m.instructions.add(instructions);
-		// System.out.println("instrSize " + instructions.size());
-		//
-		// MethodNode m2 = new MethodNode(access, name, desc, signature,
-		// (String[]) exceptions.toArray(new String[0]));
-		// TraceMethodVisitor traceVisitor = new TraceMethodVisitor(null);
-		// accept(new NegateJumpsMethodAdapter(traceVisitor, className, name));
-		// System.out.println("trace visitor");
-		// traceVisitor.print(new PrintWriter(System.out));
-		//
-		// // accept(new NegateJumpsMethodAdapter(m2, className, name));
-		// // System.out.println("instrSizes " + instructions.size() + ":"
-		// // + m.instructions.size());
-		// // Iterator mi = m.instructions.iterator();
-		// // int counter = 1;
-		// // while (mi.hasNext() && i.hasNext()) {
-		// // System.out.println(counter++ + " Result: " + mi.next() == i
-		// // .next());
-		// // AbstractInsnNode a = (AbstractInsnNode) mi.next();
-		// // if(a.getType() == AbstractInsnNode.LDC_INSN){
-		// // LdcInsnNode ldcNode = (LdcInsnNode) a;
-		// // // logger.info(ldcNode.cst);
-		// // }
-		//
-		// // }
-		// System.out.println("instrSizes " + instructions.size() + ":"
-		// + m.instructions.size() + ":" + m2.instructions.size());
-		// accept(cv);
-		// }
-		public void visitEnd() {
-			Iterator it = instructions.iterator();
-			int size = 0;
-			while (it.hasNext()) {
-				AbstractInsnNode insnNode = (AbstractInsnNode) it.next();
-				if (insnNode instanceof LabelNode) {
-					LabelNode labelNode = (LabelNode) insnNode;
-					System.out.println("LabelNode " + labelNode +  "  " +labelNode.getNext());
-				}
-			}
-			MethodNode instrumentedNode = new MethodNode(access, name, desc,
-					signature, (String[]) exceptions.toArray(new String[0]));
-			accept(new NegateJumpsMethodAdapter(instrumentedNode, className,
-					name));
-			System.out.println("Instruction sizes " + instructions.size() + ":"
-					+ instrumentedNode.instructions.size() + ":" + size); // result
-																			// as
-																			// expected
-
-			Iterator mit = instrumentedNode.instructions.iterator();
-			while (mit.hasNext()) {
-				AbstractInsnNode insnNode = (AbstractInsnNode) mit.next();
-				if (insnNode instanceof LabelNode) {
-					LabelNode labelNode = (LabelNode) insnNode;
-					System.out.println("Instrumented LabelNode " + labelNode +"  " +labelNode.getNext());
-				}
-			}
-			accept(cv);
-		}
-	}
-
 	private String className;
+
+	private boolean debug;
 
 	public MutationsClassAdapter(ClassVisitor cv) {
 		super(cv);
@@ -116,7 +27,14 @@ public class MutationsClassAdapter extends ClassAdapter {
 
 	public MethodVisitor visitMethod(int access, String name, String desc,
 			String signature, final String[] exceptions) {
-		return new TestMethodAdapter(access, name, desc, signature, exceptions,
-				className, cv, null);
+		MethodVisitor mv = super.visitMethod(access, name, desc, signature,
+				exceptions);
+		if (debug) {
+			mv = new CheckMethodAdapter(mv);
+		}
+		mv = new RicMethodAdapter(mv, className, name);
+		mv = new NegateJumpsMethodAdapter(mv, className, name);
+		mv = new ArithmeticReplaceMethodAdapter(mv, className, name);
+		return mv;
 	}
 }

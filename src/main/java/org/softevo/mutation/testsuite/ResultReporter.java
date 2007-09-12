@@ -15,8 +15,8 @@ public class ResultReporter {
 	private List<OldMutationResult> mutationResults = new ArrayList<OldMutationResult>();
 
 	public void report(
-			TestResult mutationTestResult, Mutation mutation) {
-		SingleTestResult mutated = new SingleTestResult(mutationTestResult);
+			TestResult mutationTestResult, Mutation mutation, MutationTestListener mutationTestListener) {
+		SingleTestResult mutated = new SingleTestResult(mutationTestResult , mutationTestListener);
 		QueryManager.updateMutation(mutation, mutated);
 	}
 

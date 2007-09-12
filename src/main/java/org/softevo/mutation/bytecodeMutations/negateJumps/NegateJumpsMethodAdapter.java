@@ -85,8 +85,8 @@ public class NegateJumpsMethodAdapter extends AbstractMutationAdapter {
 				possibilitiesForLine, Mutation.MutationType.NEGATE_JUMP);
 		possibilitiesForLine++;
 		logger.info("Jump instruction");
-		Mutation mutationFromDB = QueryManager.getMutation(queryMutation);
 		if (MutationManager.shouldApplyMutation(queryMutation)) {
+			Mutation mutationFromDB = QueryManager.getMutation(queryMutation);
 			MutationCode unMutated = new MutationCode(null) {
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
@@ -103,6 +103,9 @@ public class NegateJumpsMethodAdapter extends AbstractMutationAdapter {
 			};
 			BytecodeTasks.insertIfElse(mv, unMutated,
 					new MutationCode[] { mutated });
+		}
+		else{
+			mv.visitJumpInsn(opcode, label);
 		}
 	}
 

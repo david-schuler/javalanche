@@ -15,7 +15,7 @@ public class ArithmeticReplaceTest {
 
 	private static final Class TEST_CLASS = Arithmetic.class;
 
-	private static final String TEST_CLASS_TYPE = TEST_CLASS.getName();
+	private static final String TEST_CLASS_NAME = TEST_CLASS.getName();
 
 	private static final String UNITTEST_CLASS_TYPE = ArithmeticTest.class
 			.getName();
@@ -30,15 +30,16 @@ public class ArithmeticReplaceTest {
 
 	@Before
 	public void setup() {
-		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_TYPE, testCaseNames,
+		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
 				linenumbers);
-		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_TYPE);
-		ByteCodeTestUtils.generateTestDataInDB(TEST_CLASS_FILENAME);
+		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
+		ByteCodeTestUtils.generateTestDataInDB(TEST_CLASS_FILENAME, new ArithmeticReplaceCollectorTransformer(null));
 	}
 
 	@After
 	public void tearDown() {
-		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_TYPE);
+		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
+		ByteCodeTestUtils.deleteCoverageData(TEST_CLASS_NAME);
 	}
 
 	@Test

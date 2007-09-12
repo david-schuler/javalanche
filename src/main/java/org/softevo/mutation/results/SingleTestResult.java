@@ -1,8 +1,16 @@
 package org.softevo.mutation.results;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+
+import org.softevo.mutation.testsuite.MutationTestListener;
 
 import junit.framework.TestResult;
 
@@ -13,33 +21,31 @@ public class SingleTestResult {
 	@GeneratedValue
 	private Long id;
 
-	private int runs;
+	private int runs = -1;
 
-	private int failures;
+//	@OneToMany(cascade = CascadeType.ALL)
+	@Transient
+	private List<TestMessage> failures  = new ArrayList<TestMessage>();
 
-	private int errors;
+//	@OneToMany(cascade = CascadeType.ALL)
+	@Transient
+	private List<TestMessage> errors = new ArrayList<TestMessage>();
 
 	private SingleTestResult() {
 	}
 
-	public SingleTestResult(int runs, int failures, int errors) {
-		super();
-		this.runs = runs;
-		this.failures = failures;
-		this.errors = errors;
-	}
+	public SingleTestResult(TestResult mutationTestResult,
+			MutationTestListener mutationTestListener) {
+		this.runs = mutationTestResult.runCount();
+		this.failures = mutationTestListener.getFailureMessages();
+		this.errors = mutationTestListener.getErrorMessages();
 
-	public SingleTestResult(TestResult testResult) {
-		super();
-		this.runs = testResult.runCount();
-		this.failures = testResult.failureCount();
-		this.errors = testResult.errorCount();
 	}
 
 	@Override
 	public String toString() {
 		return String.format("Runs: %d  Failures: %d  Errors: %d", runs,
-				failures, errors);
+				failures.size(), errors.size());
 	}
 
 	/**
@@ -60,31 +66,15 @@ public class SingleTestResult {
 	/**
 	 * @return the errors
 	 */
-	public int getErrors() {
-		return errors;
+	public int getNumberOfErrors() {
+		return errors.size();
 	}
 
 	/**
 	 * @return the failures
 	 */
-	public int getFailures() {
-		return failures;
-	}
-
-	/**
-	 * @param errors
-	 *            the errors to set
-	 */
-	public void setErrors(int errors) {
-		this.errors = errors;
-	}
-
-	/**
-	 * @param failures
-	 *            the failures to set
-	 */
-	public void setFailures(int failures) {
-		this.failures = failures;
+	public int getNumberOfFailures() {
+		return failures.size();
 	}
 
 	/**
@@ -92,6 +82,36 @@ public class SingleTestResult {
 	 */
 	public Long getId() {
 		return id;
+	}
+
+	/**
+	 * @return the errors
+	 */
+	public List<TestMessage> getErrors() {
+		return errors;
+	}
+
+	/**
+	 * @return the failures
+	 */
+	public List<TestMessage> getFailures() {
+		return failures;
+	}
+
+	/**
+	 * @param errors
+	 *            the errors to set
+	 */
+	public void setErrors(List<TestMessage> errors) {
+		this.errors = errors;
+	}
+
+	/**
+	 * @param failures
+	 *            the failures to set
+	 */
+	public void setFailures(List<TestMessage> failures) {
+		this.failures = failures;
 	}
 
 }

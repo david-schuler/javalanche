@@ -1,29 +1,15 @@
 package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testForOwnClass;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
-import org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps;
-import org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.TestJump;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testForOwnClass.ricProject.RicClass;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testForOwnClass.ricProject.RicClassTest;
-import org.softevo.mutation.coverageResults.db.TestCoverageClassResult;
-import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
-import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
-import org.softevo.mutation.results.persistence.HibernateUtil;
-import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.testsuite.SelectiveTestSuite;
 
 public class TestOnMiniProject {
@@ -59,6 +45,7 @@ public class TestOnMiniProject {
 	@After
 	public void tearDown() {
 		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
+		ByteCodeTestUtils.deleteCoverageData(TEST_CLASS_NAME);
 	}
 
 	@Test

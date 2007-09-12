@@ -1,8 +1,9 @@
 package org.softevo.mutation.results;
 
-import static org.junit.Assert.*;
 
 import java.util.List;
+
+import junit.framework.TestResult;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -10,10 +11,14 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.softevo.mutation.coverageResults.TestSuiteCoverageResult;
 import org.softevo.mutation.hibernate.HibernateTest;
+import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
+import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
+import org.softevo.mutation.testsuite.MutationTestListener;
 
 public class QueryManagerTestClass {
 
@@ -33,6 +38,8 @@ public class QueryManagerTestClass {
 		session.save(testMutation);
 		tx.commit();
 		session.close();
+		MutationPossibilityCollector.generateTestDataInDB(MutationProperties.SAMPLE_FILE);
+//		TestSuiteCoverageResult.toDB();
 	}
 
 	@After
@@ -66,8 +73,7 @@ public class QueryManagerTestClass {
 	public void testUpdate() {
 		Mutation resultMutation = QueryManager.getMutation(testMutation);
 		Assert.assertNull(resultMutation.getMutationResult());
-		QueryManager.updateMutation(resultMutation, new SingleTestResult(1, 2,
-				3));
+		QueryManager.updateMutation(resultMutation, new SingleTestResult(new TestResult(), new MutationTestListener()));
 		Mutation checkMutation = QueryManager.getMutation(testMutation);
 		Assert.assertNotNull(checkMutation.getMutationResult());
 	}
@@ -89,6 +95,6 @@ public class QueryManagerTestClass {
 				totalTests += testcases.length;
 			}
 		}
-		assertTrue(totalTests > 20);
+		Assert.assertTrue(totalTests > 20);
 	}
 }

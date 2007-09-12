@@ -29,11 +29,6 @@ public class MutationPossibilityCollector {
 		return sb.toString();
 	}
 
-	// public void toXML(){
-	// XmlIo.toXML(possibilities,new
-	// File(MutationProperties.MUTATIONS_TO_APPLY_FILE));
-	// }
-	//
 	public void toDB() {
 		for (Mutation mutation : possibilities) {
 			QueryManager.saveMutation(mutation);

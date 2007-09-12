@@ -21,10 +21,9 @@ public class SelectiveTestSuite extends TestSuite {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final boolean TESTMODE = false;
+	private static final boolean TESTMODE = true;
 
-	static Logger logger = Logger
-			.getLogger(SelectiveTestSuite.class);
+	static Logger logger = Logger.getLogger(SelectiveTestSuite.class);
 
 	private MutationSwitcher mutationSwitcher = new MutationSwitcher();
 
@@ -41,19 +40,11 @@ public class SelectiveTestSuite extends TestSuite {
 		super();
 	}
 
-//	public SelectiveTestSuite(Class theClass, String name) {
-//		super(theClass, name);
-//	}
-//
-//	public SelectiveTestSuite(final Class theClass) {
-//		super(theClass);
-//	}
-
 	public SelectiveTestSuite(String name) {
 		super(name);
 	}
 
-	// @Override
+	@Override
 	public void run(TestResult result) {
 		logger.info("debug");
 		Map<String, TestCase> allTests = getAllTests(this);
@@ -83,10 +74,12 @@ public class SelectiveTestSuite extends TestSuite {
 			}
 			TestResult mutationTestResult = new TestResult();
 			mutationSwitcher.switchOn();
+			MutationTestListener listener = new MutationTestListener();
+			mutationTestResult.addListener(listener);
 			runTests(allTests, mutationTestResult, tests);
 			mutationSwitcher.switchOff();
-			resultReporter.report(mutationTestResult, mutation);
-			logger.info(String.format("runs %d failures:%d errors:%d",
+			resultReporter.report(mutationTestResult, mutation, listener);
+			logger.info(String.format("runs: %d failures:%d errors:%d",
 					mutationTestResult.runCount(), mutationTestResult
 							.failureCount(), mutationTestResult.errorCount()));
 		}
@@ -103,6 +96,8 @@ public class SelectiveTestSuite extends TestSuite {
 						+ "\n All Tests: " + allTests);
 			}
 			runTest(test, testResult);
+
+
 		}
 	}
 
@@ -126,5 +121,4 @@ public class SelectiveTestSuite extends TestSuite {
 		}
 		return resultMap;
 	}
-
 }

@@ -11,8 +11,6 @@ import org.softevo.mutation.properties.MutationProperties;
 
 public class RicTest {
 
-//	private static Mutations mutations = Mutations.fromXML();
-
 	private static class HelperLoader extends ClassLoader {
 
 		public void define(String className, byte[] bytecode) {

@@ -9,7 +9,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.softevo.bytecodetransformer.processFiles.FileTransformer;
-import org.softevo.mutation.bytecodeMutations.arithmetic.ArithmeticReplaceCollectorTransformer;
 import org.softevo.mutation.coverageResults.db.TestCoverageClassResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
@@ -45,11 +44,12 @@ public class ByteCodeTestUtils {
 		session.close();
 	}
 
-	public static void generateTestDataInDB(String classFileName) {
+	public static void generateTestDataInDB(String classFileName, CollectorByteCodeTransformer collectorTransformer) {
 		File classFile = new File(classFileName);
 		FileTransformer ft = new FileTransformer(classFile);
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
-		ft.process(new ArithmeticReplaceCollectorTransformer(mpc));
+		collectorTransformer.setMpc(mpc);
+		ft.process(collectorTransformer);
 		mpc.toDB();
 	}
 

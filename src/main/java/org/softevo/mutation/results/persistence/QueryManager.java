@@ -54,8 +54,12 @@ public class QueryManager {
 		mutation = getMutation(mutation);
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		mutation.setMutationResult(mutationTestResult);
-		session.update(mutation);
+		Mutation m2 = (Mutation) session.get(Mutation.class, mutation.getId());
+		m2.setMutationResult(mutationTestResult);
+//		session.save(mutationTestResult);
+//		logger.info("ID" + mutation.getId());
+//		logger.info(mutationTestResult);
+		session.update(m2);
 		tx.commit();
 		session.close();
 	}

@@ -67,7 +67,7 @@
 							<classpathPrefix>lib</classpathPrefix>
 						</manifest>
 						<manifestEntries>
-							<Premain-Class>org.softevo.mutation.javaagent.RicPreMain</Premain-Class>
+							<Premain-Class>org.softevo.mutation.javaagent.MutationPreMain</Premain-Class>
 						</manifestEntries>
 					</archive>
 					<alias>VALUE</alias>

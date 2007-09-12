@@ -19,7 +19,7 @@
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>
         <property name="use_sql_comments">true</property>
-        -->
+-->
 
         <property name="dialect">org.hibernate.dialect.HSQLDialect</property>
 
@@ -27,6 +27,7 @@
 		<mapping class="org.softevo.mutation.results.Mutation"/>
 		<mapping class="org.softevo.mutation.results.OldMutationResult"/>
 		<mapping class="org.softevo.mutation.results.SingleTestResult"/>
+		<mapping class="org.softevo.mutation.results.TestMessage"/>
 		<mapping class="org.softevo.mutation.coverageResults.db.TestCoverageLineResult"/>
 		<mapping class="org.softevo.mutation.coverageResults.db.TestCoverageClassResult"/>
 		<mapping class="org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName"/>
