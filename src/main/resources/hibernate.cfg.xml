@@ -31,7 +31,9 @@
 		<mapping class="org.softevo.mutation.coverageResults.db.TestCoverageLineResult"/>
 		<mapping class="org.softevo.mutation.coverageResults.db.TestCoverageClassResult"/>
 		<mapping class="org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName"/>
-
+		<!--
+		<mapping class="org.softevo.mutation.results.Street"/>
+		-->
 
     </session-factory>
 </hibernate-configuration>

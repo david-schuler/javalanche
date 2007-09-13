@@ -1,5 +1,9 @@
 package org.softevo.mutation.bytecodeMutations.negateJumps;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 
 import junit.framework.TestResult;
@@ -9,6 +13,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
@@ -23,6 +28,7 @@ public class NegateJumpsTest {
 	private static final Class TEST_CLASS = Jumps.class;
 
 	private static final String TEST_CLASS_NAME = TEST_CLASS.getName();
+//	private static final String TEST_CLASS_NAME = "org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps";
 
 	private static final String UNITTEST_CLASS_NAME = TestJump.class.getName();
 
@@ -54,6 +60,7 @@ public class NegateJumpsTest {
 		SelectiveTestSuite selectiveTestSuite = new SelectiveTestSuite();
 		TestSuite suite = new TestSuite(TestJump.class);
 		selectiveTestSuite.addTest(suite);
+		System.out.println(TEST_CLASS.hashCode());
 		@SuppressWarnings("unused")
 		Jumps jumps = new Jumps(); // ensure that class is loaded
 		selectiveTestSuite.run(new TestResult());
@@ -68,9 +75,10 @@ public class NegateJumpsTest {
 				.createQuery("from Mutation as m where m.className=:clname");
 		query.setString("clname", TEST_CLASS_NAME);
 		List<Mutation> mList = query.list();
-		for(Mutation m : mList){
+		for (Mutation m : mList) {
 			System.out.println(m);
-		//	Assert.assertEquals(1, m.getMutationResult().getNumberOfErrors() +m.getMutationResult().getNumberOfFailures());
+			Assert.assertEquals(1, m.getMutationResult().getNumberOfErrors()
+					+ m.getMutationResult().getNumberOfFailures());
 		}
 		tx.commit();
 		session.close();

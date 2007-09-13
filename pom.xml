@@ -8,7 +8,10 @@
 	<version>1.0-SNAPSHOT</version>
 	<name>mutationTest</name>
 	<url>http://maven.apache.org</url>
-	
+	<properties>
+	 	<maven.test.error.ignore>true</maven.test.error.ignore>
+		<maven.test.failure.ignore>true</maven.test.failure.ignore>
+  	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -19,6 +22,15 @@
 					<target>1.5</target>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-javaagent:${user.home}/workspace2/mutationTest/target/javaagent.jar</argLine>
+                    <useSystemClassLoader>true</useSystemClassLoader>
+                </configuration>
+            </plugin>
 			
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
