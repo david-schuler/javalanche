@@ -56,8 +56,8 @@ public class ArithmeticReplaceMethodAdapter extends AbstractMutationAdapter {
 
 		possibilitiesForLine++;
 		logger.debug("ArihmeticReplace");
-		Mutation mutationFromDB = QueryManager.getMutation(queryMutation);
 		if (MutationManager.shouldApplyMutation(queryMutation)) {
+			Mutation mutationFromDB = QueryManager.getMutation(queryMutation);
 			MutationCode unMutated = new SingleInsnMutationCode(null, opcode);
 			MutationCode mutated = new SingleInsnMutationCode(mutationFromDB, replaceMap.get(opcode));
 			BytecodeTasks.insertIfElse(mv, unMutated,

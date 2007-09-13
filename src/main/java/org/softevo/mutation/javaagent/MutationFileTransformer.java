@@ -25,31 +25,21 @@ public class MutationFileTransformer implements ClassFileTransformer {
 		mutations = QueryManager.getClassNamesToMutate();
 	}
 
-//	@SuppressWarnings("unused")
-//	private static RicTransformer ricTransformer = new RicTransformer();
-
-//	private static NegateJumpsTransformer negateJumpsTransformer = new NegateJumpsTransformer();
-
-//	private static ArithmeticTransformer arithmeticTransformer = new ArithmeticTransformer();
-
 	private static MutationTransformer mutationTransformer = new MutationTransformer();
 
 
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
-
 		String classNameWithDots = className.replace('/', '.');
-		logger.log(Level.DEBUG,"Processing class: " + classNameWithDots);
+		logger.log(Level.DEBUG,"Processing class: " + classNameWithDots + " contained in db: " + mutations.contains(classNameWithDots));
 		if (mutations.contains(classNameWithDots)) {
-
 			logger.info("Transforming: " + classNameWithDots);
-
 			byte[] transformedBytecode = null;
 			try {
 				transformedBytecode = mutationTransformer.transformBytecode(classfileBuffer);
 			} catch (Exception e) {
-				logger.info("Exception thrown" + e);
+				logger.info("Exception thrown: " + e);
 				e.printStackTrace();
 			}
 			logger.info("Class transformed: " + classNameWithDots);

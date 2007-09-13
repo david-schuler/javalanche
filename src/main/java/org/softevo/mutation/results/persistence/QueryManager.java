@@ -13,6 +13,7 @@ import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.TestMessage;
 import org.softevo.mutation.results.Mutation.MutationType;
 
 public class QueryManager {
@@ -55,11 +56,17 @@ public class QueryManager {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		Mutation m2 = (Mutation) session.get(Mutation.class, mutation.getId());
+		for(TestMessage tm : mutationTestResult.getErrors()){
+			session.save(tm);
+		}
+		for(TestMessage tm : mutationTestResult.getFailures()){
+			session.save(tm);
+		}
+		session.save(mutationTestResult);
 		m2.setMutationResult(mutationTestResult);
-//		session.save(mutationTestResult);
 //		logger.info("ID" + mutation.getId());
 //		logger.info(mutationTestResult);
-		session.update(m2);
+//		session.update(m2);
 		tx.commit();
 		session.close();
 	}
@@ -183,7 +190,7 @@ public class QueryManager {
 		Set<String> resultSet = new HashSet<String>();
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		Query query = session.createQuery("select className from Mutation");
+		Query query = session.createQuery("select distinct className from Mutation");
 		List results = query.list();
 		for (Object s : results) {
 			resultSet.add(s.toString());

@@ -22,4 +22,7 @@ public interface MutationProperties {
 	static final String TESTS_TO_EXECUTE_FILE = CONFIG_DIR + "/tests-to-execute.txt";
 
 	static final String MUTATION_RESULT_FILE = CONFIG_DIR + "/mutation-results.txt";
+
+
+	static final String[] TEST_CLASSES_TO_INSTRUMENT = {"org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps"};
 }
