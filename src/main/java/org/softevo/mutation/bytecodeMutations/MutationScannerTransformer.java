@@ -25,7 +25,6 @@ public class MutationScannerTransformer extends BytecodeTransformer {
 	@Override
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
 		ClassVisitor cc = new CheckClassAdapter(cw);
-		logger.info("Mutation Transformer");
 		return new MutationsCollectorClassAdapter(new TraceClassVisitor(cc, new PrintWriter(System.out)), mpc);
 	}
 }

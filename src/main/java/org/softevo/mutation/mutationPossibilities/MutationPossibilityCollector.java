@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.softevo.bytecodetransformer.processFiles.FileTransformer;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicCollectorTransformer;
 import org.softevo.mutation.properties.MutationProperties;
@@ -12,6 +13,8 @@ import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 public class MutationPossibilityCollector {
+
+	Logger logger = Logger.getLogger(MutationPossibilityCollector.class);
 
 	private List<Mutation> possibilities = new ArrayList<Mutation>();
 
@@ -62,5 +65,12 @@ public class MutationPossibilityCollector {
 
 	public Object size() {
 		return possibilities.size();
+	}
+
+	public void updateDB() {
+		logger.info("Colected " + possibilities.size() + "mutation possibilities");
+		for (Mutation mutation : possibilities) {
+			QueryManager.saveMutation(mutation);
+		}
 	}
 }

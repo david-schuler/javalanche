@@ -12,6 +12,8 @@ import junit.framework.TestSuite;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.softevo.mutation.javaagent.MutationPreMain;
+import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 
 public class SelectiveTestSuite extends TestSuite {
@@ -46,7 +48,12 @@ public class SelectiveTestSuite extends TestSuite {
 
 	@Override
 	public void run(TestResult result) {
-		logger.info("debug");
+		if(System.getProperty(MutationProperties.SCAN_FOR_MUTATIONS) !=null || MutationPreMain.scanningEnabled){
+			logger.info("Running scanner");
+			super.run(result);
+			return;
+		}
+		logger.info("Not Running scanner");
 		Map<String, TestCase> allTests = getAllTests(this);
 		logger.log(Level.INFO, "All Tests colleceted");
 		int debugCount = 20;
