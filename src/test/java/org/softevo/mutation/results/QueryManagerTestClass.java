@@ -11,7 +11,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.softevo.mutation.coverageResults.TestSuiteCoverageResult;
 import org.softevo.mutation.hibernate.HibernateTest;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.properties.MutationProperties;
@@ -39,7 +38,6 @@ public class QueryManagerTestClass {
 		tx.commit();
 		session.close();
 		MutationPossibilityCollector.generateTestDataInDB(MutationProperties.SAMPLE_FILE);
-//		TestSuiteCoverageResult.toDB();
 	}
 
 	@After

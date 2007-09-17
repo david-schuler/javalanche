@@ -12,6 +12,20 @@
 	 	<maven.test.error.ignore>true</maven.test.error.ignore>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
   	</properties>
+	
+    <repositories>
+        <repository>
+            <id>public-chair</id>
+            <name>Public Chair Repository</name>
+            <url>http://maven.st.cs.uni-sb.de:8080/archiva/repository/public</url>
+        </repository>
+        <repository>
+            <id>3rdparty-chair</id>
+            <name>3rd Party Chair Repository</name>
+            <url>http://maven.st.cs.uni-sb.de:8080/archiva/repository/3rdparty</url>
+        </repository>
+    </repositories>
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -201,11 +215,11 @@
 			<version>1.3</version>
 		</dependency>
 		
-		<dependency>
+		<!--<dependency>
 			<groupId>ant</groupId>
 			<artifactId>ant</artifactId>
 			<version>1.6.5</version>
-		</dependency>
+		</dependency>-->
 		
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
@@ -250,12 +264,6 @@
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.1</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>sibrelib</groupId>
-			<artifactId>sibrelib</artifactId>
-			<version>1.0</version>
 		</dependency>
 		
 		<dependency>

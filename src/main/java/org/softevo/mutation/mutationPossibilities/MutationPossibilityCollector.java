@@ -68,9 +68,13 @@ public class MutationPossibilityCollector {
 	}
 
 	public void updateDB() {
-		logger.info("Colected " + possibilities.size() + "mutation possibilities");
+		logger.info("Collected " + possibilities.size() + "mutation possibilities");
 		for (Mutation mutation : possibilities) {
 			QueryManager.saveMutation(mutation);
 		}
+	}
+
+	public void clear() {
+		possibilities.clear();
 	}
 }

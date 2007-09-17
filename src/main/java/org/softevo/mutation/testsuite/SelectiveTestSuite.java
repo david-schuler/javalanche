@@ -55,7 +55,7 @@ public class SelectiveTestSuite extends TestSuite {
 		}
 		logger.info("Not Running scanner");
 		Map<String, TestCase> allTests = getAllTests(this);
-		logger.log(Level.INFO, "All Tests colleceted");
+		logger.log(Level.INFO, "All Tests collcted");
 		int debugCount = 20;
 		while (mutationSwitcher.hasNext()) {
 			if (TESTMODE) {

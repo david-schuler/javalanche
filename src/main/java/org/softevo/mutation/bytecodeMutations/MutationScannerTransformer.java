@@ -1,12 +1,9 @@
 package org.softevo.mutation.bytecodeMutations;
 
-import java.io.PrintWriter;
-
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
-import org.objectweb.asm.util.TraceClassVisitor;
 import org.softevo.bytecodetransformer.processFiles.BytecodeTransformer;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 
@@ -25,6 +22,7 @@ public class MutationScannerTransformer extends BytecodeTransformer {
 	@Override
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
 		ClassVisitor cc = new CheckClassAdapter(cw);
-		return new MutationsCollectorClassAdapter(new TraceClassVisitor(cc, new PrintWriter(System.out)), mpc);
+		//new TraceClassVisitor(cc, new PrintWriter(System.out))
+		return new MutationsCollectorClassAdapter(cc, mpc);
 	}
 }
