@@ -1,7 +1,10 @@
 package org.softevo.mutation.testsuite;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,7 +30,7 @@ public class SelectiveTestSuite extends TestSuite {
 
 	static Logger logger = Logger.getLogger(SelectiveTestSuite.class);
 
-	private MutationSwitcher mutationSwitcher = new MutationSwitcher();
+	private MutationSwitcher mutationSwitcher;
 
 	private ResultReporter resultReporter = new ResultReporter();
 
@@ -48,18 +51,21 @@ public class SelectiveTestSuite extends TestSuite {
 
 	@Override
 	public void run(TestResult result) {
-		if(System.getProperty(MutationProperties.SCAN_FOR_MUTATIONS) !=null || MutationPreMain.scanningEnabled){
+		if (System.getProperty(MutationProperties.SCAN_FOR_MUTATIONS) != null
+				|| MutationPreMain.scanningEnabled) {
 			logger.info("Running scanner");
 			super.run(result);
 			return;
 		}
 		logger.info("Not Running scanner");
 		Map<String, TestCase> allTests = getAllTests(this);
-		logger.log(Level.INFO, "All Tests collcted");
+		logger.log(Level.INFO, "All Tests collected");
+		mutationSwitcher = new MutationSwitcher(
+				getStringList(allTests.values()));
 		int debugCount = 20;
 		while (mutationSwitcher.hasNext()) {
 			if (TESTMODE) {
-				if (debugCount-- < 0) {
+				if (debugCount < 0) {
 					break;
 				}
 			}
@@ -74,16 +80,17 @@ public class SelectiveTestSuite extends TestSuite {
 			}
 			if (result.shouldStop())
 				break;
-			Set<String> tests = mutationSwitcher.getTests();
-			if (tests == null) {
+			Set<String> testsForThisRun = mutationSwitcher.getTests();
+			if (testsForThisRun == null) {
 				logger.info("No tests for " + mutation);
 				continue;
 			}
+			debugCount--;
 			TestResult mutationTestResult = new TestResult();
 			mutationSwitcher.switchOn();
 			MutationTestListener listener = new MutationTestListener();
 			mutationTestResult.addListener(listener);
-			runTests(allTests, mutationTestResult, tests);
+			runTests(allTests, mutationTestResult, testsForThisRun);
 			mutationSwitcher.switchOff();
 			resultReporter.report(mutationTestResult, mutation, listener);
 			logger.info(String.format("runs: %d failures:%d errors:%d",
@@ -91,6 +98,20 @@ public class SelectiveTestSuite extends TestSuite {
 							.failureCount(), mutationTestResult.errorCount()));
 		}
 		logger.log(Level.INFO, "Test Runs finished");
+	}
+
+	/**
+	 * Returns a list of TestCase names for given Collection of TestCases.
+	 *
+	 * @param testCases
+	 * @return
+	 */
+	private Collection<String> getStringList(Collection<TestCase> testCases) {
+		List<String> result = new ArrayList<String>();
+		for (TestCase tc : testCases) {
+			result.add(getFullTestCaseName(tc));
+		}
+		return result;
 	}
 
 	private void runTests(Map<String, TestCase> allTests,
@@ -103,8 +124,6 @@ public class SelectiveTestSuite extends TestSuite {
 						+ "\n All Tests: " + allTests);
 			}
 			runTest(test, testResult);
-
-
 		}
 	}
 
@@ -118,8 +137,7 @@ public class SelectiveTestSuite extends TestSuite {
 			} else {
 				if (test instanceof TestCase) {
 					TestCase testCase = (TestCase) test;
-					String fullTestName = testCase.getClass().getName() + "."
-							+ testCase.getName();
+					String fullTestName = getFullTestCaseName(testCase);
 					resultMap.put(fullTestName, testCase);
 				}
 
@@ -127,5 +145,11 @@ public class SelectiveTestSuite extends TestSuite {
 
 		}
 		return resultMap;
+	}
+
+	private static String getFullTestCaseName(TestCase testCase) {
+		String fullTestName = testCase.getClass().getName() + "."
+				+ testCase.getName();
+		return fullTestName;
 	}
 }

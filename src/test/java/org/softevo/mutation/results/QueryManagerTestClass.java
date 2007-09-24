@@ -1,6 +1,6 @@
 package org.softevo.mutation.results;
 
-
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestResult;
@@ -12,7 +12,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.softevo.mutation.hibernate.HibernateTest;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
@@ -28,7 +27,7 @@ public class QueryManagerTestClass {
 	private static MutationType testMutationType = MutationType.RIC_MINUS_1;
 
 	private static Mutation testMutation = new Mutation(className,
-			testLineNumber, 0,testMutationType);
+			testLineNumber, 0, testMutationType);
 
 	@Before
 	public void setUp() {
@@ -37,7 +36,8 @@ public class QueryManagerTestClass {
 		session.save(testMutation);
 		tx.commit();
 		session.close();
-		MutationPossibilityCollector.generateTestDataInDB(MutationProperties.SAMPLE_FILE);
+		// MutationPossibilityCollector
+		// .generateTestDataInDB(MutationProperties.SAMPLE_FILE);
 	}
 
 	@After
@@ -47,7 +47,7 @@ public class QueryManagerTestClass {
 
 	@Test
 	public void testQueryByValues() {
-		Mutation queryMutation = new Mutation(className, testLineNumber,0,
+		Mutation queryMutation = new Mutation(className, testLineNumber, 0,
 				testMutationType);
 		Mutation resultMutation = QueryManager.getMutation(queryMutation);
 		Assert.assertTrue(resultMutation != null);
@@ -71,7 +71,8 @@ public class QueryManagerTestClass {
 	public void testUpdate() {
 		Mutation resultMutation = QueryManager.getMutation(testMutation);
 		Assert.assertNull(resultMutation.getMutationResult());
-		QueryManager.updateMutation(resultMutation, new SingleTestResult(new TestResult(), new MutationTestListener()));
+		QueryManager.updateMutation(resultMutation, new SingleTestResult(
+				new TestResult(), new MutationTestListener()));
 		Mutation checkMutation = QueryManager.getMutation(testMutation);
 		Assert.assertNotNull(checkMutation.getMutationResult());
 	}
@@ -85,7 +86,8 @@ public class QueryManagerTestClass {
 
 	@Test
 	public void testGetTestCases() {
-		List<Mutation> mutationList = QueryManager.getAllMutations();
+		List<Mutation> mutationList = QueryManager
+				.getAllMutationsForClass(MutationProperties.SAMPLE_FILE_CLASS_NAME);
 		int totalTests = 0;
 		for (Mutation mutation : mutationList) {
 			String[] testcases = QueryManager.getTestCases(mutation);
@@ -93,6 +95,36 @@ public class QueryManagerTestClass {
 				totalTests += testcases.length;
 			}
 		}
-//		Assert.assertTrue(totalTests > 20);
+		Assert.assertTrue(totalTests > 20);
+	}
+
+	@Test
+	public void testGetClassNamesForMethod() {
+		QueryManager
+				.getAllMutationsForTestCases(Arrays
+						.asList(new String[] {
+								"org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.TestJump.testMethod4",
+								"org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.TestJump.testMethod3" }));
+	}
+
+	@Test
+	public void testhasMutationForClass() {
+		boolean hasClass = QueryManager
+				.hasMutationsforClass(MutationProperties.SAMPLE_FILE_CLASS_NAME);
+		Assert.assertTrue(String.format("Expected class %s in db",
+				MutationProperties.SAMPLE_FILE_CLASS_NAME), hasClass);
+	}
+
+	@Test
+	public void testIsCoveredMutation() {
+		List<Mutation> mutationList = QueryManager
+				.getAllMutationsForClass(MutationProperties.SAMPLE_FILE_CLASS_NAME);
+		int coverCount = 0;
+		for (Mutation mutation : mutationList) {
+			if (QueryManager.isCoveredMutation(mutation)) {
+				coverCount++;
+			}
+		}
+		Assert.assertTrue(coverCount > 20);
 	}
 }

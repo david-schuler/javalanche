@@ -1,20 +1,27 @@
 package org.softevo.mutation.bytecodeMutations.negateJumps;
 
+import java.util.Map;
+
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.softevo.mutation.bytecodeMutations.AbstractMutationAdapter;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
 
-public class NegateJumpsPossibilitiesMethodAdapter extends AbstractMutationAdapter {
+public class NegateJumpsPossibilitiesMethodAdapter extends
+		AbstractMutationAdapter {
 
 	private int possibilitiesForLine = 0;
 
 	private MutationPossibilityCollector mpc;
 
-	public NegateJumpsPossibilitiesMethodAdapter(MethodVisitor mv,String className, String methodName, MutationPossibilityCollector mpc) {
-		super(mv,className, methodName);
+	private static Map<Integer, Integer> jumpReplacementMap = JumpReplacements
+			.getReplacementMap();
+
+	public NegateJumpsPossibilitiesMethodAdapter(MethodVisitor mv,
+			String className, String methodName,
+			MutationPossibilityCollector mpc) {
+		super(mv, className, methodName);
 		this.mpc = mpc;
 	}
 
@@ -24,37 +31,18 @@ public class NegateJumpsPossibilitiesMethodAdapter extends AbstractMutationAdapt
 			super.visitJumpInsn(opcode, label);
 			return;
 		}
-		switch (opcode) {
-		case Opcodes.IFEQ:
-		case Opcodes.IFNE:
-		case Opcodes.IFGE:
-		case Opcodes.IFGT:
-		case Opcodes.IFLE:
-		case Opcodes.IFLT:
-		case Opcodes.IFNULL:
-		case Opcodes.IFNONNULL:
-		case Opcodes.IF_ACMPEQ:
-		case Opcodes.IF_ACMPNE:
-		case Opcodes.IF_ICMPEQ:
-		case Opcodes.IF_ICMPGE:
-		case Opcodes.IF_ICMPGT:
-		case Opcodes.IF_ICMPLE:
-		case Opcodes.IF_ICMPLT:
-		case Opcodes.IF_ICMPNE:
-			negateJumpMutation();
-		default:
-			super.visitJumpInsn(opcode, label);
-			break;
+		if (jumpReplacementMap.containsKey(opcode)) {
+			addJumpMutationPossibility();
 		}
+		super.visitJumpInsn(opcode, label);
 	}
 
-	private void negateJumpMutation() {
+	private void addJumpMutationPossibility() {
 		Mutation mutation = new Mutation(className, getLineNumber(),
 				possibilitiesForLine, Mutation.MutationType.NEGATE_JUMP);
 		possibilitiesForLine++;
 		mpc.addPossibility(mutation);
 	}
-
 
 	@Override
 	public void visitLineNumber(int line, Label start) {
@@ -63,5 +51,3 @@ public class NegateJumpsPossibilitiesMethodAdapter extends AbstractMutationAdapt
 	}
 
 }
-
-

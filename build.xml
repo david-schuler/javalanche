@@ -13,13 +13,10 @@
 
 	<!-- Classpath declaration -->
 	<path id="project.classpath">
-		<fileset dir="/Users/schuler/workspace2/Hibernate/lib/">
+		<fileset dir="target/lib/">
 			<include name="**/*.jar" />
 			<include name="**/*.zip" />
 		</fileset>
-		<!--<filelist>
-    		<file name="/Users/schuler/workspace2/Hibernate/lib/hibernate-tools.jar"/>
-    	</filelist>-->
 	</path>
 
 	<!-- Useful shortcuts -->
@@ -64,7 +61,7 @@
 	<target name="schemaexport" depends="" description="Exports a generated schema to DB and file">
 		<hibernatetool destdir="${basedir}">
 			<classpath path="target/classes/" />
-			<annotationconfiguration configurationfile="/Users/schuler/workspace2/mutationTest/src/main/resources/hibernate.cfg.xml" />
+			<annotationconfiguration configurationfile="src/main/resources/hibernate.cfg.xml" />
 			<hbm2ddl drop="true" create="true" export="true" outputfilename="${proj.shortname}-ddl.sql" delimiter=";" format="true" />
 		</hibernatetool>
 	</target>

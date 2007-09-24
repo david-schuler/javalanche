@@ -1,6 +1,5 @@
 package org.softevo.mutation.bytecodeMutations.negateJumps;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -21,28 +20,8 @@ public class NegateJumpsMethodAdapter extends AbstractMutationAdapter {
 
 	private int possibilitiesForLine = 0;
 
-	private static final int[][] replacements = {
-			{ Opcodes.IFEQ, Opcodes.IFNE }, { Opcodes.IFNE, Opcodes.IFEQ },
-			{ Opcodes.IFGE, Opcodes.IFLT }, { Opcodes.IFGT, Opcodes.IFLE },
-			{ Opcodes.IFLE, Opcodes.IFGT }, { Opcodes.IFLT, Opcodes.IFGE },
-			{ Opcodes.IFNULL, Opcodes.IFNONNULL },
-			{ Opcodes.IFNONNULL, Opcodes.NULL },
-			{ Opcodes.IF_ACMPEQ, Opcodes.IF_ACMPNE },
-			{ Opcodes.IF_ACMPNE, Opcodes.IF_ACMPEQ },
-			{ Opcodes.IF_ICMPEQ, Opcodes.IF_ICMPNE },
-			{ Opcodes.IF_ICMPGE, Opcodes.IF_ICMPLT },
-			{ Opcodes.IF_ICMPGT, Opcodes.IF_ICMPLE },
-			{ Opcodes.IF_ICMPLE, Opcodes.IF_ICMPGT },
-			{ Opcodes.IF_ICMPLT, Opcodes.IF_ICMPGE },
-			{ Opcodes.IF_ICMPNE, Opcodes.IF_ICMPEQ } };
+	private static Map<Integer, Integer> jumpReplacmentMap = JumpReplacements.getReplacementMap();
 
-	private static Map<Integer, Integer> jumpReplacmentMap = new HashMap<Integer, Integer>();
-
-	static {
-		for (int i = 0; i < replacements.length; i++) {
-			jumpReplacmentMap.put(replacements[i][0], replacements[i][1]);
-		}
-	}
 
 	public NegateJumpsMethodAdapter(MethodVisitor mv, String className,
 			String methodName) {
@@ -98,13 +77,18 @@ public class NegateJumpsMethodAdapter extends AbstractMutationAdapter {
 			MutationCode mutated = new MutationCode(mutationFromDB) {
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
-					mv.visitJumpInsn(jumpReplacmentMap.get(opcode), label);
+					if (jumpReplacmentMap.containsKey(opcode)) {
+						int insertOpcode = jumpReplacmentMap.get(opcode);
+						mv.visitJumpInsn(insertOpcode, label);
+					} else {
+						throw new RuntimeException(
+								"Invalid opcode key for jump Map");
+					}
 				}
 			};
 			BytecodeTasks.insertIfElse(mv, unMutated,
 					new MutationCode[] { mutated });
-		}
-		else{
+		} else {
 			mv.visitJumpInsn(opcode, label);
 		}
 	}

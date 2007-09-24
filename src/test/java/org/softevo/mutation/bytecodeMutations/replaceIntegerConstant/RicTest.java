@@ -31,7 +31,7 @@ public class RicTest {
 		RicTransformer ricTransformer = new RicTransformer();
 		byte[] bytes = ricTransformer.transformBytecode(classReader);
 		HelperLoader helperLoader = new HelperLoader();
-		helperLoader.define(MutationProperties.SAMPLE_FILE_NAME, bytes);
+		helperLoader.define(MutationProperties.SAMPLE_FILE_CLASS_NAME, bytes);
 	}
 
 }

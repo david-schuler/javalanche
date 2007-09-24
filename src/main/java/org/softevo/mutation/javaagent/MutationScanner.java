@@ -9,6 +9,7 @@ import org.softevo.mutation.bytecodeMutations.MutationScannerTransformer;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.Mutation.MutationType;
+import org.softevo.mutation.results.persistence.QueryManager;
 
 public class MutationScanner implements ClassFileTransformer {
 
@@ -22,11 +23,15 @@ public class MutationScanner implements ClassFileTransformer {
 	private MutationDecision md = new MutationDecision() {
 
 		public boolean shouldBeScanned(String classNameWithDots) {
+			if (QueryManager.hasMutationsforClass(classNameWithDots)) {
+				return false;
+			}
 			return true;
 		}
 	};
 
 	static {
+		// DB must be loaded before transform method is entered.
 		MutationPossibilityCollector mpc1 = new MutationPossibilityCollector();
 		mpc1.addPossibility(new Mutation("MutationScanner", 23, 23,
 				MutationType.ARITHMETIC_REPLACE));
@@ -39,13 +44,15 @@ public class MutationScanner implements ClassFileTransformer {
 		try {
 			String classNameWithDots = className.replace('/', '.');
 			logger.info(classNameWithDots);
-			// if (md.shouldBeScanned(classNameWithDots)) {
-			logger.info("scanning class " + className + " " + mpc.size());
-			mutationScannerTransformer.transformBytecode(classfileBuffer);
-			logger.info("mpc new size" + mpc.size());
-			mpc.updateDB();
-			mpc.clear();
-			// }
+			if (md.shouldBeScanned(classNameWithDots)) {
+				mutationScannerTransformer.transformBytecode(classfileBuffer);
+				logger.info("Possibilities found for class " + className + " "
+						+ mpc.size());
+				mpc.updateDB();
+				mpc.clear();
+			} else {
+				logger.info("Skipping class " + className);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.info(e.getMessage());

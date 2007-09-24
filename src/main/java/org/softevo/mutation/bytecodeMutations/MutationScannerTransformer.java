@@ -16,7 +16,7 @@ public class MutationScannerTransformer extends BytecodeTransformer {
 
 	public MutationScannerTransformer(MutationPossibilityCollector mpc) {
 		this.mpc = mpc;
-
+		logger.debug("new MutationScannerTransformer");
 	}
 
 	@Override
