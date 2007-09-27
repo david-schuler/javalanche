@@ -2,5 +2,5 @@ package org.softevo.mutation.javaagent;
 
 public interface MutationDecision {
 
-	public boolean shouldBeScanned(String classNameWithDots);
+	public boolean shouldBeHandled(String classNameWithDots);
 }

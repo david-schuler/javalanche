@@ -28,7 +28,6 @@ public class QueryManager {
 			throw new RuntimeException("Mutation not found in DB " + mutation);
 		}
 		return m;
-
 	}
 
 	public static Mutation getMutationOrNull(Mutation mutation) {
@@ -45,7 +44,6 @@ public class QueryManager {
 			query.setParameter("number", mutation.getLineNumber());
 			query.setParameter("type", mutation.getMutationType());
 			query.setParameter("mforl", mutation.getMutationForLine());
-			logger.info(query.getQueryString());
 			m = (Mutation) query.uniqueResult();
 		}
 		tx.commit();
@@ -74,13 +72,21 @@ public class QueryManager {
 		session.close();
 	}
 
-	@SuppressWarnings("unchecked")
 	public static List<Mutation> getAllMutations() {
+		logger.info("limit Mutations by 1000");
+		return getAllMutations(1000);
+	}
+
+	public static List<Mutation> getAllMutations(int maxResults) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session.createQuery("from Mutation order by linenumber");
+		query.setMaxResults(maxResults);
 		List l = query.list();
-		List<Mutation> mutations = (List<Mutation>) l;
+		List<Mutation> mutations = new ArrayList<Mutation>();
+		for(Object o : l){
+			mutations.add((Mutation) o);
+		}
 		tx.commit();
 		session.close();
 		return mutations;
@@ -133,7 +139,6 @@ public class QueryManager {
 		query.setFetchSize(10);
 		List l = query.list();
 		assert l.size() <= 1;
-
 		List<String> retList = null;
 		if (l.size() >= 1) {
 			Object[] array = (Object[]) l.get(0);
@@ -215,32 +220,31 @@ public class QueryManager {
 		logger.info("Bbb");
 	}
 
-	@SuppressWarnings("unchecked")
 	public static Collection<Mutation> getAllMutationsForTestCases(
 			Collection<String> tests) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		// String sqlQueryString = "SELECT mutation.* FROM
-		// TESTCOVERAGETESTCASENAME AS tname,
-		// TESTCOVERAGELINERESULT_TESTCOVERAGETESTCASENAME AS line_name,
-		// TESTCOVERAGECLASSRESULT_TESTCOVERAGELINERESULT AS class_line,
-		// TESTCOVERAGECLASSRESULT AS classResult, MUTATION AS mutation WHERE
-		// tname.testcasename = :tcName AND line_name.testcases_id = tname.id
-		// AND line_name.testcoveragelineresult_id = class_line.lineresults_id
-		// AND class_line.testcoverageclassresult_id = classResult.id AND
-		// classResult.classname = mutation.classname ";
-		// Query query = session.createSQLQuery(sqlQueryString);
-		String hibernateQuery = "SELECT DISTINCT m FROM Mutation AS m, TestCoverageClassResult AS tccr JOIN tccr.lineResults AS tclr WHERE tclr.testCases.testCaseName = :tcName AND tccr.className = m.className";
-		Query query = session.createQuery(hibernateQuery);
+		String sqlQueryString = "SELECT mutation.* FROM TESTCOVERAGETESTCASENAME AS tname,"
+				+ " TESTCOVERAGELINERESULT_TESTCOVERAGETESTCASENAME AS line_name,"
+				+ " TESTCOVERAGECLASSRESULT_TESTCOVERAGELINERESULT AS class_line,"
+				+ " TESTCOVERAGECLASSRESULT AS classResult, MUTATION AS mutation WHERE"
+				+ " tname.testcasename = :tcName AND line_name.testcases_id = tname.id"
+				+ " AND line_name.testcoveragelineresult_id = class_line.lineresults_id"
+				+ " AND class_line.testcoverageclassresult_id = classResult.id AND"
+				+ " classResult.classname = mutation.classname";
+		Query query = session.createSQLQuery(sqlQueryString).addEntity(Mutation.class);
+		// String hibernateQuery = "SELECT DISTINCT m FROM Mutation AS m,
+		// TestCoverageClassResult AS tccr JOIN tccr.lineResults AS tclr WHERE
+		// tclr.testCases.testCaseName = :tcName AND tccr.className =
+		// m.className";
+		// Query query = session.createQuery(hibernateQuery);
+
 		Set<Mutation> results = new HashSet<Mutation>();
 		for (String testCaseName : tests) {
 			query.setString("tcName", testCaseName);
 			logger.info("TestCaseName: " + testCaseName);
 			List queryResults = query.list();
-			results.addAll(queryResults);
-			for (Object o : queryResults) {
-				logger.log(Level.INFO, "Type" + o.getClass());
-			}
+			addAndCastResults(results, queryResults);
 		}
 		for (Object s : results) {
 			System.out.println(s);
@@ -248,6 +252,14 @@ public class QueryManager {
 		tx.commit();
 		session.close();
 		return results;
+	}
+
+	private static void addAndCastResults(Set<Mutation> results,
+			List queryResults) {
+		for (Object o : queryResults) {
+			logger.log(Level.DEBUG, "Type" + o.getClass());
+			results.add((Mutation) o);
+		}
 	}
 
 	/**

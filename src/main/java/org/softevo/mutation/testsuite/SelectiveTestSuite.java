@@ -65,7 +65,7 @@ public class SelectiveTestSuite extends TestSuite {
 		int debugCount = 20;
 		while (mutationSwitcher.hasNext()) {
 			if (TESTMODE) {
-				if (debugCount < 0) {
+				if (debugCount-- < 0) {
 					break;
 				}
 			}
@@ -85,7 +85,6 @@ public class SelectiveTestSuite extends TestSuite {
 				logger.info("No tests for " + mutation);
 				continue;
 			}
-			debugCount--;
 			TestResult mutationTestResult = new TestResult();
 			mutationSwitcher.switchOn();
 			MutationTestListener listener = new MutationTestListener();
@@ -93,7 +92,7 @@ public class SelectiveTestSuite extends TestSuite {
 			runTests(allTests, mutationTestResult, testsForThisRun);
 			mutationSwitcher.switchOff();
 			resultReporter.report(mutationTestResult, mutation, listener);
-			logger.info(String.format("runs: %d failures:%d errors:%d",
+			logger.info(String.format("runs: %d failures:%d errors:%d ",
 					mutationTestResult.runCount(), mutationTestResult
 							.failureCount(), mutationTestResult.errorCount()));
 		}

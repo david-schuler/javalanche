@@ -22,11 +22,18 @@ public class MutationScanner implements ClassFileTransformer {
 
 	private MutationDecision md = new MutationDecision() {
 
-		public boolean shouldBeScanned(String classNameWithDots) {
+		public boolean shouldBeHandled(String classNameWithDots) {
+			if (classNameWithDots.startsWith("java")
+					|| classNameWithDots.startsWith("sun")) {
+				return false;
+			}
 			if (QueryManager.hasMutationsforClass(classNameWithDots)) {
 				return false;
 			}
-			return true;
+			if(classNameWithDots.startsWith("org.aspectj")){
+				return true;
+			}
+			return false;
 		}
 	};
 
@@ -44,7 +51,7 @@ public class MutationScanner implements ClassFileTransformer {
 		try {
 			String classNameWithDots = className.replace('/', '.');
 			logger.info(classNameWithDots);
-			if (md.shouldBeScanned(classNameWithDots)) {
+			if (md.shouldBeHandled(classNameWithDots)) {
 				mutationScannerTransformer.transformBytecode(classfileBuffer);
 				logger.info("Possibilities found for class " + className + " "
 						+ mpc.size());

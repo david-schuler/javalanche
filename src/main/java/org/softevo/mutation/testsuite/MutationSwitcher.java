@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.softevo.mutation.javaagent.MutationManager;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.QueryManager;
 
@@ -30,7 +31,8 @@ public class MutationSwitcher {
 	private void initMutations() {
 		if (mutations == null) {
 			// mutations = QueryManager.getAllMutations();
-			mutations = QueryManager.getAllMutationsForTestCases(names);
+//			mutations = QueryManager.getAllMutationsForTestCases(names);
+			mutations = MutationManager.getInstance().getMutations();
 			logger.info(mutations);
 			iter = mutations.iterator();
 		} else {
@@ -59,7 +61,6 @@ public class MutationSwitcher {
 		}
 		while (iter.hasNext()) {
 			actualMutation = iter.next();
-
 			if (actualMutation.getMutationResult() == null) {
 				return actualMutation;
 			} else {

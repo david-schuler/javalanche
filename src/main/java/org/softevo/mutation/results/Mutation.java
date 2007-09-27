@@ -119,46 +119,6 @@ public class Mutation {
 		this.mutationResult = mutationTestResult;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int PRIME = 31;
-		int result = 1;
-		result = PRIME * result + ((className == null) ? 0 : className.hashCode());
-		result = PRIME * result + lineNumber;
-		result = PRIME * result + ((mutationType == null) ? 0 : mutationType.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final Mutation other = (Mutation) obj;
-		if (className == null) {
-			if (other.className != null)
-				return false;
-		} else if (!className.equals(other.className))
-			return false;
-		if (lineNumber != other.lineNumber)
-			return false;
-		if (mutationType == null) {
-			if (other.mutationType != null)
-				return false;
-		} else if (!mutationType.equals(other.mutationType))
-			return false;
-		return true;
-	}
-
 	/**
 	 * @return the mutationForLine
 	 */

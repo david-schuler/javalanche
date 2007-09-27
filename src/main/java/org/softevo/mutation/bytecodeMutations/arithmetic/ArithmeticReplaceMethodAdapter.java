@@ -63,5 +63,8 @@ public class ArithmeticReplaceMethodAdapter extends AbstractMutationAdapter {
 			BytecodeTasks.insertIfElse(mv, unMutated,
 					new MutationCode[] { mutated });
 		}
+		else{
+			super.visitInsn(opcode);
+		}
 	}
 }
