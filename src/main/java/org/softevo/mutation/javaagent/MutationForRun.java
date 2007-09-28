@@ -7,49 +7,62 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 
-public class MutationManager {
+public class MutationForRun {
+
+	private static Logger logger = Logger.getLogger(MutationForRun.class);
 
 	/**
 	 * SingletonHolder is loaded on the first execution of
 	 * Singleton.getInstance() or the first access to SingletonHolder.INSTANCE,
-	 * not before.
-	 * see http://en.wikipedia.org/wiki/Initialization_on_demand_holder_idiom
+	 * not before. see
+	 * http://en.wikipedia.org/wiki/Initialization_on_demand_holder_idiom
 	 */
 	private static class SingletonHolder {
-		private final static MutationManager INSTANCE = new MutationManager();
+		private final static MutationForRun INSTANCE = new MutationForRun();
 	}
 
+	private static final int MAX_MUTATIONS = getMaxMutations();
 
-	private static final int MAX_MUTATIONS = 1000;
+	private static final String MUTATIONS_PER_RUN_KEY = "mutationsPerRun";
 
-	public static MutationManager getInstance() {
+	public static MutationForRun getInstance() {
 		return SingletonHolder.INSTANCE;
+	}
+
+	private static int getMaxMutations() {
+		String mutationsPerRun = System.getProperty(MUTATIONS_PER_RUN_KEY);
+		if (mutationsPerRun != null) {
+			int mutations = Integer.parseInt(mutationsPerRun);
+			return mutations;
+		}
+		return 0;
 	}
 
 	private List<Mutation> mutations;
 
-	private MutationManager() {
+	private MutationForRun() {
 		mutations = getMutationsFromDB();
+		logger.info("Aplying " + mutations.size() + " mutations");
 	}
 
-	public Collection<String> getClassNames(){
+	public Collection<String> getClassNames() {
 		Set<String> classNames = new HashSet<String>();
-		for(Mutation m : mutations){
+		for (Mutation m : mutations) {
 			classNames.add(m.getClassName());
 		}
 		return classNames;
 	}
 
-	public List<Mutation> getMutations(){
+	public List<Mutation> getMutations() {
 		return Collections.unmodifiableList(mutations);
 	}
-
 
 	private static List<Mutation> getMutationsFromDB() {
 		Session session = HibernateUtil.getSessionFactory().openSession();

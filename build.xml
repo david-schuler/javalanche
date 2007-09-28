@@ -19,6 +19,14 @@
 		</fileset>
 	</path>
 
+	<path id="mutation.classpath">
+		<fileset dir="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib">
+			<include name="**/*.jar" />
+			<include name="**/*.zip" />
+		</fileset>
+	</path>
+
+
 	<!-- Useful shortcuts -->
 	<patternset id="meta.files">
 		<include name="**/*.xml" />
@@ -71,7 +79,7 @@
 		<!-- Delete database files -->
 		<!-- <delete dir="${database.dir}"/>-->
 		<java classname="org.hsqldb.Server" fork="yes" classpathref="project.classpath" failonerror="true">
-			<jvmarg value="-Xmx1024m"/>
+			<jvmarg value="-Xmx1024m" />
 			<arg value="-database.0" />
 			<arg value="file:${database.dir}/db" />
 		</java>
@@ -80,7 +88,7 @@
 
 	<!-- Start the HSQL DB server -->
 	<target name="deletedb" description="delete the db files">
-		 <delete dir="${database.dir}"/>
+		<delete dir="${database.dir}" />
 	</target>
 
 	<!-- Start the HSQL DB browser tool -->
@@ -104,7 +112,17 @@
 			<annotationconfiguration configurationfile="${basedir}/src/main/resources/hibernate.cfg.xml" />
 			<hbm2ddl drop="true" create="true" export="false" outputfilename="schema.ddl" delimiter=";" format="true" />
 		</hibernatetool>
-		<echo message="ddl build"/>
+		<echo message="ddl build" />
+	</target>
+
+
+	<target name="generateCoverageEntries" description="generate the coverage entries for aspectj">
+		<java classname="org.softevo.mutation.coverageResults.TestSuiteCoverageResult" maxmemory="3072m" fork="true">
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+			</classpath>
+		</java>
 	</target>
 
 </project>

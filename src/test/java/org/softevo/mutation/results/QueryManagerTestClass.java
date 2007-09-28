@@ -99,7 +99,7 @@ public class QueryManagerTestClass {
 	}
 
 	@Test
-	public void testGetClassNamesForMethod() {
+	public void testGetAllMutationsForTestCases() {
 		QueryManager
 				.getAllMutationsForTestCases(Arrays
 						.asList(new String[] {

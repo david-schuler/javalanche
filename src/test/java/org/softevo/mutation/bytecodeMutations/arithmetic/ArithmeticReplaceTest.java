@@ -50,6 +50,8 @@ public class ArithmeticReplaceTest {
 		@SuppressWarnings("unused")
 		Arithmetic a = new Arithmetic();
 		selectiveTestSuite.run(new TestResult());
+		ByteCodeTestUtils.testResults(TEST_CLASS_NAME);
 	}
+
 
 }

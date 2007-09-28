@@ -21,7 +21,6 @@ public class IOTest {
 			System.out.println(l.size());
 			for (Object o : l) {
 				assertTrue(o.toString().endsWith(".class"));
-				// System.out.println(o + " "+ ((File)o).length());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

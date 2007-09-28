@@ -5,15 +5,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.junit.Assert;
 import org.softevo.bytecodetransformer.processFiles.FileTransformer;
 import org.softevo.mutation.coverageResults.db.TestCoverageClassResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
+import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
 
@@ -26,6 +29,8 @@ import org.softevo.mutation.results.persistence.QueryManager;
  *
  */
 public class ByteCodeTestUtils {
+
+	private static Logger logger = Logger.getLogger(ByteCodeTestUtils.class);
 
 	private ByteCodeTestUtils() {
 	}
@@ -44,7 +49,8 @@ public class ByteCodeTestUtils {
 		session.close();
 	}
 
-	public static void generateTestDataInDB(String classFileName, CollectorByteCodeTransformer collectorTransformer) {
+	public static void generateTestDataInDB(String classFileName,
+			CollectorByteCodeTransformer collectorTransformer) {
 		File classFile = new File(classFileName);
 		FileTransformer ft = new FileTransformer(classFile);
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
@@ -64,6 +70,19 @@ public class ByteCodeTestUtils {
 		for (Object m : mutations) {
 			((Mutation) m).setMutationResult(null);
 		}
+		tx.commit();
+		session.close();
+	}
+
+	public static void deleteMutations(String className) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		String queryString = String
+				.format("delete from Mutation where classname=:clname");
+		Query q = session.createQuery(queryString);
+		q.setString("clname", className);
+		int rowsAffected = q.executeUpdate();
+		logger.info("Deleted "+ rowsAffected +  " rows");
 		tx.commit();
 		session.close();
 	}
@@ -98,7 +117,7 @@ public class ByteCodeTestUtils {
 		return testCaseNames;
 	}
 
-	public static String getFileNameForClass(Class clazz){
+	public static String getFileNameForClass(Class clazz) {
 		String result = null;
 		try {
 			String className = clazz.getSimpleName() + ".class";
@@ -107,6 +126,37 @@ public class ByteCodeTestUtils {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	/**
+	 * Tests if exactly one testMethod failed because of the mutation.
+	 *
+	 * @param testClassName
+	 *            The class that test the mutated class.
+	 */
+	@SuppressWarnings("unchecked")
+	public static void testResults(String testClassName) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("from Mutation as m where m.className=:clname");
+		query.setString("clname", testClassName);
+		List<Mutation> mList = query.list();
+		int nonNulls = 0;
+		for (Mutation m : mList) {
+			System.out.println(m);
+			SingleTestResult singleTestResult = m.getMutationResult();
+			if (singleTestResult != null) {
+				nonNulls++;
+				Assert.assertEquals("Mutation: " + m, 1, singleTestResult
+						.getNumberOfErrors()
+						+ singleTestResult.getNumberOfFailures());
+			}
+		}
+		tx.commit();
+		session.close();
+		Assert.assertTrue("Expected failing tests because of mutations",
+				nonNulls >= mList.size());
 	}
 
 }

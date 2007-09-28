@@ -31,20 +31,30 @@ public class XmlIo {
 	public static Object fromXml(File file) {
 		StringBuilder sb = null;
 		Object resultObject = null;
+		BufferedReader bufferedReader = null;
 		try {
-			BufferedReader bufferedReader = new BufferedReader(new FileReader(
-					file));
+			bufferedReader = new BufferedReader(new FileReader(file));
 			sb = new StringBuilder();
 			while (bufferedReader.ready()) {
 				sb.append(bufferedReader.readLine());
 			}
 
 			XStream xStream = new XStream();
-			logger.info("Reading object from xml file: " + file.getAbsoluteFile());
+			logger.info("Start reading object from xml file: "
+					+ file.getAbsoluteFile());
 			resultObject = xStream.fromXML(sb.toString());
-			bufferedReader.close();
+
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			logger.info("Reading finished: " + file.getAbsoluteFile() + "\n read Object of type "+ resultObject.getClass());
+			if (bufferedReader != null) {
+				try {
+					bufferedReader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return resultObject;
 	}

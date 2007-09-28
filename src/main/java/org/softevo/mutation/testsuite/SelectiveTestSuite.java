@@ -26,7 +26,7 @@ public class SelectiveTestSuite extends TestSuite {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final boolean TESTMODE = true;
+	private static final boolean TESTMODE = false;
 
 	static Logger logger = Logger.getLogger(SelectiveTestSuite.class);
 
@@ -114,13 +114,14 @@ public class SelectiveTestSuite extends TestSuite {
 	}
 
 	private void runTests(Map<String, TestCase> allTests,
-			TestResult testResult, Set<String> tests) {
-		for (String testName : tests) {
+			TestResult testResult, Set<String> testsForThisRun) {
+		for (String testName : testsForThisRun) {
 			TestCase test = allTests.get(testName);
 			if (test == null) {
-				System.out.println(allTests);
+
 				throw new RuntimeException("Test not found " + testName
 						+ "\n All Tests: " + allTests);
+
 			}
 			runTest(test, testResult);
 		}
@@ -129,19 +130,24 @@ public class SelectiveTestSuite extends TestSuite {
 	private static Map<String, TestCase> getAllTests(TestSuite s) {
 		Map<String, TestCase> resultMap = new HashMap<String, TestCase>();
 		for (Enumeration e = s.tests(); e.hasMoreElements();) {
-			Test test = (Test) e.nextElement();
+			Object test = e.nextElement();
 			if (test instanceof TestSuite) {
 				TestSuite suite = (TestSuite) test;
 				resultMap.putAll(getAllTests(suite));
-			} else {
-				if (test instanceof TestCase) {
-					TestCase testCase = (TestCase) test;
-					String fullTestName = getFullTestCaseName(testCase);
-					resultMap.put(fullTestName, testCase);
+			} else if (test instanceof TestCase) {
+				TestCase testCase = (TestCase) test;
+				String fullTestName = getFullTestCaseName(testCase);
+				resultMap.put(fullTestName, testCase);
+				if (fullTestName.contains("AbstractTraceTest")) {
+					logger.info("Found abstract Test" + testCase);
 				}
-
+			} else if (test instanceof Test) {
+				// do nothing
+				logger.info("test not added. Class: " + test.getClass());
+			} else {
+				throw new RuntimeException("Not handled type: "
+						+ test.getClass());
 			}
-
 		}
 		return resultMap;
 	}

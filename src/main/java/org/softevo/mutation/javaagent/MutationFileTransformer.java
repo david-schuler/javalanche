@@ -32,7 +32,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	private static MutationTransformer mutationTransformer = new MutationTransformer();
 
-	private static MutationManager mm = MutationManager.getInstance();
+	private static MutationForRun mm = MutationForRun.getInstance();
 
 	private static Collection<String> classesToMutate = mm.getClassNames();
 

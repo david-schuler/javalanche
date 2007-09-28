@@ -14,6 +14,7 @@ public class RicClass {
 
 	public boolean method3(int arg) {
 		boolean b = true;
-		return arg > -1000 && b;
+		int threshold = 5;
+		return arg == threshold && b;
 	}
 }
