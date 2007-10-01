@@ -24,6 +24,7 @@ public class SelectiveTestSuite extends TestSuite {
 	/**
 	 *  $Date$
 	 *  $LastChangedDate$
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
