@@ -39,6 +39,7 @@ public class SelectiveTestSuite extends TestSuite {
 		if (TESTMODE) {
 			logger.info("TESTMODE 1");
 		}
+		logger.info("$Date$");
 	}
 
 	public SelectiveTestSuite() {
@@ -118,12 +119,12 @@ public class SelectiveTestSuite extends TestSuite {
 		for (String testName : testsForThisRun) {
 			TestCase test = allTests.get(testName);
 			if (test == null) {
-
-				throw new RuntimeException("Test not found " + testName
-						+ "\n All Tests: " + allTests);
-
+				// throw new RuntimeException("Test not found " + testName
+				// + "\n All Tests: " + allTests);
+				logger.warn("Test not found " + testName);
+			} else {
+				runTest(test, testResult);
 			}
-			runTest(test, testResult);
 		}
 	}
 
@@ -143,7 +144,7 @@ public class SelectiveTestSuite extends TestSuite {
 				}
 			} else if (test instanceof Test) {
 				// do nothing
-				logger.info("test not added. Class: " + test.getClass());
+				logger.info("Test not added. Class: " + test.getClass());
 			} else {
 				throw new RuntimeException("Not handled type: "
 						+ test.getClass());
