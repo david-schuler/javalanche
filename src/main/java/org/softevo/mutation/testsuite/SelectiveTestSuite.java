@@ -22,7 +22,7 @@ import org.softevo.mutation.results.Mutation;
 public class SelectiveTestSuite extends TestSuite {
 
 	/**
-	 *
+	 * $Date$
 	 */
 	private static final long serialVersionUID = 1L;
 
