@@ -22,8 +22,8 @@ import org.softevo.mutation.results.Mutation;
 public class SelectiveTestSuite extends TestSuite {
 
 	/**
-	 *  $Date$
-	 *  $LastChangedDate$
+	 * $Date$ $LastChangedDate:
+	 * 2007-10-01 11:46:48 +0200 (Mon, 01 Oct 2007) $
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
@@ -39,10 +39,11 @@ public class SelectiveTestSuite extends TestSuite {
 	static {
 		System.out.println("Selective Test Suite");
 		if (TESTMODE) {
-			logger.info("TESTMODE 1");
+			logger.info("TESTMODE");
 		}
 		logger.info("$Date$");
-		logger.info("$LastChangedDate$");
+		logger
+				.info("$LastChangedDate$ a");
 	}
 
 	public SelectiveTestSuite() {
@@ -62,6 +63,7 @@ public class SelectiveTestSuite extends TestSuite {
 			return;
 		}
 		logger.info("Not Running scanner");
+		logger.info("DDD");
 		Map<String, TestCase> allTests = getAllTests(this);
 		logger.log(Level.INFO, "All Tests collected");
 		mutationSwitcher = new MutationSwitcher(
@@ -126,7 +128,14 @@ public class SelectiveTestSuite extends TestSuite {
 				// + "\n All Tests: " + allTests);
 				logger.warn("Test not found " + testName);
 			} else {
-				runTest(test, testResult);
+				try {
+					runTest(test, testResult);
+				} catch (Exception e) {
+					logger.warn(String.format(
+							"Exception thrown by test %s Exception: %s", test
+									.toString(), e.toString()));
+					testResult.addError(test, e);
+				}
 			}
 		}
 	}
