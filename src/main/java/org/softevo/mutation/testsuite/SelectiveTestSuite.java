@@ -42,7 +42,7 @@ public class SelectiveTestSuite extends TestSuite {
 			logger.info("TESTMODE 1");
 		}
 		logger.info("$Date$");
-		logger.info("$LastChangeDate$");
+		logger.info("$LastChangedDate$");
 	}
 
 	public SelectiveTestSuite() {
