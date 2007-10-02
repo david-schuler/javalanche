@@ -36,7 +36,22 @@ public class SelectiveTestSuite extends TestSuite {
 
 	private ResultReporter resultReporter = new ResultReporter();
 
+	private MutationTestListener actualListener;
+
+	private Mutation actualMutation;
+
+	private TestResult actualMutationTestResult;
+
+	private Thread shutDownHook;
+
+	private Test actualTest;
+
 	static {
+		staticLogMessage();
+		// setSecurityManager();
+	}
+
+	private static void staticLogMessage() {
 		System.out.println("Selective Test Suite");
 		if (TESTMODE) {
 			logger.info("TESTMODE");
@@ -46,12 +61,38 @@ public class SelectiveTestSuite extends TestSuite {
 				.info("$LastChangedDate$ a");
 	}
 
+	private void addShutdownHook() {
+		shutDownHook = new Thread() {
+			public void run() {
+				logger.info("Shutdownhook activated");
+
+				actualListener.addError(actualTest, new RuntimeException("JVM shut down because of mutation"));
+				resultReporter.report(actualMutationTestResult, actualMutation,
+						actualListener);
+			}
+		};
+		Runtime.getRuntime().addShutdownHook(shutDownHook);
+	}
+
 	public SelectiveTestSuite() {
 		super();
+		addShutdownHook();
+	}
+
+	private static void setSecurityManager() {
+		try {
+			System.setSecurityManager(new ExitSecurityManager());
+			logger.info("SecurityManager set");
+		} catch (SecurityException se) {
+			logger.info("SecurityManager already set!");
+			se.printStackTrace();
+		}
+
 	}
 
 	public SelectiveTestSuite(String name) {
 		super(name);
+		addShutdownHook();
 	}
 
 	@Override
@@ -63,7 +104,7 @@ public class SelectiveTestSuite extends TestSuite {
 			return;
 		}
 		logger.info("Not Running scanner");
-		logger.info("DDD");
+		logger.info("eee");
 		Map<String, TestCase> allTests = getAllTests(this);
 		logger.log(Level.INFO, "All Tests collected");
 		mutationSwitcher = new MutationSwitcher(
@@ -75,12 +116,12 @@ public class SelectiveTestSuite extends TestSuite {
 					break;
 				}
 			}
-			Mutation mutation = mutationSwitcher.next();
+			actualMutation = mutationSwitcher.next();
 			try {
 				@SuppressWarnings("unused")
-				Class c = Class.forName(mutation.getClassName());
+				Class c = Class.forName(actualMutation.getClassName());
 			} catch (ClassNotFoundException e) {
-				logger.info("Class " + mutation.getClassName()
+				logger.info("Class " + actualMutation.getClassName()
 						+ " not on classpath");
 				continue;
 			}
@@ -88,20 +129,23 @@ public class SelectiveTestSuite extends TestSuite {
 				break;
 			Set<String> testsForThisRun = mutationSwitcher.getTests();
 			if (testsForThisRun == null) {
-				logger.info("No tests for " + mutation);
+				logger.info("No tests for " + actualMutation);
 				continue;
 			}
-			TestResult mutationTestResult = new TestResult();
+			actualMutationTestResult = new TestResult();
 			mutationSwitcher.switchOn();
-			MutationTestListener listener = new MutationTestListener();
-			mutationTestResult.addListener(listener);
-			runTests(allTests, mutationTestResult, testsForThisRun);
+			actualListener = new MutationTestListener();
+			actualMutationTestResult.addListener(actualListener);
+			runTests(allTests, actualMutationTestResult, testsForThisRun);
 			mutationSwitcher.switchOff();
-			resultReporter.report(mutationTestResult, mutation, listener);
+			resultReporter.report(actualMutationTestResult, actualMutation,
+					actualListener);
 			logger.info(String.format("runs: %d failures:%d errors:%d ",
-					mutationTestResult.runCount(), mutationTestResult
-							.failureCount(), mutationTestResult.errorCount()));
+					actualMutationTestResult.runCount(),
+					actualMutationTestResult.failureCount(),
+					actualMutationTestResult.errorCount()));
 		}
+		Runtime.getRuntime().removeShutdownHook(shutDownHook);
 		logger.log(Level.INFO, "Test Runs finished");
 	}
 
@@ -123,6 +167,8 @@ public class SelectiveTestSuite extends TestSuite {
 			TestResult testResult, Set<String> testsForThisRun) {
 		for (String testName : testsForThisRun) {
 			TestCase test = allTests.get(testName);
+			actualTest = test;
+			ResultReporter.setActualTestCase(getFullTestCaseName(test));
 			if (test == null) {
 				// throw new RuntimeException("Test not found " + testName
 				// + "\n All Tests: " + allTests);
@@ -134,6 +180,7 @@ public class SelectiveTestSuite extends TestSuite {
 					logger.warn(String.format(
 							"Exception thrown by test %s Exception: %s", test
 									.toString(), e.toString()));
+					logger.info("Exception caught");
 					testResult.addError(test, e);
 				}
 			}
@@ -170,4 +217,13 @@ public class SelectiveTestSuite extends TestSuite {
 				+ testCase.getName();
 		return fullTestName;
 	}
+
+	/**
+	 * @return the actualMutation
+	 */
+	public Mutation getActualMutation() {
+		return actualMutation;
+	}
+
+
 }

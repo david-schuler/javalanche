@@ -4,6 +4,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+/**
+ *
+ * Class that holds the result of one single TestCase.
+ *
+ * @author David Schuler
+ *
+ */
 @Entity
 public class TestMessage {
 
@@ -11,14 +18,37 @@ public class TestMessage {
 	@GeneratedValue
 	private Long id;
 
+	/**
+	 * name of the TestCases
+	 */
 	private String testCaseName;
 
+	/**
+	 * Failure or error message of the TestCase.
+	 */
 	private String message;
+
+	/**
+	 * True, if test case has touched the mutation.
+	 */
+	private boolean hasTouched;
+
+	/**
+	 * Time a testCase needed to execute.
+	 */
+	private long duration;
 
 	public TestMessage(String testCaseName, String message) {
 		super();
 		this.testCaseName = testCaseName;
 		this.message = message;
+	}
+
+	public TestMessage(String testCaseName, String message, long duration) {
+		super();
+		this.testCaseName = testCaseName;
+		this.message = message;
+		this.duration = duration;
 	}
 
 	public TestMessage() {
@@ -71,6 +101,37 @@ public class TestMessage {
 
 	@Override
 	public String toString() {
-		return String.format("TestCase: %s Reason: %s",testCaseName, message);
+		return String.format("TestCase: %s Touched: %s Reason: %s",
+				testCaseName, hasTouched ? "yes" : "no", message);
+	}
+
+	/**
+	 * @return the hasTouched
+	 */
+	public boolean isHasTouched() {
+		return hasTouched;
+	}
+
+	/**
+	 * @param hasTouched
+	 *            the hasTouched to set
+	 */
+	public void setHasTouched(boolean hasTouched) {
+		this.hasTouched = hasTouched;
+	}
+
+	/**
+	 * @return the duration
+	 */
+	public long getDuration() {
+		return duration;
+	}
+
+	/**
+	 * @param duration
+	 *            the duration to set
+	 */
+	public void setDuration(long duration) {
+		this.duration = duration;
 	}
 }

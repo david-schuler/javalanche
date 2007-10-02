@@ -72,7 +72,7 @@ public class QueryManagerTestClass {
 		Mutation resultMutation = QueryManager.getMutation(testMutation);
 		Assert.assertNull(resultMutation.getMutationResult());
 		QueryManager.updateMutation(resultMutation, new SingleTestResult(
-				new TestResult(), new MutationTestListener()));
+				new TestResult(), new MutationTestListener(), null));
 		Mutation checkMutation = QueryManager.getMutation(testMutation);
 		Assert.assertNotNull(checkMutation.getMutationResult());
 	}

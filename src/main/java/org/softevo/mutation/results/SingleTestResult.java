@@ -3,6 +3,8 @@ package org.softevo.mutation.results;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -27,6 +29,11 @@ public class SingleTestResult {
 
 	private int runs;
 
+	/**
+	 * True if the mutation was touched by at least one TestCase;
+	 */
+	boolean touched;
+
 	@OneToMany(cascade = CascadeType.ALL)
 	@OrderBy("testCaseName")
 	@IndexColumn(name = "failure_list_id")
@@ -36,30 +43,56 @@ public class SingleTestResult {
 	@JoinTable(name = "SINGLETESTRESULT_ERRORS", joinColumns = { @JoinColumn(name = "singletestresult_id") }, inverseJoinColumns = @JoinColumn(name = "testmessage_id"))
 	private List<TestMessage> errors = new ArrayList<TestMessage>();
 
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "SINGLETESTRESULT_PASSING", joinColumns = { @JoinColumn(name = "singletestresult_id") }, inverseJoinColumns = @JoinColumn(name = "testmessage_id"))
+	private List<TestMessage> passing = new ArrayList<TestMessage>();
+
 	private SingleTestResult() {
 	}
 
 	public SingleTestResult(TestResult mutationTestResult,
-			MutationTestListener mutationTestListener) {
+			MutationTestListener mutationTestListener,
+			Set<String> touchingTestCases) {
 		this.runs = mutationTestResult.runCount();
 		this.failures = mutationTestListener.getFailureMessages();
 		this.errors = mutationTestListener.getErrorMessages();
+		this.passing = mutationTestListener.getPassingMessages();
+		if (touchingTestCases != null && touchingTestCases.size() > 0) {
+			updateTouched(touchingTestCases, failures);
+			updateTouched(touchingTestCases, errors);
+			updateTimes(mutationTestListener.getDurations());
+			touched = true;
+		}
+	}
+
+	private void updateTimes(Map<String, Long> durations) {
+		// TODO
+	}
+
+	private static void updateTouched(Set<String> touchingTestCases,
+			List<TestMessage> testMessages) {
+		for (TestMessage tm : testMessages) {
+			if (touchingTestCases.contains(tm.getTestCaseName())) {
+				tm.setHasTouched(true);
+			}
+		}
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder sb =  new StringBuilder( String.format("Runs: %d  Failures: %d  Errors: %d", runs,
-				failures.size(), errors.size()));
-		if(failures.size() >0){
+		StringBuilder sb = new StringBuilder(String.format(
+				"Runs: %d  Failures: %d  Errors: %d LineTouched: %s", runs, failures.size(),
+				errors.size(), touched ? "yes" : "no "));
+		if (failures.size() > 0) {
 			sb.append("Failures:\n");
-			for(TestMessage tm : failures){
+			for (TestMessage tm : failures) {
 				sb.append(tm);
 				sb.append('\n');
 			}
 		}
-		if(errors.size() >0){
+		if (errors.size() > 0) {
 			sb.append("Errors:\n");
-			for(TestMessage tm : errors){
+			for (TestMessage tm : errors) {
 				sb.append(tm);
 				sb.append('\n');
 			}
@@ -135,5 +168,18 @@ public class SingleTestResult {
 		this.failures = failures;
 	}
 
+	/**
+	 * @return the passing
+	 */
+	public List<TestMessage> getPassing() {
+		return passing;
+	}
+
+	/**
+	 * @param passing the passing to set
+	 */
+	public void setPassing(List<TestMessage> passing) {
+		this.passing = passing;
+	}
 
 }

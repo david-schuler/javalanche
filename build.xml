@@ -125,4 +125,13 @@
 		</java>
 	</target>
 
+	<target name="showMutationResults" description="prints all mutation results to console">
+		<java classname="org.softevo.mutation.run.PrintResults" maxmemory="1024m" fork="true">
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+			</classpath>
+		</java>
+	</target>
+
 </project>

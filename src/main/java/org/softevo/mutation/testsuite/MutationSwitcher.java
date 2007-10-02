@@ -77,6 +77,7 @@ public class MutationSwitcher {
 					+ actualMutation.getLineNumber() + " - "
 					+ actualMutation.toString());
 			System.setProperty(actualMutation.getMutationVariable(), "1");
+			ResultReporter.setActualMutation(actualMutation);
 		}
 	}
 
@@ -85,6 +86,7 @@ public class MutationSwitcher {
 			System.clearProperty(actualMutation.getMutationVariable());
 			logger.info("disabling mutation: "
 					+ actualMutation.getMutationVariable());
+			ResultReporter.setActualMutation(null);
 		}
 
 	}

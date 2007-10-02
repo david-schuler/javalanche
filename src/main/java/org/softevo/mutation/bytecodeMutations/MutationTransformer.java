@@ -11,13 +11,18 @@ import org.softevo.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class MutationTransformer extends BytecodeTransformer {
 
+	private static final boolean DEBUG = false;
+
 	private static Logger logger = Logger.getLogger(MutationTransformer.class);
 
 	@Override
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
-		ClassVisitor cc = new CheckClassAdapter(cw);
+		ClassVisitor cv = new CheckClassAdapter(cw);
 		logger.info("Mutation Transformer");
-		return new MutationsClassAdapter(new TraceClassVisitor(cc, new PrintWriter(System.out)));
+		if (DEBUG) {
+			cv = new TraceClassVisitor(cv, new PrintWriter(System.out));
+		}
+		return new MutationsClassAdapter(cv);
 	}
 
 }

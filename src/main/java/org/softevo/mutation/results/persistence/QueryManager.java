@@ -64,10 +64,8 @@ public class QueryManager {
 			session.save(tm);
 		}
 		session.save(mutationTestResult);
+		logger.info("mutation updated " + m2);
 		m2.setMutationResult(mutationTestResult);
-		// logger.info("ID" + mutation.getId());
-		// logger.info(mutationTestResult);
-		// session.update(m2);
 		tx.commit();
 		session.close();
 	}
