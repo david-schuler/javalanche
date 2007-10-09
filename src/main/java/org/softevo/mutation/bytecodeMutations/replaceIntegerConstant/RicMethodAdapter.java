@@ -63,7 +63,12 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 	}
 
+	@Override
 	public void visitInsn(int opcode) {
+		if (mutationCode) {
+			super.visitInsn(opcode);
+			return;
+		}
 		switch (opcode) {
 		case Opcodes.ICONST_M1:
 			intConstant(-1);
@@ -116,6 +121,10 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 	@Override
 	public void visitLdcInsn(Object cst) {
+		if (mutationCode) {
+			super.visitLdcInsn(cst);
+			return;
+		}
 		if (cst instanceof Integer) {
 			Integer integerConstant = (Integer) cst;
 			intConstant(integerConstant);
@@ -129,8 +138,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		} else if (cst instanceof Double) {
 			Double doubleConstant = (Double) cst;
 			doubleConstant(doubleConstant);
-		}
-		else{
+		} else {
 			mv.visitLdcInsn(cst);
 		}
 	}
@@ -257,14 +265,14 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 			logger.info("Applying no mutations for line: " + getLineNumber());
 
 		} else {
-		logger.info("Applying no mutation for line: " + getLineNumber());
-		super.visitLdcInsn(new Long(longConstant));
-		 }
+			logger.info("Applying no mutation for line: " + getLineNumber());
+			super.visitLdcInsn(new Long(longConstant));
+		}
 	}
 
-//	private void insertPrintStatements(String message) {
-//		insertPrintStatements(mv, message);
-//	}
+	// private void insertPrintStatements(String message) {
+	// insertPrintStatements(mv, message);
+	// }
 
 	@Override
 	public void visitLineNumber(int line, Label start) {
@@ -274,6 +282,10 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 	@Override
 	public void visitIntInsn(int opcode, int operand) {
+		if (mutationCode) {
+			super.visitIntInsn(opcode, operand);
+			return;
+		}
 		if (opcode == Opcodes.BIPUSH || opcode == Opcodes.SIPUSH) {
 			intConstant(operand);
 		} else {
@@ -290,11 +302,13 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		Mutation mutationZero = new Mutation(className, getLineNumber(),
 				mutationForLine, MutationType.RIC_ZERO);
 
-
 		if (MutationManager.shouldApplyMutation(mutationPlus1)) {
-			Mutation mutationPlus1FromDB = QueryManager.getMutation(mutationPlus1);
-			Mutation mutationMinus1FromDB = QueryManager.getMutation(mutationMinus);
-			Mutation mutationZeroFromDB = QueryManager.getMutation(mutationZero);
+			Mutation mutationPlus1FromDB = QueryManager
+					.getMutation(mutationPlus1);
+			Mutation mutationMinus1FromDB = QueryManager
+					.getMutation(mutationMinus);
+			Mutation mutationZeroFromDB = QueryManager
+					.getMutation(mutationZero);
 
 			BytecodeTasks.insertIfElse(mv, new MutationCode(null) {
 
@@ -347,6 +361,4 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		return new ConstantMutations(mutationPlus1FromDB, mutationMinus1FromDB,
 				mutationZeroFromDB);
 	}
-
-
 }

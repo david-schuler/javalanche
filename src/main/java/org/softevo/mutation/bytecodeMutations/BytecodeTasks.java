@@ -14,7 +14,7 @@ import org.softevo.mutation.results.Mutation;
  */
 public class BytecodeTasks {
 
-	private static final boolean PRINT_STATEMENTS_ENABLED = true;
+	private static final boolean PRINT_STATEMENTS_ENABLED = false;
 
 	private BytecodeTasks() {
 	}
@@ -47,6 +47,7 @@ public class BytecodeTasks {
 			mv.visitJumpInsn(Opcodes.IFNULL, l1);
 			Label l2 = new Label();
 			mv.visitLabel(l2);
+			insertPrintStatements(mv, "Mutation touched: " + mutation.getId());
 			insertMutationTouchedCode(mv, mutation);
 			mutationCode.insertCodeBlock(mv);
 			mv.visitJumpInsn(Opcodes.GOTO, endLabel);
@@ -70,14 +71,14 @@ public class BytecodeTasks {
 		mv.visitLdcInsn(mutation.getId());
 		mv.visitMethodInsn(Opcodes.INVOKESTATIC,
 				"org/softevo/mutation/testsuite/ResultReporter", "touch",
-				"(I)V");
+				"(J)V");
 	}
 
 	/**
 	 * Inserts bytecode that prints the given message.
 	 *
 	 * @param mv
-	 *            The MethodVisitor for which teh code is added.
+	 *            The MethodVisitor for which the code is added.
 	 * @param message
 	 *            The text to be printed to System.out .
 	 */

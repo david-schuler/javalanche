@@ -42,10 +42,11 @@ public class ResultReporter {
 			sb.append(cr.toString());
 			sb.append('\n');
 		}
+		touch(123);
 		return sb.toString();
 	}
 
-	public static void touch(int mutationID) {
+	public static void touch(long mutationID) {
 		logger.info("Touch called by mutated code");
 		long expectedID = actualMutation.getId();
 		if (mutationID != expectedID) {

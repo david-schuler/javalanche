@@ -111,6 +111,7 @@ public class QueryManager {
 					+ mutation);
 			assert mutationInDb.equals(mutation);
 		} else {
+			logger.info("Saving Mutation" + mutation);
 			save(mutation);
 		}
 	}

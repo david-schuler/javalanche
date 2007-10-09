@@ -271,6 +271,10 @@
 			<artifactId>staticTransformer</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
-	
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.0.3</version>
+		</dependency>
 	</dependencies>
 </project>

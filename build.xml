@@ -17,6 +17,7 @@
 			<include name="**/*.jar" />
 			<include name="**/*.zip" />
 		</fileset>
+		<pathelement location="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib/mysql-connector-java-5.0.3.jar"/>
 	</path>
 
 	<path id="mutation.classpath">
@@ -68,7 +69,16 @@
 	<!-- Export the database schema -->
 	<target name="schemaexport" depends="" description="Exports a generated schema to DB and file">
 		<hibernatetool destdir="${basedir}">
-			<classpath path="target/classes/" />
+			<classpath>
+				<pathelement path="target/classes/" />
+				<pathelement location="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib/mysql-connector-java-5.0.3.jar"/>
+
+				<!--
+				<fileset dir="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib">
+					<include name="*.jar"/>
+				</fileset>
+			-->
+			</classpath>
 			<annotationconfiguration configurationfile="src/main/resources/hibernate.cfg.xml" />
 			<hbm2ddl drop="true" create="true" export="true" outputfilename="${proj.shortname}-ddl.sql" delimiter=";" format="true" />
 		</hibernatetool>
@@ -117,7 +127,7 @@
 
 
 	<target name="generateCoverageEntries" description="generate the coverage entries for aspectj">
-		<java classname="org.softevo.mutation.coverageResults.TestSuiteCoverageResult" maxmemory="3072m" fork="true">
+		<java classname="org.softevo.mutation.coverageResults.TestSuiteCoverageResult" maxmemory="1536m" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
@@ -127,6 +137,15 @@
 
 	<target name="showMutationResults" description="prints all mutation results to console">
 		<java classname="org.softevo.mutation.run.PrintResults" maxmemory="1024m" fork="true">
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="runThreaded" description="run mutation tests multithreaded">
+		<java classname="org.softevo.mutation.run.ThreadPool" maxmemory="1024m" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />

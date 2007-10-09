@@ -14,7 +14,7 @@ public class Io {
 
 	public static void writeFile(String content, File file){
 		try {
-
+			logger.info("Start writing: " + file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 			bw.write(content);
 			bw.close();
