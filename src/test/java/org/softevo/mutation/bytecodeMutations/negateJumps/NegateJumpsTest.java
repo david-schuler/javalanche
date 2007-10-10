@@ -42,7 +42,7 @@ public class NegateJumpsTest {
 			.getFileNameForClass(TEST_CLASS);
 
 	private static String[] testCaseNames = ByteCodeTestUtils
-			.generateTestCaseNames(UNITTEST_CLASS_NAME, 4);
+			.generateTestCaseNames(UNITTEST_CLASS_NAME,5);
 
 	private static final int[] linenumbers = { 6, 14, 16, 25, 34, 37 };
 
@@ -55,12 +55,23 @@ public class NegateJumpsTest {
 				new NegateJumpsCollectorTransformer(null));
 		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
 				linenumbers);
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("from TestCoverageClassResult where classname=:clname");
+		query.setString("clname", TEST_CLASS_NAME);
+		List results = query.list();
+		for (Object object : results) {
+			System.out.println(object);
+		}
+		tx.commit();
+		session.close();
 	}
 
 	@After
 	public void tearDown() {
 		// ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
-		// ByteCodeTestUtils.deleteCoverageData(TEST_CLASS_NAME);
+		ByteCodeTestUtils.deleteCoverageData(TEST_CLASS_NAME);
 	}
 
 	@Test
@@ -92,6 +103,7 @@ public class NegateJumpsTest {
 				nonNulls++;
 				Assert.assertEquals(1, singleTestResult.getNumberOfErrors()
 						+ singleTestResult.getNumberOfFailures());
+				Assert.assertTrue(singleTestResult.isTouched());
 			}
 		}
 		tx.commit();

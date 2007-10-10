@@ -25,14 +25,22 @@ public class ResultReporter {
 
 	private List<OldMutationResult> mutationResults = new ArrayList<OldMutationResult>();
 
+	private int reports = 0;
+
+	private int touched;
+
 	public void report(TestResult mutationTestResult, Mutation mutation,
 			MutationTestListener mutationTestListener) {
 		SingleTestResult mutated = new SingleTestResult(mutationTestResult,
 				mutationTestListener, touchingTestCases);
 		QueryManager.updateMutation(mutation, mutated);
+		if (touchingTestCases.size() > 0) {
+			touched++;
+		}
 		touchingTestCases.clear();
 		actualMutation = null;
 		actualTestCase = null;
+		reports++;
 	}
 
 	@Override
@@ -42,12 +50,11 @@ public class ResultReporter {
 			sb.append(cr.toString());
 			sb.append('\n');
 		}
-		touch(123);
 		return sb.toString();
 	}
 
 	public static void touch(long mutationID) {
-		logger.info("Touch called by mutated code");
+		logger.info("Touch called by mutated code in test " + actualTestCase);
 		long expectedID = actualMutation.getId();
 		if (mutationID != expectedID) {
 			throw new RuntimeException("Expected ID did not match reported ID"
@@ -85,5 +92,12 @@ public class ResultReporter {
 	 */
 	public static void setActualMutation(Mutation actualMutation) {
 		ResultReporter.actualMutation = actualMutation;
+	}
+
+	public String summary() {
+		return String
+				.format(
+						"%d Mutation Results were recorded\n%d Mutations where actually touched",
+						reports, touched);
 	}
 }

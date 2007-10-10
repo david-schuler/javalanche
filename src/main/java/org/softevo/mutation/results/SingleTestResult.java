@@ -60,13 +60,14 @@ public class SingleTestResult {
 		if (touchingTestCases != null && touchingTestCases.size() > 0) {
 			updateTouched(touchingTestCases, failures);
 			updateTouched(touchingTestCases, errors);
+			updateTouched(touchingTestCases, passing);
 			updateTimes(mutationTestListener.getDurations());
 			touched = true;
 		}
 	}
 
 	private void updateTimes(Map<String, Long> durations) {
-		// TODO
+
 	}
 
 	private static void updateTouched(Set<String> touchingTestCases,
@@ -81,8 +82,8 @@ public class SingleTestResult {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(String.format(
-				"Runs: %d  Failures: %d  Errors: %d LineTouched: %s", runs, failures.size(),
-				errors.size(), touched ? "yes" : "no "));
+				"Runs: %d  Failures: %d  Errors: %d LineTouched: %s", runs,
+				failures.size(), errors.size(), touched ? "yes" : "no "));
 		if (failures.size() > 0) {
 			sb.append("Failures:\n");
 			for (TestMessage tm : failures) {
@@ -93,6 +94,13 @@ public class SingleTestResult {
 		if (errors.size() > 0) {
 			sb.append("Errors:\n");
 			for (TestMessage tm : errors) {
+				sb.append(tm);
+				sb.append('\n');
+			}
+		}
+		if (passing.size() > 0) {
+			sb.append("Passing:\n");
+			for (TestMessage tm : passing) {
 				sb.append(tm);
 				sb.append('\n');
 			}
@@ -176,10 +184,26 @@ public class SingleTestResult {
 	}
 
 	/**
-	 * @param passing the passing to set
+	 * @param passing
+	 *            the passing to set
 	 */
 	public void setPassing(List<TestMessage> passing) {
 		this.passing = passing;
+	}
+
+	/**
+	 * @return the touched
+	 */
+	public boolean isTouched() {
+		return touched;
+	}
+
+	/**
+	 * @param touched
+	 *            the touched to set
+	 */
+	public void setTouched(boolean touched) {
+		this.touched = touched;
 	}
 
 }

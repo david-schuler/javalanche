@@ -47,7 +47,7 @@ public class BytecodeTasks {
 			mv.visitJumpInsn(Opcodes.IFNULL, l1);
 			Label l2 = new Label();
 			mv.visitLabel(l2);
-			insertPrintStatements(mv, "Mutation touched: " + mutation.getId());
+		//	insertPrintStatements(mv, "Mutation touched: " + mutation.getId());
 			insertMutationTouchedCode(mv, mutation);
 			mutationCode.insertCodeBlock(mv);
 			mv.visitJumpInsn(Opcodes.GOTO, endLabel);

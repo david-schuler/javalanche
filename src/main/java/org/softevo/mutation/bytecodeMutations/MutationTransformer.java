@@ -11,7 +11,7 @@ import org.softevo.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class MutationTransformer extends BytecodeTransformer {
 
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 
 	private static Logger logger = Logger.getLogger(MutationTransformer.class);
 

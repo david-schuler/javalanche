@@ -24,23 +24,29 @@ public class MutationTestListener implements TestListener {
 
 	private List<TestMessage> passingMessages = new ArrayList<TestMessage>();
 
+	private List<Test> nonPassing = new ArrayList<Test>();
+
 	private Map<String, Long> durations = new HashMap<String, Long>();
 
 	public void addError(Test test, Throwable t) {
 		logger.info("Error added");
 		errorMessages.add(new TestMessage(test.toString(), t.toString()));
+		nonPassing.add(test);
 	}
 
 	public void addFailure(Test test, AssertionFailedError t) {
 		logger.info("Failure added");
 		failureMessages.add(new TestMessage(test.toString(), t.toString()));
+		nonPassing.add(test);
 	}
 
 	public void endTest(Test test) {
 		long duration = System.currentTimeMillis() - start;
 		durations.put(test.toString(), duration);
-		passingMessages.add(new TestMessage(test.toString(), "test passed",
-				duration));
+		if (!nonPassing.contains(test)) {
+			passingMessages.add(new TestMessage(test.toString(), "test passed",
+					duration));
+		}
 		logger.info("Test ended");
 	}
 

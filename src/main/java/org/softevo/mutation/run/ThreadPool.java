@@ -29,9 +29,9 @@ public class ThreadPool {
 
 	private static final int MUTATIONS_PER_TASK = 100;
 
-	private static final String TASK_NAME = "mytest";
+	private static final String TASK_NAME = "test-no-compile";
 
-	private static final String MUTATION_COMMAND = "/scratch/schuler/mutationTest/src/scripts/run-tests.sh";
+	private static final String MUTATION_COMMAND = "/scratch/schuler/mutationTest/src/scripts/threaded-run-tests.sh";
 
 	ExecutorService pool = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
@@ -53,9 +53,9 @@ public class ThreadPool {
 					counter);
 			counter++;
 			ProcessStarter ps = new ProcessStarter(MUTATION_COMMAND,
-					new String[] { TASK_NAME,
-							"-Dmutation.file=" + f.getAbsolutePath() },
+					new String[] { "-Dmutation.file=" + f.getAbsolutePath() },
 					new File(EXEC_DIR), new File(outputFile));
+			logger.info("Process: " + ps.toString());
 			pool.submit(ps);
 		}
 		while (!pool.isTerminated()) {
@@ -89,13 +89,13 @@ public class ThreadPool {
 		return resultFile;
 	}
 
-//	private List<Long> getFakeList() {
-//		List<Long> list = new ArrayList<Long>();
-//		for (long i = 0; i < 40000; i++) {
-//			list.add(i);
-//		}
-//		return list;
-//	}
+	// private List<Long> getFakeList() {
+	// List<Long> list = new ArrayList<Long>();
+	// for (long i = 0; i < 40000; i++) {
+	// list.add(i);
+	// }
+	// return list;
+	// }
 
 	private List<Long> getMutionIDs(int numberOfIds) {
 		List<Long> list = new ArrayList<Long>();
@@ -116,7 +116,7 @@ public class ThreadPool {
 		List results = query.list();
 		List<Long> idList = new ArrayList<Long>();
 		for (Object id : results) {
-			idList.add((Long) id);
+			idList.add(Long.valueOf(id.toString()));
 		}
 		tx.commit();
 		session.close();

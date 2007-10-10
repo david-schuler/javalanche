@@ -30,4 +30,11 @@ public class TestJump extends TestCase {
 		assertEquals(true, jumps.method4(0));
 		assertEquals(false, jumps.method4(-8));
 	}
+
+	public void testMethod5() {
+		jumps.method1(0);
+		jumps.method2(0);
+		jumps.method3(0);
+		jumps.method4(0);
+	}
 }

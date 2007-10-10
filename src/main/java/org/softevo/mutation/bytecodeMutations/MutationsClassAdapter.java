@@ -12,7 +12,7 @@ public class MutationsClassAdapter extends ClassAdapter {
 
 	private String className;
 
-	private boolean debug;
+	private static final boolean DEBUG = true;
 
 	public MutationsClassAdapter(ClassVisitor cv) {
 		super(cv);
@@ -29,7 +29,7 @@ public class MutationsClassAdapter extends ClassAdapter {
 			String signature, final String[] exceptions) {
 		MethodVisitor mv = super.visitMethod(access, name, desc, signature,
 				exceptions);
-		if (debug) {
+		if (DEBUG) {
 			mv = new CheckMethodAdapter(mv);
 		}
 		mv = new RicMethodAdapter(mv, className, name);

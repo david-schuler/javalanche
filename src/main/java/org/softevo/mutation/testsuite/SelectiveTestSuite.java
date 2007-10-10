@@ -7,6 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -29,6 +35,8 @@ public class SelectiveTestSuite extends TestSuite {
 	private static final long serialVersionUID = 1L;
 
 	private static final boolean TESTMODE = false;
+
+	private static final long DEFAULT_TIMEOUT_IN_SECONDS = 5;
 
 	static Logger logger = Logger.getLogger(SelectiveTestSuite.class);
 
@@ -58,17 +66,20 @@ public class SelectiveTestSuite extends TestSuite {
 		}
 		logger.info("$Date$");
 		logger
-				.info("$LastChangedDate$ a");
+				.info("$LastChangedDate$");
 	}
 
 	private void addShutdownHook() {
 		shutDownHook = new Thread() {
 			public void run() {
 				logger.info("Shutdownhook activated");
-
-				actualListener.addError(actualTest, new RuntimeException("JVM shut down because of mutation"));
-				resultReporter.report(actualMutationTestResult, actualMutation,
-						actualListener);
+				if (actualListener != null) {
+					actualListener.addError(actualTest, new RuntimeException(
+							"JVM shut down because of mutation"));
+					resultReporter.report(actualMutationTestResult,
+							actualMutation, actualListener);
+				}
+				logger.info("" + resultReporter.summary());
 			}
 		};
 		Runtime.getRuntime().addShutdownHook(shutDownHook);
@@ -147,6 +158,7 @@ public class SelectiveTestSuite extends TestSuite {
 		}
 		Runtime.getRuntime().removeShutdownHook(shutDownHook);
 		logger.log(Level.INFO, "Test Runs finished");
+		logger.info("" + resultReporter.summary());
 	}
 
 	/**
@@ -168,14 +180,14 @@ public class SelectiveTestSuite extends TestSuite {
 		for (String testName : testsForThisRun) {
 			TestCase test = allTests.get(testName);
 			actualTest = test;
-			ResultReporter.setActualTestCase(getFullTestCaseName(test));
+			ResultReporter.setActualTestCase(test.toString());
 			if (test == null) {
 				// throw new RuntimeException("Test not found " + testName
 				// + "\n All Tests: " + allTests);
 				logger.warn("Test not found " + testName);
 			} else {
 				try {
-					runTest(test, testResult);
+					runWithTimeout(test, testResult);
 				} catch (Exception e) {
 					logger.warn(String.format(
 							"Exception thrown by test %s Exception: %s", test
@@ -184,6 +196,33 @@ public class SelectiveTestSuite extends TestSuite {
 					testResult.addError(test, e);
 				}
 			}
+		}
+	}
+
+	private void runWithTimeout(final TestCase test, final TestResult testResult) {
+		ExecutorService service = Executors.newSingleThreadExecutor();
+		Callable<Object> callable = new Callable<Object>() {
+			public Object call() throws Exception {
+				runTest(test, testResult);
+				return null;
+			}
+		};
+		Future<Object> result = service.submit(callable);
+		service.shutdown();
+		try {
+			boolean terminated = service.awaitTermination(
+					DEFAULT_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+			if (!terminated) {
+				service.shutdownNow();
+			}
+			result.get(DEFAULT_TIMEOUT_IN_SECONDS, TimeUnit.MILLISECONDS);
+			// throws the exception if one occurred during the invocation
+		} catch (TimeoutException e) {
+			testResult.addError(test, new Exception(String.format(
+					"test timed out after %d seconds",
+					DEFAULT_TIMEOUT_IN_SECONDS)));
+		} catch (Exception e) {
+			testResult.addError(test, e);
 		}
 	}
 
@@ -224,6 +263,5 @@ public class SelectiveTestSuite extends TestSuite {
 	public Mutation getActualMutation() {
 		return actualMutation;
 	}
-
 
 }

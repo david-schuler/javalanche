@@ -102,6 +102,7 @@ public class ByteCodeTestUtils {
 		}
 		TestCoverageClassResult classResult = new TestCoverageClassResult(
 				className, lineResult);
+		logger.info(classResult);
 		try {
 			QueryManager.save(classResult);
 		} catch (org.hibernate.exception.ConstraintViolationException e) {
