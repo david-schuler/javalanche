@@ -59,7 +59,28 @@ public class ByteCodeTestUtils {
 		mpc.toDB();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void deleteTestMutationResult(String className) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		String queryString = String
+				.format("from Mutation where classname=:clname");
+		Query q = session.createQuery(queryString);
+		q.setString("clname", className);
+		List<Mutation> mutations = q.list();
+		for (Mutation m : mutations) {
+			SingleTestResult singleTestResult = m.getMutationResult();
+			if (singleTestResult != null) {
+				logger.info("Trying to delete + " + singleTestResult);
+				m.setMutationResult(null);
+				session.delete(singleTestResult);
+			}
+		}
+		tx.commit();
+		session.close();
+	}
+
+	public static void deleteTestMutationResultOLD(String className) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		String queryString = String
@@ -74,6 +95,7 @@ public class ByteCodeTestUtils {
 		session.close();
 	}
 
+
 	public static void deleteMutations(String className) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -82,7 +104,7 @@ public class ByteCodeTestUtils {
 		Query q = session.createQuery(queryString);
 		q.setString("clname", className);
 		int rowsAffected = q.executeUpdate();
-		logger.info("Deleted "+ rowsAffected +  " rows");
+		logger.info("Deleted " + rowsAffected + " rows");
 		tx.commit();
 		session.close();
 	}

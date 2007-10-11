@@ -34,7 +34,6 @@
 
 
 		<mapping class="org.softevo.mutation.results.Mutation"/>
-		<mapping class="org.softevo.mutation.results.OldMutationResult"/>
 		<mapping class="org.softevo.mutation.results.SingleTestResult"/>
 		<mapping class="org.softevo.mutation.results.TestMessage"/>
 		<mapping class="org.softevo.mutation.coverageResults.db.TestCoverageLineResult"/>

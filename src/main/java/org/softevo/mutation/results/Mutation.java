@@ -2,6 +2,7 @@ package org.softevo.mutation.results;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
@@ -15,7 +16,7 @@ public class Mutation {
 
 	private static final String PREFIX = "mutationId";
 
-	static int mutionIdGenerator  = 0;
+	static int mutionIdGenerator = 0;
 
 	public enum MutationType {
 		NO_MUTATION, RIC_PLUS_1, RIC_MINUS_1, RIC_ZERO, NEGATE_JUMP, ARITHMETIC_REPLACE
@@ -29,14 +30,15 @@ public class Mutation {
 
 	private MutationType mutationType;
 
-	@OneToOne(cascade= CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private SingleTestResult mutationResult;
 
-	private Mutation(){
+	private Mutation() {
 
 	}
 
-	public Mutation(String className, int line, int mutationForLine, MutationType mutation) {
+	public Mutation(String className, int line, int mutationForLine,
+			MutationType mutation) {
 		super();
 		if (className == null || line < 0 || mutation == null) {
 			throw new IllegalArgumentException(String.format(
@@ -53,8 +55,10 @@ public class Mutation {
 
 	@Override
 	public String toString() {
-		return String.format("%s - %d (%d)- %s %s", className, lineNumber, mutationForLine, mutationType
-				.toString(), mutationResult == null ? "No Result": mutationResult.toString());
+		return String.format("%s - %d (%d)- %s %s", className, lineNumber,
+				mutationForLine, mutationType.toString(),
+				mutationResult == null ? "No Result" : mutationResult
+						.toString());
 	}
 
 	public String getClassName() {
@@ -65,8 +69,7 @@ public class Mutation {
 		return lineNumber;
 	}
 
-
-	public String getMutationVariable(){
+	public String getMutationVariable() {
 		return PREFIX + "_" + id;
 	}
 
@@ -85,21 +88,24 @@ public class Mutation {
 	}
 
 	/**
-	 * @param className the className to set
+	 * @param className
+	 *            the className to set
 	 */
 	public void setClassName(String className) {
 		this.className = className;
 	}
 
 	/**
-	 * @param lineNumber the lineNumber to set
+	 * @param lineNumber
+	 *            the lineNumber to set
 	 */
 	public void setLineNumber(int lineNumber) {
 		this.lineNumber = lineNumber;
 	}
 
 	/**
-	 * @param mutationType the mutationType to set
+	 * @param mutationType
+	 *            the mutationType to set
 	 */
 	public void setMutationType(MutationType mutationType) {
 		this.mutationType = mutationType;
@@ -113,7 +119,8 @@ public class Mutation {
 	}
 
 	/**
-	 * @param mutationTestResult the mutationResult to set
+	 * @param mutationTestResult
+	 *            the mutationResult to set
 	 */
 	public void setMutationResult(SingleTestResult mutationTestResult) {
 		this.mutationResult = mutationTestResult;
@@ -127,11 +134,11 @@ public class Mutation {
 	}
 
 	/**
-	 * @param mutationForLine the mutationForLine to set
+	 * @param mutationForLine
+	 *            the mutationForLine to set
 	 */
 	public void setMutationForLine(int mutationForLine) {
 		this.mutationForLine = mutationForLine;
 	}
-
 
 }

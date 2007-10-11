@@ -1,9 +1,6 @@
 package org.softevo.mutation.bytecodeMutations.negateJumps;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +39,7 @@ public class NegateJumpsTest {
 			.getFileNameForClass(TEST_CLASS);
 
 	private static String[] testCaseNames = ByteCodeTestUtils
-			.generateTestCaseNames(UNITTEST_CLASS_NAME,5);
+			.generateTestCaseNames(UNITTEST_CLASS_NAME, 5);
 
 	private static final int[] linenumbers = { 6, 14, 16, 25, 34, 37 };
 
@@ -50,7 +47,7 @@ public class NegateJumpsTest {
 
 	@Before
 	public void setup() {
-		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
+		 ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
 		ByteCodeTestUtils.generateTestDataInDB(TEST_CLASS_FILENAME,
 				new NegateJumpsCollectorTransformer(null));
 		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
@@ -70,7 +67,7 @@ public class NegateJumpsTest {
 
 	@After
 	public void tearDown() {
-		// ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
+		 ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
 		ByteCodeTestUtils.deleteCoverageData(TEST_CLASS_NAME);
 	}
 
@@ -101,8 +98,11 @@ public class NegateJumpsTest {
 			SingleTestResult singleTestResult = m.getMutationResult();
 			if (singleTestResult != null) {
 				nonNulls++;
-				Assert.assertEquals(1, singleTestResult.getNumberOfErrors()
+				Assert.assertTrue(2 >= singleTestResult.getNumberOfErrors()
 						+ singleTestResult.getNumberOfFailures());
+				Assert.assertTrue(1 <= singleTestResult.getNumberOfErrors()
+						+ singleTestResult.getNumberOfFailures());
+
 				Assert.assertTrue(singleTestResult.isTouched());
 			}
 		}

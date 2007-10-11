@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -104,11 +103,17 @@ public class MutationForRun {
 				.createSQLQuery(
 						"SELECT m.* FROM Mutation m JOIN TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN TestCoverageClassResult_TestCoverageLineResult AS class_line ON class_line.testcoverageclassresult_id = tccr.id JOIN TestCoverageLineResult AS tclr ON tclr.id = class_line.lineresults_id 	WHERE m.mutationresult_id IS NULL AND m.linenumber = tclr.linenumber")
 				.addEntity(Mutation.class);
+
 		query.setMaxResults(MAX_MUTATIONS);
 		List results = query.list();
 		List<Mutation> mutationList = new ArrayList<Mutation>();
 		for (Object m : results) {
-			mutationList.add((Mutation) m);
+			Mutation  mutation = (Mutation) m;
+			Query hqlQuery = session.createQuery("Mutation  as m 	inner join fetch m.mutationResult	inner join fetch m.mutationResult.failures inner join fetch m.mutationResult.errors inner join fetch m.mutationResult.passing WHERE m.id = :id" );
+			hqlQuery.setLong("id", mutation.getId());
+			Mutation mutationToAdd  = (Mutation) query.uniqueResult();
+			logger.info(mutationToAdd);
+			mutationList.add(mutationToAdd);
 		}
 		tx.commit();
 		session.close();
@@ -140,8 +145,11 @@ public class MutationForRun {
 	private static List<Mutation> getMutationsFromDbByID(Long[] ids) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
+//		Query query = session
+//				.createQuery("FROM Mutation m 	inner join fetch m.mutationResult	inner join fetch m.mutationResult.failures inner join fetch m.mutationResult.errors inner join fetch m.mutationResult.passing  WHERE m.id IN (:ids)");
 		Query query = session
-				.createQuery("FROM Mutation m WHERE m.id IN (:ids)");
+		.createQuery("FROM Mutation m  WHERE m.id IN (:ids)");
+
 		query.setParameterList("ids", ids);
 		List results = query.list();
 		List<Mutation> mutationList = new ArrayList<Mutation>();

@@ -17,7 +17,7 @@
 			<include name="**/*.jar" />
 			<include name="**/*.zip" />
 		</fileset>
-		<pathelement location="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib/mysql-connector-java-5.0.3.jar"/>
+		<pathelement location="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib/mysql-connector-java-5.0.3.jar" />
 	</path>
 
 	<path id="mutation.classpath">
@@ -71,7 +71,7 @@
 		<hibernatetool destdir="${basedir}">
 			<classpath>
 				<pathelement path="target/classes/" />
-				<pathelement location="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib/mysql-connector-java-5.0.3.jar"/>
+				<pathelement location="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib/mysql-connector-java-5.0.3.jar" />
 
 				<!--
 				<fileset dir="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib">
@@ -152,5 +152,15 @@
 			</classpath>
 		</java>
 	</target>
+
+	<target name="deleteTestResults" description="deletes the mutation test results in the database">
+		<java classname="org.softevo.mutation.run.ResultDeleter" maxmemory="1024m" fork="true">
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+			</classpath>
+		</java>
+	</target>
+
 
 </project>

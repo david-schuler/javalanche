@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -34,17 +35,19 @@ public class SingleTestResult {
 	 */
 	boolean touched;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@OrderBy("testCaseName")
 	@IndexColumn(name = "failure_list_id")
 	private List<TestMessage> failures = new ArrayList<TestMessage>();
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "SINGLETESTRESULT_ERRORS", joinColumns = { @JoinColumn(name = "singletestresult_id") }, inverseJoinColumns = @JoinColumn(name = "testmessage_id"))
+	@IndexColumn(name="error_id")
 	private List<TestMessage> errors = new ArrayList<TestMessage>();
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "SINGLETESTRESULT_PASSING", joinColumns = { @JoinColumn(name = "singletestresult_id") }, inverseJoinColumns = @JoinColumn(name = "testmessage_id"))
+	@IndexColumn(name="passing_id")
 	private List<TestMessage> passing = new ArrayList<TestMessage>();
 
 	private SingleTestResult() {
@@ -61,14 +64,12 @@ public class SingleTestResult {
 			updateTouched(touchingTestCases, failures);
 			updateTouched(touchingTestCases, errors);
 			updateTouched(touchingTestCases, passing);
-			updateTimes(mutationTestListener.getDurations());
+//			updateTimes(mutationTestListener.getDurations());
 			touched = true;
 		}
 	}
 
-	private void updateTimes(Map<String, Long> durations) {
 
-	}
 
 	private static void updateTouched(Set<String> touchingTestCases,
 			List<TestMessage> testMessages) {

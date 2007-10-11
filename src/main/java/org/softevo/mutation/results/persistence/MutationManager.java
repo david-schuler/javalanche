@@ -14,7 +14,7 @@ public class MutationManager {
 	public static boolean shouldApplyMutation(Mutation mutation) {
 		Mutation mutationFromDb = QueryManager.getMutationOrNull(mutation);
 		if(mutationFromDb == null){
-			logger.log(Level.INFO, "mutation not in db" + mutation);
+			logger.log(Level.INFO, "Mutation not in db: " + mutation);
 			//QueryManager.saveMutation(mutation);
 			return false;
 		}

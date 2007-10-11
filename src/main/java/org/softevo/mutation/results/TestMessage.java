@@ -39,15 +39,14 @@ public class TestMessage {
 	private long duration;
 
 	public TestMessage(String testCaseName, String message) {
-		super();
-		this.testCaseName = testCaseName;
-		this.message = message;
+		this(testCaseName, message, 0);
+
 	}
 
 	public TestMessage(String testCaseName, String message, long duration) {
 		super();
 		this.testCaseName = testCaseName;
-		this.message = message;
+		this.message = message.substring(0, Math.min(message.length(), 254));
 		this.duration = duration;
 	}
 

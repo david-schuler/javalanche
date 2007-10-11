@@ -1,15 +1,12 @@
 package org.softevo.mutation.testsuite;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestResult;
 
 import org.apache.log4j.Logger;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.OldMutationResult;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.QueryManager;
 
@@ -23,14 +20,19 @@ public class ResultReporter {
 
 	private static String actualTestCase;
 
-	private List<OldMutationResult> mutationResults = new ArrayList<OldMutationResult>();
-
 	private int reports = 0;
 
 	private int touched;
 
-	public void report(TestResult mutationTestResult, Mutation mutation,
-			MutationTestListener mutationTestListener) {
+	public synchronized void report(TestResult mutationTestResult,
+			Mutation mutation, MutationTestListener mutationTestListener) {
+		if (mutationTestResult == null || mutation == null || mutation == null) {
+			throw new IllegalArgumentException(
+					"Argument was null: " + mutationTestResult == null ? "mutationTestResult"
+							: "" + mutation == null ? ", mutation"
+									: "" + mutationTestListener == null ? ", mutationTestListener"
+											: "");
+		}
 		SingleTestResult mutated = new SingleTestResult(mutationTestResult,
 				mutationTestListener, touchingTestCases);
 		QueryManager.updateMutation(mutation, mutated);
@@ -43,15 +45,6 @@ public class ResultReporter {
 		reports++;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		for (OldMutationResult cr : mutationResults) {
-			sb.append(cr.toString());
-			sb.append('\n');
-		}
-		return sb.toString();
-	}
 
 	public static void touch(long mutationID) {
 		logger.info("Touch called by mutated code in test " + actualTestCase);

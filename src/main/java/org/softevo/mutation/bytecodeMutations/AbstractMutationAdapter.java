@@ -4,10 +4,12 @@ import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 public abstract class AbstractMutationAdapter extends MethodAdapter {
 
-	private static final Logger logger = Logger.getLogger(AbstractMutationAdapter.class);
+	private static final Logger logger = Logger
+			.getLogger(AbstractMutationAdapter.class);
 
 	private int lineNumber = -1;
 
@@ -42,10 +44,26 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 	@Override
 	public void visitLabel(Label label) {
 		super.visitLabel(label);
-		if(label.info instanceof MutationMarker){
+		if (label.info instanceof MutationMarker) {
 			MutationMarker marker = (MutationMarker) label.info;
-			logger.info("Found mutation marker: "  + (marker.isStart() ? "start" :  "end") + " in line " + getLineNumber() + "  " + this);
+			logger.info("Found mutation marker: "
+					+ (marker.isStart() ? "start" : "end") + " in line "
+					+ getLineNumber() + "  " + this);
 			mutationCode = marker.isStart();
 		}
+	}
+
+	@Override
+	public void visitMethodInsn(int opcode, String owner, String name,
+			String desc) {
+		if (owner.equals("java/lang/System") && name.equals("exit")) {
+			logger.info("System exit replaced");
+			mv.visitTypeInsn(Opcodes.NEW, "java/lang/RuntimeException");
+			mv.visitInsn(Opcodes.DUP);
+			mv.visitLdcInsn("System exit called");
+			mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/RuntimeException", "<init>", "(Ljava/lang/String;)V");
+			mv.visitInsn(Opcodes.ATHROW);
+		}
+		super.visitMethodInsn(opcode, owner, name, desc);
 	}
 }

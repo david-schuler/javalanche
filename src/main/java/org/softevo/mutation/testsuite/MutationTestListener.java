@@ -24,34 +24,47 @@ public class MutationTestListener implements TestListener {
 
 	private List<TestMessage> passingMessages = new ArrayList<TestMessage>();
 
-	private List<Test> nonPassing = new ArrayList<Test>();
-
-	private Map<String, Long> durations = new HashMap<String, Long>();
+	private List<Test> alreadyReported = new ArrayList<Test>();
 
 	public void addError(Test test, Throwable t) {
+		if (alreadyReported.contains(test)) {
+			logger.warn("Result for this test was already reported " + test);
+			return;
+		}
 		logger.info("Error added");
-		errorMessages.add(new TestMessage(test.toString(), t.toString()));
-		nonPassing.add(test);
+		long duration = getDuration();
+		errorMessages.add(new TestMessage(test.toString(), t.toString(), duration));
+		alreadyReported.add(test);
 	}
 
 	public void addFailure(Test test, AssertionFailedError t) {
+		if (alreadyReported.contains(test)) {
+			logger.warn("Result for this test was already reported " + test);
+			return;
+		}
 		logger.info("Failure added");
-		failureMessages.add(new TestMessage(test.toString(), t.toString()));
-		nonPassing.add(test);
+		long duration = getDuration();
+		failureMessages.add(new TestMessage(test.toString(), t.toString(), duration));
+		alreadyReported.add(test);
 	}
 
 	public void endTest(Test test) {
-		long duration = System.currentTimeMillis() - start;
-		durations.put(test.toString(), duration);
-		if (!nonPassing.contains(test)) {
+		if (!alreadyReported.contains(test)) {
+			long duration = getDuration();
+// 			durations.put(test.toString(), duration);
 			passingMessages.add(new TestMessage(test.toString(), "test passed",
 					duration));
 		}
-		logger.info("Test ended");
+		logger.info("Test ended:" + test);
+	}
+
+	private long getDuration() {
+		long duration = System.currentTimeMillis() - start;
+		return duration;
 	}
 
 	public void startTest(Test test) {
-		logger.info("Test started");
+		logger.info("Test started: " + test);
 		start = System.currentTimeMillis();
 	}
 
@@ -63,12 +76,6 @@ public class MutationTestListener implements TestListener {
 		return failureMessages;
 	}
 
-	/**
-	 * @return the durations
-	 */
-	public Map<String, Long> getDurations() {
-		return durations;
-	}
 
 	/**
 	 * @return the passingMessages

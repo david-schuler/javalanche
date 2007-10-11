@@ -27,9 +27,11 @@ import org.softevo.mutation.results.Mutation;
 
 public class SelectiveTestSuite extends TestSuite {
 
+	// private static final ExitSecurityManager EXIT_SECURITY_MANAGER = new
+	// ExitSecurityManager();
+
 	/**
-	 * $Date$ $LastChangedDate:
-	 * 2007-10-01 11:46:48 +0200 (Mon, 01 Oct 2007) $
+	 * $Date$
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
@@ -37,6 +39,8 @@ public class SelectiveTestSuite extends TestSuite {
 	private static final boolean TESTMODE = false;
 
 	private static final long DEFAULT_TIMEOUT_IN_SECONDS = 5;
+
+	protected static final int SECOND = 1000;
 
 	static Logger logger = Logger.getLogger(SelectiveTestSuite.class);
 
@@ -64,6 +68,7 @@ public class SelectiveTestSuite extends TestSuite {
 		if (TESTMODE) {
 			logger.info("TESTMODE");
 		}
+		logger.info(System.getProperty("java.security.policy"));
 		logger.info("$Date$");
 		logger
 				.info("$LastChangedDate$");
@@ -71,14 +76,28 @@ public class SelectiveTestSuite extends TestSuite {
 
 	private void addShutdownHook() {
 		shutDownHook = new Thread() {
+			private static final boolean SLEEP = false;
+
 			public void run() {
-				logger.info("Shutdownhook activated");
+				logger.info("Shutdown hook activated");
+				logger.info("actualListener: " + actualListener
+						+ "\nresultReporter: " + resultReporter);
+				if (SLEEP) {
+					try {
+						logger.info("Sleeping for 10 seconds");
+						sleep(10 * SECOND);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					logger.info("Woke up");
+				}
 				if (actualListener != null) {
 					actualListener.addError(actualTest, new RuntimeException(
 							"JVM shut down because of mutation"));
-					resultReporter.report(actualMutationTestResult,
-							actualMutation, actualListener);
+					// resultReporter.report(actualMutationTestResult,
+					// actualMutation, actualListener);
 				}
+
 				logger.info("" + resultReporter.summary());
 			}
 		};
@@ -90,16 +109,16 @@ public class SelectiveTestSuite extends TestSuite {
 		addShutdownHook();
 	}
 
-	private static void setSecurityManager() {
-		try {
-			System.setSecurityManager(new ExitSecurityManager());
-			logger.info("SecurityManager set");
-		} catch (SecurityException se) {
-			logger.info("SecurityManager already set!");
-			se.printStackTrace();
-		}
-
-	}
+	// private static void setSecurityManager() {
+	// try {
+	// System.setSecurityManager(EXIT_SECURITY_MANAGER);
+	// logger.info("SecurityManager set");
+	// } catch (SecurityException se) {
+	// logger.info("SecurityManager already set!");
+	// se.printStackTrace();
+	// }
+	//
+	// }
 
 	public SelectiveTestSuite(String name) {
 		super(name);
@@ -159,6 +178,7 @@ public class SelectiveTestSuite extends TestSuite {
 		Runtime.getRuntime().removeShutdownHook(shutDownHook);
 		logger.log(Level.INFO, "Test Runs finished");
 		logger.info("" + resultReporter.summary());
+		// EXIT_SECURITY_MANAGER.setCanExit(true);
 	}
 
 	/**
@@ -180,19 +200,19 @@ public class SelectiveTestSuite extends TestSuite {
 		for (String testName : testsForThisRun) {
 			TestCase test = allTests.get(testName);
 			actualTest = test;
-			ResultReporter.setActualTestCase(test.toString());
 			if (test == null) {
 				// throw new RuntimeException("Test not found " + testName
 				// + "\n All Tests: " + allTests);
 				logger.warn("Test not found " + testName);
 			} else {
 				try {
+					ResultReporter.setActualTestCase(test.toString());
 					runWithTimeout(test, testResult);
+					// runTest(test, testResult);
 				} catch (Exception e) {
 					logger.warn(String.format(
 							"Exception thrown by test %s Exception: %s", test
 									.toString(), e.toString()));
-					logger.info("Exception caught");
 					testResult.addError(test, e);
 				}
 			}
@@ -203,7 +223,13 @@ public class SelectiveTestSuite extends TestSuite {
 		ExecutorService service = Executors.newSingleThreadExecutor();
 		Callable<Object> callable = new Callable<Object>() {
 			public Object call() throws Exception {
-				runTest(test, testResult);
+				try {
+					runTest(test, testResult);
+				} catch (Exception e) {
+					logger.info("Caught exception" + e);
+					e.printStackTrace();
+					testResult.addError(test, e);
+				}
 				return null;
 			}
 		};
@@ -216,12 +242,13 @@ public class SelectiveTestSuite extends TestSuite {
 				service.shutdownNow();
 			}
 			result.get(DEFAULT_TIMEOUT_IN_SECONDS, TimeUnit.MILLISECONDS);
-			// throws the exception if one occurred during the invocation
+			result.cancel(true);
 		} catch (TimeoutException e) {
 			testResult.addError(test, new Exception(String.format(
 					"test timed out after %d seconds",
 					DEFAULT_TIMEOUT_IN_SECONDS)));
 		} catch (Exception e) {
+			e.printStackTrace();
 			testResult.addError(test, e);
 		}
 	}
