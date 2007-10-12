@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.core.BaseException;
 
 public class XmlIo {
 
@@ -40,14 +41,22 @@ public class XmlIo {
 			}
 
 			XStream xStream = new XStream();
+			logger.info("XML file read. Size: " + sb.length());
 			logger.info("Start reading object from xml file: "
 					+ file.getAbsoluteFile());
-			resultObject = xStream.fromXML(sb.toString());
+
+			String xml = sb.toString();
+			logger.info("got string - size: " + xml.length());
+			resultObject = xStream.fromXML(xml);
 
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (BaseException be) {
+			logger.warn("Exception thrown when deserializing " + be);
+			be.printStackTrace();
 		} finally {
-			logger.info("Reading finished: " + file.getAbsoluteFile() + "\n read Object of type "+ resultObject.getClass());
+			logger.info("Reading finished: " + file.getAbsoluteFile());
+			logger.info("Read Object of type " + resultObject.getClass());
 			if (bufferedReader != null) {
 				try {
 					bufferedReader.close();

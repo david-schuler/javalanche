@@ -41,12 +41,12 @@ public class SingleTestResult {
 	private List<TestMessage> failures = new ArrayList<TestMessage>();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = "SINGLETESTRESULT_ERRORS", joinColumns = { @JoinColumn(name = "singletestresult_id") }, inverseJoinColumns = @JoinColumn(name = "testmessage_id"))
+	@JoinTable(name = "SingleTestResult_Errors", joinColumns = { @JoinColumn(name = "singleTestResult_id") }, inverseJoinColumns = @JoinColumn(name = "testMessage_id"))
 	@IndexColumn(name="error_id")
 	private List<TestMessage> errors = new ArrayList<TestMessage>();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = "SINGLETESTRESULT_PASSING", joinColumns = { @JoinColumn(name = "singletestresult_id") }, inverseJoinColumns = @JoinColumn(name = "testmessage_id"))
+	@JoinTable(name = "SingleTestResult_Passing", joinColumns = { @JoinColumn(name = "singleTestResult_id") }, inverseJoinColumns = @JoinColumn(name = "testMessage_id"))
 	@IndexColumn(name="passing_id")
 	private List<TestMessage> passing = new ArrayList<TestMessage>();
 

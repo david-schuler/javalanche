@@ -50,6 +50,9 @@ public class TestSuiteCoverageResult {
 		for (Entry<String, CoverageResult> entry : entrySet) {
 			CoverageResult cr = entry.getValue();
 			String className = entry.getKey();
+			if(className.startsWith("config.clover_html.")){
+				className = className.replace("config.clover_html.", "");
+			}
 			Set<Entry<Integer, List<String>>> lineDataSet = cr.lineData
 					.entrySet();
 			List<TestCoverageLineResult> lineResults = new ArrayList<TestCoverageLineResult>();

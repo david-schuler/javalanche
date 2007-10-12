@@ -127,7 +127,7 @@
 
 
 	<target name="generateCoverageEntries" description="generate the coverage entries for aspectj">
-		<java classname="org.softevo.mutation.coverageResults.TestSuiteCoverageResult" maxmemory="1536m" fork="true">
+		<java classname="org.softevo.mutation.coverageResults.TestSuiteCoverageResult" maxmemory="2048m" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
@@ -154,7 +154,7 @@
 	</target>
 
 	<target name="deleteTestResults" description="deletes the mutation test results in the database">
-		<java classname="org.softevo.mutation.run.ResultDeleter" maxmemory="1024m" fork="true">
+		<java classname="org.softevo.mutation.run.ResultDeleter" maxmemory="1024m" fork="true" jvm="/usr/local/java/jdk1.5.0_12/jre/bin/java">
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
@@ -162,5 +162,29 @@
 		</java>
 	</target>
 
+	<target name="junitXML" description="test xml serialization">
+
+		<echo>A A B B</echo>
+		<junit printsummary="withOutAndErr" fork="yes" haltonfailure="yes" showoutput="yes">
+			<formatter type="plain" />
+			<formatter type="xml" />
+			<formatter type="plain" />
+			<test name="org.softevo.mutation.io.TestXML" />
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+				<path location="target/test-classes" />
+			</classpath>
+		</junit>
+	</target>
+
+	<target name="parseCoverageResults" description="parses the clover coverage results">
+		<java classname="org.softevo.mutation.coverageResults.clover.ParseCloverResults" maxmemory="3072m" fork="true">
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+			</classpath>
+		</java>
+	</target>
 
 </project>

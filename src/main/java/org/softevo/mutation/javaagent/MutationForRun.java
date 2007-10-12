@@ -109,9 +109,10 @@ public class MutationForRun {
 		List<Mutation> mutationList = new ArrayList<Mutation>();
 		for (Object m : results) {
 			Mutation  mutation = (Mutation) m;
-			Query hqlQuery = session.createQuery("Mutation  as m 	inner join fetch m.mutationResult	inner join fetch m.mutationResult.failures inner join fetch m.mutationResult.errors inner join fetch m.mutationResult.passing WHERE m.id = :id" );
-			hqlQuery.setLong("id", mutation.getId());
-			Mutation mutationToAdd  = (Mutation) query.uniqueResult();
+//			Query hqlQuery = session.createQuery("Mutation  as m 	inner join fetch m.mutationResult	inner join fetch m.mutationResult.failures inner join fetch m.mutationResult.errors inner join fetch m.mutationResult.passing WHERE m.id = :id" );
+//			hqlQuery.setLong("id", mutation.getId());
+//			Mutation mutationToAdd  = (Mutation) hqlQuery.uniqueResult();
+			Mutation mutationToAdd = mutation;
 			logger.info(mutationToAdd);
 			mutationList.add(mutationToAdd);
 		}

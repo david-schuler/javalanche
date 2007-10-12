@@ -9,9 +9,9 @@ public interface MutationProperties {
 	static final String SAMPLE_FILE = ASPECTJ_DIR + "/weaver/bin/"
 			+ SAMPLE_FILE_CLASS_NAME.replace('.', '/') + ".class";
 
-	static final String CLOVER_REPORT_DIR = "/scratch/schuler/aspectJClover/run-all-junit-tests/clover_html";
-
 	static final String CONFIG_DIR = "/scratch/schuler/mutation-test-config";
+
+	static final String CLOVER_REPORT_DIR = CONFIG_DIR +  "/clover_html";
 
 	static final String TEST_FILE = CONFIG_DIR + "/selected-tests.txt";
 

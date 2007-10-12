@@ -57,14 +57,13 @@ public class QueryManager {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		Mutation m2 = (Mutation) session.get(Mutation.class, mutation.getId());
-		for (TestMessage tm : mutationTestResult.getErrors()) {
-			session.save(tm);
-		}
-		for (TestMessage tm : mutationTestResult.getFailures()) {
-			session.save(tm);
-		}
+//		for (TestMessage tm : mutationTestResult.getErrors()) {
+//			session.save(tm);
+//		}
+//		for (TestMessage tm : mutationTestResult.getFailures()) {
+//			session.save(tm);
+//		}
 		session.save(mutationTestResult);
-		logger.info("mutation updated " + m2);
 		m2.setMutationResult(mutationTestResult);
 		tx.commit();
 		session.close();

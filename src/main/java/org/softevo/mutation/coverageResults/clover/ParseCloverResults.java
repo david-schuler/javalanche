@@ -19,6 +19,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.softevo.mutation.coverageResults.CoverageResult;
+import org.softevo.mutation.coverageResults.TestSuiteCoverageResult;
 import org.softevo.mutation.io.HtmlFileSource;
 import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.properties.MutationProperties;
@@ -257,8 +258,18 @@ public class ParseCloverResults {
 	}
 
 	public static void main(String[] args) {
-		Object o = parseResults();
-		XmlIo.toXML(o, new File(MutationProperties.CLOVER_RESULTS_FILE));
+		boolean todb = false;
+		if (args.length > 0 && args[0].toLowerCase().equals("todb")) {
+			todb = true;
+			logger.info("Also writing to db");
+		}
+		Map<String, CoverageResult> map = parseResults();
+		XmlIo.toXML(map, new File(MutationProperties.CLOVER_RESULTS_FILE));
 		logger.info("Parsing Finished");
+		if (todb) {
+			TestSuiteCoverageResult coverageResult = new TestSuiteCoverageResult(
+					map);
+			coverageResult.toDB();
+		}
 	}
 }
