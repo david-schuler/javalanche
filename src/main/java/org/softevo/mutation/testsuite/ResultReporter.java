@@ -1,11 +1,14 @@
 package org.softevo.mutation.testsuite;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.TestResult;
 
 import org.apache.log4j.Logger;
+import org.softevo.mutation.io.XmlIo;
+import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.QueryManager;
@@ -27,11 +30,11 @@ public class ResultReporter {
 	public synchronized void report(TestResult mutationTestResult,
 			Mutation mutation, MutationTestListener mutationTestListener) {
 		if (mutationTestResult == null || mutation == null || mutation == null) {
-			throw new IllegalArgumentException(
-					"Argument was null: " + mutationTestResult == null ? "mutationTestResult"
-							: "" + mutation == null ? ", mutation"
-									: "" + mutationTestListener == null ? ", mutationTestListener"
-											: "");
+			throw new IllegalArgumentException("Argument was null: "
+					+ mutationTestResult == null ? "mutationTestResult" : ""
+					+ mutation == null ? ", mutation" : ""
+					+ mutationTestListener == null ? ", mutationTestListener"
+					: "");
 		}
 		SingleTestResult mutated = new SingleTestResult(mutationTestResult,
 				mutationTestListener, touchingTestCases);
@@ -44,7 +47,6 @@ public class ResultReporter {
 		actualTestCase = null;
 		reports++;
 	}
-
 
 	public static void touch(long mutationID) {
 		logger.info("Touch called by mutated code in test " + actualTestCase);
@@ -88,9 +90,13 @@ public class ResultReporter {
 	}
 
 	public String summary() {
-		return String
-				.format(
-						"%d Mutation Results were recorded\n%d Mutations where actually touched",
-						reports, touched);
+		RunResult runResult = new RunResult(reports, touched);
+		String resultFile = System.getProperty(MutationProperties.RESULT_FILE_KEY);
+		if (resultFile != null) {
+			XmlIo.toXML(runResult, new File(resultFile));
+		}else{
+			logger.warn("Not writing property file. Didn't found Property " + MutationProperties.RESULT_FILE_KEY);
+		}
+		return runResult.toString();
 	}
 }

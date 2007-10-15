@@ -30,4 +30,6 @@ public interface MutationProperties {
 	static final String[] TEST_CLASSES_TO_INSTRUMENT = { "org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps" };
 
 	static final String SCAN_FOR_MUTATIONS = "scan";
+
+	static final String RESULT_FILE_KEY = "mutation.result.file";
 }

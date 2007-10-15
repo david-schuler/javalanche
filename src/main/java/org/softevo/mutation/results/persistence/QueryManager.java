@@ -15,7 +15,6 @@ import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
-import org.softevo.mutation.results.TestMessage;
 import org.softevo.mutation.results.Mutation.MutationType;
 
 public class QueryManager {

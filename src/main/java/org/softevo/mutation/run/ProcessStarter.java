@@ -5,6 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
+
+import org.softevo.mutation.properties.MutationProperties;
+import org.softevo.mutation.testsuite.RunResult;
 
 public class ProcessStarter implements Runnable {
 
@@ -75,24 +79,33 @@ public class ProcessStarter implements Runnable {
 
 	private boolean running;
 
+	private boolean finished;
+
 	private int exitvalue;
 
 	private final File outputFile;
 
+	private final File resultFile;
+
 	public ProcessStarter(String command, String[] args, File dir,
-			File outputFile) {
+			File outputFile, File resultFile) {
 		super();
 		this.command = command;
 		this.args = args;
 		this.dir = dir;
 		this.outputFile = outputFile;
+		this.resultFile = resultFile;
 		System.out.println("Process created" + this);
 	}
 
 	public void run() {
 		System.out.println("Process started" + this);
 		try {
-			process = Runtime.getRuntime().exec(command, args, dir);
+			String[] cmdArray = new String[args.length + 2];
+			cmdArray[0] = command;
+			cmdArray[1] = "-D" + MutationProperties.RESULT_FILE_KEY + "=" + resultFile.getAbsolutePath();
+			System.arraycopy(args, 0, cmdArray, 2, args.length);
+			process = Runtime.getRuntime().exec(cmdArray, new String[0], dir);
 			running = true;
 			InputStream is = process.getInputStream();
 			FileOutputStream fw = new FileOutputStream(outputFile);
@@ -113,6 +126,7 @@ public class ProcessStarter implements Runnable {
 		}
 		exitvalue = process.exitValue();
 		running = false;
+		finished = true;
 	}
 
 	@Override
@@ -120,8 +134,11 @@ public class ProcessStarter implements Runnable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Command" + command);
 		sb.append('\n');
+		sb.append("Arguments: ");
+		sb.append(Arrays.toString(args));
 		sb.append("Output File" + outputFile.getAbsolutePath());
 		sb.append('\n');
+
 		return sb.toString();
 	}
 
@@ -145,8 +162,20 @@ public class ProcessStarter implements Runnable {
 
 		ProcessStarter ps = new ProcessStarter(cmd, new String[] {}, new File(
 				"/scratch/schuler/mutationTest/src/scripts/"), new File(
-				"processoutput.txt"));
+				"processoutput.txt"), new File("res.xml"));
 		Thread t = new Thread(ps);
 		t.start();
+	}
+
+	public RunResult getRunResult() {
+		return null;
+
+	}
+
+	/**
+	 * @return the finished
+	 */
+	public boolean isFinished() {
+		return finished;
 	}
 }

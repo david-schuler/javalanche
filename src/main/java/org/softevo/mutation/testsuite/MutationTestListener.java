@@ -1,16 +1,14 @@
 package org.softevo.mutation.testsuite;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.softevo.mutation.results.TestMessage;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestListener;
+
+import org.apache.log4j.Logger;
+import org.softevo.mutation.results.TestMessage;
 
 public class MutationTestListener implements TestListener {
 
