@@ -41,12 +41,12 @@ public class XmlIo {
 			}
 
 			XStream xStream = new XStream();
-			logger.info("XML file read. Size: " + sb.length());
+			logger.debug("XML file read. Size: " + sb.length());
 			logger.info("Start reading object from xml file: "
 					+ file.getAbsoluteFile());
 
 			String xml = sb.toString();
-			logger.info("got string - size: " + xml.length());
+			logger.debug("got string - size: " + xml.length());
 			resultObject = xStream.fromXML(xml);
 
 		} catch (IOException e) {
@@ -56,7 +56,7 @@ public class XmlIo {
 			be.printStackTrace();
 		} finally {
 			logger.info("Reading finished: " + file.getAbsoluteFile());
-			logger.info("Read Object of type " + resultObject.getClass());
+			logger.debug("Read Object of type " + resultObject.getClass());
 			if (bufferedReader != null) {
 				try {
 					bufferedReader.close();

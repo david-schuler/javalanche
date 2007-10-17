@@ -153,6 +153,18 @@
 		</java>
 	</target>
 
+	<target name="runThreadedDebug" description="run mutation tests multithreaded, with remote debugging enabled">
+		<java classname="org.softevo.mutation.run.ThreadPool" maxmemory="1024m" fork="true">
+			<jvmarg value="-Xdebug" />
+			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044" />
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+			</classpath>
+		</java>
+	</target>
+
+
 	<target name="deleteTestResults" description="deletes the mutation test results in the database">
 		<java classname="org.softevo.mutation.run.ResultDeleter" maxmemory="1024m" fork="true" jvm="/usr/local/java/jdk1.5.0_12/jre/bin/java">
 			<classpath>

@@ -3,6 +3,7 @@ package org.softevo.mutation.results.persistence;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.results.Mutation;
 
 public class MutationManager {
@@ -18,7 +19,11 @@ public class MutationManager {
 			//QueryManager.saveMutation(mutation);
 			return false;
 		}
-		return true;
+		else if(MutationForRun.getInstance().containsMutation(mutationFromDb)){
+			logger.log(Level.INFO, "Applyin mutation: " + mutation);
+			return true;
+		}
+		return false;
 	}
 
 }

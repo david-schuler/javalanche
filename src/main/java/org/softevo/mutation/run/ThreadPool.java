@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -15,9 +15,12 @@ import org.hibernate.Transaction;
 import org.softevo.mutation.io.Io;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.persistence.HibernateUtil;
+import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.testsuite.RunResult;
 
 public class ThreadPool {
+
+	private static final int CHECK_PERIOD = 20;
 
 	private static final String EXEC_DIR = "/scratch/schuler/mutationTest/src/scripts/";
 
@@ -25,9 +28,9 @@ public class ThreadPool {
 
 	private static final int NUMBER_OF_THREADS = 3;
 
-	private static final int MAX_MUTATIONS = 10000;
+	private static final int MAX_MUTATIONS = 20000;
 
-	private static final int NUMBER_OF_TASKS = 10;
+	private static final int NUMBER_OF_TASKS = 200;
 
 	private static final int MUTATIONS_PER_TASK = 100;
 
@@ -45,9 +48,14 @@ public class ThreadPool {
 
 	private static final String MUTATION_COMMAND = "/scratch/schuler/mutationTest/src/scripts/threaded-run-tests.sh";
 
-	ExecutorService pool = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+	private static final long MAX_TIME_FOR_SUB_PROCESS = 7 * 60 * 1000;
+
+	private final ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors
+			.newFixedThreadPool(NUMBER_OF_THREADS);
 
 	private List<Long> mutationIDs;
+
+	private List<ProcessWrapper> processes;
 
 	public static void main(String[] args) {
 		ThreadPool tp = new ThreadPool();
@@ -55,20 +63,22 @@ public class ThreadPool {
 	}
 
 	private void startTimed() {
+		long mutationResultsPre  = QueryManager.getNumberOfMutationsWithResult();
 		long startTime = System.currentTimeMillis();
 		logger.info("Start fetching mutations");
 		mutationIDs = getMutationsIdListFromDb();
 		// mutationIDs = getFakeList();
 		long fetchTime = System.currentTimeMillis();
 		logger.info("Fetched " + mutationIDs.size() + " mutations in "
-				+ formatMillisecons(fetchTime - startTime));
+				+ formatMilliseconds(fetchTime - startTime));
 		start();
 		long duration = System.currentTimeMillis() - fetchTime;
-		logger.info("Ran " + MUTATIONS_PER_TASK * NUMBER_OF_TASKS
-				+ " mutations in " + formatMillisecons(duration));
+		long actuallMutationsInDb = QueryManager.getNumberOfMutationsWithResult()  - mutationResultsPre;
+		logger.info("Tried to run " + MUTATIONS_PER_TASK * NUMBER_OF_TASKS
+				+ " mutations - got " + actuallMutationsInDb +"  results\nRun for: " + formatMilliseconds(duration));
 	}
 
-	private String formatMillisecons(long duration) {
+	private String formatMilliseconds(long duration) {
 		long minutes = duration / 60000;
 		int seconds = (int) ((duration % 60000) / 1000);
 		return minutes + "'" + seconds + "''";
@@ -79,29 +89,12 @@ public class ThreadPool {
 	}
 
 	private void runTasks() {
-		List<File> files = writeTaskFiles();
-		int counter = 0;
-		List<ProcessStarter> processes = new ArrayList<ProcessStarter>();
-		for (File f : files) {
-			String outputFile = String.format(RESULT_DIR
-					+ "/process-output-%02d.txt", counter);
-
-			String resultFile = String.format(RESULT_DIR
-					+ "/process-result-%02d.xml", counter);
-			counter++;
-			ProcessStarter ps = new ProcessStarter(MUTATION_COMMAND,
-					new String[] { "-Dmutation.file=" + f.getAbsolutePath() },
-					new File(EXEC_DIR), new File(outputFile), new File(
-							resultFile));
-			processes.add(ps);
-			logger.info("Process: " + ps.toString());
-			pool.submit(ps);
-		}
+		addProcesses();
 		while (!pool.isTerminated()) {
 			try {
-				boolean processesFinished = pool.awaitTermination(10,
+				boolean processesFinished = pool.awaitTermination(CHECK_PERIOD,
 						TimeUnit.SECONDS);
-				report(processes);
+				handleProcesses(processes);
 				logger.info("Processes finished:" + processesFinished);
 				if (processesFinished) {
 					pool.shutdown();
@@ -113,22 +106,65 @@ public class ThreadPool {
 		handleResults(processes);
 	}
 
-	private void report(List<ProcessStarter> processes) {
+	private void addProcesses() {
+		List<File> files = writeTaskFiles();
+		int counter = 0;
+		processes = new ArrayList<ProcessWrapper>();
+		for (File f : files) {
+			String outputFile = String.format(RESULT_DIR
+					+ "/process-output-%02d.txt", counter);
+
+			String resultFile = String.format(RESULT_DIR
+					+ "/process-result-%02d.xml", counter);
+			counter++;
+			ProcessWrapper ps = new ProcessWrapper(MUTATION_COMMAND,
+					new String[] { "-Dmutation.file=" + f.getAbsolutePath() },
+					new File(EXEC_DIR), new File(outputFile), new File(
+							resultFile));
+			processes.add(ps);
+			logger.info("Process: " + ps.toString());
+			pool.submit(ps);
+		}
+	}
+
+	private void handleProcesses(List<ProcessWrapper> processes) {
 		int processesFinished = 0;
-		for (ProcessStarter ps : processes) {
+		int processesRunning = 0;
+		for (ProcessWrapper ps : processes) {
 			if (ps.isFinished()) {
 				processesFinished++;
 			}
+			if (ps.isRunning()) {
+				processesRunning++;
+				long timeRunning = ps.getTimeRunnning();
+				logger.info("Process is running for "
+						+ formatMilliseconds(timeRunning) + " out of "
+						+ formatMilliseconds(MAX_TIME_FOR_SUB_PROCESS));
+				if (timeRunning >= MAX_TIME_FOR_SUB_PROCESS) {
+					logger.info("Destroying process" + ps
+							+ " because time running exceeded limit: "
+							+ formatMilliseconds(timeRunning));
+					boolean couldBeRemoved = pool.remove(ps);
+					logger.info(couldBeRemoved ? "Task was removed"
+							: " Task could not be removed");
+					ps.destroyProcess();
+				}
+			}
+
 		}
-		logger.info(processesFinished +  " processes are finished");
+		logger.info(processesFinished + " processes are finished and "
+				+ processesRunning + " are running");
+		if(processesRunning == 0 && processesFinished == NUMBER_OF_TASKS){
+			pool.shutdown();
+		}
 		handleResults(processes);
 	}
 
-	private void handleResults(List<ProcessStarter> processes) {
+	private void handleResults(List<ProcessWrapper> processes) {
 		int totalMutations = 0;
-		for (ProcessStarter ps : processes) {
-			if (!ps.isRunning()) {
-				RunResult runResult = ps.getRunResult();
+		for (ProcessWrapper ps : processes) {
+			RunResult runResult = ps.getRunResult();
+			if (ps.isFinished() && runResult != null) {
 				totalMutations += runResult.getMutations();
 			}
 		}

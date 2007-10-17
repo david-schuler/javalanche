@@ -39,6 +39,10 @@ public class MutationForRun {
 
 	private static final boolean NON_RANDOM = true;
 
+
+	private List<Mutation> mutations;
+
+
 	public static MutationForRun getInstance() {
 		return SingletonHolder.INSTANCE;
 	}
@@ -52,12 +56,12 @@ public class MutationForRun {
 		return 0;
 	}
 
-	private List<Mutation> mutations;
 
 	private MutationForRun() {
 		mutations = getMutationsForRun();
 		logger.info("Aplying " + mutations.size() + " mutations");
 	}
+
 
 	public Collection<String> getClassNames() {
 		Set<String> classNames = new HashSet<String>();
@@ -80,15 +84,16 @@ public class MutationForRun {
 				logger.info("Value of mutation file: " + filename);
 				File file = new File(filename);
 				if (file.exists()) {
-					logger.info("Location of mutation.file: " + file.getAbsolutePath());
+					logger.info("Location of mutation.file: "
+							+ file.getAbsolutePath());
 					return getMutationsByFile(file);
-				}else{
+				} else {
 					logger.info("Mutation file does not exist" + file);
 				}
 			}
 		} else {
 			logger.info("Property not found: mutation.file");
-		//	throw new RuntimeException("property not found");
+			// throw new RuntimeException("property not found");
 		}
 		if (NON_RANDOM) {
 			return getMutationsFromDB();
@@ -108,10 +113,13 @@ public class MutationForRun {
 		List results = query.list();
 		List<Mutation> mutationList = new ArrayList<Mutation>();
 		for (Object m : results) {
-			Mutation  mutation = (Mutation) m;
-//			Query hqlQuery = session.createQuery("Mutation  as m 	inner join fetch m.mutationResult	inner join fetch m.mutationResult.failures inner join fetch m.mutationResult.errors inner join fetch m.mutationResult.passing WHERE m.id = :id" );
-//			hqlQuery.setLong("id", mutation.getId());
-//			Mutation mutationToAdd  = (Mutation) hqlQuery.uniqueResult();
+			Mutation mutation = (Mutation) m;
+			// Query hqlQuery = session.createQuery("Mutation as m inner join
+			// fetch m.mutationResult inner join fetch m.mutationResult.failures
+			// inner join fetch m.mutationResult.errors inner join fetch
+			// m.mutationResult.passing WHERE m.id = :id" );
+			// hqlQuery.setLong("id", mutation.getId());
+			// Mutation mutationToAdd = (Mutation) hqlQuery.uniqueResult();
 			Mutation mutationToAdd = mutation;
 			logger.info(mutationToAdd);
 			mutationList.add(mutationToAdd);
@@ -130,7 +138,7 @@ public class MutationForRun {
 		List<Long> idList = new ArrayList<Long>();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
-			while(br.ready()){
+			while (br.ready()) {
 				String id = br.readLine();
 				idList.add(Long.valueOf(id));
 			}
@@ -146,10 +154,13 @@ public class MutationForRun {
 	private static List<Mutation> getMutationsFromDbByID(Long[] ids) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-//		Query query = session
-//				.createQuery("FROM Mutation m 	inner join fetch m.mutationResult	inner join fetch m.mutationResult.failures inner join fetch m.mutationResult.errors inner join fetch m.mutationResult.passing  WHERE m.id IN (:ids)");
+		// Query query = session
+		// .createQuery("FROM Mutation m inner join fetch m.mutationResult inner
+		// join fetch m.mutationResult.failures inner join fetch
+		// m.mutationResult.errors inner join fetch m.mutationResult.passing
+		// WHERE m.id IN (:ids)");
 		Query query = session
-		.createQuery("FROM Mutation m  WHERE m.id IN (:ids)");
+				.createQuery("FROM Mutation m  WHERE m.id IN (:ids)");
 
 		query.setParameterList("ids", ids);
 		List results = query.list();
@@ -162,8 +173,12 @@ public class MutationForRun {
 		return mutationList;
 	}
 
-	public void reinit(){
+	public void reinit() {
 		mutations = getMutationsForRun();
-		logger.info("Got "  +mutations.size() + " mutations");
+		logger.info("Got " + mutations.size() + " mutations");
+	}
+
+	public boolean containsMutation(Mutation mutationFromDb) {
+		return mutations.contains(mutationFromDb);
 	}
 }
