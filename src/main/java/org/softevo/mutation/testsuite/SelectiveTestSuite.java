@@ -25,6 +25,14 @@ import org.softevo.mutation.javaagent.MutationPreMain;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 
+/**
+ * Subclass of Junits {@link TestSuite} class. It is used to execute the tests
+ * for the mutated program. It repeatedly executes the test-cases for every
+ * mutation, but only executes the tests that cover the mutation.
+ * 
+ * @author David Schuler
+ * 
+ */
 public class SelectiveTestSuite extends TestSuite {
 
 	// private static final ExitSecurityManager EXIT_SECURITY_MANAGER = new
@@ -32,7 +40,7 @@ public class SelectiveTestSuite extends TestSuite {
 
 	/**
 	 * $Date$
-	 *
+	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -183,7 +191,7 @@ public class SelectiveTestSuite extends TestSuite {
 
 	/**
 	 * Returns a list of TestCase names for given Collection of TestCases.
-	 *
+	 * 
 	 * @param testCases
 	 * @return
 	 */
