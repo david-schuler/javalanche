@@ -1,4 +1,4 @@
-package org.softevo.mutation.run;
+package org.softevo.mutation.run.threaded;
 
 import java.io.File;
 import java.io.FileOutputStream;

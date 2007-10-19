@@ -11,6 +11,12 @@
 	<property name="lib.dir" value="lib" />
 	<property name="build.dir" value="target" />
 
+
+	<!-- Application specific properties -->
+	<property name="threaded.result.dir" value="/scratch/schuler/mutation-test-config/result" />
+	<property name="threaded.main.class" value="org.softevo.mutation.run.threaded.ThreadPool" />
+
+
 	<!-- Classpath declaration -->
 	<path id="project.classpath">
 		<fileset dir="target/lib/">
@@ -145,9 +151,8 @@
 	</target>
 
 	<target name="runThreaded" description="run mutation tests multithreaded">
-		<property name="threaded.result.dir" value="/scratch/schuler/mutation-test-config/result" />
-		<delete dir="${threaded.result.dir}"/>
-		<mkdir dir="${threaded.result.dir}"/>
+		<delete dir="${threaded.result.dir}" />
+		<mkdir dir="${threaded.result.dir}" />
 		<java classname="org.softevo.mutation.run.ThreadPool" maxmemory="1024m" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
@@ -157,10 +162,9 @@
 	</target>
 
 	<target name="runThreadedDebug" description="run mutation tests multithreaded, with remote debugging enabled">
-		<property name="threaded.result.dir" value="/scratch/schuler/mutation-test-config/result" />
-		<delete dir="${threaded.result.dir}"/>
-		<mkdir dir="${threaded.result.dir}"/>
-		<java classname="org.softevo.mutation.run.ThreadPool" maxmemory="1024m" fork="true">
+		<delete dir="${threaded.result.dir}" />
+		<mkdir dir="${threaded.result.dir}" />
+		<java classname="org.softevo.mutation.run.threaded.ThreadPool" maxmemory="1024m" fork="true">
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044" />
 			<classpath>

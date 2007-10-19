@@ -10,6 +10,13 @@ import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 
+/**
+ *
+ * Deletes the results from the database.
+ *
+ * @author David Schuler
+ *
+ */
 public class ResultDeleter {
 
 	private static Logger logger = Logger.getLogger(ResultDeleter.class);
