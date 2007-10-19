@@ -46,6 +46,8 @@ public class ProcessWrapper extends Thread {
 
 	private PipeThread outputPipe;
 
+	private RunResult runResult;
+
 	public ProcessWrapper(String command, String[] args, File dir,
 			File outputFile, File resultFile) {
 		super();
@@ -67,10 +69,9 @@ public class ProcessWrapper extends Thread {
 			InputStream is = process.getInputStream();
 			FileOutputStream fw = new FileOutputStream(outputFile);
 			outputPipe = new PipeThread(is, fw);
-			// logger.info(is + " - " + process.getErrorStream());
-			// errorPipe = new PipeThread(process.getErrorStream());
+			errorPipe = new PipeThread(process.getErrorStream());
 			outputPipe.start();
-			// errorPipe.start();
+			errorPipe.start();
 			process.waitFor();
 			closePipes();
 		} catch (IOException e) {
@@ -97,26 +98,22 @@ public class ProcessWrapper extends Thread {
 	}
 
 	private void closePipes() {
-		if (outputPipe != null) {
-			outputPipe.setRunning(false);
+		closePipe(outputPipe);
+		closePipe(errorPipe);
+	}
+
+	private void closePipe(PipeThread pipeThread) {
+		if (pipeThread != null) {
+			pipeThread.setRunning(false);
 			try {
-				outputPipe.join(100);
-				// outputPipe.interrupt();
+				pipeThread.join();
 			} catch (InterruptedException e) {
+				logger.warn("Exception thrown when trying to close pipe. "
+						+ e.getMessage() + "\n" + e.getStackTrace().toString());
 				e.printStackTrace();
 			}
 
 		}
-		if (errorPipe != null) {
-			errorPipe.setRunning(false);
-			// try {
-			errorPipe.interrupt();
-			// } catch (InterruptedException e) {
-			// e.printStackTrace();
-			// }
-
-		}
-
 	}
 
 	@Override
@@ -158,15 +155,14 @@ public class ProcessWrapper extends Thread {
 	}
 
 	public RunResult getRunResult() {
-		if (finished) {
+		if (finished && runResult == null) {
 			if (resultFile.exists()) {
-				RunResult rr = (RunResult) XmlIo.fromXml(resultFile);
-				return rr;
+				runResult = (RunResult) XmlIo.fromXml(resultFile);
 			} else {
 				logger.info("File " + resultFile + " does not exist");
 			}
 		}
-		return null;
+		return runResult;
 
 	}
 
@@ -196,10 +192,14 @@ public class ProcessWrapper extends Thread {
 		logger.info("Destroying Process" + this);
 		closePipes();
 		logger.info("Pipes closed");
-		end();
 		logger.info("Trying to destroy sub process");
 		process.destroy();
 		logger.info("Sub process destroyed");
-		interrupt();
+		try {
+			logger.info("exit value: " + process.exitValue());
+		} catch (IllegalThreadStateException e) {
+			logger.info("could not get exit value" + e.getMessage());
+		}
+		end();
 	}
 }

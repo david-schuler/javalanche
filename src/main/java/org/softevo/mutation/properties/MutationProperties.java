@@ -32,4 +32,6 @@ public interface MutationProperties {
 	static final String SCAN_FOR_MUTATIONS = "scan";
 
 	static final String RESULT_FILE_KEY = "mutation.result.file";
+
+	static final String MUTATION_FILE_KEY = "mutation.file";
 }

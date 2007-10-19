@@ -145,6 +145,9 @@
 	</target>
 
 	<target name="runThreaded" description="run mutation tests multithreaded">
+		<property name="threaded.result.dir" value="/scratch/schuler/mutation-test-config/result" />
+		<delete dir="${threaded.result.dir}"/>
+		<mkdir dir="${threaded.result.dir}"/>
 		<java classname="org.softevo.mutation.run.ThreadPool" maxmemory="1024m" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
@@ -154,6 +157,9 @@
 	</target>
 
 	<target name="runThreadedDebug" description="run mutation tests multithreaded, with remote debugging enabled">
+		<property name="threaded.result.dir" value="/scratch/schuler/mutation-test-config/result" />
+		<delete dir="${threaded.result.dir}"/>
+		<mkdir dir="${threaded.result.dir}"/>
 		<java classname="org.softevo.mutation.run.ThreadPool" maxmemory="1024m" fork="true">
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044" />
@@ -175,8 +181,6 @@
 	</target>
 
 	<target name="junitXML" description="test xml serialization">
-
-		<echo>A A B B</echo>
 		<junit printsummary="withOutAndErr" fork="yes" haltonfailure="yes" showoutput="yes">
 			<formatter type="plain" />
 			<formatter type="xml" />
