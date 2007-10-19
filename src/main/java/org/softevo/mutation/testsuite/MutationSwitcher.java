@@ -11,27 +11,33 @@ import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.QueryManager;
 
+/**
+ * Class handles the activation and deactivation of the mutations during
+ * runtime.
+ *
+ * @author David Schuler
+ *
+ */
 public class MutationSwitcher {
 
 	private static Logger logger = Logger.getLogger(MutationSwitcher.class);
 
+	/**
+	 * The mutations that are activated in this run
+	 */
 	private Collection<Mutation> mutations;
 
 	private Iterator<Mutation> iter;
 
+	/**
+	 * Holds the currently activated mutation.
+	 */
 	private Mutation actualMutation;
 
-	Collection<String> names;
 
-	public MutationSwitcher(Collection<String> name) {
-		// initMutations();
-		this.names = name;
-	}
 
 	private void initMutations() {
 		if (mutations == null) {
-			// mutations = QueryManager.getAllMutations();
-//			mutations = QueryManager.getAllMutationsForTestCases(names);
 			mutations = MutationForRun.getInstance().getMutations();
 			logger.info(mutations);
 			iter = mutations.iterator();
@@ -40,6 +46,9 @@ public class MutationSwitcher {
 		}
 	}
 
+	/**
+	 * @return The test cases that cover the actual activated mutation.
+	 */
 	public Set<String> getTests() {
 		String[] testCases = QueryManager.getTestCases(actualMutation);
 		if (testCases == null) {
@@ -70,6 +79,9 @@ public class MutationSwitcher {
 		return actualMutation;
 	}
 
+	/**
+	 * Turns the actual mutation on.
+	 */
 	public void switchOn() {
 		if (actualMutation != null) {
 			logger.info("enabling mutation: "
@@ -81,6 +93,9 @@ public class MutationSwitcher {
 		}
 	}
 
+	/**
+	 * Turns the actual mutation off.
+	 */
 	public void switchOff() {
 		if (actualMutation != null) {
 			System.clearProperty(actualMutation.getMutationVariable());
@@ -88,6 +103,5 @@ public class MutationSwitcher {
 					+ actualMutation.getMutationVariable());
 			ResultReporter.setActualMutation(null);
 		}
-
 	}
 }

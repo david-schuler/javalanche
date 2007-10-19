@@ -1,8 +1,9 @@
 package org.softevo.mutation.testsuite;
 
 /**
- * Class that holds the result for one run of the program.
- * Needed when run in several JVMs.
+ * Class that holds the result for one run of the program. Needed when run in
+ * several JVMs.
+ *
  * @author David Schuler
  *
  */
@@ -13,14 +14,14 @@ public class RunResult {
 	private int touched;
 
 	/**
-	 * @return the mutations
+	 * @return the mutations the number of for which results are stored.
 	 */
 	public int getMutations() {
 		return mutations;
 	}
 
 	/**
-	 * @return the touched
+	 * @return the number touched mutation
 	 */
 	public int getTouched() {
 		return touched;

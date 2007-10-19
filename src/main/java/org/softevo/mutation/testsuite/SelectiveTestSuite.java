@@ -29,9 +29,9 @@ import org.softevo.mutation.results.Mutation;
  * Subclass of Junits {@link TestSuite} class. It is used to execute the tests
  * for the mutated program. It repeatedly executes the test-cases for every
  * mutation, but only executes the tests that cover the mutation.
- * 
+ *
  * @author David Schuler
- * 
+ *
  */
 public class SelectiveTestSuite extends TestSuite {
 
@@ -40,15 +40,14 @@ public class SelectiveTestSuite extends TestSuite {
 
 	/**
 	 * $Date$
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final boolean TESTMODE = false;
+	private static final boolean DEBUG = false;
 
 	private static final long DEFAULT_TIMEOUT_IN_SECONDS = 5;
 
-	protected static final int SECOND = 1000;
 
 	static Logger logger = Logger.getLogger(SelectiveTestSuite.class);
 
@@ -73,7 +72,7 @@ public class SelectiveTestSuite extends TestSuite {
 
 	private static void staticLogMessage() {
 		System.out.println("Selective Test Suite");
-		if (TESTMODE) {
+		if (DEBUG) {
 			logger.info("TESTMODE");
 		}
 		logger.info(System.getProperty("java.security.policy"));
@@ -84,7 +83,10 @@ public class SelectiveTestSuite extends TestSuite {
 
 	private void addShutdownHook() {
 		shutDownHook = new Thread() {
+
 			private static final boolean SLEEP = false;
+
+			protected static final int SECOND = 1000;
 
 			public void run() {
 				logger.info("Shutdown hook activated");
@@ -117,16 +119,6 @@ public class SelectiveTestSuite extends TestSuite {
 		addShutdownHook();
 	}
 
-	// private static void setSecurityManager() {
-	// try {
-	// System.setSecurityManager(EXIT_SECURITY_MANAGER);
-	// logger.info("SecurityManager set");
-	// } catch (SecurityException se) {
-	// logger.info("SecurityManager already set!");
-	// se.printStackTrace();
-	// }
-	//
-	// }
 
 	public SelectiveTestSuite(String name) {
 		super(name);
@@ -142,14 +134,12 @@ public class SelectiveTestSuite extends TestSuite {
 			return;
 		}
 		logger.info("Not Running scanner");
-		logger.info("eee");
 		Map<String, TestCase> allTests = getAllTests(this);
 		logger.log(Level.INFO, "All Tests collected");
-		mutationSwitcher = new MutationSwitcher(
-				getStringList(allTests.values()));
+		mutationSwitcher = new MutationSwitcher();
 		int debugCount = 20;
 		while (mutationSwitcher.hasNext()) {
-			if (TESTMODE) {
+			if (DEBUG) {
 				if (debugCount-- < 0) {
 					break;
 				}
@@ -186,12 +176,11 @@ public class SelectiveTestSuite extends TestSuite {
 		Runtime.getRuntime().removeShutdownHook(shutDownHook);
 		logger.log(Level.INFO, "Test Runs finished");
 		logger.info("" + resultReporter.summary());
-		// EXIT_SECURITY_MANAGER.setCanExit(true);
 	}
 
 	/**
 	 * Returns a list of TestCase names for given Collection of TestCases.
-	 * 
+	 *
 	 * @param testCases
 	 * @return
 	 */

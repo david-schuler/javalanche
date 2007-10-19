@@ -13,6 +13,10 @@ import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.QueryManager;
 
+/**
+ * @author David Schuler
+ *
+ */
 public class ResultReporter {
 
 	private static Logger logger = Logger.getLogger(ResultReporter.class);
