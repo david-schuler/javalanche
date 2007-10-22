@@ -22,7 +22,7 @@ import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.HibernateUtil;
-import org.softevo.mutation.testsuite.SelectiveTestSuite;
+import org.softevo.mutation.runtime.SelectiveTestSuite;
 
 public class NegateJumpsTest {
 

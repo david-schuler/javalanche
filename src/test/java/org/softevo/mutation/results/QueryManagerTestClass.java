@@ -16,7 +16,7 @@ import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
-import org.softevo.mutation.testsuite.MutationTestListener;
+import org.softevo.mutation.runtime.MutationTestListener;
 
 public class QueryManagerTestClass {
 

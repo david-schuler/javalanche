@@ -19,7 +19,7 @@ import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.HibernateUtil;
-import org.softevo.mutation.testsuite.SelectiveTestSuite;
+import org.softevo.mutation.runtime.SelectiveTestSuite;
 
 public class TestOnMiniProject {
 
