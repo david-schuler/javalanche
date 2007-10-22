@@ -16,7 +16,7 @@ import org.softevo.mutation.io.Io;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
-import org.softevo.mutation.testsuite.RunResult;
+import org.softevo.mutation.runtime.RunResult;
 
 /**
  * Class executes several instances of the mutation test tool in parallel using

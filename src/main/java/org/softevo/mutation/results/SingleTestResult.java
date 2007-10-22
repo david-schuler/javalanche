@@ -18,7 +18,7 @@ import javax.persistence.OrderBy;
 import junit.framework.TestResult;
 
 import org.hibernate.annotations.IndexColumn;
-import org.softevo.mutation.testsuite.MutationTestListener;
+import org.softevo.mutation.runtime.MutationTestListener;
 
 @Entity
 public class SingleTestResult {

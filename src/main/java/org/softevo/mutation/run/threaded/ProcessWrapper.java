@@ -9,7 +9,7 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.testsuite.RunResult;
+import org.softevo.mutation.runtime.RunResult;
 
 /**
  *
