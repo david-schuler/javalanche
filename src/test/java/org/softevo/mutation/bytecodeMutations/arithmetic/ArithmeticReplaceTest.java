@@ -7,8 +7,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
-import org.softevo.mutation.bytecodeMutations.arithmetic.testClass.Arithmetic;
-import org.softevo.mutation.bytecodeMutations.arithmetic.testClass.ArithmeticTest;
+import org.softevo.mutation.bytecodeMutations.arithmetic.testclasses.Arithmetic;
+import org.softevo.mutation.bytecodeMutations.arithmetic.testclasses.ArithmeticTest;
 import org.softevo.mutation.runtime.SelectiveTestSuite;
 
 public class ArithmeticReplaceTest {
