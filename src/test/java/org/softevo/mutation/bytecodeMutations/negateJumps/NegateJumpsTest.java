@@ -7,7 +7,6 @@ import java.util.List;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -16,8 +15,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
-import org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps;
-import org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.TestJump;
+import org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.Jumps;
+import org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.TestJump;
 import org.softevo.mutation.io.Io;
 import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.results.Mutation;

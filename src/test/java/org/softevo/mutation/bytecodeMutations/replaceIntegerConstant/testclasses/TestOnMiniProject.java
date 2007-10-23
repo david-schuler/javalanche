@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testForOwnClass;
+package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses;
 
 import java.util.List;
 
@@ -13,8 +13,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testForOwnClass.ricProject.RicClass;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testForOwnClass.ricProject.RicClassTest;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.RicClass;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.RicClassTest;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
