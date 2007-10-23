@@ -1,5 +1,6 @@
 package org.softevo.mutation.bytecodeMutations;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
 import org.apache.log4j.Logger;

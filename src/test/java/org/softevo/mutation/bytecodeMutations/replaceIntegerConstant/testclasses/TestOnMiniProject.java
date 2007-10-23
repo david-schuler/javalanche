@@ -13,8 +13,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.RicClass;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.RicClassTest;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants;
+import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstantsTest;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
@@ -23,11 +23,11 @@ import org.softevo.mutation.runtime.SelectiveTestSuite;
 
 public class TestOnMiniProject {
 
-	private static final Class TEST_CLASS = RicClass.class;
+	private static final Class TEST_CLASS = IntegerConstants.class;
 
 	private static final String TEST_CLASS_NAME = TEST_CLASS.getName();
 
-	private static final String UNITTEST_CLASS_NAME = RicClassTest.class
+	private static final String UNITTEST_CLASS_NAME = IntegerConstantsTest.class
 			.getName();
 
 	private static final String TEST_CLASS_FILENAME = ByteCodeTestUtils
@@ -38,17 +38,12 @@ public class TestOnMiniProject {
 
 	private static final int[] linenumbers = { 6, 11, 12, 16, 17, 18 };
 
-	public void generateMutations() {
-		MutationPossibilityCollector.generateTestDataInDB(TEST_CLASS_FILENAME);
-	}
-
 	@Before
 	public void setup() {
-		// ByteCodeTestUtils.deleteMutations(TEST_CLASS_NAME);
 		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
 		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
 				linenumbers);
-		generateMutations();
+		MutationPossibilityCollector.generateTestDataInDB(TEST_CLASS_FILENAME);
 	}
 
 	@After
@@ -59,11 +54,12 @@ public class TestOnMiniProject {
 
 	@Test
 	public void runTests() {
+		ByteCodeTestUtils.redefineMutations(TEST_CLASS_NAME);
 		SelectiveTestSuite selectiveTestSuite = new SelectiveTestSuite();
-		TestSuite suite = new TestSuite(RicClassTest.class);
+		TestSuite suite = new TestSuite(IntegerConstantsTest.class);
 		selectiveTestSuite.addTest(suite);
 		@SuppressWarnings("unused")
-		RicClass ric = new RicClass();
+		IntegerConstants ric = new IntegerConstants();
 		selectiveTestSuite.run(new TestResult());
 		testResults(TEST_CLASS_NAME);
 	}

@@ -22,8 +22,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 
 	private static String[] testNames = {
-			"org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps",
-			"testClass.Arithmetic", "testForOwnClass.ricProject.RicClass" };
+			".testclasses"};
 
 	private static MutationTransformer mutationTransformer = new MutationTransformer();
 
@@ -38,7 +37,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 				return true;
 			}
 			for (String included : testNames) {
-				if (classNameWithDots.endsWith(included)) {
+				if (classNameWithDots.contains(included)) {
 					return true;
 				}
 			}

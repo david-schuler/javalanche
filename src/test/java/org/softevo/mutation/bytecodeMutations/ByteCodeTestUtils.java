@@ -14,6 +14,8 @@ import org.softevo.bytecodetransformer.processFiles.FileTransformer;
 import org.softevo.mutation.coverageResults.db.TestCoverageClassResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
+import org.softevo.mutation.io.Io;
+import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
@@ -29,6 +31,8 @@ import org.softevo.mutation.results.persistence.QueryManager;
  *
  */
 public class ByteCodeTestUtils {
+
+	private static final String DEFAULT_OUTPUT_FILE = "redefine-ids.txt";
 
 	private static Logger logger = Logger.getLogger(ByteCodeTestUtils.class);
 
@@ -94,7 +98,6 @@ public class ByteCodeTestUtils {
 		tx.commit();
 		session.close();
 	}
-
 
 	public static void deleteMutations(String className) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -180,6 +183,30 @@ public class ByteCodeTestUtils {
 		session.close();
 		Assert.assertTrue("Expected failing tests because of mutations",
 				nonNulls >= mList.size());
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void redefineMutations(String testClassName) {
+		List<Long> ids = new ArrayList<Long>();
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("from Mutation as m where m.className=:clname");
+		query.setString("clname", testClassName);
+		List<Mutation> mList = query.list();
+		for (Mutation m : mList) {
+			ids.add(m.getId());
+		}
+		tx.commit();
+		session.close();
+		StringBuilder sb = new StringBuilder();
+		for (Long l : ids) {
+			sb.append(l + "\n");
+		}
+		File file = new File(DEFAULT_OUTPUT_FILE);
+		Io.writeFile(sb.toString(), file);
+		System.setProperty("mutation.file", file.getAbsolutePath());
+		MutationForRun.getInstance().reinit();
 	}
 
 }

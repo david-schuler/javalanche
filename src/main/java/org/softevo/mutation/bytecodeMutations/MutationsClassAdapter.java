@@ -7,12 +7,13 @@ import org.objectweb.asm.util.CheckMethodAdapter;
 import org.softevo.mutation.bytecodeMutations.arithmetic.ArithmeticReplaceMethodAdapter;
 import org.softevo.mutation.bytecodeMutations.negateJumps.NegateJumpsMethodAdapter;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicMethodAdapter;
+import org.softevo.mutation.properties.MutationProperties;
 
 public class MutationsClassAdapter extends ClassAdapter {
 
 	private String className;
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = MutationProperties.DEBUG;
 
 	public MutationsClassAdapter(ClassVisitor cv) {
 		super(cv);

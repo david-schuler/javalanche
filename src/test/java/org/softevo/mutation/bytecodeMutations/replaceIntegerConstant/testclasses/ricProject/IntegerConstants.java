@@ -1,6 +1,6 @@
 package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject;
 
-public class RicClass {
+public class IntegerConstants {
 
 	public int method1(int i) {
 		int myconst = 5;

@@ -2,11 +2,11 @@ package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasse
 
 import junit.framework.TestCase;
 
-public class RicClassTest extends TestCase {
-	private RicClass ric;
+public class IntegerConstantsTest extends TestCase {
+	private IntegerConstants ric;
 
 	public void setUp() {
-		ric = new RicClass();
+		ric = new IntegerConstants();
 	}
 
 	public void testMethod1() {

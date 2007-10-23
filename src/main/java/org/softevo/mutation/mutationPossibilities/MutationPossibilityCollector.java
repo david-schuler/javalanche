@@ -44,7 +44,8 @@ public class MutationPossibilityCollector {
 		for (Mutation m : allMutations) {
 			if (!QueryManager.hasUnmutated(m.getClassName(), m.getLineNumber())) {
 				Mutation unmutated = new Mutation(m.getClassName(), m
-						.getLineNumber(),m.getMutationForLine(), MutationType.NO_MUTATION);
+						.getLineNumber(), m.getMutationForLine(),
+						MutationType.NO_MUTATION);
 				QueryManager.saveMutation(unmutated);
 			}
 		}
@@ -63,13 +64,19 @@ public class MutationPossibilityCollector {
 		generateUnmutated();
 	}
 
-	public Object size() {
+	/**
+	 * Returns the number of collected mutation possibilities.
+	 *
+	 * @return The number of mutation possibilities that were collected.
+	 */
+	public int size() {
 		return possibilities.size();
 	}
 
 	public void updateDB() {
-		logger.info("Collected " + possibilities.size() + "mutation possibilities");
-		int counter =  0;
+		logger.info("Collected " + possibilities.size()
+				+ "mutation possibilities");
+		int counter = 0;
 		for (Mutation mutation : possibilities) {
 			counter++;
 			logger.info(counter + ": Trying to save mutation :" + mutation);

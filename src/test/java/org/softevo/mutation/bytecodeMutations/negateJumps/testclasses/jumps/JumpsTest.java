@@ -3,7 +3,7 @@ package org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps;
 import junit.framework.TestCase;
 
 
-public class TestJump extends TestCase {
+public class JumpsTest extends TestCase {
 
 	Jumps jumps = new Jumps();
 

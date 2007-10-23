@@ -27,6 +27,8 @@ public class ResultReporter {
 
 	private static String actualTestCase;
 
+	private static boolean firstTouch = true;
+
 	private int reports = 0;
 
 	private int touched;
@@ -49,11 +51,16 @@ public class ResultReporter {
 		touchingTestCases.clear();
 		actualMutation = null;
 		actualTestCase = null;
+		firstTouch = true;
 		reports++;
 	}
 
 	public static void touch(long mutationID) {
-		logger.info("Touch called by mutated code in test " + actualTestCase);
+		if (firstTouch) {
+			logger.info("Touch called by mutated code in test "
+					+ actualTestCase);
+			firstTouch = false;
+		}
 		long expectedID = actualMutation.getId();
 		if (mutationID != expectedID) {
 			throw new RuntimeException("Expected ID did not match reported ID"
@@ -95,11 +102,13 @@ public class ResultReporter {
 
 	public String summary() {
 		RunResult runResult = new RunResult(reports, touched);
-		String resultFile = System.getProperty(MutationProperties.RESULT_FILE_KEY);
+		String resultFile = System
+				.getProperty(MutationProperties.RESULT_FILE_KEY);
 		if (resultFile != null) {
 			XmlIo.toXML(runResult, new File(resultFile));
-		}else{
-			logger.warn("Not writing property file. Didn't found Property " + MutationProperties.RESULT_FILE_KEY);
+		} else {
+			logger.warn("Not writing property file. Didn't found Property "
+					+ MutationProperties.RESULT_FILE_KEY);
 		}
 		return runResult.toString();
 	}
