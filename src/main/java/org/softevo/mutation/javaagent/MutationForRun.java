@@ -181,4 +181,14 @@ public class MutationForRun {
 	public boolean containsMutation(Mutation mutationFromDb) {
 		return mutations.contains(mutationFromDb);
 	}
+
+	public static void addMutationForTest(Mutation m){
+		MutationForRun mfr = getInstance();
+		mfr.addMutationForTestPR(m);
+	}
+
+	private void addMutationForTestPR(Mutation m) {
+		// TODO Auto-generated method stub
+		
+	}
 }

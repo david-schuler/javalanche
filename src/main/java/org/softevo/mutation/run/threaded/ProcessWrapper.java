@@ -18,6 +18,10 @@ import org.softevo.mutation.runtime.RunResult;
  * @author David Schuler
  *
  */
+/**
+ * @author David Schuler
+ *
+ */
 public class ProcessWrapper extends Thread {
 
 	private static Logger logger = Logger.getLogger(ProcessWrapper.class);
@@ -48,6 +52,20 @@ public class ProcessWrapper extends Thread {
 
 	private RunResult runResult;
 
+	/**
+	 * Construct a new ProcessWrapper.
+	 *
+	 * @param command
+	 *            The actual command
+	 * @param args
+	 *            Arguments of the command
+	 * @param dir
+	 *            Directory where the command is executed
+	 * @param outputFile
+	 *            The file to which the output of the process is written
+	 * @param resultFile
+	 *            The result file the tasks writes its mutation results to.
+	 */
 	public ProcessWrapper(String command, String[] args, File dir,
 			File outputFile, File resultFile) {
 		super();
@@ -59,6 +77,11 @@ public class ProcessWrapper extends Thread {
 		System.out.println("Process created" + this);
 	}
 
+	/**
+	 * Starts the underlying process.
+	 *
+	 * @see java.lang.Thread#run()
+	 */
 	public void run() {
 		System.out.println("Process started" + this);
 		try {
@@ -88,6 +111,11 @@ public class ProcessWrapper extends Thread {
 		finished = true;
 	}
 
+	/**
+	 * Return the commandto start the process.
+	 *
+	 * @return The command to start the process.
+	 */
 	private String[] getCommand() {
 		String[] cmdArray = new String[args.length + 2];
 		cmdArray[0] = command;
@@ -102,6 +130,12 @@ public class ProcessWrapper extends Thread {
 		closePipe(errorPipe);
 	}
 
+	/**
+	 * Close the pipe and wait for it to finish.
+	 *
+	 * @param pipeThread
+	 *            The {@link PipeThread} that should be closed.
+	 */
 	private void closePipe(PipeThread pipeThread) {
 		if (pipeThread != null) {
 			pipeThread.setRunning(false);
@@ -116,6 +150,11 @@ public class ProcessWrapper extends Thread {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see java.lang.Thread#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -130,28 +169,17 @@ public class ProcessWrapper extends Thread {
 	}
 
 	/**
-	 * @return the exit value
+	 * @return the exit value of the process.
 	 */
 	public int getExitvalue() {
 		return exitvalue;
 	}
 
 	/**
-	 * @return the isRunning
+	 * @return True, if the process is running.
 	 */
 	public boolean isRunning() {
 		return running;
-	}
-
-	public static void main(String[] args) {
-		String cmd = "/scratch/schuler/mutationTest/src/scripts/run-tests.sh";
-		// String cmd = "java";
-
-		ProcessWrapper ps = new ProcessWrapper(cmd, new String[] {}, new File(
-				"/scratch/schuler/mutationTest/src/scripts/"), new File(
-				"processoutput.txt"), new File("res.xml"));
-		Thread t = new Thread(ps);
-		t.start();
 	}
 
 	public RunResult getRunResult() {
@@ -179,7 +207,7 @@ public class ProcessWrapper extends Thread {
 	}
 
 	/**
-	 * @return the finished
+	 * @return True if the process has finished.
 	 */
 	public boolean isFinished() {
 		return finished;

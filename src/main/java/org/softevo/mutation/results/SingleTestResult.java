@@ -118,7 +118,7 @@ public class SingleTestResult {
 
 	/**
 	 * @param runs
-	 *            the runs to set
+	 *            The runs to set
 	 */
 	public void setRuns(int runs) {
 		this.runs = runs;

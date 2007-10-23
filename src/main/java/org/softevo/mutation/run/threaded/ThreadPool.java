@@ -52,9 +52,9 @@ public class ThreadPool {
 	/**
 	 * Number of tasks that will be submitted to the thread pool.
 	 */
-	private static final int NUMBER_OF_TASKS = 200;
+	private static final int NUMBER_OF_TASKS = 100;
 
-	private static final int MUTATIONS_PER_TASK = 150;
+	private static final int MUTATIONS_PER_TASK = 1000;
 
 	private static final String RESULT_DIR = MutationProperties.CONFIG_DIR
 			+ "/result/";
@@ -99,13 +99,15 @@ public class ThreadPool {
 
 	private int processCounter;
 
+	private final long mutationResultsPre = QueryManager
+			.getNumberOfMutationsWithResult();
+
 	public static void main(String[] args) {
 		ThreadPool tp = new ThreadPool();
 		tp.startTimed();
 	}
 
 	private void startTimed() {
-		long mutationResultsPre = QueryManager.getNumberOfMutationsWithResult();
 		long startTime = System.currentTimeMillis();
 		logger.info("Start fetching mutations");
 		refreshMutations();
@@ -251,7 +253,11 @@ public class ThreadPool {
 				totalMutations += runResult.getMutations();
 			}
 		}
-		logger.info(totalMutations + " mutation where actually executed");
+		logger.info(totalMutations
+				+ " mutation where actually executed - regarding result files");
+		logger
+				.info((QueryManager.getNumberOfMutationsWithResult() - mutationResultsPre)
+						+ " mutation results where added to db");
 	}
 
 	private File writeListToFile(List<Long> list, int id) {
@@ -294,6 +300,12 @@ public class ThreadPool {
 		mutationIDs = getMutationsIdListFromDb();
 	}
 
+	/**
+	 * Return a list of mutation ids that have coverage data associated
+	 *         but do not have a result yet.
+	 *
+	 * @return a list of mutation ids.
+	 */
 	private static List<Long> getMutationsIdListFromDb() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();

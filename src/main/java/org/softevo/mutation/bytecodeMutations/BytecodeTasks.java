@@ -70,7 +70,7 @@ public class BytecodeTasks {
 		}
 		mv.visitLdcInsn(mutation.getId());
 		mv.visitMethodInsn(Opcodes.INVOKESTATIC,
-				"org/softevo/mutation/testsuite/ResultReporter", "touch",
+				"org/softevo/mutation/runtime/ResultReporter", "touch",
 				"(J)V");
 	}
 

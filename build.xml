@@ -153,7 +153,7 @@
 	<target name="runThreaded" description="run mutation tests multithreaded">
 		<delete dir="${threaded.result.dir}" />
 		<mkdir dir="${threaded.result.dir}" />
-		<java classname="org.softevo.mutation.run.ThreadPool" maxmemory="1024m" fork="true">
+		<java classname="org.softevo.mutation.run.threaded.ThreadPool" maxmemory="1024m" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />

@@ -7,6 +7,7 @@ import java.util.List;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -22,16 +23,18 @@ import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.HibernateUtil;
+import org.softevo.mutation.results.persistence.MutationManager;
 import org.softevo.mutation.runtime.SelectiveTestSuite;
 
 public class NegateJumpsTest {
 
+	static {
+		MutationManager.setApplyAllMutation(true);
+	}
+
 	private static final Class TEST_CLASS = Jumps.class;
 
 	private static final String TEST_CLASS_NAME = TEST_CLASS.getName();
-
-	// private static final String TEST_CLASS_NAME =
-	// "org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps";
 
 	private static final String UNITTEST_CLASS_NAME = TestJump.class.getName();
 
@@ -47,7 +50,7 @@ public class NegateJumpsTest {
 
 	@Before
 	public void setup() {
-		 ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
+		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
 		ByteCodeTestUtils.generateTestDataInDB(TEST_CLASS_FILENAME,
 				new NegateJumpsCollectorTransformer(null));
 		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
@@ -67,7 +70,7 @@ public class NegateJumpsTest {
 
 	@After
 	public void tearDown() {
-//		 ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
+		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
 		ByteCodeTestUtils.deleteCoverageData(TEST_CLASS_NAME);
 	}
 

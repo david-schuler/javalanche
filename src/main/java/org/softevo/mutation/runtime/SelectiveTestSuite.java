@@ -35,8 +35,6 @@ import org.softevo.mutation.results.Mutation;
  */
 public class SelectiveTestSuite extends TestSuite {
 
-	// private static final ExitSecurityManager EXIT_SECURITY_MANAGER = new
-	// ExitSecurityManager();
 
 	/**
 	 * $Date: 2007-10-19 11:37:30 +0200 (Fri, 19 Oct 2007) $
@@ -46,6 +44,9 @@ public class SelectiveTestSuite extends TestSuite {
 
 	private static final boolean DEBUG = false;
 
+	/**
+	 * Timeout for one single test
+	 */
 	private static final long DEFAULT_TIMEOUT_IN_SECONDS = 5;
 
 	static Logger logger = Logger.getLogger(SelectiveTestSuite.class);
@@ -137,9 +138,9 @@ public class SelectiveTestSuite extends TestSuite {
 			return;
 		}
 		logger.info("Not Running scanner");
-		Map<String, TestCase> allTests = getAllTests(this);
 		logger.log(Level.INFO, "All Tests collected");
 		mutationSwitcher = new MutationSwitcher();
+		Map<String, TestCase> allTests = getAllTests(this);
 		int debugCount = 20;
 		while (mutationSwitcher.hasNext()) {
 			if (DEBUG) {
@@ -296,7 +297,7 @@ public class SelectiveTestSuite extends TestSuite {
 	}
 
 	/**
-	 * @return the actualMutation
+	 * @return the actualMutation that is currently applied.
 	 */
 	public Mutation getActualMutation() {
 		return actualMutation;
