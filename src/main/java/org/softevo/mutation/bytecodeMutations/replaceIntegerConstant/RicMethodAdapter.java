@@ -1,5 +1,8 @@
 package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -143,132 +146,225 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		}
 	}
 
-	private void doubleConstant(final double doubleConstant) {
-		logger.info("double constant for line: " + getLineNumber());
-		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
-				mutationForLine);
-		if (MutationManager.shouldApplyMutation(cm.getPlus1())) {
-			MutationCode unmutated = new MutationCode(null) {
-				@Override
-				public void insertCodeBlock(MethodVisitor mv) {
-					mv.visitLdcInsn(new Double(doubleConstant));
-				}
-
-			};
-			BytecodeTasks.insertIfElse(mv, unmutated, new MutationCode[] {
-					new MutationCode(cm.getPlus1()) {
-
-						@Override
-						public void insertCodeBlock(MethodVisitor mv) {
-							mv.visitLdcInsn(new Double(doubleConstant + 1));
-						}
-					}
-
-					, new MutationCode(cm.getMinus1()) {
-						@Override
-						public void insertCodeBlock(MethodVisitor mv) {
-							mv.visitLdcInsn(new Double(doubleConstant - 1));
-						}
-
-					}, new MutationCode(cm.getZero()) {
-						@Override
-						public void insertCodeBlock(MethodVisitor mv) {
-							mv.visitLdcInsn(new Double(0));
-						}
-					} });
-
-			logger.info("Applying ric int mutations line: " + getLineNumber());
-		} else {
-			logger.info("Applying no mutation for line: " + getLineNumber());
-			super.visitLdcInsn(new Double(doubleConstant));
-			// }
-		}
-	}
-
-	private void floatConstant(final float f) {
-		logger.info("float constant for line: " + getLineNumber());
-		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
-				mutationForLine);
-		if (MutationManager.shouldApplyMutation(cm.getPlus1())) {
-			MutationCode unmutated = new MutationCode(null) {
-
-				@Override
-				public void insertCodeBlock(MethodVisitor mv) {
-					mv.visitLdcInsn(new Float(f));
-				}
-
-			};
-			BytecodeTasks.insertIfElse(mv, unmutated, new MutationCode[] {
-					new MutationCode(cm.getPlus1()) {
-
-						@Override
-						public void insertCodeBlock(MethodVisitor mv) {
-							mv.visitLdcInsn(new Float(f + 1));
-						}
-					}
-
-					, new MutationCode(cm.getMinus1()) {
-						@Override
-						public void insertCodeBlock(MethodVisitor mv) {
-							mv.visitLdcInsn(new Float(f - 1));
-						}
-
-					}, new MutationCode(cm.getZero()) {
-						@Override
-						public void insertCodeBlock(MethodVisitor mv) {
-							mv.visitLdcInsn(new Float(0));
-						}
-					} });
-			logger
-					.info("Applying ric float mutations line: "
-							+ getLineNumber());
-		} else {
-			logger.info("Applying no mutation for line: " + getLineNumber());
-			super.visitLdcInsn(new Float(f));
-		}
-	}
-
 	private void longConstant(final long longConstant) {
 		logger.info("long constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
 				mutationForLine);
+		boolean insert = false;
+		MutationCode unmutated = new MutationCode(null) {
+
+			@Override
+			public void insertCodeBlock(MethodVisitor mv) {
+				mv.visitLdcInsn(new Long(longConstant));
+			}
+
+		};
+
+		List<MutationCode> mutationCode = new ArrayList<MutationCode>();
+
 		if (MutationManager.shouldApplyMutation(cm.getPlus1())) {
-			MutationCode unmutated = new MutationCode(null) {
+			insert = true;
+			mutationCode.add(new MutationCode(cm.getPlus1()) {
 
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
-					mv.visitLdcInsn(new Long(longConstant));
+					mv.visitLdcInsn(new Long(longConstant + 1));
 				}
+			});
+		}
+		if (MutationManager.shouldApplyMutation(cm.getMinus1())) {
+			insert = true;
+			mutationCode.add(new MutationCode(cm.getMinus1()) {
+				@Override
+				public void insertCodeBlock(MethodVisitor mv) {
+					mv.visitLdcInsn(new Long(longConstant - 1));
+				}
+			});
+		}
 
-			};
-			BytecodeTasks.insertIfElse(mv, unmutated, new MutationCode[] {
-					new MutationCode(cm.getPlus1()) {
-
-						@Override
-						public void insertCodeBlock(MethodVisitor mv) {
-							mv.visitLdcInsn(new Long(longConstant + 1));
-						}
-					}
-
-					, new MutationCode(cm.getMinus1()) {
-						@Override
-						public void insertCodeBlock(MethodVisitor mv) {
-							mv.visitLdcInsn(new Long(longConstant - 1));
-						}
-
-					}, new MutationCode(cm.getZero()) {
-						@Override
-						public void insertCodeBlock(MethodVisitor mv) {
-							mv.visitLdcInsn(new Long(0));
-						}
-					} });
-			logger.info("Applying no mutations for line: " + getLineNumber());
-
+		if (MutationManager.shouldApplyMutation(cm.getZero())) {
+			insert = true;
+			mutationCode.add(new MutationCode(cm.getZero()) {
+				@Override
+				public void insertCodeBlock(MethodVisitor mv) {
+					mv.visitLdcInsn(new Long(0));
+				}
+			});
+		}
+		if (insert) {
+			logger.info("Applying mutations for line: " + getLineNumber());
+			BytecodeTasks.insertIfElse(mv, unmutated, mutationCode
+					.toArray(new MutationCode[0]));
 		} else {
 			logger.info("Applying no mutation for line: " + getLineNumber());
 			super.visitLdcInsn(new Long(longConstant));
 		}
 	}
+
+	private void floatConstant(final float floatConstant) {
+		logger.info("long constant for line: " + getLineNumber());
+		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
+				mutationForLine);
+		boolean insert = false;
+		MutationCode unmutated = new MutationCode(null) {
+
+			@Override
+			public void insertCodeBlock(MethodVisitor mv) {
+				mv.visitLdcInsn(new Float(floatConstant));
+			}
+
+		};
+
+		List<MutationCode> mutationCode = new ArrayList<MutationCode>();
+
+		if (MutationManager.shouldApplyMutation(cm.getPlus1())) {
+			insert = true;
+			mutationCode.add(new MutationCode(cm.getPlus1()) {
+
+				@Override
+				public void insertCodeBlock(MethodVisitor mv) {
+					mv.visitLdcInsn(new Float(floatConstant + 1));
+				}
+			});
+		}
+		if (MutationManager.shouldApplyMutation(cm.getMinus1())) {
+			insert = true;
+			mutationCode.add(new MutationCode(cm.getMinus1()) {
+				@Override
+				public void insertCodeBlock(MethodVisitor mv) {
+					mv.visitLdcInsn(new Float(floatConstant - 1));
+				}
+			});
+		}
+
+		if (MutationManager.shouldApplyMutation(cm.getZero())) {
+			insert = true;
+			mutationCode.add(new MutationCode(cm.getZero()) {
+				@Override
+				public void insertCodeBlock(MethodVisitor mv) {
+					mv.visitLdcInsn(new Float(0));
+				}
+			});
+		}
+		if (insert) {
+			logger.info("Applying mutations for line: " + getLineNumber());
+			BytecodeTasks.insertIfElse(mv, unmutated, mutationCode
+					.toArray(new MutationCode[0]));
+		} else {
+			logger.info("Applying no mutation for line: " + getLineNumber());
+			super.visitLdcInsn(new Float(floatConstant));
+		}
+	}
+
+	private void doubleConstant(final double doubleConstant) {
+		logger.info("long constant for line: " + getLineNumber());
+		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
+				mutationForLine);
+		boolean insert = false;
+		MutationCode unmutated = new MutationCode(null) {
+
+			@Override
+			public void insertCodeBlock(MethodVisitor mv) {
+				mv.visitLdcInsn(new Double(doubleConstant));
+			}
+
+		};
+		List<MutationCode> mutationCode = new ArrayList<MutationCode>();
+
+		if (MutationManager.shouldApplyMutation(cm.getPlus1())) {
+			insert = true;
+			mutationCode.add(new MutationCode(cm.getPlus1()) {
+
+				@Override
+				public void insertCodeBlock(MethodVisitor mv) {
+					mv.visitLdcInsn(new Double(doubleConstant + 1));
+				}
+			});
+		}
+		if (MutationManager.shouldApplyMutation(cm.getMinus1())) {
+			insert = true;
+			mutationCode.add(new MutationCode(cm.getMinus1()) {
+				@Override
+				public void insertCodeBlock(MethodVisitor mv) {
+					mv.visitLdcInsn(new Double(doubleConstant - 1));
+				}
+			});
+		}
+		if (MutationManager.shouldApplyMutation(cm.getZero())) {
+			insert = true;
+			mutationCode.add(new MutationCode(cm.getZero()) {
+				@Override
+				public void insertCodeBlock(MethodVisitor mv) {
+					mv.visitLdcInsn(new Double(0));
+				}
+			});
+		}
+		if (insert) {
+			logger.info("Applying mutations for line: " + getLineNumber());
+			BytecodeTasks.insertIfElse(mv, unmutated, mutationCode
+					.toArray(new MutationCode[0]));
+		} else {
+			logger.info("Applying no mutation for line: " + getLineNumber());
+			super.visitLdcInsn(new Double(doubleConstant));
+		}
+	}
+
+
+	private void intConstant(final int intConstant) {
+		logger.info("long constant for line: " + getLineNumber());
+		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
+				mutationForLine);
+		boolean insert = false;
+		MutationCode unmutated = new MutationCode(null) {
+
+			@Override
+			public void insertCodeBlock(MethodVisitor mv) {
+				mv.visitLdcInsn(new Integer(intConstant));
+			}
+
+		};
+
+		List<MutationCode> mutationCode = new ArrayList<MutationCode>();
+
+		if (MutationManager.shouldApplyMutation(cm.getPlus1())) {
+			insert = true;
+			mutationCode.add(new MutationCode(cm.getPlus1()) {
+
+				@Override
+				public void insertCodeBlock(MethodVisitor mv) {
+					mv.visitLdcInsn(new Integer(intConstant + 1));
+				}
+			});
+		}
+		if (MutationManager.shouldApplyMutation(cm.getMinus1())) {
+			insert = true;
+			mutationCode.add(new MutationCode(cm.getMinus1()) {
+				@Override
+				public void insertCodeBlock(MethodVisitor mv) {
+					mv.visitLdcInsn(new Integer(intConstant - 1));
+				}
+			});
+		}
+
+		if (MutationManager.shouldApplyMutation(cm.getZero())) {
+			insert = true;
+			mutationCode.add(new MutationCode(cm.getZero()) {
+				@Override
+				public void insertCodeBlock(MethodVisitor mv) {
+					mv.visitLdcInsn(new Integer(0));
+				}
+			});
+		}
+		if (insert) {
+			logger.info("Applying mutations for line: " + getLineNumber());
+			BytecodeTasks.insertIfElse(mv, unmutated, mutationCode
+					.toArray(new MutationCode[0]));
+		} else {
+			logger.info("Applying no mutation for line: " + getLineNumber());
+			super.visitLdcInsn(new Integer(intConstant));
+		}
+	}
+
 
 	// private void insertPrintStatements(String message) {
 	// insertPrintStatements(mv, message);
@@ -293,59 +389,6 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		}
 	}
 
-	private void intConstant(final int i) {
-		logger.info("int constant for line: " + getLineNumber());
-		Mutation mutationPlus1 = new Mutation(className, getLineNumber(),
-				mutationForLine, MutationType.RIC_PLUS_1);
-		Mutation mutationMinus = new Mutation(className, getLineNumber(),
-				mutationForLine, MutationType.RIC_MINUS_1);
-		Mutation mutationZero = new Mutation(className, getLineNumber(),
-				mutationForLine, MutationType.RIC_ZERO);
-
-		if (MutationManager.shouldApplyMutation(mutationPlus1)) {
-			Mutation mutationPlus1FromDB = QueryManager
-					.getMutation(mutationPlus1);
-			Mutation mutationMinus1FromDB = QueryManager
-					.getMutation(mutationMinus);
-			Mutation mutationZeroFromDB = QueryManager
-					.getMutation(mutationZero);
-
-			BytecodeTasks.insertIfElse(mv, new MutationCode(null) {
-
-				@Override
-				public void insertCodeBlock(MethodVisitor mv) {
-					mv.visitLdcInsn(new Integer(i));
-				}
-
-			}, new MutationCode[] { new MutationCode(mutationPlus1FromDB) {
-				@Override
-				public void insertCodeBlock(MethodVisitor mv) {
-					mv.visitLdcInsn(new Integer(i + 1));
-				}
-
-			}, new MutationCode(mutationMinus1FromDB) {
-				@Override
-				public void insertCodeBlock(MethodVisitor mv) {
-					mv.visitLdcInsn(new Integer(i - 1));
-				}
-
-			}, new MutationCode(mutationZeroFromDB) {
-				@Override
-				public void insertCodeBlock(MethodVisitor mv) {
-					mv.visitLdcInsn(new Integer(0));
-				}
-
-			}
-
-			}
-
-			);
-			logger.info("Applying ric int mutations line: " + getLineNumber());
-		} else {
-			logger.info("Applying no mutation for line: " + getLineNumber());
-			super.visitLdcInsn(new Integer(i));
-		}
-	}
 
 	private static ConstantMutations getConstantMutations(String className,
 			int lineNumber, int mutationForLine) {
@@ -360,5 +403,6 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		Mutation mutationZeroFromDB = QueryManager.getMutation(mutationZero);
 		return new ConstantMutations(mutationPlus1FromDB, mutationMinus1FromDB,
 				mutationZeroFromDB);
+
 	}
 }

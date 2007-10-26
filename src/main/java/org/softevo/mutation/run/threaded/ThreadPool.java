@@ -32,7 +32,7 @@ public class ThreadPool {
 	/**
 	 * Time interval when the processes are checked.
 	 */
-	private static final int CHECK_PERIOD = 20;
+	private static final int CHECK_PERIOD = 60;
 
 	/**
 	 * Directory where the processes are executed
@@ -47,14 +47,39 @@ public class ThreadPool {
 	/**
 	 * Number of mutations that are fetched randomly from the database.
 	 */
-	private static final int MAX_MUTATIONS = 20000;
+	private static final int MAX_MUTATIONS = 200;// 20000;
 
 	/**
 	 * Number of tasks that will be submitted to the thread pool.
 	 */
-	private static final int NUMBER_OF_TASKS = 100;
+	private static final int NUMBER_OF_TASKS = 5;// 100;
 
-	private static final int MUTATIONS_PER_TASK = 1000;
+	private static final int MUTATIONS_PER_TASK = 40;// 1000;
+
+	/**
+	 * Maximum running time for one sub process.
+	 */
+	private static final long MAX_TIME_FOR_SUB_PROCESS = 10 * 30 * 1000; // 10 *
+
+	// 60 *
+	// 1000;
+
+//	 /**
+//	 * Number of mutations that are fetched randomly from the database.
+//	 */
+//	 private static final int MAX_MUTATIONS = 20000;
+//
+//	 /**
+//	 * Number of tasks that will be submitted to the thread pool.
+//	 */
+//	 private static final int NUMBER_OF_TASKS = 100;
+//
+//	 private static final int MUTATIONS_PER_TASK = 75 ;
+//
+//	 /**
+//	 * Maximum running time for one sub process.
+//	 */
+//	 private static final long MAX_TIME_FOR_SUB_PROCESS = 30 * 60 * 1000;
 
 	private static final String RESULT_DIR = MutationProperties.CONFIG_DIR
 			+ "/result/";
@@ -72,11 +97,6 @@ public class ThreadPool {
 	 * Command that is used to execute on mutation task.
 	 */
 	private static final String MUTATION_COMMAND = "/scratch/schuler/mutationTest/src/scripts/threaded-run-tests.sh";
-
-	/**
-	 * Maximum running time for one sub process.
-	 */
-	private static final long MAX_TIME_FOR_SUB_PROCESS = 10 * 60 * 1000;
 
 	/**
 	 * Processes that are added to the thread pool per turn. after one turn the
@@ -102,6 +122,8 @@ public class ThreadPool {
 	private final long mutationResultsPre = QueryManager
 			.getNumberOfMutationsWithResult();
 
+	private int triedShutdowns = 0;
+
 	public static void main(String[] args) {
 		ThreadPool tp = new ThreadPool();
 		tp.startTimed();
@@ -109,7 +131,7 @@ public class ThreadPool {
 
 	private void startTimed() {
 		long startTime = System.currentTimeMillis();
-		logger.info("Start fetching mutations");
+		logger.info("Start fetching " + MAX_MUTATIONS + " mutations");
 		refreshMutations();
 		// mutationIDs = getFakeList();
 		long fetchTime = System.currentTimeMillis();
@@ -136,7 +158,8 @@ public class ThreadPool {
 	}
 
 	private void runTasks() {
-		addProcesses(PROCESSES_PER_TURN);
+		addProcesses(Math.min(PROCESSES_PER_TURN, NUMBER_OF_TASKS
+				- processCounter));
 		while (!pool.isTerminated()) {
 			try {
 				boolean processesFinished = pool.awaitTermination(CHECK_PERIOD,
@@ -206,7 +229,13 @@ public class ThreadPool {
 					- processCounter));
 		}
 		if (processesRunning == 0 && processesFinished == NUMBER_OF_TASKS) {
+			logger.info("trying to shut down the thread pool");
 			pool.shutdown();
+			triedShutdowns++;
+			if (triedShutdowns > 3) {
+				logger.info("Forcing the thread pool to shutdown");
+				pool.shutdownNow();
+			}
 		}
 		handleResults(processes);
 	}
@@ -269,7 +298,7 @@ public class ThreadPool {
 			sb.append(l);
 			sb.append("\n");
 		}
-		Io.writeFile(sb.toString(), resultFile);
+//		TODO Io.writeFile(sb.toString(), resultFile);
 		return resultFile;
 	}
 
@@ -301,8 +330,8 @@ public class ThreadPool {
 	}
 
 	/**
-	 * Return a list of mutation ids that have coverage data associated
-	 *         but do not have a result yet.
+	 * Return a list of mutation ids that have coverage data associated but do
+	 * not have a result yet.
 	 *
 	 * @return a list of mutation ids.
 	 */

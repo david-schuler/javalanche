@@ -20,9 +20,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	private static Logger logger = Logger
 			.getLogger(MutationFileTransformer.class);
 
-
-	private static String[] testNames = {
-			".testclasses"};
+	private static String testName = ".testclasses";
 
 	private static MutationTransformer mutationTransformer = new MutationTransformer();
 
@@ -36,18 +34,20 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			if (classesToMutate.contains(classNameWithDots)) {
 				return true;
 			}
-			for (String included : testNames) {
-				if (classNameWithDots.contains(included)) {
-					return true;
-				}
+			if (classNameWithDots.contains(testName) && !classNameWithDots.endsWith("Test")) {
+				return true;
 			}
 			return false;
 		}
 
 	};
 
-	/* (non-Javadoc)
-	 * @see java.lang.instrument.ClassFileTransformer#transform(java.lang.ClassLoader, java.lang.String, java.lang.Class, java.security.ProtectionDomain, byte[])
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see java.lang.instrument.ClassFileTransformer#transform(java.lang.ClassLoader,
+	 *      java.lang.String, java.lang.Class, java.security.ProtectionDomain,
+	 *      byte[])
 	 */
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,

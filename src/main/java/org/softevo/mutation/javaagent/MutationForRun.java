@@ -39,9 +39,9 @@ public class MutationForRun {
 
 	private static final boolean NON_RANDOM = true;
 
-
 	private List<Mutation> mutations;
 
+	private List<Mutation> appliedMutations = new ArrayList<Mutation>();
 
 	public static MutationForRun getInstance() {
 		return SingletonHolder.INSTANCE;
@@ -56,12 +56,13 @@ public class MutationForRun {
 		return 0;
 	}
 
-
 	private MutationForRun() {
 		mutations = getMutationsForRun();
 		logger.info("Aplying " + mutations.size() + " mutations");
+		for (Mutation m : mutations) {
+			logger.info(m);
+		}
 	}
-
 
 	public Collection<String> getClassNames() {
 		Set<String> classNames = new HashSet<String>();
@@ -79,7 +80,6 @@ public class MutationForRun {
 		if (System.getProperty("mutation.file") != null) {
 			logger.info("Found Property mutation.file");
 			String filename = System.getProperty("mutation.file");
-
 			if (!filename.equals("")) {
 				logger.info("Value of mutation file: " + filename);
 				File file = new File(filename);
@@ -178,17 +178,48 @@ public class MutationForRun {
 		logger.info("Got " + mutations.size() + " mutations");
 	}
 
-	public boolean containsMutation(Mutation mutationFromDb) {
-		return mutations.contains(mutationFromDb);
+	public boolean containsMutation(Mutation mutation) {
+		if (mutations.contains(mutation)) {
+			logger.info("mutation contained:  " + mutation);
+		} else {
+			logger.info("mutation not contained:  " + mutation);
+		}
+		return mutations.contains(mutation);
 	}
 
-	public static void addMutationForTest(Mutation m){
-		MutationForRun mfr = getInstance();
-		mfr.addMutationForTestPR(m);
+	public static void mutationApplied(Mutation mutation) {
+		getInstance()._mutationApplied(mutation);
 	}
 
-	private void addMutationForTestPR(Mutation m) {
-		// TODO Auto-generated method stub
-		
+	private void _mutationApplied(Mutation mutation) {
+		appliedMutations.add(mutation);
+	}
+
+	public void reportAppliedMutations() {
+		List<Mutation> notApplied = new ArrayList<Mutation>();
+		int applied = 0;
+		for (Mutation m : mutations) {
+			if (appliedMutations.contains(m)) {
+				applied++;
+			} else {
+				notApplied.add(m);
+			}
+		}
+		logger.info(applied + " Mutations out of " + mutations.size()
+				+ " Where applied to bytecode");
+		if (applied < mutations.size() || notApplied.size() > 0) {
+			logger.error("Not all mutations where applied to source code");
+			for (Mutation mutation : notApplied) {
+				logger.warn("Mutation not applied " + mutation);
+			}
+		}
+	}
+
+	public static int getNumberOfAppliedMutations() {
+		return getInstance().appliedMutations.size();
+	}
+
+	public static List<Mutation> getAppliedMutations() {
+		return getInstance().appliedMutations;
 	}
 }

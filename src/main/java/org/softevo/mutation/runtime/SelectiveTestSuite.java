@@ -21,6 +21,7 @@ import junit.framework.TestSuite;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.javaagent.MutationPreMain;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
@@ -109,6 +110,7 @@ public class SelectiveTestSuite extends TestSuite {
 				}
 
 				logger.info("" + resultReporter.summary());
+				MutationForRun.getInstance().reportAppliedMutations();
 			}
 		};
 		Runtime.getRuntime().addShutdownHook(shutDownHook);
@@ -180,6 +182,7 @@ public class SelectiveTestSuite extends TestSuite {
 		Runtime.getRuntime().removeShutdownHook(shutDownHook);
 		logger.log(Level.INFO, "Test Runs finished");
 		logger.info("" + resultReporter.summary());
+		MutationForRun.getInstance().reportAppliedMutations();
 	}
 
 	/**

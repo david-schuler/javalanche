@@ -8,6 +8,7 @@ import junit.framework.TestResult;
 
 import org.apache.log4j.Logger;
 import org.softevo.mutation.io.XmlIo;
+import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
@@ -25,13 +26,14 @@ public class ResultReporter {
 
 	private static Set<String> touchingTestCases = new HashSet<String>();
 
+	private static Set<Mutation> reportedMutations = new HashSet<Mutation>();
+
+	private static Set<Mutation> touchedMutations = new HashSet<Mutation>();
+
 	private static String actualTestCase;
 
 	private static boolean firstTouch = true;
 
-	private int reports = 0;
-
-	private int touched;
 
 	public synchronized void report(TestResult mutationTestResult,
 			Mutation mutation, MutationTestListener mutationTestListener) {
@@ -45,14 +47,16 @@ public class ResultReporter {
 		SingleTestResult mutated = new SingleTestResult(mutationTestResult,
 				mutationTestListener, touchingTestCases);
 		QueryManager.updateMutation(mutation, mutated);
+		if (!reportedMutations.contains(mutation)) {
+			reportedMutations.add(mutation);
+		}
 		if (touchingTestCases.size() > 0) {
-			touched++;
+			touchedMutations.add(mutation);
 		}
 		touchingTestCases.clear();
 		actualMutation = null;
 		actualTestCase = null;
 		firstTouch = true;
-		reports++;
 	}
 
 	public static void touch(long mutationID) {
@@ -101,7 +105,9 @@ public class ResultReporter {
 	}
 
 	public String summary() {
-		RunResult runResult = new RunResult(reports, touched);
+		RunResult runResult = new RunResult(reportedMutations, touchedMutations, MutationForRun
+				.getAppliedMutations());
+
 		String resultFile = System
 				.getProperty(MutationProperties.RESULT_FILE_KEY);
 		if (resultFile != null) {
@@ -110,6 +116,7 @@ public class ResultReporter {
 			logger.warn("Not writing property file. Didn't found Property "
 					+ MutationProperties.RESULT_FILE_KEY);
 		}
+
 		return runResult.toString();
 	}
 }

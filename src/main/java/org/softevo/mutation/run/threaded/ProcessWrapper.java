@@ -112,7 +112,7 @@ public class ProcessWrapper extends Thread {
 	}
 
 	/**
-	 * Return the commandto start the process.
+	 * Return the command to start the process.
 	 *
 	 * @return The command to start the process.
 	 */
@@ -126,7 +126,9 @@ public class ProcessWrapper extends Thread {
 	}
 
 	private void closePipes() {
+		logger.info("shutting down pipe" + outputPipe.getPipeID());
 		closePipe(outputPipe);
+		logger.info("shutting down pipe" + errorPipe.getPipeID());
 		closePipe(errorPipe);
 	}
 
@@ -140,7 +142,7 @@ public class ProcessWrapper extends Thread {
 		if (pipeThread != null) {
 			pipeThread.setRunning(false);
 			try {
-				pipeThread.join();
+				pipeThread.join(100 * 1000);
 			} catch (InterruptedException e) {
 				logger.warn("Exception thrown when trying to close pipe. "
 						+ e.getMessage() + "\n" + e.getStackTrace().toString());
@@ -162,8 +164,9 @@ public class ProcessWrapper extends Thread {
 		sb.append('\n');
 		sb.append("Arguments: ");
 		sb.append(Arrays.toString(args));
-		sb.append("Output File" + outputFile.getAbsolutePath());
+		sb.append("Output File: " + outputFile.getAbsolutePath());
 		sb.append('\n');
+		sb.append("Command: " + Arrays.toString(getCommand()));
 
 		return sb.toString();
 	}
@@ -207,7 +210,7 @@ public class ProcessWrapper extends Thread {
 	}
 
 	/**
-	 * @return True if the process has finished.
+	 * @return True, if the process has finished.
 	 */
 	public boolean isFinished() {
 		return finished;

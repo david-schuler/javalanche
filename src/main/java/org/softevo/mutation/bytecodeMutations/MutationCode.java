@@ -20,4 +20,7 @@ public abstract class MutationCode {
 		this.mutation = mutation;
 	}
 
+	public MutationCode() {
+	}
+
 }

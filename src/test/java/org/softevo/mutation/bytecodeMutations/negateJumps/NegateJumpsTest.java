@@ -1,7 +1,5 @@
 package org.softevo.mutation.bytecodeMutations.negateJumps;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestResult;
@@ -17,8 +15,7 @@ import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
 import org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.Jumps;
 import org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.JumpsTest;
-import org.softevo.mutation.io.Io;
-import org.softevo.mutation.javaagent.MutationForRun;
+import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.HibernateUtil;
@@ -62,6 +59,7 @@ public class NegateJumpsTest {
 
 	@Test
 	public void runTests() {
+		System.setProperty(MutationProperties.RESULT_FILE_KEY, "target/unittestResults.xml");
 		ByteCodeTestUtils.redefineMutations(TEST_CLASS_NAME);
 		SelectiveTestSuite selectiveTestSuite = new SelectiveTestSuite();
 		TestSuite suite = new TestSuite(JumpsTest.class);

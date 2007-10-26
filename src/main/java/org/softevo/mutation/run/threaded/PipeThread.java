@@ -72,4 +72,8 @@ class PipeThread extends Thread {
 	public synchronized void setRunning(boolean running) {
 		this.running = running;
 	}
+
+	public int getPipeID() {
+		return pipeID;
+	}
 }

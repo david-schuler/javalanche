@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses;
+package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
 
 import java.util.List;
 
@@ -19,9 +19,14 @@ import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.HibernateUtil;
+import org.softevo.mutation.results.persistence.MutationManager;
 import org.softevo.mutation.runtime.SelectiveTestSuite;
 
 public class TestOnMiniProject {
+
+	static {
+		MutationManager.setApplyAllMutation(true);
+	}
 
 	private static final Class TEST_CLASS = IntegerConstants.class;
 

@@ -41,7 +41,7 @@ public class MutationProperties {
 
 	public static final String MUTATION_TEST_DEBUG_KEY = "mutation.test.debug";
 
-	public static final boolean DEBUG = getDebug();
+	public static final boolean DEBUG = true;
 
 	private static boolean getDebug() {
 		String debugProperty = System.getProperty(MUTATION_TEST_DEBUG_KEY);
