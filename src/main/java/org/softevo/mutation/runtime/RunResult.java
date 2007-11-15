@@ -15,16 +15,19 @@ import org.softevo.mutation.results.Mutation;
  */
 public class RunResult {
 
-	private int mutations;
+	private int reported;
 
 	private int touched;
 
 	private int numberOfAppliedMutations;
 
+	@SuppressWarnings("unused")
 	private Set<Mutation> touchedMutations;
 
+	@SuppressWarnings("unused")
 	private Set<Mutation> reportedMutations;
 
+	@SuppressWarnings("unused")
 	private List<Mutation> appliedMutations;
 
 	private List<Long> touchedIds = new ArrayList<Long>();
@@ -38,7 +41,7 @@ public class RunResult {
 	 * @return the mutations the number of for which results are stored.
 	 */
 	public int getMutations() {
-		return mutations;
+		return reported;
 	}
 
 	/**
@@ -51,7 +54,7 @@ public class RunResult {
 	public RunResult(Set<Mutation> reportedMutations,
 			Set<Mutation> touchedMutations, List<Mutation> appliedMutations) {
 		super();
-		this.mutations = reportedMutations.size();
+		this.reported = reportedMutations.size();
 		this.reportedMutations = reportedMutations;
 		this.touched = touchedMutations.size();
 		this.touchedMutations = touchedMutations;
@@ -75,6 +78,20 @@ public class RunResult {
 		return String.format("%d mutations were applied"
 				+ "\n%d Mutation Results were recorded"
 				+ "\n%d Mutations where actually touched.",
-				numberOfAppliedMutations, mutations, touched);
+				numberOfAppliedMutations, reported, touched);
+	}
+
+	/**
+	 * @return the reportedMutations
+	 */
+	public Set<Mutation> getReportedMutations() {
+		return reportedMutations;
+	}
+
+	/**
+	 * @return the reportedIds
+	 */
+	public List<Long> getReportedIds() {
+		return reportedIds;
 	}
 }

@@ -30,6 +30,9 @@ public class MutationScanner implements ClassFileTransformer {
 			if (QueryManager.hasMutationsforClass(classNameWithDots)) {
 				return false;
 			}
+			if (classNameWithDots.toLowerCase().contains("test")) {
+				return false;
+			}
 			if(classNameWithDots.startsWith("org.aspectj")){
 				return true;
 			}

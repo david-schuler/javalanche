@@ -18,17 +18,11 @@ import org.softevo.mutation.runtime.RunResult;
  * @author David Schuler
  *
  */
-/**
- * @author David Schuler
- *
- */
 public class ProcessWrapper extends Thread {
 
 	private static Logger logger = Logger.getLogger(ProcessWrapper.class);
 
 	private String command;
-
-	private String[] args;
 
 	private File dir;
 
@@ -52,12 +46,16 @@ public class ProcessWrapper extends Thread {
 
 	private RunResult runResult;
 
+	private File taskFile;
+
+	private int debugPort;
+
 	/**
 	 * Construct a new ProcessWrapper.
 	 *
 	 * @param command
 	 *            The actual command
-	 * @param args
+	 * @param taskFile
 	 *            Arguments of the command
 	 * @param dir
 	 *            Directory where the command is executed
@@ -66,11 +64,12 @@ public class ProcessWrapper extends Thread {
 	 * @param resultFile
 	 *            The result file the tasks writes its mutation results to.
 	 */
-	public ProcessWrapper(String command, String[] args, File dir,
-			File outputFile, File resultFile) {
+	public ProcessWrapper(String command, File taskFile, File dir,
+			File outputFile, File resultFile, int taskID) {
 		super();
+		this.debugPort = 1000 + taskID;
 		this.command = command;
-		this.args = args;
+		this.taskFile = taskFile;
 		this.dir = dir;
 		this.outputFile = outputFile;
 		this.resultFile = resultFile;
@@ -117,11 +116,15 @@ public class ProcessWrapper extends Thread {
 	 * @return The command to start the process.
 	 */
 	private String[] getCommand() {
-		String[] cmdArray = new String[args.length + 2];
+		String[] cmdArray = new String[4];
 		cmdArray[0] = command;
 		cmdArray[1] = "-D" + MutationProperties.RESULT_FILE_KEY + "="
 				+ resultFile.getAbsolutePath();
-		System.arraycopy(args, 0, cmdArray, 2, args.length);
+		cmdArray[2] = "-D" + MutationProperties.MUTATION_FILE_KEY + "="
+				+ taskFile.getAbsolutePath();
+		cmdArray[3] = "-D" + MutationProperties.DEBUG_PORT_KEY + "="
+		+ debugPort;
+		// String.format("-D%s=%s",
 		return cmdArray;
 	}
 
@@ -162,12 +165,11 @@ public class ProcessWrapper extends Thread {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Command" + command);
 		sb.append('\n');
-		sb.append("Arguments: ");
-		sb.append(Arrays.toString(args));
 		sb.append("Output File: " + outputFile.getAbsolutePath());
 		sb.append('\n');
+		sb.append("Task File: " + taskFile.getAbsolutePath());
+		sb.append('\n');
 		sb.append("Command: " + Arrays.toString(getCommand()));
-
 		return sb.toString();
 	}
 

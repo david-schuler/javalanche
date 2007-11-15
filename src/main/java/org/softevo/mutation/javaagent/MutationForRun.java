@@ -1,10 +1,6 @@
 package org.softevo.mutation.javaagent;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,8 +12,10 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.softevo.mutation.io.Io;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.HibernateUtil;
+import org.softevo.mutation.results.persistence.QueryManager;
 
 public class MutationForRun {
 
@@ -130,47 +128,8 @@ public class MutationForRun {
 	}
 
 	private static List<Mutation> getMutationsByFile(File file) {
-		List<Long> idList = getIDsFromFile(file);
-		return getMutationsFromDbByID(idList.toArray(new Long[0]));
-	}
-
-	private static List<Long> getIDsFromFile(File file) {
-		List<Long> idList = new ArrayList<Long>();
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			while (br.ready()) {
-				String id = br.readLine();
-				idList.add(Long.valueOf(id));
-			}
-			br.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return idList;
-	}
-
-	private static List<Mutation> getMutationsFromDbByID(Long[] ids) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		// Query query = session
-		// .createQuery("FROM Mutation m inner join fetch m.mutationResult inner
-		// join fetch m.mutationResult.failures inner join fetch
-		// m.mutationResult.errors inner join fetch m.mutationResult.passing
-		// WHERE m.id IN (:ids)");
-		Query query = session
-				.createQuery("FROM Mutation m  WHERE m.id IN (:ids)");
-
-		query.setParameterList("ids", ids);
-		List results = query.list();
-		List<Mutation> mutationList = new ArrayList<Mutation>();
-		for (Object m : results) {
-			mutationList.add((Mutation) m);
-		}
-		tx.commit();
-		session.close();
-		return mutationList;
+		List<Long> idList = Io.getIDsFromFile(file);
+		return QueryManager.getMutationsFromDbByID(idList.toArray(new Long[0]));
 	}
 
 	public void reinit() {
@@ -180,9 +139,9 @@ public class MutationForRun {
 
 	public boolean containsMutation(Mutation mutation) {
 		if (mutations.contains(mutation)) {
-			logger.info("mutation contained:  " + mutation);
+			logger.debug("mutation contained:  " + mutation);
 		} else {
-			logger.info("mutation not contained:  " + mutation);
+			logger.debug("mutation not contained:  " + mutation);
 		}
 		return mutations.contains(mutation);
 	}

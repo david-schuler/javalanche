@@ -161,23 +161,6 @@ public class QueryManager {
 		return retList.toArray(new String[0]);
 	}
 
-	public static boolean hasUnmutated(String className, int lineNumber) {
-		boolean hasUnmutated = false;
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		Query query = session
-				.createQuery("from Mutation where classname=:clname and linenumber=:lnumber and mutationtype=:mtype");
-		query.setString("clname", className);
-		query.setInteger("lnumber", lineNumber);
-		query.setInteger("mtype", MutationType.NO_MUTATION.ordinal());
-		if (query.list().size() == 1) {
-			hasUnmutated = true;
-		}
-		tx.commit();
-		session.close();
-		return hasUnmutated;
-	}
-
 	public static boolean shouldMutateClass(String className) {
 		boolean shouldMutate = false;
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -312,5 +295,66 @@ public class QueryManager {
 
 	public static void main(String[] args) {
 		System.out.println(getNumberOfMutationsWithResult());
+	}
+
+	public static List<Mutation> getMutationsFromDbByID(Long[] ids) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		// Query query = session
+		// .createQuery("FROM Mutation m inner join fetch m.mutationResult inner
+		// join fetch m.mutationResult.failures inner join fetch
+		// m.mutationResult.errors inner join fetch m.mutationResult.passing
+		// WHERE m.id IN (:ids)");
+		Query query = session
+				.createQuery("FROM Mutation m  WHERE m.id IN (:ids)");
+
+		query.setParameterList("ids", ids);
+		List results = query.list();
+		List<Mutation> mutationList = new ArrayList<Mutation>();
+		for (Object m : results) {
+			mutationList.add((Mutation) m);
+		}
+		tx.commit();
+		session.close();
+		return mutationList;
+	}
+
+	public static Mutation generateUnmutated(Mutation mutation) {
+		Mutation unmutated;
+		if (!hasUnmutated(mutation)) {
+			unmutated = new Mutation(mutation.getClassName(), mutation
+					.getLineNumber(), mutation.getMutationForLine(),
+					MutationType.NO_MUTATION);
+			saveMutation(unmutated);
+		} else {
+			unmutated = getUnmutated(mutation);
+		}
+		return unmutated;
+	}
+
+	private static Mutation getUnmutated(Mutation mutation) {
+		return getUnmutated(mutation.getClassName(), mutation.getLineNumber());
+	}
+
+	private static boolean hasUnmutated(Mutation mutation) {
+		return hasUnmutated(mutation.getClassName(), mutation.getLineNumber());
+	}
+
+	public static boolean hasUnmutated(String className, int lineNumber) {
+		return getUnmutated(className, lineNumber) != null ? true : false;
+	}
+
+	public static Mutation getUnmutated(String className, int lineNumber) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("from Mutation where classname=:clname and linenumber=:lnumber and mutationtype=:mtype");
+		query.setString("clname", className);
+		query.setInteger("lnumber", lineNumber);
+		query.setInteger("mtype", MutationType.NO_MUTATION.ordinal());
+		Mutation mmutation = (Mutation) query.uniqueResult();
+		tx.commit();
+		session.close();
+		return mmutation;
 	}
 }

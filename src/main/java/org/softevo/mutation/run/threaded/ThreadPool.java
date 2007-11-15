@@ -13,7 +13,9 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.softevo.mutation.io.Io;
+import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.properties.MutationProperties;
+import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.runtime.RunResult;
@@ -42,44 +44,43 @@ public class ThreadPool {
 	/**
 	 * Number of parallel running threads.
 	 */
-	private static final int NUMBER_OF_THREADS = 3;
+	private static final int NUMBER_OF_THREADS = 2;
 
-	/**
-	 * Number of mutations that are fetched randomly from the database.
-	 */
-	private static final int MAX_MUTATIONS = 200;// 20000;
-
-	/**
-	 * Number of tasks that will be submitted to the thread pool.
-	 */
-	private static final int NUMBER_OF_TASKS = 5;// 100;
-
-	private static final int MUTATIONS_PER_TASK = 40;// 1000;
-
-	/**
-	 * Maximum running time for one sub process.
-	 */
-	private static final long MAX_TIME_FOR_SUB_PROCESS = 10 * 30 * 1000; // 10 *
-
-	// 60 *
-	// 1000;
-
-//	 /**
+//	/**
 //	 * Number of mutations that are fetched randomly from the database.
 //	 */
-//	 private static final int MAX_MUTATIONS = 20000;
+//	private static final int MAX_MUTATIONS = 200;// 20000;
 //
-//	 /**
+//	/**
 //	 * Number of tasks that will be submitted to the thread pool.
 //	 */
-//	 private static final int NUMBER_OF_TASKS = 100;
+//	private static final int NUMBER_OF_TASKS = 5;// 100;
 //
-//	 private static final int MUTATIONS_PER_TASK = 75 ;
+//	private static final int MUTATIONS_PER_TASK = 40;// 1000;
 //
-//	 /**
+//	/**
 //	 * Maximum running time for one sub process.
 //	 */
-//	 private static final long MAX_TIME_FOR_SUB_PROCESS = 30 * 60 * 1000;
+//	private static final long MAX_TIME_FOR_SUB_PROCESS = 10 * 30 * 1000;
+
+	 /**
+	 * Number of mutations that are fetched randomly from the database.
+	 */
+	 private static final int MAX_MUTATIONS = 7500;
+
+	 /**
+	 * Number of tasks that will be submitted to the thread pool.
+	 */
+	 private static final int NUMBER_OF_TASKS = 50;
+
+	 private static final int MUTATIONS_PER_TASK = 75;
+
+	 /**
+	 * Maximum running time for one sub process.
+	 */
+	 private static final long MAX_TIME_FOR_SUB_PROCESS = 60 * 60 * 1000;
+
+	private List<Long> allQueriedMutations = new ArrayList<Long>();
 
 	private static final String RESULT_DIR = MutationProperties.CONFIG_DIR
 			+ "/result/";
@@ -145,6 +146,47 @@ public class ThreadPool {
 		logger.info("Tried to run " + MUTATIONS_PER_TASK * NUMBER_OF_TASKS
 				+ " mutations - got " + actuallMutationsInDb
 				+ "  results\nRun for: " + formatMilliseconds(duration));
+		writeResults();
+	}
+
+	private void writeResults() {
+		logger.info("Getting" + allQueriedMutations.size() + " Mutations");
+		List<Mutation> dbMutations = QueryManager
+				.getMutationsFromDbByID(allQueriedMutations
+						.toArray(new Long[0]));
+		List<Long> mutationsWithResult = new ArrayList<Long>();
+		for (Mutation m : dbMutations) {
+			if (m.getMutationResult() != null) {
+				mutationsWithResult.add(m.getId());
+			}
+		}
+		XmlIo.toXML(mutationsWithResult, new File(RESULT_DIR
+				+ "/all-mutations.xml"));
+		List<Long> mutationsFromResultFiles = new ArrayList<Long>();
+		for (ProcessWrapper ps : processes) {
+			RunResult runResult = ps.getRunResult();
+			if (runResult != null) {
+				List<Long> reportedMutations = runResult.getReportedIds();
+				mutationsFromResultFiles.addAll(reportedMutations);
+			}
+		}
+		List<Long> notContainedIds = new ArrayList<Long>();
+		for (Long id : mutationsWithResult) {
+			if (!mutationsFromResultFiles.contains(id)) {
+				notContainedIds.add(id);
+			}
+		}
+		XmlIo.toXML(notContainedIds, new File(RESULT_DIR
+				+ "/ids-not-in-result-files.xml"));
+
+		List<Long> dbNotContainedIds = new ArrayList<Long>();
+		for (Long m : mutationsFromResultFiles) {
+			if (!mutationsWithResult.contains(m)) {
+				dbNotContainedIds.add(m);
+			}
+		}
+		XmlIo.toXML(dbNotContainedIds, new File(RESULT_DIR
+				+ "/ids-not-in-db.xml"));
 	}
 
 	private String formatMilliseconds(long duration) {
@@ -197,14 +239,13 @@ public class ThreadPool {
 		String outputFile = String.format(RESULT_DIR
 				+ "/process-output-%02d.txt", processCounter);
 		List<Long> list = getMutionIDs(MUTATIONS_PER_TASK);
+		allQueriedMutations.addAll(list);
 		File taskIdFile = writeListToFile(list, processCounter);
 		String resultFile = String.format(RESULT_DIR
 				+ "/process-result-%02d.xml", processCounter);
-		ProcessWrapper ps = new ProcessWrapper(MUTATION_COMMAND,
-				new String[] { String.format("-D%s=%s",
-						MutationProperties.MUTATION_FILE_KEY, taskIdFile
-								.getAbsolutePath()) }, new File(EXEC_DIR),
-				new File(outputFile), new File(resultFile));
+		ProcessWrapper ps = new ProcessWrapper(MUTATION_COMMAND, taskIdFile,
+				new File(EXEC_DIR), new File(outputFile), new File(resultFile),
+				processCounter);
 		processes.add(ps);
 		logger.info("Process: " + ps.toString());
 		pool.submit(ps);
@@ -213,8 +254,6 @@ public class ThreadPool {
 	/**
 	 * This method is called in regular intervals. It destroys processes that
 	 * run for two long and logs statistics.
-	 *
-	 * @param processes
 	 */
 	private void handleProcesses() {
 		int processesFinished = getNumberOfFinishedProcesses();
@@ -298,7 +337,7 @@ public class ThreadPool {
 			sb.append(l);
 			sb.append("\n");
 		}
-//		TODO Io.writeFile(sb.toString(), resultFile);
+		Io.writeFile(sb.toString(), resultFile);
 		return resultFile;
 	}
 

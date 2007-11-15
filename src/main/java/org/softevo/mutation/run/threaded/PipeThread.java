@@ -1,4 +1,3 @@
-
 package org.softevo.mutation.run.threaded;
 
 import java.io.IOException;
@@ -46,8 +45,8 @@ class PipeThread extends Thread {
 					&& (bytesRead = is.read(buffer)) != -1) {
 				os.write(buffer, 0, bytesRead);
 			}
-			if (is != null) {
-				if ((bytesRead = is.read(buffer)) != -1) {
+			synchronized (is) {
+				if (is != null && (bytesRead = is.read(buffer)) != -1) {
 					os.write(buffer, 0, bytesRead);
 				}
 			}

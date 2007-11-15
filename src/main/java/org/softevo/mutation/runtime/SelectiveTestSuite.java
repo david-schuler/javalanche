@@ -25,6 +25,7 @@ import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.javaagent.MutationPreMain;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
+import org.softevo.mutation.results.persistence.QueryManager;
 
 /**
  * Subclass of Junits {@link TestSuite} class. It is used to execute the tests
@@ -66,9 +67,10 @@ public class SelectiveTestSuite extends TestSuite {
 
 	private Test actualTest;
 
+	private boolean checkUnmutated =false;
+
 	static {
 		staticLogMessage();
-		// setSecurityManager();
 	}
 
 	private static void staticLogMessage() {
@@ -178,6 +180,20 @@ public class SelectiveTestSuite extends TestSuite {
 					actualMutationTestResult.runCount(),
 					actualMutationTestResult.failureCount(),
 					actualMutationTestResult.errorCount()));
+			if(checkUnmutated){
+				actualMutation = QueryManager.generateUnmutated(actualMutation);
+				TestResult unmutatedTestResult = new TestResult();
+				MutationTestListener unmutatedListener = new MutationTestListener();
+				unmutatedTestResult.addListener(unmutatedListener);
+				runTests(allTests, unmutatedTestResult, testsForThisRun);
+				resultReporter.report(unmutatedTestResult, actualMutation,
+						unmutatedListener);
+				logger.info(String.format("Check Result runs: %d failures:%d errors:%d ",
+						actualMutationTestResult.runCount(),
+						actualMutationTestResult.failureCount(),
+						actualMutationTestResult.errorCount()));
+
+			}
 		}
 		Runtime.getRuntime().removeShutdownHook(shutDownHook);
 		logger.log(Level.INFO, "Test Runs finished");

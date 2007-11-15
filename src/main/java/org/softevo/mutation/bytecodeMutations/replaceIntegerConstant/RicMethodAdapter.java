@@ -151,6 +151,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
 				mutationForLine);
 		boolean insert = false;
+		mutationForLine++;
 		MutationCode unmutated = new MutationCode(null) {
 
 			@Override
@@ -205,6 +206,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		logger.info("long constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
 				mutationForLine);
+		mutationForLine++;
 		boolean insert = false;
 		MutationCode unmutated = new MutationCode(null) {
 
@@ -261,6 +263,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
 				mutationForLine);
 		boolean insert = false;
+		mutationForLine++;
 		MutationCode unmutated = new MutationCode(null) {
 
 			@Override
@@ -314,6 +317,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		logger.info("long constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
 				mutationForLine);
+		mutationForLine++;
 		boolean insert = false;
 		MutationCode unmutated = new MutationCode(null) {
 
@@ -398,9 +402,9 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 				mutationForLine, MutationType.RIC_MINUS_1);
 		Mutation mutationZero = new Mutation(className, lineNumber,
 				mutationForLine, MutationType.RIC_ZERO);
-		Mutation mutationPlus1FromDB = QueryManager.getMutation(mutationPlus1);
-		Mutation mutationMinus1FromDB = QueryManager.getMutation(mutationMinus);
-		Mutation mutationZeroFromDB = QueryManager.getMutation(mutationZero);
+		Mutation mutationPlus1FromDB = QueryManager.getMutationOrNull(mutationPlus1);
+		Mutation mutationMinus1FromDB = QueryManager.getMutationOrNull(mutationMinus);
+		Mutation mutationZeroFromDB = QueryManager.getMutationOrNull(mutationZero);
 		return new ConstantMutations(mutationPlus1FromDB, mutationMinus1FromDB,
 				mutationZeroFromDB);
 

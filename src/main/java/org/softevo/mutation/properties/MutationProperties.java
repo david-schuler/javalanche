@@ -43,6 +43,8 @@ public class MutationProperties {
 
 	public static final boolean DEBUG = true;
 
+	public static final String DEBUG_PORT_KEY = "mutation.debug.port";
+
 	private static boolean getDebug() {
 		String debugProperty = System.getProperty(MUTATION_TEST_DEBUG_KEY);
 		if (debugProperty != null && !debugProperty.equals("false")) {

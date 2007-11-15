@@ -22,6 +22,10 @@ public class MutationManager {
 	private static Logger logger = Logger.getLogger(MutationManager.class);
 
 	public static boolean shouldApplyMutation(Mutation mutation) {
+		if(mutation == null){
+			logger.log(Level.INFO, "Null Mutation");
+			return false;
+		}
 		Mutation mutationFromDb = QueryManager.getMutationOrNull(mutation);
 		if (mutationFromDb == null) {
 			logger.log(Level.INFO, "Mutation not in db: " + mutation);

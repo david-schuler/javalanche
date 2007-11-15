@@ -142,7 +142,7 @@
 	</target>
 
 	<target name="showMutationResults" description="prints all mutation results to console">
-		<java classname="org.softevo.mutation.run.PrintResults" maxmemory="1024m" fork="true">
+		<java classname="org.softevo.mutation.run.PrintResults" maxmemory="4096m" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
@@ -151,9 +151,9 @@
 	</target>
 
 	<target name="runThreaded" description="run mutation tests multithreaded">
-		<!--<delete dir="${threaded.result.dir}" />
+		<delete dir="${threaded.result.dir}" />
 		<mkdir dir="${threaded.result.dir}" />
-		--><java classname="org.softevo.mutation.run.threaded.ThreadPool" maxmemory="1024m" fork="true">
+		<java classname="org.softevo.mutation.run.threaded.ThreadPool" maxmemory="1024m" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
@@ -174,9 +174,26 @@
 		</java>
 	</target>
 
+	<target name="runThreadedDebugSingleRun" description="run mutation tests for run file">
+		<property name="mutation.file" value="/scratch2/schuler/mutation-test-config/result/mutation-task-06.txt" />
+		<java classname="org.softevo.mutation.run.ResultDeleter" maxmemory="1024m" fork="true" jvm="/usr/local/java/jdk1.5.0_12/jre/bin/java">
+			<arg value="${mutation.file}" />
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+			</classpath>
+		</java>
+		<exec dir="." executable="/scratch2/schuler/mutationTest/src/scripts/threaded-run-tests.sh" os="Linux">
+			<arg line="-Dmutation.file=${mutation.file}" />
+			<arg line="-Dmutation.result.file=debug_result.xml" />
+		</exec>
+	</target>
+
+
 
 	<target name="deleteTestResults" description="deletes the mutation test results in the database">
-		<java classname="org.softevo.mutation.run.ResultDeleter" maxmemory="1024m" fork="true" jvm="/usr/local/java/jdk1.5.0_12/jre/bin/java">
+		<java classname="org.softevo.mutation.run.ResultDeleter" maxmemory="4096m" fork="true" jvm="/usr/local/java/jdk1.5.0_12/jre/bin/java">
+			<arg value="all" />
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
@@ -206,5 +223,16 @@
 			</classpath>
 		</java>
 	</target>
+
+
+	<target name="deleteTestCaseMutations" description="deletes mutations for testcases from db">
+		<java classname="org.softevo.mutation.run.DeleteTestCaseMutations" maxmemory="2048m" fork="true">
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+			</classpath>
+		</java>
+	</target>
+
 
 </project>
