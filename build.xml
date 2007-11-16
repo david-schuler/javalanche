@@ -175,7 +175,7 @@
 	</target>
 
 	<target name="runThreadedDebugSingleRun" description="run mutation tests for run file">
-		<property name="mutation.file" value="/scratch2/schuler/mutation-test-config/result/mutation-task-06.txt" />
+		<property name="mutation.file" value="/scratch2/schuler/mutation-test-config/result/mutation-task-01.txt" />
 		<java classname="org.softevo.mutation.run.ResultDeleter" maxmemory="1024m" fork="true" jvm="/usr/local/java/jdk1.5.0_12/jre/bin/java">
 			<arg value="${mutation.file}" />
 			<classpath>

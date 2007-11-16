@@ -37,7 +37,6 @@ import org.softevo.mutation.results.persistence.QueryManager;
  */
 public class SelectiveTestSuite extends TestSuite {
 
-
 	/**
 	 * $Date: 2007-10-19 11:37:30 +0200 (Fri, 19 Oct 2007) $
 	 *
@@ -67,7 +66,7 @@ public class SelectiveTestSuite extends TestSuite {
 
 	private Test actualTest;
 
-	private boolean checkUnmutated =false;
+	private boolean checkUnmutated = false;
 
 	static {
 		staticLogMessage();
@@ -93,7 +92,7 @@ public class SelectiveTestSuite extends TestSuite {
 
 			public void run() {
 				logger.info("Shutdown hook activated");
-				logger.info("actualListener: " + actualListener
+				logger.info("ActualListener: " + actualListener
 						+ "\nresultReporter: " + resultReporter);
 				if (SLEEP) {
 					try {
@@ -107,10 +106,12 @@ public class SelectiveTestSuite extends TestSuite {
 				if (actualListener != null) {
 					actualListener.addError(actualTest, new RuntimeException(
 							"JVM shut down because of mutation"));
-					// resultReporter.report(actualMutationTestResult,
-					// actualMutation, actualListener);
+					resultReporter.report(actualMutationTestResult,
+							actualMutation, actualListener);
 				}
-
+				else{
+					logger.warn("Maybe could not report error that caused the shutdown. Caused by mutation: "+ actualMutation);
+				}
 				logger.info("" + resultReporter.summary());
 				MutationForRun.getInstance().reportAppliedMutations();
 			}
@@ -180,7 +181,7 @@ public class SelectiveTestSuite extends TestSuite {
 					actualMutationTestResult.runCount(),
 					actualMutationTestResult.failureCount(),
 					actualMutationTestResult.errorCount()));
-			if(checkUnmutated){
+			if (checkUnmutated) {
 				actualMutation = QueryManager.generateUnmutated(actualMutation);
 				TestResult unmutatedTestResult = new TestResult();
 				MutationTestListener unmutatedListener = new MutationTestListener();
@@ -188,7 +189,8 @@ public class SelectiveTestSuite extends TestSuite {
 				runTests(allTests, unmutatedTestResult, testsForThisRun);
 				resultReporter.report(unmutatedTestResult, actualMutation,
 						unmutatedListener);
-				logger.info(String.format("Check Result runs: %d failures:%d errors:%d ",
+				logger.info(String.format(
+						"Check Result runs: %d failures:%d errors:%d ",
 						actualMutationTestResult.runCount(),
 						actualMutationTestResult.failureCount(),
 						actualMutationTestResult.errorCount()));

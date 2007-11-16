@@ -25,6 +25,6 @@
 	<classpathentry kind="var" path="M2_REPO/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3.jar" sourcepath="M2_REPO/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.9/log4j-1.2.9.jar" sourcepath="M2_REPO/log4j/log4j/1.2.9/log4j-1.2.9-sources.jar"/>
-	<classpathentry kind="lib" path="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib/mysql-connector-java-5.0.3.jar"/>
+	<classpathentry kind="lib" path="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib/mysql-connector-java-5.1-nightly-20071110-bin.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -7,6 +7,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+/**
+ * @author David Schuler
+ *
+ */
 @Entity
 public class Mutation {
 
@@ -141,23 +145,30 @@ public class Mutation {
 		this.mutationForLine = mutationForLine;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int PRIME = 31;
 		int result = 1;
-		result = PRIME * result + ((className == null) ? 0 : className.hashCode());
+		result = PRIME * result
+				+ ((className == null) ? 0 : className.hashCode());
 		result = PRIME * result + ((id == null) ? 0 : id.hashCode());
 		result = PRIME * result + lineNumber;
 		result = PRIME * result + mutationForLine;
-		result = PRIME * result + ((mutationResult == null) ? 0 : mutationResult.hashCode());
-		result = PRIME * result + ((mutationType == null) ? 0 : mutationType.hashCode());
+		result = PRIME * result
+				+ ((mutationResult == null) ? 0 : mutationResult.hashCode());
+		result = PRIME * result
+				+ ((mutationType == null) ? 0 : mutationType.hashCode());
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -178,6 +189,42 @@ public class Mutation {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
+			return false;
+		if (lineNumber != other.lineNumber)
+			return false;
+		if (mutationForLine != other.mutationForLine)
+			return false;
+		if (mutationResult == null) {
+			if (other.mutationResult != null)
+				return false;
+		} else if (!mutationResult.equals(other.mutationResult))
+			return false;
+		if (mutationType == null) {
+			if (other.mutationType != null)
+				return false;
+		} else if (!mutationType.equals(other.mutationType))
+			return false;
+		return true;
+	}
+
+	/**
+	 * Same behaviour as equals without checking for equal ids.
+	 *
+	 * @param comp Mutation to compare.
+	 * @return True, if both objects are equal except of their IDs.
+	 */
+	public boolean equalsWithoutId(Mutation comp) {
+		if (this == comp)
+			return true;
+		if (comp == null)
+			return false;
+		if (getClass() != comp.getClass())
+			return false;
+		final Mutation other = (Mutation) comp;
+		if (className == null) {
+			if (other.className != null)
+				return false;
+		} else if (!className.equals(other.className))
 			return false;
 		if (lineNumber != other.lineNumber)
 			return false;

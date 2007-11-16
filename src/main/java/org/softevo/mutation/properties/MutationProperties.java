@@ -54,4 +54,9 @@ public class MutationProperties {
 		logger.info("Debugging not enabled");
 		return false;
 	}
+
+	/**
+	 * Directory where the processes are executed
+	 */
+	public static final String EXEC_DIR = "/scratch/schuler/mutationTest/src/scripts/";
 }

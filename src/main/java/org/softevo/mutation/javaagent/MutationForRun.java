@@ -56,7 +56,7 @@ public class MutationForRun {
 
 	private MutationForRun() {
 		mutations = getMutationsForRun();
-		logger.info("Aplying " + mutations.size() + " mutations");
+		logger.info("Applying " + mutations.size() + " mutations");
 		for (Mutation m : mutations) {
 			logger.info(m);
 		}
@@ -86,7 +86,7 @@ public class MutationForRun {
 							+ file.getAbsolutePath());
 					return getMutationsByFile(file);
 				} else {
-					logger.info("Mutation file does not exist" + file);
+					logger.info("Mutation file does not exist " + file);
 				}
 			}
 		} else {
@@ -138,12 +138,24 @@ public class MutationForRun {
 	}
 
 	public boolean containsMutation(Mutation mutation) {
-		if (mutations.contains(mutation)) {
+		boolean result = hasMutation(mutation);
+		if (result) {
 			logger.debug("mutation contained:  " + mutation);
 		} else {
 			logger.debug("mutation not contained:  " + mutation);
 		}
-		return mutations.contains(mutation);
+		return result;
+	}
+
+	private boolean hasMutation(Mutation searchMutation) {
+		if (searchMutation != null) {
+			for (Mutation m : mutations) {
+				if (searchMutation.equalsWithoutId(m)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public static void mutationApplied(Mutation mutation) {

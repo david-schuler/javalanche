@@ -26,12 +26,13 @@ public class MutationManager {
 			logger.log(Level.INFO, "Null Mutation");
 			return false;
 		}
-		Mutation mutationFromDb = QueryManager.getMutationOrNull(mutation);
-		if (mutationFromDb == null) {
-			logger.log(Level.INFO, "Mutation not in db: " + mutation);
-			return false;
-		} else if (MutationForRun.getInstance()
-				.containsMutation(mutationFromDb)) {
+		else if (MutationForRun.getInstance()
+				.containsMutation(mutation)) {
+			Mutation mutationFromDb = QueryManager.getMutationOrNull(mutation);
+			if (mutationFromDb == null) {
+				logger.log(Level.INFO, "Mutation not in db: " + mutation);
+				return false;
+			}
 			logger.log(Level.INFO, "Applying mutation: " + mutation);
 			MutationForRun.mutationApplied(mutationFromDb);
 			return true;

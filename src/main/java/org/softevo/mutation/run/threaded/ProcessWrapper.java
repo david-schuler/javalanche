@@ -22,6 +22,9 @@ public class ProcessWrapper extends Thread {
 
 	private static Logger logger = Logger.getLogger(ProcessWrapper.class);
 
+	private static final String KILL_COMMAND = MutationProperties.EXEC_DIR
+			+ "/kill-by-id.sh";
+
 	private String command;
 
 	private File dir;
@@ -50,6 +53,8 @@ public class ProcessWrapper extends Thread {
 
 	private int debugPort;
 
+	private int taskId;
+
 	/**
 	 * Construct a new ProcessWrapper.
 	 *
@@ -65,9 +70,10 @@ public class ProcessWrapper extends Thread {
 	 *            The result file the tasks writes its mutation results to.
 	 */
 	public ProcessWrapper(String command, File taskFile, File dir,
-			File outputFile, File resultFile, int taskID) {
+			File outputFile, File resultFile, int taskId) {
 		super();
-		this.debugPort = 1000 + taskID;
+		this.taskId = taskId;
+		this.debugPort = 1000 + taskId;
 		this.command = command;
 		this.taskFile = taskFile;
 		this.dir = dir;
@@ -123,7 +129,7 @@ public class ProcessWrapper extends Thread {
 		cmdArray[2] = "-D" + MutationProperties.MUTATION_FILE_KEY + "="
 				+ taskFile.getAbsolutePath();
 		cmdArray[3] = "-D" + MutationProperties.DEBUG_PORT_KEY + "="
-		+ debugPort;
+				+ debugPort;
 		// String.format("-D%s=%s",
 		return cmdArray;
 	}
@@ -233,6 +239,23 @@ public class ProcessWrapper extends Thread {
 		} catch (IllegalThreadStateException e) {
 			logger.info("could not get exit value" + e.getMessage());
 		}
+		try {
+			sleep(10 * 1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		try {
+			Process  killProcess = Runtime.getRuntime().exec(getKillComand(), new String[0], dir);
+			InputStream is = killProcess.getInputStream();
+			PipeThread killOutputPipe = new PipeThread(is);
+			killOutputPipe.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		end();
+	}
+
+	private String[] getKillComand() {
+		return new String[]{ KILL_COMMAND ,  ""  +  taskId };
 	}
 }

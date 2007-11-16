@@ -25,11 +25,58 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 		private Mutation zero;
 
+		private Mutation plus1FromDB;
+
+		private Mutation minus1FromDB;
+
+		private Mutation zeroFromDB;
+
+		private boolean dbMutationsInitialized;
+
 		public ConstantMutations(Mutation plus1, Mutation minus1, Mutation zero) {
 			super();
 			this.plus1 = plus1;
 			this.minus1 = minus1;
 			this.zero = zero;
+		}
+
+		private void initDbMutations() {
+			if (!dbMutationsInitialized) {
+				plus1FromDB = QueryManager.getMutationOrNull(plus1);
+				minus1FromDB = QueryManager.getMutationOrNull(minus1);
+				zeroFromDB = QueryManager.getMutationOrNull(zero);
+				dbMutationsInitialized = true;
+			}
+		}
+
+		/**
+		 * @return the minus1FromDB
+		 */
+		public Mutation getMinus1FromDB() {
+			if (!dbMutationsInitialized) {
+				initDbMutations();
+			}
+			return minus1FromDB;
+		}
+
+		/**
+		 * @return the plus1FromDB
+		 */
+		public Mutation getPlus1FromDB() {
+			if (!dbMutationsInitialized) {
+				initDbMutations();
+			}
+			return plus1FromDB;
+		}
+
+		/**
+		 * @return the zeroFromDB
+		 */
+		public Mutation getZeroFromDB() {
+			if (!dbMutationsInitialized) {
+				initDbMutations();
+			}
+			return zeroFromDB;
 		}
 
 		/**
@@ -165,7 +212,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 		if (MutationManager.shouldApplyMutation(cm.getPlus1())) {
 			insert = true;
-			mutationCode.add(new MutationCode(cm.getPlus1()) {
+			mutationCode.add(new MutationCode(cm.getPlus1FromDB()) {
 
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
@@ -175,7 +222,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		}
 		if (MutationManager.shouldApplyMutation(cm.getMinus1())) {
 			insert = true;
-			mutationCode.add(new MutationCode(cm.getMinus1()) {
+			mutationCode.add(new MutationCode(cm.getMinus1FromDB()) {
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
 					mv.visitLdcInsn(new Long(longConstant - 1));
@@ -185,7 +232,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 		if (MutationManager.shouldApplyMutation(cm.getZero())) {
 			insert = true;
-			mutationCode.add(new MutationCode(cm.getZero()) {
+			mutationCode.add(new MutationCode(cm.getZeroFromDB()) {
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
 					mv.visitLdcInsn(new Long(0));
@@ -221,7 +268,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 		if (MutationManager.shouldApplyMutation(cm.getPlus1())) {
 			insert = true;
-			mutationCode.add(new MutationCode(cm.getPlus1()) {
+			mutationCode.add(new MutationCode(cm.getPlus1FromDB()) {
 
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
@@ -231,7 +278,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		}
 		if (MutationManager.shouldApplyMutation(cm.getMinus1())) {
 			insert = true;
-			mutationCode.add(new MutationCode(cm.getMinus1()) {
+			mutationCode.add(new MutationCode(cm.getMinus1FromDB()) {
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
 					mv.visitLdcInsn(new Float(floatConstant - 1));
@@ -241,7 +288,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 		if (MutationManager.shouldApplyMutation(cm.getZero())) {
 			insert = true;
-			mutationCode.add(new MutationCode(cm.getZero()) {
+			mutationCode.add(new MutationCode(cm.getZeroFromDB()) {
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
 					mv.visitLdcInsn(new Float(0));
@@ -259,7 +306,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	}
 
 	private void doubleConstant(final double doubleConstant) {
-		logger.info("long constant for line: " + getLineNumber());
+		logger.info("double constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
 				mutationForLine);
 		boolean insert = false;
@@ -276,7 +323,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 		if (MutationManager.shouldApplyMutation(cm.getPlus1())) {
 			insert = true;
-			mutationCode.add(new MutationCode(cm.getPlus1()) {
+			mutationCode.add(new MutationCode(cm.getPlus1FromDB()) {
 
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
@@ -286,7 +333,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		}
 		if (MutationManager.shouldApplyMutation(cm.getMinus1())) {
 			insert = true;
-			mutationCode.add(new MutationCode(cm.getMinus1()) {
+			mutationCode.add(new MutationCode(cm.getMinus1FromDB()) {
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
 					mv.visitLdcInsn(new Double(doubleConstant - 1));
@@ -295,7 +342,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		}
 		if (MutationManager.shouldApplyMutation(cm.getZero())) {
 			insert = true;
-			mutationCode.add(new MutationCode(cm.getZero()) {
+			mutationCode.add(new MutationCode(cm.getZeroFromDB()) {
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
 					mv.visitLdcInsn(new Double(0));
@@ -311,7 +358,6 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 			super.visitLdcInsn(new Double(doubleConstant));
 		}
 	}
-
 
 	private void intConstant(final int intConstant) {
 		logger.info("long constant for line: " + getLineNumber());
@@ -332,7 +378,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 		if (MutationManager.shouldApplyMutation(cm.getPlus1())) {
 			insert = true;
-			mutationCode.add(new MutationCode(cm.getPlus1()) {
+			mutationCode.add(new MutationCode(cm.getPlus1FromDB()) {
 
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
@@ -342,7 +388,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		}
 		if (MutationManager.shouldApplyMutation(cm.getMinus1())) {
 			insert = true;
-			mutationCode.add(new MutationCode(cm.getMinus1()) {
+			mutationCode.add(new MutationCode(cm.getMinus1FromDB()) {
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
 					mv.visitLdcInsn(new Integer(intConstant - 1));
@@ -352,7 +398,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 		if (MutationManager.shouldApplyMutation(cm.getZero())) {
 			insert = true;
-			mutationCode.add(new MutationCode(cm.getZero()) {
+			mutationCode.add(new MutationCode(cm.getZeroFromDB()) {
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
 					mv.visitLdcInsn(new Integer(0));
@@ -368,7 +414,6 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 			super.visitLdcInsn(new Integer(intConstant));
 		}
 	}
-
 
 	// private void insertPrintStatements(String message) {
 	// insertPrintStatements(mv, message);
@@ -393,20 +438,15 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		}
 	}
 
-
 	private static ConstantMutations getConstantMutations(String className,
 			int lineNumber, int mutationForLine) {
-		Mutation mutationPlus1 = new Mutation(className, lineNumber,
+		Mutation mutationPlus = new Mutation(className, lineNumber,
 				mutationForLine, MutationType.RIC_PLUS_1);
 		Mutation mutationMinus = new Mutation(className, lineNumber,
 				mutationForLine, MutationType.RIC_MINUS_1);
 		Mutation mutationZero = new Mutation(className, lineNumber,
 				mutationForLine, MutationType.RIC_ZERO);
-		Mutation mutationPlus1FromDB = QueryManager.getMutationOrNull(mutationPlus1);
-		Mutation mutationMinus1FromDB = QueryManager.getMutationOrNull(mutationMinus);
-		Mutation mutationZeroFromDB = QueryManager.getMutationOrNull(mutationZero);
-		return new ConstantMutations(mutationPlus1FromDB, mutationMinus1FromDB,
-				mutationZeroFromDB);
+		return new ConstantMutations(mutationPlus, mutationMinus, mutationZero);
 
 	}
 }

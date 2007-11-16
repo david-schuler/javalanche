@@ -37,48 +37,43 @@ public class ThreadPool {
 	private static final int CHECK_PERIOD = 60;
 
 	/**
-	 * Directory where the processes are executed
-	 */
-	private static final String EXEC_DIR = "/scratch/schuler/mutationTest/src/scripts/";
-
-	/**
 	 * Number of parallel running threads.
 	 */
 	private static final int NUMBER_OF_THREADS = 2;
 
-//	/**
-//	 * Number of mutations that are fetched randomly from the database.
-//	 */
-//	private static final int MAX_MUTATIONS = 200;// 20000;
-//
-//	/**
-//	 * Number of tasks that will be submitted to the thread pool.
-//	 */
-//	private static final int NUMBER_OF_TASKS = 5;// 100;
-//
-//	private static final int MUTATIONS_PER_TASK = 40;// 1000;
-//
-//	/**
-//	 * Maximum running time for one sub process.
-//	 */
-//	private static final long MAX_TIME_FOR_SUB_PROCESS = 10 * 30 * 1000;
-
-	 /**
+	/**
 	 * Number of mutations that are fetched randomly from the database.
 	 */
-	 private static final int MAX_MUTATIONS = 7500;
+	private static final int MAX_MUTATIONS = 200;// 20000;
 
-	 /**
+	/**
 	 * Number of tasks that will be submitted to the thread pool.
 	 */
-	 private static final int NUMBER_OF_TASKS = 50;
+	private static final int NUMBER_OF_TASKS = 5;// 100;
 
-	 private static final int MUTATIONS_PER_TASK = 75;
+	private static final int MUTATIONS_PER_TASK = 40;// 1000;
 
-	 /**
+	/**
 	 * Maximum running time for one sub process.
 	 */
-	 private static final long MAX_TIME_FOR_SUB_PROCESS = 60 * 60 * 1000;
+	private static final long MAX_TIME_FOR_SUB_PROCESS = 10 * 30 * 1000;
+
+//	 /**
+//	 * Number of mutations that are fetched randomly from the database.
+//	 */
+//	 private static final int MAX_MUTATIONS = 7500;
+//
+//	 /**
+//	 * Number of tasks that will be submitted to the thread pool.
+//	 */
+//	 private static final int NUMBER_OF_TASKS = 50;
+//
+//	 private static final int MUTATIONS_PER_TASK = 75;
+//
+//	 /**
+//	 * Maximum running time for one sub process.
+//	 */
+//	 private static final long MAX_TIME_FOR_SUB_PROCESS = 60 * 60 * 1000;
 
 	private List<Long> allQueriedMutations = new ArrayList<Long>();
 
@@ -244,7 +239,7 @@ public class ThreadPool {
 		String resultFile = String.format(RESULT_DIR
 				+ "/process-result-%02d.xml", processCounter);
 		ProcessWrapper ps = new ProcessWrapper(MUTATION_COMMAND, taskIdFile,
-				new File(EXEC_DIR), new File(outputFile), new File(resultFile),
+				new File(MutationProperties.EXEC_DIR), new File(outputFile), new File(resultFile),
 				processCounter);
 		processes.add(ps);
 		logger.info("Process: " + ps.toString());

@@ -63,8 +63,9 @@ public class NegateJumpsMethodAdapter extends AbstractMutationAdapter {
 		Mutation queryMutation = new Mutation(className, getLineNumber(),
 				possibilitiesForLine, Mutation.MutationType.NEGATE_JUMP);
 		possibilitiesForLine++;
-		logger.info("Jump instruction");
+		logger.info("Jump instruction in line: " + getLineNumber());
 		if (MutationManager.shouldApplyMutation(queryMutation)) {
+			logger.info("Applying mutation for line: " + getLineNumber());
 			Mutation mutationFromDB = QueryManager.getMutation(queryMutation);
 			MutationCode unMutated = new MutationCode(null) {
 				@Override
