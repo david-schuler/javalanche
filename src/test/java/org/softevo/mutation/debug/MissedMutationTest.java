@@ -22,10 +22,10 @@ private	String CLASS_LOCATION = "/scratch/schuler/aspectJ/util/bin/org/aspectj/u
 		ft.process(new MutationScannerTransformer(mpc));
 		Assert.assertTrue(mpc.size() > 40);
 		mpc.toDB();
-		MutationManager.setApplyAllMutation(true);
+		//MutationManager.setApplyAllMutation(true);
 		FileTransformer ft2 = new FileTransformer(new File(CLASS_LOCATION));
 		ft2.process(new MutationTransformer());
-		
+
 	}
 
 }

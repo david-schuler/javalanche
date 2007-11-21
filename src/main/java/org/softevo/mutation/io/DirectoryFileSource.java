@@ -16,7 +16,7 @@ import org.apache.commons.io.DirectoryWalker;
  * @author David Schuler
  *
  */
-public class HtmlFileSource extends DirectoryWalker {
+public class DirectoryFileSource extends DirectoryWalker {
 
 	private static String fileExtension;
 
@@ -33,9 +33,9 @@ public class HtmlFileSource extends DirectoryWalker {
 	 */
 	public static Collection<File> getFilesByExtension(File startDirectory,
 			String fileExtension) throws IOException {
-		HtmlFileSource.fileExtension = fileExtension;
+		DirectoryFileSource.fileExtension = fileExtension;
 		Set<File> results = new HashSet<File>();
-		HtmlFileSource source = new HtmlFileSource();
+		DirectoryFileSource source = new DirectoryFileSource();
 		source.walk(startDirectory, results);
 		return results;
 	}

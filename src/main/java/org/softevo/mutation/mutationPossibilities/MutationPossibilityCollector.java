@@ -40,7 +40,7 @@ public class MutationPossibilityCollector {
 	}
 
 	public static void generateUnmutated() {
-		List<Mutation> allMutations = QueryManager.getAllMutations();
+		List<Mutation> allMutations = QueryManager.getMutations(1000);
 		for (Mutation m : allMutations) {
 			if (!QueryManager.hasUnmutated(m.getClassName(), m.getLineNumber())) {
 				Mutation unmutated = new Mutation(m.getClassName(), m

@@ -58,5 +58,6 @@ public class TestLangUtil {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		MutationManager.setApplyAllMutation(false);
 	}
 }

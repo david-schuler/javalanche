@@ -4,23 +4,20 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 
 import org.junit.Test;
-import org.softevo.mutation.io.ClassFileSource;
 import org.softevo.mutation.properties.MutationProperties;
 
 public class IOTest {
 
 	@Test
 	public void testIO() {
-		ClassFileSource cfs = new ClassFileSource();
 		try {
-			List l = cfs.getClasses(new File(MutationProperties.ASPECTJ_DIR));
+			Collection<File> l = DirectoryFileSource.getFilesByExtension(new File(MutationProperties.ASPECTJ_DIR), ".class");
 			assertTrue(l.size() > 10);
-			System.out.println(l.size());
-			for (Object o : l) {
-				assertTrue(o.toString().endsWith(".class"));
+			for (File file : l) {
+				assertTrue(file.toString().endsWith(".class"));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

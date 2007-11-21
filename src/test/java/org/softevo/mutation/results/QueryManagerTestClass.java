@@ -63,7 +63,7 @@ public class QueryManagerTestClass {
 
 	@Test
 	public void testGetAllMutations() {
-		List<Mutation> list = QueryManager.getAllMutations();
+		List<Mutation> list = QueryManager.getMutations(40);
 		Assert.assertTrue(list.size() >= 1);
 	}
 

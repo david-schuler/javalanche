@@ -88,16 +88,4 @@ public class HibernateTest {
 		session.close();
 	}
 
-	@Test(timeout = 8000)
-	public void showMutations() {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		Query query = session.createQuery("from Mutation ");
-		query.setMaxResults(50);
-		List results = query.list();
-		Assert.assertTrue(results.size() > 30);
-		tx.commit();
-		session.close();
-	}
-
 }

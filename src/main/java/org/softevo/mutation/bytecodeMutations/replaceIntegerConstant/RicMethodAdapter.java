@@ -360,7 +360,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	}
 
 	private void intConstant(final int intConstant) {
-		logger.info("long constant for line: " + getLineNumber());
+		logger.info("int constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
 				mutationForLine);
 		mutationForLine++;

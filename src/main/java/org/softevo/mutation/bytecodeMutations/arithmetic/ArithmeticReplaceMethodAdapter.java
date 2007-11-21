@@ -11,6 +11,15 @@ import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.MutationManager;
 import org.softevo.mutation.results.persistence.QueryManager;
 
+/**
+ * Method Adapter that replaces arithmetic operations. The details for the
+ * replacements can be found in {@link ReplaceMap}.
+ *
+ * @see ReplaceMap
+ *
+ * @author David Schuler
+ *
+ */
 public class ArithmeticReplaceMethodAdapter extends AbstractMutationAdapter {
 
 	private static class SingleInsnMutationCode extends MutationCode {
@@ -29,8 +38,12 @@ public class ArithmeticReplaceMethodAdapter extends AbstractMutationAdapter {
 
 	}
 
-	private static Map<Integer, Integer> replaceMap = ReplaceMap.getReplaceMap();
+	private static Map<Integer, Integer> replaceMap = ReplaceMap
+			.getReplaceMap();
 
+	/**
+	 * Counts the mutation possibilities for one line.
+	 */
 	private int possibilitiesForLine = 0;
 
 	private Logger logger = Logger
@@ -43,7 +56,7 @@ public class ArithmeticReplaceMethodAdapter extends AbstractMutationAdapter {
 
 	@Override
 	public void visitInsn(int opcode) {
-		if (replaceMap.containsKey(opcode) && !mutationCode ) {
+		if (replaceMap.containsKey(opcode) && !mutationCode) {
 			mutate(opcode);
 		} else {
 			super.visitInsn(opcode);
@@ -59,11 +72,11 @@ public class ArithmeticReplaceMethodAdapter extends AbstractMutationAdapter {
 		if (MutationManager.shouldApplyMutation(queryMutation)) {
 			Mutation mutationFromDB = QueryManager.getMutation(queryMutation);
 			MutationCode unMutated = new SingleInsnMutationCode(null, opcode);
-			MutationCode mutated = new SingleInsnMutationCode(mutationFromDB, replaceMap.get(opcode));
+			MutationCode mutated = new SingleInsnMutationCode(mutationFromDB,
+					replaceMap.get(opcode));
 			BytecodeTasks.insertIfElse(mv, unMutated,
 					new MutationCode[] { mutated });
-		}
-		else{
+		} else {
 			super.visitInsn(opcode);
 		}
 	}

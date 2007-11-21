@@ -20,7 +20,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.softevo.mutation.coverageResults.CoverageResult;
 import org.softevo.mutation.coverageResults.TestSuiteCoverageResult;
-import org.softevo.mutation.io.HtmlFileSource;
+import org.softevo.mutation.io.DirectoryFileSource;
 import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.properties.MutationProperties;
 import org.w3c.dom.Document;
@@ -117,7 +117,7 @@ public class ParseCloverResults {
 		Map<String, CoverageResult> results = new HashMap<String, CoverageResult>();
 		Collection<File> files = null;
 		try {
-			files = HtmlFileSource.getFilesByExtension(new File(
+			files = DirectoryFileSource.getFilesByExtension(new File(
 					MutationProperties.CLOVER_REPORT_DIR), ".html");
 		} catch (IOException e1) {
 			e1.printStackTrace();
