@@ -9,13 +9,13 @@ import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
 import org.softevo.mutation.bytecodeMutations.arithmetic.testclasses.Arithmetic;
 import org.softevo.mutation.bytecodeMutations.arithmetic.testclasses.ArithmeticTest;
-import org.softevo.mutation.results.persistence.MutationManager;
 import org.softevo.mutation.runtime.SelectiveTestSuite;
 
 public class ArithmeticReplaceTest {
 
 	static {
-		MutationManager.setApplyAllMutation(true);
+		ByteCodeTestUtils.redefineMutations("org.softevo.mutation.bytecodeMutations.arithmetic.testclasses.Arithmetic");
+//		MutationManager.setApplyAllMutation(true);
 	}
 
 	private static final Class TEST_CLASS = Arithmetic.class;
@@ -40,6 +40,8 @@ public class ArithmeticReplaceTest {
 		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
 		ByteCodeTestUtils.generateTestDataInDB(TEST_CLASS_FILENAME,
 				new ArithmeticReplaceCollectorTransformer(null));
+//		ByteCodeTestUtils.addMutations(TEST_CLASS.getName());
+
 	}
 
 	@After

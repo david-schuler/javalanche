@@ -142,7 +142,7 @@
 	</target>
 
 	<target name="showMutationResults" description="prints all mutation results to console">
-		<java classname="org.softevo.mutation.run.PrintResults" maxmemory="4096m" fork="true">
+		<java classname="org.softevo.mutation.run.PrintResults" maxmemory="5120m" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
@@ -161,6 +161,17 @@
 		</java>
 	</target>
 
+	<target name="runThreadedRepeat" description="run mutation tests multithreaded and repeat the previous run" depends="deleteTestResultsFromLastRun">
+		<java classname="org.softevo.mutation.run.threaded.ThreadPool" maxmemory="1024m" fork="true">
+			<sysproperty key="mutation.repeat" value="true" />
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+			</classpath>
+		</java>
+	</target>
+
+
 	<target name="runThreadedDebug" description="run mutation tests multithreaded, with remote debugging enabled">
 		<delete dir="${threaded.result.dir}" />
 		<mkdir dir="${threaded.result.dir}" />
@@ -176,16 +187,17 @@
 
 	<target name="runThreadedDebugSingleRun" description="run mutation tests for run file">
 		<property name="mutation.file" value="/scratch2/schuler/mutation-test-config/result/mutation-task-01.txt" />
-		<java classname="org.softevo.mutation.run.ResultDeleter" maxmemory="1024m" fork="true" jvm="/usr/local/java/jdk1.5.0_12/jre/bin/java">
+<!--		<java classname="org.softevo.mutation.run.ResultDeleter" maxmemory="1024m" fork="true" jvm="/usr/local/java/jdk1.5.0_12/jre/bin/java">
 			<arg value="${mutation.file}" />
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
 			</classpath>
 		</java>
-		<exec dir="." executable="/scratch2/schuler/mutationTest/src/scripts/threaded-run-tests.sh" os="Linux">
+	-->	<exec dir="." executable="/scratch2/schuler/mutationTest/src/scripts/threaded-run-tests.sh" os="Linux">
 			<arg line="-Dmutation.file=${mutation.file}" />
 			<arg line="-Dmutation.result.file=debug_result.xml" />
+			<arg line="-Dmutation.debug.port=1044"/>
 		</exec>
 	</target>
 
@@ -215,6 +227,43 @@
 		</junit>
 	</target>
 
+
+	<target name="junitLangUtil" description="Test lang util">
+		<junit printsummary="withOutAndErr" maxmemory="3072m" fork="yes" haltonfailure="no" showoutput="yes">
+			<jvmarg value="-Xdebug"/>
+			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044"/>
+			<formatter type="plain" />
+			<formatter type="xml" />
+			<formatter type="plain" />
+			<test name="org.softevo.mutation.TestLangUtil" />
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+				<path location="target/test-classes" />
+			</classpath>
+		</junit>
+	</target>
+
+	<target name="junit" description="test">
+		<junit printsummary="withOutAndErr" fork="yes" haltonfailure="no" showoutput="yes">
+			<formatter type="plain" />
+			<formatter type="xml" />
+			<formatter type="plain" />
+			<batchtest fork="yes" >
+				<fileset dir="target/test-classes">
+					<include name="**/*Test*.java" />
+				</fileset>
+			</batchtest>
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+				<path location="target/test-classes" />
+			</classpath>
+		</junit>
+	</target>
+
+
+
 	<target name="parseCoverageResults" description="parses the clover coverage results">
 		<java classname="org.softevo.mutation.coverageResults.clover.ParseCloverResults" maxmemory="3072m" fork="true">
 			<classpath>
@@ -234,5 +283,14 @@
 		</java>
 	</target>
 
+	<target name="deleteTestResultsFromLastRun" description="deletes the mutation test results from the last run">
+		<java classname="org.softevo.mutation.run.ResultDeleter" maxmemory="4096m" fork="true" jvm="/usr/local/java/jdk1.5.0_12/jre/bin/java">
+			<arg value="files" />
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+			</classpath>
+		</java>
+	</target>
 
 </project>

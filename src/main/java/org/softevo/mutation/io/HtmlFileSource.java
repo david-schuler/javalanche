@@ -10,25 +10,30 @@ import org.apache.commons.io.DirectoryWalker;
 
 /**
  *
- * Provides a method that returns all html files, in all subdirectories, for a
- * given directory.
+ * Provides a method that returns all files that end with a given extension, in
+ * all subdirectories, for a given start directory.
  *
  * @author David Schuler
  *
  */
 public class HtmlFileSource extends DirectoryWalker {
 
+	private static String fileExtension;
+
 	/**
-	 * Searches recursively in all subdirectories for html files.
+	 * Searches recursively in all subdirectories for files with given
+	 * extension.
 	 *
 	 * @param startDirectory
-	 *            Location of the directory.
-	 * @return A list of all files, from all subdirectories, ending with html.
+	 *            Location of the directory to start from.
+	 * @return A list of all files, from all subdirectories, ending with given
+	 *         extension.
 	 * @throws IOException
 	 *             if IOException thrown when processing directories.
 	 */
-	public static Collection<File> getHtmlFiles(File startDirectory)
-			throws IOException {
+	public static Collection<File> getFilesByExtension(File startDirectory,
+			String fileExtension) throws IOException {
+		HtmlFileSource.fileExtension = fileExtension;
 		Set<File> results = new HashSet<File>();
 		HtmlFileSource source = new HtmlFileSource();
 		source.walk(startDirectory, results);
@@ -56,7 +61,7 @@ public class HtmlFileSource extends DirectoryWalker {
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void handleFile(File file, int depth, Collection results) {
-		if (file.getName().endsWith(".html")) {
+		if (file.getName().endsWith(fileExtension)) {
 			results.add(file);
 		}
 	}

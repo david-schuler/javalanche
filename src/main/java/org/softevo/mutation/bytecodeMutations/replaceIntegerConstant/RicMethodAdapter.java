@@ -102,7 +102,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 	}
 
-	public static int mutationForLine = 0;
+	private int mutationForLine = 0;
 
 	static Logger logger = Logger.getLogger(RicMethodAdapter.class);
 

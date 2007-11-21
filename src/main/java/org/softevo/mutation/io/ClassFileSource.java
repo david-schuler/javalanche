@@ -8,6 +8,14 @@ import java.util.List;
 
 import org.apache.commons.io.DirectoryWalker;
 
+/**
+*
+* Provides a method that returns all class files, in all subdirectories, for a
+* given directory.
+*
+* @author David Schuler
+*
+*/
 public class ClassFileSource extends DirectoryWalker {
 
 	public ClassFileSource() {

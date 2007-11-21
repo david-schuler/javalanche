@@ -3,7 +3,6 @@ package org.softevo.mutation.bytecodeMutations;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicMethodAdapter;
 import org.softevo.mutation.results.Mutation;
 
 /**
@@ -33,7 +32,6 @@ public class BytecodeTasks {
 	 */
 	public static void insertIfElse(MethodVisitor mv, MutationCode unMutated,
 			MutationCode[] mutations) {
-		RicMethodAdapter.mutationForLine++;
 		Label endLabel = new Label();
 		Label mutationStartLabel = new Label();
 		mutationStartLabel.info = new MutationMarker(true);

@@ -125,4 +125,28 @@ public class MutationTestListener implements TestListener {
 		return passingMessages;
 	}
 
+	/**
+	 * For test purposes.
+	 * @param errorMessages the errorMessages to set
+	 */
+	public void setErrorMessages(List<TestMessage> errorMessages) {
+		this.errorMessages = errorMessages;
+	}
+
+	/**
+	 * For test purposes.
+	 * @param failureMessages the failureMessages to set
+	 */
+	public void setFailureMessages(List<TestMessage> failureMessages) {
+		this.failureMessages = failureMessages;
+	}
+
+	/**
+	 * For test purposes.
+	 * @param passingMessages the passingMessages to set
+	 */
+	public void setPassingMessages(List<TestMessage> passingMessages) {
+		this.passingMessages = passingMessages;
+	}
+
 }

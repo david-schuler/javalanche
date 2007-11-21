@@ -209,4 +209,10 @@ public class ByteCodeTestUtils {
 		MutationForRun.getInstance().reinit();
 	}
 
+	public static void addMutations(String filename){
+		FileTransformer ft = new FileTransformer(new File(filename));
+		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
+		ft.process(new MutationScannerTransformer(mpc));
+		mpc.toDB();
+	}
 }

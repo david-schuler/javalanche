@@ -13,7 +13,7 @@
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
   	</properties>
 	
-    <repositories>
+   <!-- <repositories>
         <repository>
             <id>public-chair</id>
             <name>Public Chair Repository</name>
@@ -25,7 +25,7 @@
             <url>http://maven.st.cs.uni-sb.de:8080/archiva/repository/3rdparty</url>
         </repository>
     </repositories>
-	
+	-->
 	<build>
 		<plugins>
 			<plugin>
@@ -41,6 +41,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+				  	<forkMode>pertest</forkMode>
                     <argLine>-javaagent:${user.home}/workspace2/mutationTest/target/javaagent.jar</argLine>
                     <useSystemClassLoader>true</useSystemClassLoader>
                 </configuration>

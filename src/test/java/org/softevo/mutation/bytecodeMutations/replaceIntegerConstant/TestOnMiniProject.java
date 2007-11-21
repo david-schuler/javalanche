@@ -19,13 +19,13 @@ import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.HibernateUtil;
-import org.softevo.mutation.results.persistence.MutationManager;
 import org.softevo.mutation.runtime.SelectiveTestSuite;
 
 public class TestOnMiniProject {
 
 	static {
-		MutationManager.setApplyAllMutation(true);
+		ByteCodeTestUtils.redefineMutations("org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants");
+//		MutationManager.setApplyAllMutation(true);
 	}
 
 	private static final Class TEST_CLASS = IntegerConstants.class;

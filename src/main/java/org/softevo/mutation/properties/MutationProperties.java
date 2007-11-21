@@ -59,4 +59,7 @@ public class MutationProperties {
 	 * Directory where the processes are executed
 	 */
 	public static final String EXEC_DIR = "/scratch/schuler/mutationTest/src/scripts/";
+
+	public static final String RESULT_DIR = CONFIG_DIR
+	+ "/result/";
 }

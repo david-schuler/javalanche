@@ -31,57 +31,55 @@ public class ThreadPool {
 
 	private static Logger logger = Logger.getLogger(ThreadPool.class);
 
-	/**
+	 /**
 	 * Time interval when the processes are checked.
 	 */
-	private static final int CHECK_PERIOD = 60;
+	 private static final int CHECK_PERIOD = 60;
 
-	/**
+	 /**
 	 * Number of parallel running threads.
 	 */
-	private static final int NUMBER_OF_THREADS = 2;
+	 private static final int NUMBER_OF_THREADS = 2;
 
-	/**
-	 * Number of mutations that are fetched randomly from the database.
-	 */
-	private static final int MAX_MUTATIONS = 200;// 20000;
 
-	/**
-	 * Number of tasks that will be submitted to the thread pool.
-	 */
-	private static final int NUMBER_OF_TASKS = 5;// 100;
-
-	private static final int MUTATIONS_PER_TASK = 40;// 1000;
-
-	/**
-	 * Maximum running time for one sub process.
-	 */
-	private static final long MAX_TIME_FOR_SUB_PROCESS = 10 * 30 * 1000;
-
-//	 /**
+//	  /**
 //	 * Number of mutations that are fetched randomly from the database.
 //	 */
-//	 private static final int MAX_MUTATIONS = 7500;
+//	 private static final int MAX_MUTATIONS = 200;// 20000;
 //
 //	 /**
 //	 * Number of tasks that will be submitted to the thread pool.
 //	 */
-//	 private static final int NUMBER_OF_TASKS = 50;
+//	 private static final int NUMBER_OF_TASKS = 5;// 100;
 //
-//	 private static final int MUTATIONS_PER_TASK = 75;
+//	 private static final int MUTATIONS_PER_TASK = 10;// 1000;
 //
 //	 /**
 //	 * Maximum running time for one sub process.
 //	 */
-//	 private static final long MAX_TIME_FOR_SUB_PROCESS = 60 * 60 * 1000;
+//	 private static final long MAX_TIME_FOR_SUB_PROCESS = 10 * 30 * 1000;
 
-	private List<Long> allQueriedMutations = new ArrayList<Long>();
+	/**
+	 * Number of mutations that are fetched randomly from the database.
+	 */
+	private static final int MAX_MUTATIONS = 7500;
 
-	private static final String RESULT_DIR = MutationProperties.CONFIG_DIR
-			+ "/result/";
+	/**
+	 * Number of tasks that will be submitted to the thread pool.
+	 */
+	private static final int NUMBER_OF_TASKS = 40;
+
+	private static final int MUTATIONS_PER_TASK = 75;
+
+	/**
+	 * Maximum running time for one sub process.
+	 */
+	private static final long MAX_TIME_FOR_SUB_PROCESS = 30 * 60 * 1000;
+
+	 private List<Long> allQueriedMutations = new ArrayList<Long>();
 
 	static {
-		File resultDir = new File(RESULT_DIR);
+		File resultDir = new File(MutationProperties.RESULT_DIR);
 		if (!resultDir.exists()) {
 			resultDir.mkdir();
 		}
@@ -155,7 +153,7 @@ public class ThreadPool {
 				mutationsWithResult.add(m.getId());
 			}
 		}
-		XmlIo.toXML(mutationsWithResult, new File(RESULT_DIR
+		XmlIo.toXML(mutationsWithResult, new File(MutationProperties.RESULT_DIR
 				+ "/all-mutations.xml"));
 		List<Long> mutationsFromResultFiles = new ArrayList<Long>();
 		for (ProcessWrapper ps : processes) {
@@ -171,7 +169,7 @@ public class ThreadPool {
 				notContainedIds.add(id);
 			}
 		}
-		XmlIo.toXML(notContainedIds, new File(RESULT_DIR
+		XmlIo.toXML(notContainedIds, new File(MutationProperties.RESULT_DIR
 				+ "/ids-not-in-result-files.xml"));
 
 		List<Long> dbNotContainedIds = new ArrayList<Long>();
@@ -180,7 +178,7 @@ public class ThreadPool {
 				dbNotContainedIds.add(m);
 			}
 		}
-		XmlIo.toXML(dbNotContainedIds, new File(RESULT_DIR
+		XmlIo.toXML(dbNotContainedIds, new File(MutationProperties.RESULT_DIR
 				+ "/ids-not-in-db.xml"));
 	}
 
@@ -231,16 +229,27 @@ public class ThreadPool {
 	 */
 	private void createProcess() {
 		processCounter++;
-		String outputFile = String.format(RESULT_DIR
+		String outputFile = String.format(MutationProperties.RESULT_DIR
 				+ "/process-output-%02d.txt", processCounter);
-		List<Long> list = getMutionIDs(MUTATIONS_PER_TASK);
-		allQueriedMutations.addAll(list);
-		File taskIdFile = writeListToFile(list, processCounter);
-		String resultFile = String.format(RESULT_DIR
+		String repeatLastRun = System.getProperty("mutation.repeat");
+		File taskIdFile;
+		if (repeatLastRun != null && repeatLastRun.equals("true")) {
+			String filename = String.format(MutationProperties.RESULT_DIR
+					+ "mutation-task-%02d.txt", processCounter);
+			taskIdFile = new File(filename);
+		} else {
+			List<Long> list = getMutionIDs(MUTATIONS_PER_TASK);
+			allQueriedMutations.addAll(list);
+			taskIdFile = writeListToFile(list, processCounter);
+
+		}
+
+		String resultFile = String.format(MutationProperties.RESULT_DIR
 				+ "/process-result-%02d.xml", processCounter);
+
 		ProcessWrapper ps = new ProcessWrapper(MUTATION_COMMAND, taskIdFile,
-				new File(MutationProperties.EXEC_DIR), new File(outputFile), new File(resultFile),
-				processCounter);
+				new File(MutationProperties.EXEC_DIR), new File(outputFile),
+				new File(resultFile), processCounter);
 		processes.add(ps);
 		logger.info("Process: " + ps.toString());
 		pool.submit(ps);
@@ -324,8 +333,8 @@ public class ThreadPool {
 	}
 
 	private File writeListToFile(List<Long> list, int id) {
-		String filename = String.format(RESULT_DIR + "mutation-task-%02d.txt",
-				id);
+		String filename = String.format(MutationProperties.RESULT_DIR
+				+ "mutation-task-%02d.txt", id);
 		File resultFile = new File(filename);
 		StringBuilder sb = new StringBuilder();
 		for (Long l : list) {

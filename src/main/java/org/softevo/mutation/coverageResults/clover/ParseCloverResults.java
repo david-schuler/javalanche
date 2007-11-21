@@ -117,8 +117,8 @@ public class ParseCloverResults {
 		Map<String, CoverageResult> results = new HashMap<String, CoverageResult>();
 		Collection<File> files = null;
 		try {
-			files = HtmlFileSource.getHtmlFiles(new File(
-					MutationProperties.CLOVER_REPORT_DIR));
+			files = HtmlFileSource.getFilesByExtension(new File(
+					MutationProperties.CLOVER_REPORT_DIR), ".html");
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -267,9 +267,10 @@ public class ParseCloverResults {
 		XmlIo.toXML(map, new File(MutationProperties.CLOVER_RESULTS_FILE));
 		logger.info("Parsing Finished");
 		if (todb) {
-			TestSuiteCoverageResult coverageResult = new TestSuiteCoverageResult(
-					map);
-			coverageResult.toDB();
+			// TestSuiteCoverageResult coverageResult = new
+			// TestSuiteCoverageResult(
+			// map);
+			TestSuiteCoverageResult.toDB();
 		}
 	}
 }

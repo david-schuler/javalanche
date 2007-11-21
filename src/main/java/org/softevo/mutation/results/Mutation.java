@@ -59,7 +59,7 @@ public class Mutation {
 
 	@Override
 	public String toString() {
-		return String.format("%s - %d (%d)- %s %s", className, lineNumber,
+		return String.format("%d %s - %d (%d)- %s %s", id, className, lineNumber,
 				mutationForLine, mutationType.toString(),
 				mutationResult == null ? "No Result" : mutationResult
 						.toString());

@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 
 public abstract class AbstractMutationAdapter extends MethodAdapter {
 
@@ -53,17 +52,17 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 		}
 	}
 
-	@Override
-	public void visitMethodInsn(int opcode, String owner, String name,
-			String desc) {
-		if (owner.equals("java/lang/System") && name.equals("exit")) {
-			logger.info("System exit replaced");
-			mv.visitTypeInsn(Opcodes.NEW, "java/lang/RuntimeException");
-			mv.visitInsn(Opcodes.DUP);
-			mv.visitLdcInsn("System exit called");
-			mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/RuntimeException", "<init>", "(Ljava/lang/String;)V");
-			mv.visitInsn(Opcodes.ATHROW);
-		}
-		super.visitMethodInsn(opcode, owner, name, desc);
-	}
+//	@Override
+//	public void visitMethodInsn(int opcode, String owner, String name,
+//			String desc) {
+//		if (owner.equals("java/lang/System") && name.equals("exit")) {
+//			logger.info("System exit replaced");
+//			mv.visitTypeInsn(Opcodes.NEW, "java/lang/RuntimeException");
+//			mv.visitInsn(Opcodes.DUP);
+//			mv.visitLdcInsn("System exit called");
+//			mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/RuntimeException", "<init>", "(Ljava/lang/String;)V");
+//			mv.visitInsn(Opcodes.ATHROW);
+//		}
+//		super.visitMethodInsn(opcode, owner, name, desc);
+//	}
 }
