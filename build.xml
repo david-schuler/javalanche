@@ -186,18 +186,18 @@
 	</target>
 
 	<target name="runThreadedDebugSingleRun" description="run mutation tests for run file">
-		<property name="mutation.file" value="/scratch2/schuler/mutation-test-config/result/mutation-task-01.txt" />
-<!--		<java classname="org.softevo.mutation.run.ResultDeleter" maxmemory="1024m" fork="true" jvm="/usr/local/java/jdk1.5.0_12/jre/bin/java">
+		<property name="mutation.file" value="/scratch2/schuler/mutation-test-config/result/mutation-task-24.txt" />
+		<java classname="org.softevo.mutation.run.ResultDeleter" maxmemory="2048m" fork="true" jvm="/usr/local/java/jdk1.5.0_12/jre/bin/java">
 			<arg value="${mutation.file}" />
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
 			</classpath>
 		</java>
-	-->	<exec dir="." executable="/scratch2/schuler/mutationTest/src/scripts/threaded-run-tests.sh" os="Linux">
+		<exec dir="." executable="/scratch2/schuler/mutationTest/src/scripts/threaded-run-tests.sh" os="Linux">
 			<arg line="-Dmutation.file=${mutation.file}" />
 			<arg line="-Dmutation.result.file=debug_result.xml" />
-			<arg line="-Dmutation.debug.port=1044"/>
+			<arg line="-Dmutation.debug.port=1044" />
 		</exec>
 	</target>
 
@@ -230,8 +230,8 @@
 
 	<target name="junitLangUtil" description="Test lang util">
 		<junit printsummary="withOutAndErr" maxmemory="3072m" fork="yes" haltonfailure="no" showoutput="yes">
-			<jvmarg value="-Xdebug"/>
-			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044"/>
+			<jvmarg value="-Xdebug" />
+			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044" />
 			<formatter type="plain" />
 			<formatter type="xml" />
 			<formatter type="plain" />
@@ -249,7 +249,7 @@
 			<formatter type="plain" />
 			<formatter type="xml" />
 			<formatter type="plain" />
-			<batchtest fork="yes" >
+			<batchtest fork="yes">
 				<fileset dir="target/test-classes">
 					<include name="**/*Test*.java" />
 				</fileset>
@@ -292,5 +292,30 @@
 			</classpath>
 		</java>
 	</target>
+
+	<target name="debugQuery" description="Debug id query">
+		<java classname="org.softevo.mutation.run.TestForIds" maxmemory="4096m" fork="true">
+			<jvmarg value="-Xdebug" />
+			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044" />
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+			</classpath>
+		</java>
+	</target>
+
+
+	<target name="compareUnmutated" description="Compare Mutation Results with the unmutated runs">
+		<java classname="org.softevo.mutation.run.CompareWithUnmutated" maxmemory="4096m" fork="true">
+			<!-- <jvmarg value="-Xdebug" />
+			     <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044" />
+			 -->
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+			</classpath>
+		</java>
+	</target>
+
 
 </project>

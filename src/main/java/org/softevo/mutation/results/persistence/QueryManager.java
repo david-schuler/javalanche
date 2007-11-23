@@ -330,7 +330,7 @@ public class QueryManager {
 	/**
 	 * Returns the number of mutations that have a result associated.
 	 *
-	 * @return  The number of mutations that have a result associated.
+	 * @return The number of mutations that have a result associated.
 	 */
 	public static long getNumberOfMutationsWithResult() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -344,9 +344,11 @@ public class QueryManager {
 		return l;
 	}
 
-
-	/** Query the database for mutations with the given ids.
-	 * @param ids The ids that are used to query.
+	/**
+	 * Query the database for mutations with the given ids.
+	 *
+	 * @param ids
+	 *            The ids that are used to query.
 	 * @return Return a list of mutations with the given ids.
 	 */
 	public static List<Mutation> getMutationsFromDbByID(Long[] ids) {
@@ -357,17 +359,22 @@ public class QueryManager {
 		// join fetch m.mutationResult.failures inner join fetch
 		// m.mutationResult.errors inner join fetch m.mutationResult.passing
 		// WHERE m.id IN (:ids)");
+
 		Query query = session
 				.createQuery("FROM Mutation m  WHERE m.id IN (:ids)");
-
 		query.setParameterList("ids", ids);
+
 		List results = query.list();
+
 		List<Mutation> mutationList = new ArrayList<Mutation>();
+
 		for (Object m : results) {
 			mutationList.add((Mutation) m);
 		}
+
 		tx.commit();
 		session.close();
+
 		return mutationList;
 	}
 
@@ -388,7 +395,7 @@ public class QueryManager {
 		return getUnmutated(mutation.getClassName(), mutation.getLineNumber());
 	}
 
-	private static boolean hasUnmutated(Mutation mutation) {
+	public static boolean hasUnmutated(Mutation mutation) {
 		return hasUnmutated(mutation.getClassName(), mutation.getLineNumber());
 	}
 

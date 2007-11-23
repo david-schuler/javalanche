@@ -42,41 +42,41 @@ public class ThreadPool {
 	 private static final int NUMBER_OF_THREADS = 2;
 
 
-//	  /**
-//	 * Number of mutations that are fetched randomly from the database.
-//	 */
-//	 private static final int MAX_MUTATIONS = 200;// 20000;
-//
-//	 /**
-//	 * Number of tasks that will be submitted to the thread pool.
-//	 */
-//	 private static final int NUMBER_OF_TASKS = 5;// 100;
-//
-//	 private static final int MUTATIONS_PER_TASK = 10;// 1000;
-//
-//	 /**
-//	 * Maximum running time for one sub process.
-//	 */
-//	 private static final long MAX_TIME_FOR_SUB_PROCESS = 10 * 30 * 1000;
-
-	/**
+     /**
 	 * Number of mutations that are fetched randomly from the database.
 	 */
-	private static final int MAX_MUTATIONS = 7500;
+	 private static final int MAX_MUTATIONS = 200;// 20000;
 
-	/**
+	 /**
 	 * Number of tasks that will be submitted to the thread pool.
 	 */
-	private static final int NUMBER_OF_TASKS = 40;
+	 private static final int NUMBER_OF_TASKS = 5;// 100;
 
-	private static final int MUTATIONS_PER_TASK = 75;
+	 private static final int MUTATIONS_PER_TASK = 10;// 1000;
 
-	/**
+	 /**
 	 * Maximum running time for one sub process.
 	 */
-	private static final long MAX_TIME_FOR_SUB_PROCESS = 30 * 60 * 1000;
+	 private static final long MAX_TIME_FOR_SUB_PROCESS = 10 * 30 * 1000;
 
-	 private List<Long> allQueriedMutations = new ArrayList<Long>();
+//	/**
+//	 * Number of mutations that are fetched randomly from the database.
+//	 */
+//	private static final int MAX_MUTATIONS = 7500;
+//
+//	/**
+//	 * Number of tasks that will be submitted to the thread pool.
+//	 */
+//	private static final int NUMBER_OF_TASKS = 50;
+//
+//	private static final int MUTATIONS_PER_TASK = 100;
+//
+//	/**
+//	 * Maximum running time for one sub process.
+//	 */
+//	private static final long MAX_TIME_FOR_SUB_PROCESS = 30 * 60 * 1000;
+
+	private List<Long> allQueriedMutations = new ArrayList<Long>();
 
 	static {
 		File resultDir = new File(MutationProperties.RESULT_DIR);

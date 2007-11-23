@@ -34,17 +34,17 @@ public class SingleTestResult {
 	 */
 	boolean touched;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL)//, fetch = FetchType.EAGER)
 	@OrderBy("testCaseName")
 	@IndexColumn(name = "failure_list_id")
 	private List<TestMessage> failures = new ArrayList<TestMessage>();
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL)//, fetch = FetchType.EAGER)
 	@JoinTable(name = "SingleTestResult_Errors", joinColumns = { @JoinColumn(name = "singleTestResult_id") }, inverseJoinColumns = @JoinColumn(name = "testMessage_id"))
 	@IndexColumn(name="error_id")
 	private List<TestMessage> errors = new ArrayList<TestMessage>();
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL)//, fetch = FetchType.EAGER)
 	@JoinTable(name = "SingleTestResult_Passing", joinColumns = { @JoinColumn(name = "singleTestResult_id") }, inverseJoinColumns = @JoinColumn(name = "testMessage_id"))
 	@IndexColumn(name="passing_id")
 	private List<TestMessage> passing = new ArrayList<TestMessage>();

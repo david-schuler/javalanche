@@ -24,16 +24,31 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	private static Logger logger = Logger
 			.getLogger(MutationFileTransformer.class);
 
+	static {
+		logger.info("Loading MutationFileTransformer");
+	}
+
 	private static String testName = ".testclasses";
 
+	static {
+		logger.info("1");
+	}
 	private static MutationTransformer mutationTransformer = new MutationTransformer();
-
+	static {
+		logger.info("2");
+	}
 	private static MutationForRun mm = MutationForRun.getInstance();
-
+	static {
+		logger.info("3");
+	}
 	private static Collection<String> classesToMutate = mm.getClassNames();
-
+	static {
+		logger.info("4");
+	}
 	private static RemoveSystemExitTransformer systemExitTransformer = new RemoveSystemExitTransformer();
-
+	static {
+		logger.info("5");
+	}
 	private static final String[] systemExitClasses = new String[] {
 			"org.aspectj.tools.ajbrowser.ui.swing.TopFrame",
 			"org.aspectj.tools.ajdoc.JavadocRunner$1",
@@ -54,10 +69,14 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			"org.aspectj.testing.server.TestServer",
 			"org.aspectj.testing.drivers.Harness",
 			"org.softevo.mutation.bytecodeMutations.sysexit.testclasses.SysExit", };
-
+	static {
+		logger.info("1");
+	}
 	private static List<String> systemExitClassList = Arrays
 			.asList(systemExitClasses);
-
+	static {
+		logger.info("1");
+	}
 	private static MutationDecision mutationDecision = new MutationDecision() {
 
 		public boolean shouldBeHandled(String classNameWithDots) {
@@ -66,7 +85,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			}
 			if (classNameWithDots.contains(testName)
 					&& !classNameWithDots.endsWith("Test")) {
-				//Hack for unittesting
+				// Hack for unittesting
 				ByteCodeTestUtils.redefineMutations(classNameWithDots);
 				return true;
 			}
@@ -86,7 +105,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
 		String classNameWithDots = className.replace('/', '.');
-//		logger.info("Entering transform");
+		// logger.info("Entering transform");
 		if (isSystemExitClass(classNameWithDots)) {
 			logger.info("Trying to remove calls to system exit from class"
 					+ classNameWithDots);

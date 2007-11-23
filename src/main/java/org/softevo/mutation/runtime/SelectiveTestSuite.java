@@ -66,7 +66,7 @@ public class SelectiveTestSuite extends TestSuite {
 
 	private Test actualTest;
 
-	private boolean checkUnmutated = false;
+	private boolean checkUnmutated = true;
 
 	static {
 		staticLogMessage();
@@ -108,9 +108,10 @@ public class SelectiveTestSuite extends TestSuite {
 							"JVM shut down because of mutation"));
 					resultReporter.report(actualMutationTestResult,
 							actualMutation, actualListener);
-				}
-				else{
-					logger.warn("Maybe could not report error that caused the shutdown. Caused by mutation: "+ actualMutation);
+				} else {
+					logger
+							.warn("Maybe could not report error that caused the shutdown. Caused by mutation: "
+									+ actualMutation);
 				}
 				logger.info("" + resultReporter.summary());
 				MutationForRun.getInstance().reportAppliedMutations();
@@ -182,19 +183,24 @@ public class SelectiveTestSuite extends TestSuite {
 					actualMutationTestResult.failureCount(),
 					actualMutationTestResult.errorCount()));
 			if (checkUnmutated) {
-				actualMutation = QueryManager.generateUnmutated(actualMutation);
-				TestResult unmutatedTestResult = new TestResult();
-				MutationTestListener unmutatedListener = new MutationTestListener();
-				unmutatedTestResult.addListener(unmutatedListener);
-				runTests(allTests, unmutatedTestResult, testsForThisRun);
-				resultReporter.report(unmutatedTestResult, actualMutation,
-						unmutatedListener);
-				logger.info(String.format(
-						"Check Result runs: %d failures:%d errors:%d ",
-						actualMutationTestResult.runCount(),
-						actualMutationTestResult.failureCount(),
-						actualMutationTestResult.errorCount()));
-
+				if (!QueryManager.hasUnmutated(actualMutation)) {
+					actualMutation = QueryManager
+							.generateUnmutated(actualMutation);
+					ResultReporter.setActualMutation(actualMutation);
+					TestResult unmutatedTestResult = new TestResult();
+					actualMutationTestResult = unmutatedTestResult;
+					MutationTestListener unmutatedListener = new MutationTestListener();
+					actualListener = unmutatedListener;
+					unmutatedTestResult.addListener(unmutatedListener);
+					runTests(allTests, unmutatedTestResult, testsForThisRun);
+					resultReporter.report(unmutatedTestResult, actualMutation,
+							unmutatedListener);
+					logger.info(String.format(
+							"Check Result runs: %d failures:%d errors:%d ",
+							actualMutationTestResult.runCount(),
+							actualMutationTestResult.failureCount(),
+							actualMutationTestResult.errorCount()));
+				}
 			}
 		}
 		Runtime.getRuntime().removeShutdownHook(shutDownHook);
