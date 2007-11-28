@@ -9,7 +9,6 @@ import org.softevo.bytecodetransformer.processFiles.FileTransformer;
 import org.softevo.mutation.bytecodeMutations.MutationScannerTransformer;
 import org.softevo.mutation.bytecodeMutations.MutationTransformer;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
-import org.softevo.mutation.results.persistence.MutationManager;
 
 public class MissedMutationTest {
 
@@ -27,5 +26,4 @@ private	String CLASS_LOCATION = "/scratch/schuler/aspectJ/util/bin/org/aspectj/u
 		ft2.process(new MutationTransformer());
 
 	}
-
 }

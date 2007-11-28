@@ -2,6 +2,7 @@ package org.softevo.mutation.run.threaded;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Executors;
@@ -31,50 +32,49 @@ public class ThreadPool {
 
 	private static Logger logger = Logger.getLogger(ThreadPool.class);
 
-	 /**
+	/**
 	 * Time interval when the processes are checked.
 	 */
-	 private static final int CHECK_PERIOD = 60;
+	private static final int CHECK_PERIOD = 60;
 
-	 /**
+	/**
 	 * Number of parallel running threads.
 	 */
-	 private static final int NUMBER_OF_THREADS = 2;
+	private static final int NUMBER_OF_THREADS = 2	;
 
-
-     /**
-	 * Number of mutations that are fetched randomly from the database.
+	/**
+	 * Number of mutations that are fetched random ly from the database.
 	 */
-	 private static final int MAX_MUTATIONS = 200;// 20000;
+	private static final int MAX_MUTATIONS = 200;// 20000;
 
-	 /**
+	/**
 	 * Number of tasks that will be submitted to the thread pool.
 	 */
-	 private static final int NUMBER_OF_TASKS = 5;// 100;
+	private static final int NUMBER_OF_TASKS = 2;// 100;
 
-	 private static final int MUTATIONS_PER_TASK = 10;// 1000;
+	private static final int MUTATIONS_PER_TASK = 10;// 1000;
 
-	 /**
+	/**
 	 * Maximum running time for one sub process.
 	 */
-	 private static final long MAX_TIME_FOR_SUB_PROCESS = 10 * 30 * 1000;
+	private static final long MAX_TIME_FOR_SUB_PROCESS = 10 * 30 * 1000;
 
-//	/**
-//	 * Number of mutations that are fetched randomly from the database.
-//	 */
-//	private static final int MAX_MUTATIONS = 7500;
-//
-//	/**
-//	 * Number of tasks that will be submitted to the thread pool.
-//	 */
-//	private static final int NUMBER_OF_TASKS = 50;
-//
-//	private static final int MUTATIONS_PER_TASK = 100;
-//
-//	/**
-//	 * Maximum running time for one sub process.
-//	 */
-//	private static final long MAX_TIME_FOR_SUB_PROCESS = 30 * 60 * 1000;
+	// /**
+	// * Number of mutations that are fetched randomly from the database.
+	// */
+	// private static final int MAX_MUTATIONS = 7500;
+	//
+	// /**
+	// * Number of tasks that will be submitted to the thread pool.
+	// */
+	// private static final int NUMBER_OF_TASKS = 50;
+	//
+	// private static final int MUTATIONS_PER_TASK = 100;
+	//
+	// /**
+	// * Maximum running time for one sub process.
+	// */
+	// private static final long MAX_TIME_FOR_SUB_PROCESS = 30 * 60 * 1000;
 
 	private List<Long> allQueriedMutations = new ArrayList<Long>();
 
@@ -117,6 +117,8 @@ public class ThreadPool {
 			.getNumberOfMutationsWithResult();
 
 	private int triedShutdowns = 0;
+
+	public InstanceManager freeInstances  = new InstanceManager();
 
 	public static void main(String[] args) {
 		ThreadPool tp = new ThreadPool();
@@ -249,7 +251,7 @@ public class ThreadPool {
 
 		ProcessWrapper ps = new ProcessWrapper(MUTATION_COMMAND, taskIdFile,
 				new File(MutationProperties.EXEC_DIR), new File(outputFile),
-				new File(resultFile), processCounter);
+				new File(resultFile), processCounter, freeInstances);
 		processes.add(ps);
 		logger.info("Process: " + ps.toString());
 		pool.submit(ps);
@@ -382,7 +384,7 @@ public class ThreadPool {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session
-				.createSQLQuery("SELECT m.id FROM Mutation m JOIN TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN TestCoverageClassResult_TestCoverageLineResult AS class_line ON class_line.testcoverageclassresult_id = tccr.id JOIN TestCoverageLineResult AS tclr ON tclr.id = class_line.lineresults_id 	WHERE m.mutationresult_id IS NULL AND m.linenumber = tclr.linenumber");
+				.createSQLQuery("SELECT m.id FROM Mutation m JOIN TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN TestCoverageClassResult_TestCoverageLineResult AS class_line ON class_line.testcoverageclassresult_id = tccr.id JOIN TestCoverageLineResult AS tclr ON tclr.id = class_line.lineresults_id 	WHERE m.mutationresult_id IS NULL AND m.linenumber = tclr.linenumber AND m.mutationType != 0");
 		query.setMaxResults(MAX_MUTATIONS);
 		List results = query.list();
 		List<Long> idList = new ArrayList<Long>();

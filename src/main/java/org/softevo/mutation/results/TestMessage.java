@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.apache.log4j.Logger;
+
 /**
  *
  * Class that holds the result of one single TestCase.
@@ -13,6 +15,8 @@ import javax.persistence.Id;
  */
 @Entity
 public class TestMessage {
+
+	private static Logger logger = Logger.getLogger(TestMessage.class);
 
 	@Id
 	@GeneratedValue
@@ -43,9 +47,21 @@ public class TestMessage {
 
 	}
 
+	public TestMessage(TestMessage testMessage) {
+		this.id = new Long(0);
+		this.testCaseName = testMessage.testCaseName;
+		this.hasTouched = testMessage.hasTouched;
+		this.message  = testMessage.message;
+		this.duration = 0;
+		// this.duration = testMessage.duration;
+	}
+
 	public TestMessage(String testCaseName, String message, long duration) {
 		super();
 		this.testCaseName = testCaseName;
+//		if(message.length() > 254){
+			logger.info("Got long error message from test:  ("+ message.length() + ") "  + testCaseName +"\n" + message);
+//
 		this.message = message.substring(0, Math.min(message.length(), 254));
 		this.duration = duration;
 	}
@@ -132,5 +148,84 @@ public class TestMessage {
 	 */
 	public void setDuration(long duration) {
 		this.duration = duration;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int PRIME = 31;
+		int result = 1;
+		result = PRIME * result + (int) (duration ^ (duration >>> 32));
+		result = PRIME * result + (hasTouched ? 1231 : 1237);
+		result = PRIME * result + ((id == null) ? 0 : id.hashCode());
+		result = PRIME * result + ((message == null) ? 0 : message.hashCode());
+		result = PRIME * result
+				+ ((testCaseName == null) ? 0 : testCaseName.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final TestMessage other = (TestMessage) obj;
+		if (duration != other.duration)
+			return false;
+		if (hasTouched != other.hasTouched)
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (message == null) {
+			if (other.message != null)
+				return false;
+		} else if (!message.equals(other.message))
+			return false;
+		if (testCaseName == null) {
+			if (other.testCaseName != null)
+				return false;
+		} else if (!testCaseName.equals(other.testCaseName))
+			return false;
+		return true;
+	}
+
+	public boolean equalsWithoutID(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final TestMessage other = (TestMessage) obj;
+		if (duration != other.duration)
+			return false;
+		if (hasTouched != other.hasTouched)
+			return false;
+		if (message == null) {
+			if (other.message != null)
+				return false;
+		} else if (!message.equals(other.message))
+			return false;
+		if (testCaseName == null) {
+			if (other.testCaseName != null)
+				return false;
+		} else if (!testCaseName.equals(other.testCaseName))
+			return false;
+		return true;
 	}
 }

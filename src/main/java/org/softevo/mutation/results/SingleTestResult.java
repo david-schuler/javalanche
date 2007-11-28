@@ -2,18 +2,20 @@ package org.softevo.mutation.results;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import junit.framework.TestResult;
 
@@ -49,6 +51,24 @@ public class SingleTestResult {
 	@IndexColumn(name="passing_id")
 	private List<TestMessage> passing = new ArrayList<TestMessage>();
 
+	//Temporal(TemporalType.TIME)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date date;
+
+	/**
+	 * @return the date
+	 */
+	public Date getDate() {
+		return date;
+	}
+
+	/**
+	 * @param date the date to set
+	 */
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
 	private SingleTestResult() {
 	}
 
@@ -59,6 +79,7 @@ public class SingleTestResult {
 		this.failures = mutationTestListener.getFailureMessages();
 		this.errors = mutationTestListener.getErrorMessages();
 		this.passing = mutationTestListener.getPassingMessages();
+		this.date = new Date();
 		if (touchingTestCases != null && touchingTestCases.size() > 0) {
 			updateTouched(touchingTestCases, failures);
 			updateTouched(touchingTestCases, errors);
@@ -83,7 +104,8 @@ public class SingleTestResult {
 	public String toString() {
 		StringBuilder sb = new StringBuilder(String.format(
 				"Runs: %d  Failures: %d  Errors: %d LineTouched: %s", runs,
-				failures.size(), errors.size(), touched ? "yes" : "no "));
+				failures. size(), errors.size(), touched ? "yes" : "no "));
+		sb.append("date: "+ date);
 		if (failures.size() > 0) {
 			sb.append("Failures:\n");
 			for (TestMessage tm : failures) {

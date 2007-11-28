@@ -1,6 +1,7 @@
 package org.softevo.mutation.runtime;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,9 +49,9 @@ public class MutationTestListener implements TestListener {
 			logger.warn("Result for this test was already reported " + test);
 			return;
 		}
-		logger.info("Error added");
+		logger.info("Error added!\nStack Trace:\n" +   Arrays.toString(t.getStackTrace()));
 		long duration = getDuration(test);
-		errorMessages.add(new TestMessage(test.toString(), t.toString(),
+		errorMessages.add(new TestMessage(test.toString(), t.toString() + "\nStack Trace:\n" +   Arrays.toString(t.getStackTrace()),
 				duration));
 		alreadyReported.add(test);
 	}
@@ -83,6 +84,7 @@ public class MutationTestListener implements TestListener {
 			long duration = getDuration(test);
 			passingMessages.add(new TestMessage(test.toString(), "test passed",
 					duration));
+			alreadyReported.add(test);
 		}
 		logger.info("Test ended:" + test);
 	}

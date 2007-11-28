@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.softevo.mutation.io.XmlIo;
@@ -55,6 +56,10 @@ public class ProcessWrapper extends Thread {
 
 	private int taskId;
 
+	private String aspectjDir;
+
+	private InstanceManager instances;
+
 	/**
 	 * Construct a new ProcessWrapper.
 	 *
@@ -70,7 +75,8 @@ public class ProcessWrapper extends Thread {
 	 *            The result file the tasks writes its mutation results to.
 	 */
 	public ProcessWrapper(String command, File taskFile, File dir,
-			File outputFile, File resultFile, int taskId) {
+			File outputFile, File resultFile, int taskId,
+			InstanceManager instances) {
 		super();
 		this.taskId = taskId;
 		this.debugPort = 1000 + taskId;
@@ -79,6 +85,7 @@ public class ProcessWrapper extends Thread {
 		this.dir = dir;
 		this.outputFile = outputFile;
 		this.resultFile = resultFile;
+		this.instances = instances;
 		System.out.println("Process created" + this);
 	}
 
@@ -90,6 +97,10 @@ public class ProcessWrapper extends Thread {
 	public void run() {
 		System.out.println("Process started" + this);
 		try {
+			while (aspectjDir == null) {
+				aspectjDir = instances.getInstance();
+				sleep(5000);
+			}
 			String[] cmdArray = getCommand();
 			process = Runtime.getRuntime().exec(cmdArray, new String[0], dir);
 			running = true;
@@ -101,6 +112,9 @@ public class ProcessWrapper extends Thread {
 			outputPipe.start();
 			errorPipe.start();
 			process.waitFor();
+			synchronized (instances) {
+				instances.addInstance(aspectjDir);
+			}
 			closePipes();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -122,7 +136,7 @@ public class ProcessWrapper extends Thread {
 	 * @return The command to start the process.
 	 */
 	private String[] getCommand() {
-		String[] cmdArray = new String[4];
+		String[] cmdArray = new String[5];
 		cmdArray[0] = command;
 		cmdArray[1] = "-D" + MutationProperties.RESULT_FILE_KEY + "="
 				+ resultFile.getAbsolutePath();
@@ -130,6 +144,7 @@ public class ProcessWrapper extends Thread {
 				+ taskFile.getAbsolutePath();
 		cmdArray[3] = "-D" + MutationProperties.DEBUG_PORT_KEY + "="
 				+ debugPort;
+		cmdArray[4] = aspectjDir;
 		// String.format("-D%s=%s",
 		return cmdArray;
 	}
@@ -176,6 +191,8 @@ public class ProcessWrapper extends Thread {
 		sb.append("Task File: " + taskFile.getAbsolutePath());
 		sb.append('\n');
 		sb.append("Command: " + Arrays.toString(getCommand()));
+		sb.append('\n');
+		sb.append("Aspectj Dir: " + aspectjDir);
 		return sb.toString();
 	}
 
@@ -245,7 +262,8 @@ public class ProcessWrapper extends Thread {
 			e.printStackTrace();
 		}
 		try {
-			Process  killProcess = Runtime.getRuntime().exec(getKillComand(), new String[0], dir);
+			Process killProcess = Runtime.getRuntime().exec(getKillComand(),
+					new String[0], dir);
 			InputStream is = killProcess.getInputStream();
 			PipeThread killOutputPipe = new PipeThread(is);
 			killOutputPipe.start();
@@ -256,6 +274,6 @@ public class ProcessWrapper extends Thread {
 	}
 
 	private String[] getKillComand() {
-		return new String[]{ KILL_COMMAND ,  ""  +  taskId };
+		return new String[] { KILL_COMMAND, "" + taskId };
 	}
 }

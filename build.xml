@@ -15,6 +15,7 @@
 	<!-- Application specific properties -->
 	<property name="threaded.result.dir" value="/scratch/schuler/mutation-test-config/result" />
 	<property name="threaded.main.class" value="org.softevo.mutation.run.threaded.ThreadPool" />
+	<property name="mutation.test.output.dir" value="/scratch/schuler/output-mutation-test/" />
 
 
 	<!-- Classpath declaration -->
@@ -77,13 +78,11 @@
 		<hibernatetool destdir="${basedir}">
 			<classpath>
 				<pathelement path="target/classes/" />
-				<pathelement location="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib/mysql-connector-java-5.0.3.jar" />
-
+				<pathelement location="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib/mysql-connector-java-5.1-nightly-20071110-bin.jar" />
 				<!--
-				<fileset dir="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib">
-					<include name="*.jar"/>
-				</fileset>
-			-->
+
+				<path refid="mutation.classpath" />
+				-->
 			</classpath>
 			<annotationconfiguration configurationfile="src/main/resources/hibernate.cfg.xml" />
 			<hbm2ddl drop="true" create="true" export="true" outputfilename="${proj.shortname}-ddl.sql" delimiter=";" format="true" />
@@ -100,6 +99,24 @@
 			<arg value="file:${database.dir}/db" />
 		</java>
 	</target>
+
+
+
+	<!-- /usr/bin/mysqldump -port=3308 -user=mutation -password=mu -h 127.0.0.1 -r mutation-test.dump mutation_test -->
+	<target name="dumpDb" description="dump the database">
+		<tstamp>
+			<format property="dump.tstamp" pattern="dd-MM-yyyy_hh-mm-aa" />
+		</tstamp>
+		<property name="dump.file" location="${basedir}/mutation-test_${dump.tstamp}.dump" />
+		<exec dir="." executable="/usr/bin/mysqldump">
+			<arg line="--port=3308 --user=mutation --password=mu -h 127.0.0.1 -r ${dump.file} mutation_test " />
+		</exec>
+		<echo>
+			Dump written to: ${dump.file}
+		</echo>
+	</target>
+
+
 
 
 	<!-- Start the HSQL DB server -->
@@ -132,6 +149,7 @@
 	</target>
 
 
+	<!--
 	<target name="generateCoverageEntries" description="generate the coverage entries for aspectj">
 		<java classname="org.softevo.mutation.coverageResults.TestSuiteCoverageResult" maxmemory="2048m" fork="true">
 			<classpath>
@@ -140,6 +158,7 @@
 			</classpath>
 		</java>
 	</target>
+    -->
 
 	<target name="showMutationResults" description="prints all mutation results to console">
 		<java classname="org.softevo.mutation.run.PrintResults" maxmemory="5120m" fork="true">
@@ -149,6 +168,24 @@
 			</classpath>
 		</java>
 	</target>
+
+
+	<target name="copyAspectjInstances">
+		<exec executable="/usr/bin/ant" dir="">
+			<!--<arg line="-buildfile /scratch/schuler/aspectj/build/build.xml compile-tests" />-->
+			<arg line="-buildfile /scratch/schuler/aspectj/run-all-junit-tests/build.xml compile-tests" />
+		</exec>
+		<mkdir dir="${mutation.test.output.dir}" />
+		<property name="aspectj.dir" value="/scratch/schuler/aspectj/">
+		</property>
+		<copy toDir="${mutation.test.output.dir}/instance1">
+			<fileset dir="${aspectj.dir}"/>
+		</copy>
+		<copy toDir="${mutation.test.output.dir}/instance2">
+			<fileset dir="${aspectj.dir}"/>
+		</copy>
+	</target>
+
 
 	<target name="runThreaded" description="run mutation tests multithreaded">
 		<delete dir="${threaded.result.dir}" />
@@ -162,6 +199,8 @@
 	</target>
 
 	<target name="runThreadedRepeat" description="run mutation tests multithreaded and repeat the previous run" depends="deleteTestResultsFromLastRun">
+
+
 		<java classname="org.softevo.mutation.run.threaded.ThreadPool" maxmemory="1024m" fork="true">
 			<sysproperty key="mutation.repeat" value="true" />
 			<classpath>
@@ -264,8 +303,9 @@
 
 
 
-	<target name="parseCoverageResults" description="parses the clover coverage results">
+	<target name="parseCoverageResults" description="parses the clover coverage results and writes the results to the database">
 		<java classname="org.softevo.mutation.coverageResults.clover.ParseCloverResults" maxmemory="3072m" fork="true">
+			<arg value="todb" />
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
@@ -276,6 +316,15 @@
 
 	<target name="deleteTestCaseMutations" description="deletes mutations for testcases from db">
 		<java classname="org.softevo.mutation.run.DeleteTestCaseMutations" maxmemory="2048m" fork="true">
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="deleteUnmutated" description="delete all Mutations of type unmutated=0 from db">
+		<java classname="org.softevo.mutation.run.DeleteUnmutated" maxmemory="2048m" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
@@ -306,9 +355,10 @@
 
 
 	<target name="compareUnmutated" description="Compare Mutation Results with the unmutated runs">
-		<java classname="org.softevo.mutation.run.CompareWithUnmutated" maxmemory="4096m" fork="true">
-			<!-- <jvmarg value="-Xdebug" />
-			     <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044" />
+		<java classname="org.softevo.mutation.run.CompareWithUnmutated" maxmemory="4096m" fork="true" jvm="./java-nice.sh">
+			<!--
+				<jvmarg value="-Xdebug" />
+			    <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044" />
 			 -->
 			<classpath>
 				<path refid="mutation.classpath" />

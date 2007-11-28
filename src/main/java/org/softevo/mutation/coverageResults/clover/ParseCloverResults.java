@@ -258,19 +258,18 @@ public class ParseCloverResults {
 	}
 
 	public static void main(String[] args) {
-		boolean todb = false;
+		boolean toDb = true;
 		if (args.length > 0 && args[0].toLowerCase().equals("todb")) {
-			todb = true;
-			logger.info("Also writing to db");
+			toDb = true;
+			logger.info("Will write results to database");
 		}
 		Map<String, CoverageResult> map = parseResults();
 		XmlIo.toXML(map, new File(MutationProperties.CLOVER_RESULTS_FILE));
 		logger.info("Parsing Finished");
-		if (todb) {
-			// TestSuiteCoverageResult coverageResult = new
-			// TestSuiteCoverageResult(
-			// map);
-			TestSuiteCoverageResult.toDB();
+		if (toDb) {
+			logger.info("Start writing to database");
+			new TestSuiteCoverageResult(map).writeToDB();
+			logger.info("Finished writing to database");
 		}
 	}
 }

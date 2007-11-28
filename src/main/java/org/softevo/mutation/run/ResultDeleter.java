@@ -69,7 +69,7 @@ public class ResultDeleter {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		for (Mutation m : mutationsFromDbByID) {
-			deleteMutation(session, m);
+			deleteMutationResult(session, m);
 		}
 		logger.info(String.format("Deleting %d mutation results",
 				mutationsFromDbByID.size()));
@@ -77,12 +77,37 @@ public class ResultDeleter {
 		session.close();
 	}
 
-	private static void deleteMutation(Session session, Mutation m) {
+	private static void deleteMutationResult(Session session, Mutation m) {
+		deleteMutationResult(session, m, true);
+	}
+
+	private static void deleteMutationResult(Session session, Mutation m,
+			boolean deleteUnmutated) {
 		session.load(m, m.getId());
+		logger.info("Loading mutation with  following id: " + m.getId());
+
 		SingleTestResult singleTestResult = m.getMutationResult();
 		if (singleTestResult != null) {
 			m.setMutationResult(null);
 			session.delete(singleTestResult);
+		}
+		if (deleteUnmutated) {
+			if (QueryManager.hasUnmutated(m)) {
+				Mutation unMutated = QueryManager.generateUnmutated(m);
+				unMutated = (Mutation) session.get(Mutation.class, unMutated
+						.getId());
+				if (unMutated != null)
+					logger
+							.info("Loading unmutated mutation with following id: "
+									+ unMutated.getId());
+				// session.load(unMutated, unMutated.getId());
+				SingleTestResult unMutatedSingleTestResult = unMutated
+						.getMutationResult();
+				if (unMutatedSingleTestResult != null) {
+					unMutated.setMutationResult(null);
+					session.delete(unMutatedSingleTestResult);
+				}
+			}
 		}
 	}
 
@@ -109,7 +134,7 @@ public class ResultDeleter {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		for (Mutation m : mutations) {
-			deleteMutation(session, m);
+			deleteMutationResult(session, m);
 		}
 		logger.info(String.format("Deleting %d mutation results", mutations
 				.size()));

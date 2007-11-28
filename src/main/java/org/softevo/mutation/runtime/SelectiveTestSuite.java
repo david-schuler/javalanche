@@ -48,7 +48,7 @@ public class SelectiveTestSuite extends TestSuite {
 	/**
 	 * Timeout for one single test
 	 */
-	private static final long DEFAULT_TIMEOUT_IN_SECONDS = 5;
+	private static final long DEFAULT_TIMEOUT_IN_SECONDS = 10;
 
 	static Logger logger = Logger.getLogger(SelectiveTestSuite.class);
 
@@ -183,10 +183,12 @@ public class SelectiveTestSuite extends TestSuite {
 					actualMutationTestResult.failureCount(),
 					actualMutationTestResult.errorCount()));
 			if (checkUnmutated) {
-				if (!QueryManager.hasUnmutated(actualMutation)) {
-					actualMutation = QueryManager
-							.generateUnmutated(actualMutation);
+				actualMutation = QueryManager
+				.generateUnmutated(actualMutation);
+				if (actualMutation.getMutationResult() ==null) {
+					logger.info("Starting unmutated tests");
 					ResultReporter.setActualMutation(actualMutation);
+					logger.info("Unmutated mutation:"  + actualMutation);
 					TestResult unmutatedTestResult = new TestResult();
 					actualMutationTestResult = unmutatedTestResult;
 					MutationTestListener unmutatedListener = new MutationTestListener();

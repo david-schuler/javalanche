@@ -38,7 +38,6 @@ public class Mutation {
 	private SingleTestResult mutationResult;
 
 	private Mutation() {
-
 	}
 
 	public Mutation(String className, int line, int mutationForLine,
@@ -63,6 +62,12 @@ public class Mutation {
 				mutationForLine, mutationType.toString(),
 				mutationResult == null ? "No Result" : mutationResult
 						.toString());
+	}
+
+	public String toShortString() {
+		return String.format("%d %s - %d (%d)- %s", id, className, lineNumber,
+				mutationForLine, mutationType.toString());
+
 	}
 
 	public String getClassName() {

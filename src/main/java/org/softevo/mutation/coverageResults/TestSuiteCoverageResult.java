@@ -40,17 +40,11 @@ public class TestSuiteCoverageResult {
 		return tscvr;
 	}
 
-	public static void main(String[] args) {
-		toDB();
-	}
-
-	public static void toDB() {
-		TestSuiteCoverageResult tscr = getFromXml();
-		Set<Entry<String, CoverageResult>> entrySet = tscr.results.entrySet();
-		for (Entry<String, CoverageResult> entry : entrySet) {
+	public void writeToDB() {
+		for (Entry<String, CoverageResult> entry : results.entrySet()) {
 			CoverageResult cr = entry.getValue();
 			String className = entry.getKey();
-			if(className.startsWith("config.clover_html.")){
+			if (className.startsWith("config.clover_html.")) {
 				className = className.replace("config.clover_html.", "");
 			}
 			Set<Entry<Integer, List<String>>> lineDataSet = cr.lineData
@@ -67,6 +61,16 @@ public class TestSuiteCoverageResult {
 			TestCoverageClassResult testCoverageClassResult = new TestCoverageClassResult(
 					className, lineResults);
 			QueryManager.save(testCoverageClassResult);
+
 		}
+	}
+
+	public static void main(String[] args) {
+		toDB();
+	}
+
+	public static void toDB() {
+		TestSuiteCoverageResult tscr = getFromXml();
+		tscr.writeToDB();
 	}
 }
