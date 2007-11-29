@@ -15,6 +15,9 @@ import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 /**
+ *
+ * Class that stores the results of the testcases.
+ *
  * @author David Schuler
  *
  */
@@ -33,7 +36,6 @@ public class ResultReporter {
 	private static String actualTestCase;
 
 	private static boolean firstTouch = true;
-
 
 	public synchronized void report(TestResult mutationTestResult,
 			Mutation mutation, MutationTestListener mutationTestListener) {
@@ -104,9 +106,15 @@ public class ResultReporter {
 		ResultReporter.actualMutation = actualMutation;
 	}
 
+	/**
+	 * Returns a summary for all collected test outcomes and writes these to a
+	 * file if a property for the file name was set.
+	 *
+	 * @return The String containing the summary.
+	 */
 	public String summary() {
-		RunResult runResult = new RunResult(reportedMutations, touchedMutations, MutationForRun
-				.getAppliedMutations());
+		RunResult runResult = new RunResult(reportedMutations,
+				touchedMutations, MutationForRun.getAppliedMutations());
 
 		String resultFile = System
 				.getProperty(MutationProperties.RESULT_FILE_KEY);

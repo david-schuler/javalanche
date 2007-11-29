@@ -170,7 +170,7 @@
 	</target>
 
 
-	<target name="copyAspectjInstances">
+	<target name="copyAspectjInstances" description="copy aspectj instances">
 		<exec executable="/usr/bin/ant" dir="">
 			<!--<arg line="-buildfile /scratch/schuler/aspectj/build/build.xml compile-tests" />-->
 			<arg line="-buildfile /scratch/schuler/aspectj/run-all-junit-tests/build.xml compile-tests" />
@@ -184,6 +184,10 @@
 		<copy toDir="${mutation.test.output.dir}/instance2">
 			<fileset dir="${aspectj.dir}"/>
 		</copy>
+		<copy toDir="${mutation.test.output.dir}/instance3">
+				<fileset dir="${aspectj.dir}"/>
+		</copy>
+
 	</target>
 
 

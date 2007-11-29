@@ -30,10 +30,19 @@ public class MutationTestListener implements TestListener {
 	 */
 	private Map<Test, Long> startTime = new HashMap<Test, Long>();
 
+	/**
+	 * Stores the error messages of test that failed because of an error.
+	 */
 	private List<TestMessage> errorMessages = new ArrayList<TestMessage>();
 
+	/**
+	 * Stores the messages of tests were an assertion failed.
+	 */
 	private List<TestMessage> failureMessages = new ArrayList<TestMessage>();
 
+	/**
+	 * Stores the messages of tests that passed.
+	 */
 	private List<TestMessage> passingMessages = new ArrayList<TestMessage>();
 
 	private List<Test> alreadyReported = new ArrayList<Test>();
@@ -49,9 +58,11 @@ public class MutationTestListener implements TestListener {
 			logger.warn("Result for this test was already reported " + test);
 			return;
 		}
-		logger.info("Error added!\nStack Trace:\n" +   Arrays.toString(t.getStackTrace()));
+		logger.info("Error added for test: " + test + "\nStack Trace:\n"
+				+ Arrays.toString(t.getStackTrace()));
 		long duration = getDuration(test);
-		errorMessages.add(new TestMessage(test.toString(), t.toString() + "\nStack Trace:\n" +   Arrays.toString(t.getStackTrace()),
+		errorMessages.add(new TestMessage(test.toString(), t.toString()
+				+ "\nStack Trace:\n" + Arrays.toString(t.getStackTrace()),
 				duration));
 		alreadyReported.add(test);
 	}
@@ -67,7 +78,7 @@ public class MutationTestListener implements TestListener {
 			logger.warn("Result for this test was already reported " + test);
 			return;
 		}
-		logger.info("Failure added");
+		logger.info("Failure added for test: " + test);
 		long duration = getDuration(test);
 		failureMessages.add(new TestMessage(test.toString(), t.toString(),
 				duration));
@@ -85,10 +96,17 @@ public class MutationTestListener implements TestListener {
 			passingMessages.add(new TestMessage(test.toString(), "test passed",
 					duration));
 			alreadyReported.add(test);
+			logger.info("Test ended normaly:" + test);
 		}
-		logger.info("Test ended:" + test);
 	}
 
+	/**
+	 * Returns the duration for the test.
+	 *
+	 * @param test
+	 *            The test for which the duration is computed for.
+	 * @return The duration in milliseconds for this test.
+	 */
 	private long getDuration(Test test) {
 		long duration = System.currentTimeMillis() - startTime.get(test);
 		startTime.remove(test);
@@ -103,7 +121,7 @@ public class MutationTestListener implements TestListener {
 	public void startTest(Test test) {
 		logger.info("Test started: " + test);
 		long start = System.currentTimeMillis();
-		startTime.put(test,start);
+		startTime.put(test, start);
 	}
 
 	/**
@@ -121,7 +139,7 @@ public class MutationTestListener implements TestListener {
 	}
 
 	/**
-	 * @return the passing messages.
+	 * @return The passing messages.
 	 */
 	public List<TestMessage> getPassingMessages() {
 		return passingMessages;
@@ -129,7 +147,9 @@ public class MutationTestListener implements TestListener {
 
 	/**
 	 * For test purposes.
-	 * @param errorMessages the errorMessages to set
+	 *
+	 * @param errorMessages
+	 *            the errorMessages to set
 	 */
 	public void setErrorMessages(List<TestMessage> errorMessages) {
 		this.errorMessages = errorMessages;
@@ -137,7 +157,9 @@ public class MutationTestListener implements TestListener {
 
 	/**
 	 * For test purposes.
-	 * @param failureMessages the failureMessages to set
+	 *
+	 * @param failureMessages
+	 *            the failureMessages to set
 	 */
 	public void setFailureMessages(List<TestMessage> failureMessages) {
 		this.failureMessages = failureMessages;
@@ -145,7 +167,9 @@ public class MutationTestListener implements TestListener {
 
 	/**
 	 * For test purposes.
-	 * @param passingMessages the passingMessages to set
+	 *
+	 * @param passingMessages
+	 *            the passingMessages to set
 	 */
 	public void setPassingMessages(List<TestMessage> passingMessages) {
 		this.passingMessages = passingMessages;

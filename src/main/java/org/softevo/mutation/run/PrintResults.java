@@ -48,7 +48,7 @@ public class PrintResults {
 			System.out.println("Errors");
 			for (TestMessage testMessage : mutation.getMutationResult()
 					.getErrors()) {
-				// System.out.println(testMessage);
+				 System.out.println(testMessage);
 				errors.add(new TestMessage(testMessage));
 				errorTests.add(testMessage.getTestCaseName());
 
@@ -56,7 +56,7 @@ public class PrintResults {
 			System.out.println("Failures");
 			for (TestMessage testMessage : mutation.getMutationResult()
 					.getFailures()) {
-				// System.out.println(testMessage);
+				 System.out.println(testMessage);
 				failures.add(new TestMessage(testMessage));
 				failingTests.add(testMessage.getTestCaseName());
 			}
@@ -64,7 +64,7 @@ public class PrintResults {
 			System.out.println("Passing");
 			for (TestMessage testMessage : mutation.getMutationResult()
 					.getPassing()) {
-				// System.out.println(testMessage);
+				System.out.println(testMessage);
 				passingTests.add(testMessage.getTestCaseName());
 				passingMap.put(testMessage.getTestCaseName(), mutation);
 			}

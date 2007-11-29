@@ -57,6 +57,10 @@ public class MutationSwitcher {
 		return new HashSet<String>(Arrays.asList(testCases));
 	}
 
+	/**
+	 * Checks if there is a mutation to apply.
+	 * @return True, if next() will return a mutation.
+	 */
 	public boolean hasNext() {
 		if (iter == null) {
 			initMutations();
@@ -64,6 +68,11 @@ public class MutationSwitcher {
 		return iter.hasNext();
 	}
 
+	/**
+	 * Takes the next mutation without a result and sets it as the actual mutation.
+	 *
+	 * @return The mutation that is now the actual mutation.
+	 */
 	public Mutation next() {
 		if (iter == null) {
 			initMutations();
