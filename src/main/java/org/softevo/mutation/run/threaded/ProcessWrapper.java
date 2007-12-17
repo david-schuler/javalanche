@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.softevo.mutation.io.XmlIo;
@@ -261,19 +260,17 @@ public class ProcessWrapper extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		killProcess();
 		try {
-			Process killProcess = Runtime.getRuntime().exec(getKillComand(),
-					new String[0], dir);
-			InputStream is = killProcess.getInputStream();
-			PipeThread killOutputPipe = new PipeThread(is);
-			killOutputPipe.start();
-		} catch (IOException e) {
+			sleep(10 * 1000);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		end();
 	}
 
-	private String[] getKillComand() {
-		return new String[] { KILL_COMMAND, "" + taskId };
+	private void killProcess() {
+		KillProcess.killProcess(taskId);
 	}
+
 }

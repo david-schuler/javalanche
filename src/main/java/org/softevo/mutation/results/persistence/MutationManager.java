@@ -33,7 +33,7 @@ public class MutationManager {
 				logger.log(Level.INFO, "Mutation not in db: " + mutation);
 				return false;
 			}
-			logger.log(Level.INFO, "Applying mutation: " + mutation);
+			logger.log(Level.INFO, "Applying mutation: " + mutationFromDb);
 			MutationForRun.mutationApplied(mutationFromDb);
 			return true;
 		}

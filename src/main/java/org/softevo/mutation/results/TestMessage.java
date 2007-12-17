@@ -3,6 +3,7 @@ package org.softevo.mutation.results;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 import org.apache.log4j.Logger;
 
@@ -15,6 +16,8 @@ import org.apache.log4j.Logger;
  */
 @Entity
 public class TestMessage {
+
+	private static final int MAX_MESSAGE_LENGTH = 65000;
 
 	private static Logger logger = Logger.getLogger(TestMessage.class);
 
@@ -30,6 +33,7 @@ public class TestMessage {
 	/**
 	 * Failure or error message of the TestCase.
 	 */
+	@Lob
 	private String message;
 
 	/**
@@ -51,7 +55,7 @@ public class TestMessage {
 		this.id = new Long(0);
 		this.testCaseName = testMessage.testCaseName;
 		this.hasTouched = testMessage.hasTouched;
-		this.message  = testMessage.message;
+		this.message = testMessage.message;
 		this.duration = 0;
 		// this.duration = testMessage.duration;
 	}
@@ -59,10 +63,14 @@ public class TestMessage {
 	public TestMessage(String testCaseName, String message, long duration) {
 		super();
 		this.testCaseName = testCaseName;
-//		if(message.length() > 254){
-			logger.info("Got long error message from test:  ("+ message.length() + ") "  + testCaseName +"\n" + message);
-//
-		this.message = message.substring(0, Math.min(message.length(), 254));
+		if (message.length() > MAX_MESSAGE_LENGTH) {
+			logger.info("Got long error message from test:  ("
+					+ message.length() + ") " + testCaseName + "\n" + message);
+			this.message = message.substring(0, Math.min(message.length(),
+					MAX_MESSAGE_LENGTH));
+		} else {
+			this.message = message;
+		}
 		this.duration = duration;
 	}
 

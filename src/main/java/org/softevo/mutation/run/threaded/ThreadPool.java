@@ -40,18 +40,17 @@ public class ThreadPool {
 	 * Number of parallel running threads.
 	 */
 	private static final int NUMBER_OF_THREADS = 3	;
-//
 //	/**
-//	 * Number of mutations that are fetched random ly from the database.
+//	 * Number of mutations that are fetched randomly from the database.
 //	 */
 //	private static final int MAX_MUTATIONS = 500;// 20000;
 //
 //	/**
 //	 * Number of tasks that will be submitted to the thread pool.
 //	 */
-//	private static final int NUMBER_OF_TASKS = 10;// 100;
+//	private static final int NUMBER_OF_TASKS = 20;// 100;
 //
-//	private static final int MUTATIONS_PER_TASK = 40;// 1000;
+//	private static final int MUTATIONS_PER_TASK = 10;// 1000;
 //
 //	/**
 //	 * Maximum running time for one sub process.
@@ -66,14 +65,14 @@ public class ThreadPool {
 	 /**
 	 * Number of tasks that will be submitted to the thread pool.
 	 */
-	 private static final int NUMBER_OF_TASKS = 50;
+	 private static final int NUMBER_OF_TASKS = 100;
 
 	 private static final int MUTATIONS_PER_TASK = 75;
 
 	 /**
 	 * Maximum running time for one sub process.
 	 */
-	 private static final long MAX_TIME_FOR_SUB_PROCESS = 30 * 60 * 1000;
+	 private static final long MAX_TIME_FOR_SUB_PROCESS = 60 * 60 * 1000;
 
 	private List<Long> allQueriedMutations = new ArrayList<Long>();
 
@@ -95,7 +94,7 @@ public class ThreadPool {
 	 * Processes that are added to the thread pool per turn. after one turn the
 	 * ids of mutations without results are refreshed.
 	 */
-	private static final int PROCESSES_PER_TURN = 10;
+	private static final int PROCESSES_PER_TURN = 5;
 
 	private final ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors
 			.newFixedThreadPool(NUMBER_OF_THREADS);

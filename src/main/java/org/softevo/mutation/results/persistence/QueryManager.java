@@ -416,4 +416,19 @@ public class QueryManager {
 		session.close();
 		return mmutation;
 	}
+
+	public static void saveMutations(List<Mutation> mutationsToSave) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+
+		int counter = 0;
+		for (Mutation mutation : mutationsToSave) {
+			counter++;
+			logger.info(counter + ": Trying to save mutation :" + mutation);
+			session.save(mutation);
+		}
+		tx.commit();
+		session.close();
+
+	}
 }

@@ -62,9 +62,18 @@ public class MutationTestListener implements TestListener {
 				+ Arrays.toString(t.getStackTrace()));
 		long duration = getDuration(test);
 		errorMessages.add(new TestMessage(test.toString(), t.toString()
-				+ "\nStack Trace:\n" + Arrays.toString(t.getStackTrace()),
+				+ "\nStack Trace:\n" + stackTraceToString(t.getStackTrace()),
 				duration));
 		alreadyReported.add(test);
+	}
+
+	private String stackTraceToString(StackTraceElement[] stackTrace) {
+		StringBuilder sb =  new StringBuilder();
+		for(StackTraceElement stackTraceElement: stackTrace){
+			sb.append(stackTraceElement.toString());
+			sb.append('\n');
+		}
+		return sb.toString();
 	}
 
 	/*

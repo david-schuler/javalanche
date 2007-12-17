@@ -75,13 +75,9 @@ public class MutationPossibilityCollector {
 
 	public void updateDB() {
 		logger.info("Collected " + possibilities.size()
-				+ "mutation possibilities");
-		int counter = 0;
-		for (Mutation mutation : possibilities) {
-			counter++;
-			logger.info(counter + ": Trying to save mutation :" + mutation);
-			QueryManager.saveMutation(mutation);
-		}
+				+ "mutation possibilities. Trying to save mutations.");
+		QueryManager.saveMutations(possibilities);
+		logger.info("Mutations saved");
 	}
 
 	public void clear() {

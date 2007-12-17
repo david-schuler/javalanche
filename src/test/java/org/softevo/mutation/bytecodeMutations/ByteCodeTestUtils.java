@@ -19,6 +19,7 @@ import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
 
@@ -171,18 +172,21 @@ public class ByteCodeTestUtils {
 		int nonNulls = 0;
 		for (Mutation m : mList) {
 			System.out.println(m);
-			SingleTestResult singleTestResult = m.getMutationResult();
-			if (singleTestResult != null) {
-				nonNulls++;
-				Assert.assertEquals("Mutation: " + m, 1, singleTestResult
-						.getNumberOfErrors()
-						+ singleTestResult.getNumberOfFailures());
+			if (m.getMutationType() != MutationType.NO_MUTATION) {
+				SingleTestResult singleTestResult = m.getMutationResult();
+				if (singleTestResult != null) {
+					nonNulls++;
+					Assert.assertEquals("Mutation: " + m, 1, singleTestResult
+							.getNumberOfErrors()
+							+ singleTestResult.getNumberOfFailures());
+				}
 			}
 		}
+
 		tx.commit();
 		session.close();
 		Assert.assertTrue("Expected failing tests because of mutations",
-				nonNulls >= mList.size());
+				nonNulls >= mList.size()/2);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -209,7 +213,7 @@ public class ByteCodeTestUtils {
 		MutationForRun.getInstance().reinit();
 	}
 
-	public static void addMutations(String filename){
+	public static void addMutations(String filename) {
 		FileTransformer ft = new FileTransformer(new File(filename));
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 		ft.process(new MutationScannerTransformer(mpc));

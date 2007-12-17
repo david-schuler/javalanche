@@ -2,6 +2,7 @@ package org.softevo.mutation.run;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,7 +26,7 @@ public class PrintResults {
 
 	public static void main(String[] args) {
 		// printFirstWithResults(100);
-		// printFromFil es();
+		// printFromFiles();
 		printUnmutated();
 	}
 
@@ -43,22 +44,41 @@ public class PrintResults {
 		Set<String> failingTests = new HashSet<String>();
 		Set<String> errorTests = new HashSet<String>();
 		Map<String, Mutation> passingMap = new HashMap<String, Mutation>();
+		Map<String, List<TestMessage>> failureMap = new HashMap<String, List<TestMessage>>();
+		Map<String, List<TestMessage>> errorMap = new HashMap<String, List<TestMessage>>();
 		for (Mutation mutation : results) {
 			System.out.println(mutation.toShortString());
 			System.out.println("Errors");
 			for (TestMessage testMessage : mutation.getMutationResult()
 					.getErrors()) {
-				 System.out.println(testMessage);
+				System.out.println(testMessage);
 				errors.add(new TestMessage(testMessage));
 				errorTests.add(testMessage.getTestCaseName());
-
+				String testName = testMessage.getTestCaseName();
+				List<TestMessage> testMessageList = null;
+				if (errorMap.get(testName) == null) {
+					testMessageList = new ArrayList<TestMessage>();
+					errorMap.put(testName, testMessageList);
+				} else {
+					testMessageList = errorMap.get(testName);
+				}
+				testMessageList.add(testMessage);
 			}
 			System.out.println("Failures");
 			for (TestMessage testMessage : mutation.getMutationResult()
 					.getFailures()) {
-				 System.out.println(testMessage);
+				System.out.println(testMessage);
 				failures.add(new TestMessage(testMessage));
 				failingTests.add(testMessage.getTestCaseName());
+				String testName = testMessage.getTestCaseName();
+				List<TestMessage> testMessageList = null;
+				if (failureMap.get(testName) == null) {
+					testMessageList = new ArrayList<TestMessage>();
+					failureMap.put(testName, testMessageList);
+				} else {
+					testMessageList = failureMap.get(testName);
+				}
+				testMessageList.add(testMessage);
 			}
 
 			System.out.println("Passing");
@@ -86,17 +106,24 @@ public class PrintResults {
 		System.out.println("\n\nError Short");
 		for (String error : errorTests) {
 			System.out.println(error);
+
 		}
 
 		System.out.println("\n\nCheck Passing");
 		for (String passing : passingTests) {
 			if (errorTests.contains(passing)) {
 				System.out.println(passing + " contained in error and passing");
+				for(TestMessage tm : errorMap.get(passing)){
+					System.out.println( "\t" + tm);
+				}
 				// System.out.println(passingMap.get(passing));
 			}
 			if (failingTests.contains(passing)) {
 				System.out.println(passing
 						+ " contained in failures and passing");
+				for(TestMessage tm : failureMap.get(passing)){
+					System.out.println( "\t" + tm);
+				}
 				// System.out.println(passingMap.get(passing));
 			}
 		}

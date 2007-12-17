@@ -19,6 +19,8 @@ import org.softevo.mutation.results.persistence.QueryManager;
 
 public class MutationForRun {
 
+	private static final String MUTATION_FILE = "mutation.file";
+
 	private static Logger logger = Logger.getLogger(MutationForRun.class);
 
 	/**
@@ -58,6 +60,7 @@ public class MutationForRun {
 		mutations = getMutationsForRun();
 		logger.info("Applying " + mutations.size() + " mutations");
 		for (Mutation m : mutations) {
+			logger.info("Mutation ID: " + m.getId());
 			logger.info(m);
 		}
 	}
@@ -75,28 +78,47 @@ public class MutationForRun {
 	}
 
 	private static List<Mutation> getMutationsForRun() {
-		if (System.getProperty("mutation.file") != null) {
+		List<Mutation> mutationsToReturn = new ArrayList<Mutation>();
+		if (System.getProperty(MUTATION_FILE) != null) {
 			logger.info("Found Property mutation.file");
-			String filename = System.getProperty("mutation.file");
+			String filename = System.getProperty(MUTATION_FILE);
 			if (!filename.equals("")) {
 				logger.info("Value of mutation file: " + filename);
 				File file = new File(filename);
 				if (file.exists()) {
-					logger.info("Location of mutation.file: "
+					logger.info("Location of mutation file: "
 							+ file.getAbsolutePath());
-					return getMutationsByFile(file);
+					mutationsToReturn = getMutationsByFile(file);
 				} else {
 					logger.info("Mutation file does not exist " + file);
 				}
 			}
 		} else {
-			logger.info("Property not found: mutation.file");
-			// throw new RuntimeException("property not found");
+			logger.info("Property not found: " + MUTATION_FILE);
 		}
-		if (NON_RANDOM) {
-			return getMutationsFromDB();
+		if (mutationsToReturn != null) {
+			// if (NON_RANDOM) {
+			// mutationsToReturn = getMutationsFromDB();
+			// }
+			// make sure that we have not got any mutations that have already an
+			// result
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			Transaction tx = session.beginTransaction();
+			List<Mutation> toRemove = new ArrayList<Mutation>();
+			for (Mutation m : mutationsToReturn) {
+				session.load(m, m.getId());
+				if (m.getMutationResult() != null) {
+					logger
+							.warn("Found mutation that already has a mutation result "
+									+ m);
+					toRemove.add(m);
+				}
+			}
+			mutationsToReturn.removeAll(toRemove);
+			tx.commit();
+			session.close();
 		}
-		return null;
+		return mutationsToReturn;
 	}
 
 	private static List<Mutation> getMutationsFromDB() {
@@ -106,7 +128,6 @@ public class MutationForRun {
 				.createSQLQuery(
 						"SELECT m.* FROM Mutation m JOIN TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN TestCoverageClassResult_TestCoverageLineResult AS class_line ON class_line.testcoverageclassresult_id = tccr.id JOIN TestCoverageLineResult AS tclr ON tclr.id = class_line.lineresults_id 	WHERE m.mutationresult_id IS NULL AND m.linenumber = tclr.linenumber")
 				.addEntity(Mutation.class);
-
 		query.setMaxResults(MAX_MUTATIONS);
 		List results = query.list();
 		List<Mutation> mutationList = new ArrayList<Mutation>();
@@ -119,6 +140,7 @@ public class MutationForRun {
 			// hqlQuery.setLong("id", mutation.getId());
 			// Mutation mutationToAdd = (Mutation) hqlQuery.uniqueResult();
 			Mutation mutationToAdd = mutation;
+			logger.info("Mutation id:" + mutationToAdd.getId());
 			logger.info(mutationToAdd);
 			mutationList.add(mutationToAdd);
 		}
@@ -129,7 +151,16 @@ public class MutationForRun {
 
 	private static List<Mutation> getMutationsByFile(File file) {
 		List<Long> idList = Io.getIDsFromFile(file);
-		return QueryManager.getMutationsFromDbByID(idList.toArray(new Long[0]));
+		List<Mutation> returnList = null;
+		if (idList.size() > 0) {
+			returnList = QueryManager.getMutationsFromDbByID(idList
+					.toArray(new Long[0]));
+		}
+		else{
+			returnList  = new ArrayList<Mutation>();
+		}
+		return returnList;
+
 	}
 
 	public void reinit() {
