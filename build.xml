@@ -79,10 +79,7 @@
 			<classpath>
 				<pathelement path="target/classes/" />
 				<pathelement location="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib/mysql-connector-java-5.1-nightly-20071110-bin.jar" />
-
-
-				<!--	<path refid="mutation.classpath" />
-			-->
+				<!--<path refid="mutation.classpath" />-->
 				<fileset dir="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib">
 					<exclude name="**/commons-logging-1.1.jar" />
 					<include name="**/*.jar" />
@@ -200,9 +197,23 @@
 		</exec>
 	</target>
 
-	<target name="runThreaded" description="run mutation tests multithreaded">
+	<target name="copyAndDeletResults">
+		<tstamp>
+			<format property="copy.tstamp" pattern="yyyy-MM-dd_hh-mm" locale="de" />
+		</tstamp>
+
+		<echo>
+			${copy.tstamp}
+		</echo>
+		<copy todir="${threaded.result.dir}${copy.tstamp}" >
+			<fileset dir="${threaded.result.dir}"/>
+		</copy>
 		<delete dir="${threaded.result.dir}" />
 		<mkdir dir="${threaded.result.dir}" />
+
+	</target>
+
+	<target name="runThreaded" description="run mutation tests multithreaded" depends="copyAndDeletResults">
 		<java classname="org.softevo.mutation.run.threaded.ThreadPool" maxmemory="1024m" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
@@ -212,8 +223,6 @@
 	</target>
 
 	<target name="runThreadedRepeat" description="run mutation tests multithreaded and repeat the previous run" depends="deleteTestResultsFromLastRun">
-
-
 		<java classname="org.softevo.mutation.run.threaded.ThreadPool" maxmemory="1024m" fork="true">
 			<sysproperty key="mutation.repeat" value="true" />
 			<classpath>
@@ -388,7 +397,7 @@
 
 	<target name="testKill" description="Kill Process">
 		<java classname="org.softevo.mutation.run.threaded.KillProcess" maxmemory="1024m" fork="true">
-			<arg line="26"/>
+			<arg line="26" />
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
@@ -396,5 +405,17 @@
 		</java>
 	</target>
 
+	<target name="runTreeMap" description="runTheTreemapVisualization">
+		<exec executable="scp">
+			<arg line=" kubrick:/scratch2/schuler/mutationTest/mutations-class-result.xml ." />
+		</exec>
+		<java classname="org.softevo.mutation.visualize.MutationTreeData" maxmemory="512m" fork="true">
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
+				<path location="${user.home}/workspace2/prefuse/bin" />
+			</classpath>
+		</java>
+	</target>
 
 </project>

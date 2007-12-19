@@ -329,7 +329,7 @@ public class ThreadPool {
 				+ " mutation where actually executed - regarding result files");
 		logger
 				.info((QueryManager.getNumberOfMutationsWithResult() - mutationResultsPre)
-						+ " mutation results where added to db");
+						+ " mutation results where added to db");//TODO handle NOMUTATIONS
 	}
 
 	private File writeListToFile(List<Long> list, int id) {

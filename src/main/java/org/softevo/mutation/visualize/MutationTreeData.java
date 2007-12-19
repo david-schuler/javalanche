@@ -1,5 +1,6 @@
 package org.softevo.mutation.visualize;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.HibernateUtil;
+import org.softevo.mutation.run.analyze.MutationsClassData;
 
 import prefuse.data.Node;
 import prefuse.data.Table;
@@ -34,9 +36,21 @@ public class MutationTreeData {
 	private static Map<String, Integer> iBugsData = GetIBugsData
 			.getBugsForClasses();
 
+	private static Map<String, MutationsClassData> mutationData = MutationsClassData
+			.getMapFromFile(new File("mutations-class-result.xml"));
+
 	static final String IBUGS_FAILURES = "ibugsFailures";
 
+	static final String KILLED = "killed";
+
+	static final String SURVIVED = "survived";
+
+	static final String TOTAL = "total";
+
+	public static final String FRACTION = "fraction";
+
 	private static class MNode {
+
 
 		String name;
 
@@ -69,7 +83,12 @@ public class MutationTreeData {
 			Table nodes = tree.getNodeTable();
 			nodes.addColumn(NAME, String.class);
 			nodes.addColumn(NUMBER_OF_MUTATIONS, int.class);
-			nodes.addColumn(TreeMap.NOT_KILLED, Integer.class);
+			nodes.addColumn(TreeMap.NOT_KILLED, int.class);
+
+			nodes.addColumn(KILLED, int.class);
+			nodes.addColumn(SURVIVED, int.class);
+			nodes.addColumn(TOTAL, int.class);
+			nodes.addColumn(FRACTION, int.class);
 			nodes.addColumn(SHORT_NAME, String.class);
 			nodes.addColumn(IBUGS_FAILURES, int.class);
 			nodes.addColumn("size", double.class);
@@ -90,6 +109,14 @@ public class MutationTreeData {
 			}
 			node.set(TreeMap.NOT_KILLED, mutations.size());
 
+			MutationsClassData mutationsClassData = mutationData.get(name);
+			if (mutationsClassData != null) {
+				node.set(KILLED, mutationsClassData.getMutationsKilled());
+				node.set(SURVIVED, mutationsClassData.getMutationsSurvived());
+				node.set(TOTAL, mutationsClassData.getMutationsTotal());
+				node.set(FRACTION,(int)  (( 1. * mutationsClassData.getMutationsSurvived()   / mutationsClassData.getMutationsTotal()) * 100));
+			}
+
 			node.set(SHORT_NAME, shortname);
 			// node.setInt(NUMBER_OF_MUTATIONS, (int) Math.min(mutations.size(),
 			// 255));
@@ -100,8 +127,7 @@ public class MutationTreeData {
 			if (iBugsData.containsKey(name)) {
 				logger.info("Ibugs data found for class" + name);
 				node.set(IBUGS_FAILURES, iBugsData.get(name));
-			}
-			else{
+			} else {
 				node.set(IBUGS_FAILURES, 0);
 			}
 			for (MNode mnode : children.values()) {

@@ -126,7 +126,7 @@ public class TreeMap extends Display {
 		m_vis.setInteractive(treeNodes, noLeaf, false);
 
 		DataColorAction fill = new DataColorAction("tree.nodes",
-				MutationTreeData.NUMBER_OF_MUTATIONS, Constants.LINEAR_SCALE,
+				MutationTreeData.FRACTION, Constants.LINEAR_SCALE,
 				VisualItem.FILLCOLOR, palette);
 		fill.setFilterPredicate((Predicate) ExpressionParser
 				.parse("childcount()=0"));
@@ -192,7 +192,6 @@ public class TreeMap extends Display {
 		ActionList iBugsPaint = new ActionList(400);
 		iBugsPaint.add(new ColorAnimator(treeNodes));
 		iBugsPaint.add(new RepaintAction());
-//		iBugsPaint.add(new IBugsColorAction(treeNodes));
 		iBugsPaint.add(bugsFill);
 		m_vis.putAction(IBUGS_PAINT, iBugsPaint);
 
@@ -277,16 +276,20 @@ public class TreeMap extends Display {
 		search.setBorder(BorderFactory.createEmptyBorder(5, 5, 4, 0));
 		search.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 11));
 
-		final JFastLabel title = new JFastLabel("                 ");
-		title.setPreferredSize(new Dimension(350, 20));
+		final JFastLabel title = new JFastLabel("                                  ");
+		title.setPreferredSize(new Dimension(450, 20));
 		title.setVerticalAlignment(SwingConstants.BOTTOM);
 		title.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
 		title.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 16));
 
 		treemap.addControlListener(new ControlAdapter() {
 			public void itemEntered(VisualItem item, MouseEvent e) {
-				title.setText(item.get(MutationTreeData.NUMBER_OF_MUTATIONS)
-						+ " ");
+				StringBuilder sb = new StringBuilder();
+				sb.append("Total: "  + item.get(MutationTreeData.TOTAL) + "(" + item.get(MutationTreeData.NUMBER_OF_MUTATIONS) + ")");
+				sb.append(" Killed: "  + item.get(MutationTreeData.KILLED));
+				sb.append(" Survived: "  + item.get(MutationTreeData.SURVIVED));
+				sb.append(" IBugs: "  + item.get(MutationTreeData.IBUGS_FAILURES));
+				title.setText(sb.toString());
 			}
 
 			public void itemExited(VisualItem item, MouseEvent e) {

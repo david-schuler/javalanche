@@ -116,7 +116,6 @@ public class PrintResults {
 				for(TestMessage tm : errorMap.get(passing)){
 					System.out.println( "\t" + tm);
 				}
-				// System.out.println(passingMap.get(passing));
 			}
 			if (failingTests.contains(passing)) {
 				System.out.println(passing
@@ -124,7 +123,6 @@ public class PrintResults {
 				for(TestMessage tm : failureMap.get(passing)){
 					System.out.println( "\t" + tm);
 				}
-				// System.out.println(passingMap.get(passing));
 			}
 		}
 		System.out.printf("Total passing %d failing %d error %d", passingTests
