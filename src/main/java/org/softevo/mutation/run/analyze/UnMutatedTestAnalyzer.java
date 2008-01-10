@@ -15,8 +15,7 @@ import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.TestMessage;
 
-public class UnMutatedTestAnalyzer implements
-		MutatedUnmutatedAnalyzer {
+public class UnMutatedTestAnalyzer implements MutatedUnmutatedAnalyzer {
 
 	private static class TestCaseOutcome {
 
@@ -26,7 +25,7 @@ public class UnMutatedTestAnalyzer implements
 
 		int failed;
 
-		Map<String, Integer> failureMessages = new HashMap<String, Integer>();
+		Map<String, List<Mutation>> failureMessages = new HashMap<String, List<Mutation>>();
 
 		public TestCaseOutcome(String name) {
 			super();
@@ -37,13 +36,31 @@ public class UnMutatedTestAnalyzer implements
 			passed++;
 		}
 
-		public void addFailed(String string) {
-			if(failureMessages.containsKey(string)){
-				failureMessages.put(string, failureMessages.get(string) + 1);
-			}else{
-				failureMessages.put(string, 1);
+		public void addFailed(String name, Mutation m) {
+			List<Mutation> mutations = null;
+			if (failureMessages.containsKey(name)) {
+				mutations = failureMessages.get(name);
+
+			} else {
+				mutations = new ArrayList<Mutation>();
+				failureMessages.put(name, mutations);
 			}
+			mutations.add(m);
 			failed++;
+		}
+
+		/**
+		 * @return the failed
+		 */
+		public int getFailed() {
+			return failed;
+		}
+
+		/**
+		 * @return the passed
+		 */
+		public int getPassed() {
+			return passed;
 		}
 	}
 
@@ -52,26 +69,38 @@ public class UnMutatedTestAnalyzer implements
 	public String getResults() {
 		int inconsistent = 0;
 		int total = 0;
-		for (UnMutatedTestAnalyzer.TestCaseOutcome outcome : testCaseMap.values()) {
+		for (UnMutatedTestAnalyzer.TestCaseOutcome outcome : testCaseMap
+				.values()) {
 			if (outcome.failed != 0 && outcome.passed != 0) {
 				inconsistent++;
 			}
 			total++;
 		}
 		writeResultFile();
-		return "Tests with inconsistent outcome: " + inconsistent
-				+ " out of " + total;
+		return "Tests with inconsistent outcome: " + inconsistent + " out of "
+				+ total;
 	}
 
 	public void writeResultFile() {
 		StringBuffer sb = new StringBuffer();
-		for (UnMutatedTestAnalyzer.TestCaseOutcome outcome : testCaseMap.values()) {
-			if (outcome.failed != 0 && outcome.passed != 0) {
+		for (UnMutatedTestAnalyzer.TestCaseOutcome outcome : testCaseMap
+				.values()) {
+			if (outcome.getFailed() != 0 && outcome.getPassed() != 0) {
 				sb.append(outcome.name);
+				sb.append("Passed " +  outcome.getPassed());
+				sb.append("Failed " +  outcome.getFailed());
 				sb.append('\n');
 				sb.append("Messages:\n");
-				for (Entry<String, Integer> entry : outcome.failureMessages.entrySet()) {
-					sb.append('\t' + entry.getValue() + "x " + entry.getKey() );
+				for (Entry<String, List<Mutation>> entry : outcome.failureMessages
+						.entrySet()) {
+					sb.append('\t' + entry.getValue().size() + "x "
+							+ entry.getKey());
+					for (Mutation m : entry.getValue()) {
+						sb.append('\n');
+						sb.append("ID: " + m.getId() + " Classname: "
+								+ m.getClassName() + " Linenumber:"
+								+ m.getLineNumber());
+					}
 					sb.append('\n');
 				}
 				sb
@@ -89,11 +118,11 @@ public class UnMutatedTestAnalyzer implements
 		}
 		for (TestMessage tm : testResult.getFailures()) {
 			UnMutatedTestAnalyzer.TestCaseOutcome outcome = getOutcome(tm);
-			outcome.addFailed(tm.getMessage());
+			outcome.addFailed(tm.getMessage(), unMutated);
 		}
 		for (TestMessage tm : testResult.getErrors()) {
 			UnMutatedTestAnalyzer.TestCaseOutcome outcome = getOutcome(tm);
-			outcome.addFailed(tm.getMessage());
+			outcome.addFailed(tm.getMessage(), unMutated);
 		}
 
 	}
