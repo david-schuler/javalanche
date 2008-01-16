@@ -62,4 +62,6 @@ public class MutationProperties {
 
 	public static final String RESULT_DIR = CONFIG_DIR
 	+ "/result/";
+
+	public static final String MUTATIONS_CLASS_RESULT_XML = "mutations-class-result.xml";
 }

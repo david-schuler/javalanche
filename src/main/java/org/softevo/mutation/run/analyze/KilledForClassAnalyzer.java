@@ -4,15 +4,21 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.management.Query;
+
 import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.persistence.QueryManager;
 
 public class KilledForClassAnalyzer implements MutatedUnmutatedAnalyzer {
 
 	private Map<String, MutationsClassData> mutationData = new HashMap<String, MutationsClassData>();
 
 	public String getResults() {
+		for(MutationsClassData m : mutationData.values()){
+			m.setMutationsTotal(QueryManager.getNumberOfMutationsForClass(m.getClassName()));
+		}
 		XmlIo.toXML(mutationData, new File("mutations-class-result.xml"));
 		return "";
 	}

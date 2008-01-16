@@ -431,4 +431,16 @@ public class QueryManager {
 		session.close();
 
 	}
+
+	public static int getNumberOfMutationsForClass(String className) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createSQLQuery("SELECT count(*) FROM Mutation WHERE className = :clName AND mutationType!= 0;");
+		query.setString("clName", className);
+		Integer numberOfMutations = Integer.valueOf(query.uniqueResult().toString());
+		tx.commit();
+		session.close();
+		return numberOfMutations.intValue();
+	}
 }

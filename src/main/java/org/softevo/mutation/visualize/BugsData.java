@@ -19,7 +19,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class GetIBugsData {
+public class BugsData {
 
 	private static final String IBUGS_XML_FILE = "/Users/schuler/Desktop/firefox/ibugs_aspectj-1.1/repository.xml";
 
@@ -66,7 +66,6 @@ public class GetIBugsData {
 	public static void main(String[] args) {
 		Map<String, Integer> map  = getBugsForClasses();
 		printBugsForClasses(map);
-
 	}
 
 	public static Map<String, Integer> getBugsForClasses() {
@@ -117,7 +116,6 @@ public class GetIBugsData {
 		Set<Entry<String, Integer>> entrySet = map.entrySet();
 		SortedSet<Entry<String, Integer>> sortedEntrySet = new TreeSet<Entry<String, Integer>>(
 				new Comparator<Entry<String, Integer>>() {
-
 					public int compare(Entry<String, Integer> o1,
 							Entry<String, Integer> o2) {
 						return o1.getValue() - o2.getValue();
@@ -129,7 +127,7 @@ public class GetIBugsData {
 		}
 	}
 
-	public static void parseXmlFile(File file, DefaultHandler handler) {
+	private static void parseXmlFile(File file, DefaultHandler handler) {
 		try {
 			// Create a builder factory
 			SAXParserFactory factory = SAXParserFactory.newInstance();

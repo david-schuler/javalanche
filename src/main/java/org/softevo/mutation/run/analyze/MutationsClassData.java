@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.softevo.mutation.run.analyze;
 
 import java.io.File;
@@ -64,10 +61,19 @@ public class MutationsClassData {
 		return mutationsTotal;
 	}
 
+
+
 	@SuppressWarnings("unchecked")
 	public static Map<String, MutationsClassData> getMapFromFile(File file){
 		Map<String, MutationsClassData> resultMap =  (Map<String, MutationsClassData>) XmlIo.fromXml(file);
 		return resultMap;
 	}
-		
+
+	/**
+	 * @param mutationsTotal the mutationsTotal to set
+	 */
+	public void setMutationsTotal(int mutationsTotal) {
+		this.mutationsTotal = mutationsTotal;
+	}
+
 }

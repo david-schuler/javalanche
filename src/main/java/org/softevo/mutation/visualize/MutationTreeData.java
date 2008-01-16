@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.run.analyze.MutationsClassData;
@@ -33,11 +34,11 @@ public class MutationTreeData {
 
 	private static final String SHORT_NAME = "shortName";
 
-	private static Map<String, Integer> iBugsData = GetIBugsData
+	private static Map<String, Integer> iBugsData = BugsData
 			.getBugsForClasses();
 
 	private static Map<String, MutationsClassData> mutationData = MutationsClassData
-			.getMapFromFile(new File("mutations-class-result.xml"));
+			.getMapFromFile(new File(MutationProperties.MUTATIONS_CLASS_RESULT_XML));
 
 	static final String IBUGS_FAILURES = "ibugsFailures";
 
