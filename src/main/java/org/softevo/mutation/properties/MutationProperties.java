@@ -1,6 +1,7 @@
 package org.softevo.mutation.properties;
 
 import org.apache.log4j.Logger;
+import org.softevo.mutation.run.threaded.ThreadPool;
 
 public class MutationProperties {
 
@@ -60,8 +61,63 @@ public class MutationProperties {
 	 */
 	public static final String EXEC_DIR = "/scratch/schuler/mutationTest/src/scripts/";
 
-	public static final String RESULT_DIR = CONFIG_DIR
-	+ "/result/";
+	public static final String RESULT_DIR = CONFIG_DIR + "/result/";
 
 	public static final String MUTATIONS_CLASS_RESULT_XML = "mutations-class-result.xml";
+
+	/**
+	 *
+	 * The key for the system property that specifies the package prefix of the
+	 * project to mutate.
+	 *
+	 * -dmutation.package.prefix=org.aspectj
+	 */
+	public static final String PROJECT_PREFIX_KEY = "mutation.package.prefix";
+
+	public static final String PROJECT_PREFIX = getPrefix();
+
+	/**
+	 *
+	 * The key for the system property that specifies the the testsuite which
+	 * should be modified
+	 *
+	 * -dmutation.test.suite=AllTests
+	 */
+	public static final String TEST_SUITE_KEY = "mutation.test.suite";
+
+	/**
+	 * The key for the system property that specifies if there is coverage
+	 * information in the db.
+	 *
+	 * -dmutation.coverage.information=false
+	 *
+	 */
+	public static final String COVERAG_INFORMATION_KEY = "mutation.coverage.information";
+
+	/**
+	 * True if coverage information is available in the db.
+	 */
+	public static final boolean COVERAGE_INFFORMATION = getCoverage();
+
+	private static boolean getCoverage() {
+		String coverageInformation = System
+				.getProperty(COVERAG_INFORMATION_KEY);
+		boolean result = false;
+		if (coverageInformation != null
+				&& coverageInformation.toLowerCase().equals("true")) {
+			result = true;
+		}
+		return result;
+	}
+
+	private static String getPrefix() {
+		String project_prefix = System
+				.getProperty(PROJECT_PREFIX_KEY);
+		if (project_prefix == null) {
+			ThreadPool.logger.warn("No project prefix found (Property: "
+					+ PROJECT_PREFIX_KEY + " not set)");
+		}
+		return project_prefix;
+	}
+
 }

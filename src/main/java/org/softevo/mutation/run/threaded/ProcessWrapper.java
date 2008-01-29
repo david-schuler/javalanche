@@ -102,6 +102,7 @@ public class ProcessWrapper extends Thread {
 			}
 			String[] cmdArray = getCommand();
 			process = Runtime.getRuntime().exec(cmdArray, new String[0], dir);
+			logger.info(Arrays.toString(cmdArray));
 			running = true;
 			startTime = System.currentTimeMillis();
 			InputStream is = process.getInputStream();
@@ -196,7 +197,7 @@ public class ProcessWrapper extends Thread {
 	}
 
 	/**
-	 * @return the exit value of the process.
+	 * @return The exit value of the process.
 	 */
 	public int getExitvalue() {
 		return exitvalue;

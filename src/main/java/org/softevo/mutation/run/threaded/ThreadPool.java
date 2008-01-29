@@ -9,14 +9,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.softevo.mutation.io.Io;
 import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.runtime.RunResult;
 
@@ -29,7 +25,7 @@ import org.softevo.mutation.runtime.RunResult;
  */
 public class ThreadPool {
 
-	private static Logger logger = Logger.getLogger(ThreadPool.class);
+	public static Logger logger = Logger.getLogger(ThreadPool.class);
 
 	/**
 	 * Time interval when the processes are checked.
@@ -39,40 +35,41 @@ public class ThreadPool {
 	/**
 	 * Number of parallel running threads.
 	 */
-	private static final int NUMBER_OF_THREADS = 3	;
-//	/**
-//	 * Number of mutations that are fetched randomly from the database.
-//	 */
-//	private static final int MAX_MUTATIONS = 500;// 20000;
-//
-//	/**
-//	 * Number of tasks that will be submitted to the thread pool.
-//	 */
-//	private static final int NUMBER_OF_TASKS = 20;// 100;
-//
-//	private static final int MUTATIONS_PER_TASK = 10;// 1000;
-//
-//	/**
-//	 * Maximum running time for one sub process.
-//	 */
-//	private static final long MAX_TIME_FOR_SUB_PROCESS = 15 * 60 * 1000;
+	private static final int NUMBER_OF_THREADS = 3;
 
-	 /**
+	// /**
+	// * Number of mutations that are fetched randomly from the database.
+	// */
+	// private static final int MAX_MUTATIONS = 500;// 20000;
+	//
+	// /**
+	// * Number of tasks that will be submitted to the thread pool.
+	// */
+	// private static final int NUMBER_OF_TASKS = 20;// 100;
+	//
+	// private static final int MUTATIONS_PER_TASK = 10;// 1000;
+	//
+	// /**
+	// * Maximum running time for one sub process.
+	// */
+	// private static final long MAX_TIME_FOR_SUB_PROCESS = 15 * 60 * 1000;
+
+	/**
 	 * Number of mutations that are fetched randomly from the database.
 	 */
-	 private static final int MAX_MUTATIONS = 5500;
+	public static final int MAX_MUTATIONS = 5500;
 
-	 /**
+	/**
 	 * Number of tasks that will be submitted to the thread pool.
 	 */
-	 private static final int NUMBER_OF_TASKS = 100;
+	private static final int NUMBER_OF_TASKS = 100;
 
-	 private static final int MUTATIONS_PER_TASK = 75;
+	private static final int MUTATIONS_PER_TASK = 75;
 
-	 /**
+	/**
 	 * Maximum running time for one sub process.
 	 */
-	 private static final long MAX_TIME_FOR_SUB_PROCESS = 60 * 60 * 1000;
+	private static final long MAX_TIME_FOR_SUB_PROCESS = 60 * 60 * 1000;
 
 	private List<Long> allQueriedMutations = new ArrayList<Long>();
 
@@ -88,7 +85,8 @@ public class ThreadPool {
 	/**
 	 * Command that is used to execute on mutation task.
 	 */
-	private static final String MUTATION_COMMAND = "/scratch/schuler/mutationTest/src/scripts/threaded-run-tests.sh";
+//	private static final String MUTATION_COMMAND = "/scratch/schuler/mutationTest/src/scripts/threaded-run-tests.sh";
+	private static final String MUTATION_COMMAND = "src/scripts/threaded-run-tests.sh";
 
 	/**
 	 * Processes that are added to the thread pool per turn. after one turn the
@@ -116,7 +114,7 @@ public class ThreadPool {
 
 	private int triedShutdowns = 0;
 
-	public InstanceManager freeInstances  = new InstanceManager();
+	public InstanceManager freeInstances = new InstanceManager();
 
 	public static void main(String[] args) {
 		ThreadPool tp = new ThreadPool();
@@ -329,7 +327,9 @@ public class ThreadPool {
 				+ " mutation where actually executed - regarding result files");
 		logger
 				.info((QueryManager.getNumberOfMutationsWithResult() - mutationResultsPre)
-						+ " mutation results where added to db");//TODO handle NOMUTATIONS
+						+ " mutation results where added to db");// TODO
+		// handle
+		// NOMUTATIONS
 	}
 
 	private File writeListToFile(List<Long> list, int id) {
@@ -369,28 +369,6 @@ public class ThreadPool {
 	}
 
 	private void refreshMutations() {
-		mutationIDs = getMutationsIdListFromDb();
-	}
-
-	/**
-	 * Return a list of mutation ids that have coverage data associated but do
-	 * not have a result yet.
-	 *
-	 * @return a list of mutation ids.
-	 */
-	private static List<Long> getMutationsIdListFromDb() {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		Query query = session
-				.createSQLQuery("SELECT m.id FROM Mutation m JOIN TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN TestCoverageClassResult_TestCoverageLineResult AS class_line ON class_line.testcoverageclassresult_id = tccr.id JOIN TestCoverageLineResult AS tclr ON tclr.id = class_line.lineresults_id 	WHERE m.mutationresult_id IS NULL AND m.linenumber = tclr.linenumber AND m.mutationType != 0");
-		query.setMaxResults(MAX_MUTATIONS);
-		List results = query.list();
-		List<Long> idList = new ArrayList<Long>();
-		for (Object id : results) {
-			idList.add(Long.valueOf(id.toString()));
-		}
-		tx.commit();
-		session.close();
-		return idList;
+		mutationIDs = QueryManager.getMutationsIdListFromDb(MAX_MUTATIONS);
 	}
 }

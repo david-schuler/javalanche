@@ -25,6 +25,8 @@ public class BugsData {
 
 	private static final String ASPECTJ_PREFIX = "org.aspectj";
 
+	private static String ASPECTJ_DIRECTORY_STRING = "org/aspectj/";
+
 	private static class IBugsSaxHandler extends DefaultHandler {
 
 		private List<String> filenames = new ArrayList<String>();
@@ -39,7 +41,7 @@ public class BugsData {
 			} else if (waitForFixedFiles && qName.equals("file")) {
 				String filename = attributes.getValue("name");
 				filenames.add(filename);
-//				System.out.println(filename);
+				// System.out.println(filename);
 			}
 		}
 
@@ -64,7 +66,7 @@ public class BugsData {
 	}
 
 	public static void main(String[] args) {
-		Map<String, Integer> map  = getBugsForClasses();
+		Map<String, Integer> map = getBugsForClasses();
 		printBugsForClasses(map);
 	}
 
@@ -81,16 +83,7 @@ public class BugsData {
 			if (filename.startsWith(ASPECTJ_PREFIX)
 					&& filename.endsWith("java")) {
 
-				String fnew = filename;
-
-				String aspectJString = "org/aspectj/";
-				if (filename.contains(aspectJString)) {
-					int startPosition = filename.indexOf(aspectJString);
-					fnew = filename.substring(startPosition,
-							filename.length() - 5);
-					fnew = fnew.replace('/', '.');
-
-				}
+				String fnew = getClassName(filename);
 				if (fnew.toLowerCase().contains("test")) {
 					testClasses.add(fnew);
 				} else {
@@ -110,6 +103,20 @@ public class BugsData {
 			}
 		}
 		return map;
+	}
+
+
+
+	public static String getClassName(String filename) {
+		String newFileName =filename;
+		if (filename.contains(ASPECTJ_DIRECTORY_STRING)) {
+			int startPosition = filename.indexOf(ASPECTJ_DIRECTORY_STRING);
+			newFileName = filename.substring(startPosition,
+					filename.length() - 5);
+			newFileName = newFileName.replace('/', '.');
+
+		}
+		return newFileName;
 	}
 
 	private static void printBugsForClasses(Map<String, Integer> map) {

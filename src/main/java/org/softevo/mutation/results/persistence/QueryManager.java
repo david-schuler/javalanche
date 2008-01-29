@@ -13,9 +13,11 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
+import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.Mutation.MutationType;
+import org.softevo.mutation.run.threaded.ThreadPool;
 
 /**
  * Class that provides static method that execute queries.
@@ -378,6 +380,15 @@ public class QueryManager {
 		return mutationList;
 	}
 
+	/**
+	 * Generates a mutation of type not mutated in the database, if there is
+	 * none in the db. The generated mutation or the one from the db is
+	 * returned.
+	 *
+	 * @param mutation
+	 *            Mutation to generate a mutation of type not mutated for.
+	 * @return The generated mutation or the mutation from the db.
+	 */
 	public static Mutation generateUnmutated(Mutation mutation) {
 		Mutation unmutated;
 		if (!hasUnmutated(mutation)) {
@@ -438,9 +449,61 @@ public class QueryManager {
 		Query query = session
 				.createSQLQuery("SELECT count(*) FROM Mutation WHERE className = :clName AND mutationType!= 0;");
 		query.setString("clName", className);
-		Integer numberOfMutations = Integer.valueOf(query.uniqueResult().toString());
+		Integer numberOfMutations = Integer.valueOf(query.uniqueResult()
+				.toString());
 		tx.commit();
 		session.close();
 		return numberOfMutations.intValue();
+	}
+
+
+	public static List<Mutation> getMutationListFromDb(int numberOfMutations) {
+		String prefix = MutationProperties.PROJECT_PREFIX;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		String queryString = "SELECT m.* FROM Mutation m JOIN TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN TestCoverageClassResult_TestCoverageLineResult AS class_line ON class_line.testcoverageclassresult_id = tccr.id JOIN TestCoverageLineResult AS tclr ON tclr.id = class_line.lineresults_id 	WHERE m.mutationresult_id IS NULL AND m.linenumber = tclr.linenumber AND m.mutationType != 0 AND m.className LIKE '"
+				+ prefix + "%' ";
+		if (!MutationProperties.COVERAGE_INFFORMATION) {
+			queryString = "SELECT m.* FROM Mutation m WHERE m.mutationresult_id IS NULL  AND m.mutationType != 0 AND m.className LIKE '"
+					+ prefix + "%' ";
+		}
+		Query query = session.createSQLQuery(queryString).addEntity(Mutation.class);
+		query.setMaxResults(numberOfMutations);
+		List results = query.list();
+		List<Mutation> idList = new ArrayList<Mutation>();
+		for (Object mutation : results) {
+			idList.add((Mutation) mutation);
+		}
+		tx.commit();
+		session.close();
+		return idList;
+	}
+
+	/**
+	 * Return a list of mutation ids that have coverage data associated but do
+	 * not have a result yet.
+	 *
+	 * @return a list of mutation ids.
+	 */
+	public static List<Long> getMutationsIdListFromDb(int numberOfMutations) {
+		String prefix = MutationProperties.PROJECT_PREFIX;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		String queryString = "SELECT m.id FROM Mutation m JOIN TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN TestCoverageClassResult_TestCoverageLineResult AS class_line ON class_line.testcoverageclassresult_id = tccr.id JOIN TestCoverageLineResult AS tclr ON tclr.id = class_line.lineresults_id 	WHERE m.mutationresult_id IS NULL AND m.linenumber = tclr.linenumber AND m.mutationType != 0 AND m.className LIKE '"
+				+ prefix + "%' ";
+		if (!MutationProperties.COVERAGE_INFFORMATION) {
+			queryString = "SELECT m.id FROM Mutation m WHERE m.mutationresult_id IS NULL  AND m.mutationType != 0 AND m.className LIKE '"
+					+ prefix + "%' ";
+		}
+		Query query = session.createSQLQuery(queryString);
+		query.setMaxResults(numberOfMutations);
+		List results = query.list();
+		List<Long> idList = new ArrayList<Long>();
+		for (Object id : results) {
+			idList.add(Long.valueOf(id.toString()));
+		}
+		tx.commit();
+		session.close();
+		return idList;
 	}
 }

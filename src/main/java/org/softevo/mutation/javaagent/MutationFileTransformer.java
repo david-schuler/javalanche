@@ -10,7 +10,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
 import org.softevo.mutation.bytecodeMutations.MutationTransformer;
+import org.softevo.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import org.softevo.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
+import org.softevo.mutation.properties.MutationProperties;
 
 /**
  * {@link MutationTransformer} is used to apply mutations during runtime via a
@@ -26,6 +28,8 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	static {
 		logger.info("Loading MutationFileTransformer");
+		logger.info("Log4J Configuration at: " + System.getProperty("log4j.configuration"));
+
 	}
 
 	private static String testName = ".testclasses";
@@ -61,7 +65,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	private static List<String> systemExitClassList = Arrays
 			.asList(systemExitClasses);
-	
+
 	private static MutationDecision mutationDecision = new MutationDecision() {
 
 		public boolean shouldBeHandled(String classNameWithDots) {
@@ -90,13 +94,20 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
 		String classNameWithDots = className.replace('/', '.');
-		// logger.info("Entering transform");
+//		logger.info(className + " is passed to transformer");
 		if (isSystemExitClass(classNameWithDots)) {
 			logger.info("Trying to remove calls to system exit from class"
 					+ classNameWithDots);
 			classfileBuffer = systemExitTransformer
 					.transformBytecode(classfileBuffer);
 		}
+
+		if(classNameWithDots.endsWith("AllTests")|| compareWithSuiteProperty(classNameWithDots) ){
+			logger.info("Trying to integrate SelectiveTestSuite");
+			IntegrateSuiteTransformer integrateSuiteTransformer = new IntegrateSuiteTransformer();
+			classfileBuffer = integrateSuiteTransformer.transformBytecode(classfileBuffer);
+		}
+
 		if (mutationDecision.shouldBeHandled(classNameWithDots)) {
 			logger.info("Transforming: " + classNameWithDots);
 			byte[] transformedBytecode = null;
@@ -111,6 +122,15 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			return transformedBytecode;
 		}
 		return classfileBuffer;
+	}
+
+	private  boolean compareWithSuiteProperty(String classNameWithDots) {
+		String testSuiteName = System.getProperty(MutationProperties.TEST_SUITE_KEY);
+		boolean returnValue = false;
+		if(classNameWithDots.contains(testSuiteName)){
+			returnValue = true;
+		}
+		return returnValue;
 	}
 
 	private boolean isSystemExitClass(String classNameWithDots) {

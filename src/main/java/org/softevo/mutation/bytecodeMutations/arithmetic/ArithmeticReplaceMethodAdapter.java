@@ -3,6 +3,7 @@ package org.softevo.mutation.bytecodeMutations.arithmetic;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.softevo.mutation.bytecodeMutations.AbstractMutationAdapter;
 import org.softevo.mutation.bytecodeMutations.BytecodeTasks;
@@ -61,6 +62,12 @@ public class ArithmeticReplaceMethodAdapter extends AbstractMutationAdapter {
 		} else {
 			super.visitInsn(opcode);
 		}
+	}
+
+	@Override
+	public void visitLineNumber(int line, Label start) {
+		super.visitLineNumber(line, start);
+		possibilitiesForLine = 0;
 	}
 
 	private void mutate(int opcode) {

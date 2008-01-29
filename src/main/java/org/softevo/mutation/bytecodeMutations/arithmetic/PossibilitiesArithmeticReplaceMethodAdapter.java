@@ -2,6 +2,7 @@ package org.softevo.mutation.bytecodeMutations.arithmetic;
 
 import java.util.Map;
 
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.softevo.mutation.bytecodeMutations.AbstractMutationAdapter;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
@@ -102,6 +103,12 @@ public class PossibilitiesArithmeticReplaceMethodAdapter extends
 		// break;
 		// }
 
+	}
+
+	@Override
+	public void visitLineNumber(int line, Label start) {
+		super.visitLineNumber(line, start);
+		possForLine = 0;
 	}
 
 	private void addPossibility() {

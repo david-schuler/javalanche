@@ -12,6 +12,7 @@ import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 /**
@@ -33,9 +34,14 @@ public class ResultReporter {
 
 	private static Set<Mutation> touchedMutations = new HashSet<Mutation>();
 
+	private static Set<Mutation> unMutatedMutations = new HashSet<Mutation>();
+
+
 	private static String actualTestCase;
 
 	private static boolean firstTouch = true;
+
+	private int unmutated;
 
 	public synchronized void report(TestResult mutationTestResult,
 			Mutation mutation, MutationTestListener mutationTestListener) {
@@ -114,7 +120,7 @@ public class ResultReporter {
 	 */
 	public String summary() {
 		RunResult runResult = new RunResult(reportedMutations,
-				touchedMutations, MutationForRun.getAppliedMutations());
+				touchedMutations, MutationForRun.getAppliedMutations(), unMutatedMutations);
 
 		String resultFile = System
 				.getProperty(MutationProperties.RESULT_FILE_KEY);
@@ -126,5 +132,10 @@ public class ResultReporter {
 		}
 
 		return runResult.toString();
+	}
+
+	public void addUnmutated(Mutation m) {
+		assert m.getMutationType().equals(MutationType.NO_MUTATION);
+		unMutatedMutations.add(m);
 	}
 }

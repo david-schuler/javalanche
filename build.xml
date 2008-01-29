@@ -215,6 +215,7 @@
 
 	<target name="runThreaded" description="run mutation tests multithreaded" depends="copyAndDeletResults">
 		<java classname="org.softevo.mutation.run.threaded.ThreadPool" maxmemory="1024m" fork="true">
+			<sysproperty key="mutation.package.prefix" 	value="de.susebox" />
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
@@ -247,8 +248,8 @@
 	</target>
 
 	<target name="runThreadedDebugSingleRun" description="run mutation tests for run file">
-		<property name="mutation.file" value="/scratch2/schuler/mutation-test-config/result/mutation-task-11.txt" />
-		<!--
+
+		<property name="mutation.file" value="/scratch2/schuler/mutation-test-config/result2008-01-06_02-29/mutation-task-01.txt" />
 		<java classname="org.softevo.mutation.run.ResultDeleter" maxmemory="2048m" fork="true" jvm="/usr/local/java/jdk1.5.0_12/jre/bin/java">
 			<arg value="${mutation.file}" />
 			<classpath>
@@ -256,13 +257,12 @@
 				<path location="target/classes" />
 			</classpath>
 		</java>
-		-->
 
 		<exec dir="." executable="/scratch2/schuler/mutationTest/src/scripts/threaded-run-tests.sh" os="Linux">
 			<arg line="-Dmutation.file=${mutation.file}" />
 			<arg line="-Dmutation.result.file=debug_result.xml" />
 			<arg line="-Dmutation.debug.port=1044" />
-			<arg line="/scratch/schuler/aspectj/" />
+			<arg line="/scratch/schuler/output-mutation-test/instance1" />
 		</exec>
 
 	</target>
@@ -382,10 +382,10 @@
 
 
 	<target name="compareUnmutated" description="Compare Mutation Results with the unmutated runs">
-		<java classname="org.softevo.mutation.run.CompareWithUnmutated" maxmemory="4096m" fork="true" jvm="./java-nice.sh">
+		<java classname="org.softevo.mutation.run.CompareWithUnmutated" maxmemory="8192m" fork="true" jvm="./java-nice.sh">
 			<!--
-				<jvmarg value="-Xdebug" />
-			    <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044" />
+			<jvmarg value="-Xdebug" />
+			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044" />
 			 -->
 			<classpath>
 				<path refid="mutation.classpath" />

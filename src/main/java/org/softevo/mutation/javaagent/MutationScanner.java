@@ -7,6 +7,7 @@ import java.security.ProtectionDomain;
 import org.apache.log4j.Logger;
 import org.softevo.mutation.bytecodeMutations.MutationScannerTransformer;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
+import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;
@@ -21,6 +22,8 @@ public class MutationScanner implements ClassFileTransformer {
 			mpc);
 
 	private MutationDecision md = new MutationDecision() {
+	
+			private String prefix = System.getProperty(MutationProperties.PROJECT_PREFIX_KEY);
 
 		public boolean shouldBeHandled(String classNameWithDots) {
 			if (classNameWithDots.startsWith("java")
@@ -34,6 +37,9 @@ public class MutationScanner implements ClassFileTransformer {
 				return false;
 			}
 			if(classNameWithDots.startsWith("org.aspectj")){
+				return true;
+			}
+			if(prefix != null && classNameWithDots.startsWith(prefix)){
 				return true;
 			}
 			return false;

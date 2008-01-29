@@ -37,8 +37,6 @@ public class MutationForRun {
 
 	private static final String MUTATIONS_PER_RUN_KEY = "mutationsPerRun";
 
-	private static final boolean NON_RANDOM = true;
-
 	private List<Mutation> mutations;
 
 	private List<Mutation> appliedMutations = new ArrayList<Mutation>();
@@ -53,7 +51,7 @@ public class MutationForRun {
 			int mutations = Integer.parseInt(mutationsPerRun);
 			return mutations;
 		}
-		return 0;
+		return 10;
 	}
 
 	private MutationForRun() {
@@ -96,10 +94,10 @@ public class MutationForRun {
 		} else {
 			logger.info("Property not found: " + MUTATION_FILE);
 		}
+		if (mutationsToReturn.size() == 0) {
+			mutationsToReturn =  QueryManager.getMutationListFromDb(MAX_MUTATIONS);
+		}
 		if (mutationsToReturn != null) {
-			// if (NON_RANDOM) {
-			// mutationsToReturn = getMutationsFromDB();
-			// }
 			// make sure that we have not got any mutations that have already an
 			// result
 			Session session = HibernateUtil.getSessionFactory().openSession();
@@ -155,9 +153,8 @@ public class MutationForRun {
 		if (idList.size() > 0) {
 			returnList = QueryManager.getMutationsFromDbByID(idList
 					.toArray(new Long[0]));
-		}
-		else{
-			returnList  = new ArrayList<Mutation>();
+		} else {
+			returnList = new ArrayList<Mutation>();
 		}
 		return returnList;
 

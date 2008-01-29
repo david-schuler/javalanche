@@ -1,10 +1,8 @@
 package org.softevo.mutation.runtime;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -28,13 +26,14 @@ import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 /**
- * Subclass of Junits {@link TestSuite} class. It is used to execute the tests
+ * Subclass of JUnits {@link TestSuite} class. It is used to execute the tests
  * for the mutated program. It repeatedly executes the test-cases for every
  * mutation, but only executes the tests that cover the mutation.
  *
  * @author David Schuler
  *
  */
+
 public class SelectiveTestSuite extends TestSuite {
 
 	/**
@@ -43,13 +42,30 @@ public class SelectiveTestSuite extends TestSuite {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Enables debugging ~ only a limited number of mutations are executed.
+	 */
 	private static final boolean DEBUG = false;
 
 	/**
-	 * Timeout for one single test
+	 * Number of mutations that are executed during debugging.
+	 */
+	private static final int DEBUG_MUTATION_TO_EXECUTE = 20;
+
+	/**
+	 * Timeout for one single test.
 	 */
 	private static final long DEFAULT_TIMEOUT_IN_SECONDS = 10;
 
+	/**
+	 * Execute the same tests with mutation disabled right after the mutation
+	 * was tested.
+	 */
+	private static final boolean CHECK_UNMUTATED_REPEAT = true;
+
+	/**
+	 * Log4J logger.
+	 */
 	static Logger logger = Logger.getLogger(SelectiveTestSuite.class);
 
 	private MutationSwitcher mutationSwitcher;
@@ -66,12 +82,14 @@ public class SelectiveTestSuite extends TestSuite {
 
 	private Test actualTest;
 
-	private boolean checkUnmutated = true;
-
 	static {
 		staticLogMessage();
 	}
 
+	/**
+	 * Prints out a static log message to check if the SelectiveTestSuite is
+	 * integrated in the Process.
+	 */
 	private static void staticLogMessage() {
 		System.out.println("Selective Test Suite");
 		if (DEBUG) {
@@ -143,11 +161,14 @@ public class SelectiveTestSuite extends TestSuite {
 			super.run(result);
 			return;
 		}
-		logger.info("Not Running scanner");
+		Thread currentThread = Thread.currentThread();
+		StackTraceElement[] sts = currentThread.getStackTrace();
+		String stackTraceString = Arrays.toString(sts);
+		logger.info("SelectiveTestSuite.run entered. Stacktrace:\n" + stackTraceString);
 		logger.log(Level.INFO, "All Tests collected");
 		mutationSwitcher = new MutationSwitcher();
 		Map<String, TestCase> allTests = getAllTests(this);
-		int debugCount = 20;
+		int debugCount = DEBUG_MUTATION_TO_EXECUTE;
 		while (mutationSwitcher.hasNext()) {
 			if (DEBUG) {
 				if (debugCount-- < 0) {
@@ -166,43 +187,25 @@ public class SelectiveTestSuite extends TestSuite {
 			if (result.shouldStop())
 				break;
 			Set<String> testsForThisRun = mutationSwitcher.getTests();
+			if (!MutationProperties.COVERAGE_INFFORMATION) {
+				testsForThisRun = allTests.keySet();
+			}
 			if (testsForThisRun == null) {
-				logger.info("No tests for " + actualMutation);
+				logger.warn("No tests for " + actualMutation);
 				continue;
 			}
 			actualMutationTestResult = new TestResult();
 			mutationSwitcher.switchOn();
 			actualListener = new MutationTestListener();
 			actualMutationTestResult.addListener(actualListener);
+
 			runTests(allTests, actualMutationTestResult, testsForThisRun);
 			mutationSwitcher.switchOff();
 			resultReporter.report(actualMutationTestResult, actualMutation,
 					actualListener);
-			logger.info(String.format("runs: %d failures:%d errors:%d ",
-					actualMutationTestResult.runCount(),
-					actualMutationTestResult.failureCount(),
-					actualMutationTestResult.errorCount()));
-			if (checkUnmutated) {
-				actualMutation = QueryManager
-				.generateUnmutated(actualMutation);
-				if (actualMutation.getMutationResult() ==null) {
-					logger.info("Starting unmutated tests");
-					ResultReporter.setActualMutation(actualMutation);
-					logger.info("Unmutated mutation:"  + actualMutation);
-					TestResult unmutatedTestResult = new TestResult();
-					actualMutationTestResult = unmutatedTestResult;
-					MutationTestListener unmutatedListener = new MutationTestListener();
-					actualListener = unmutatedListener;
-					unmutatedTestResult.addListener(unmutatedListener);
-					runTests(allTests, unmutatedTestResult, testsForThisRun);
-					resultReporter.report(unmutatedTestResult, actualMutation,
-							unmutatedListener);
-					logger.info(String.format(
-							"Check Result runs: %d failures:%d errors:%d ",
-							actualMutationTestResult.runCount(),
-							actualMutationTestResult.failureCount(),
-							actualMutationTestResult.errorCount()));
-				}
+			logResults();
+			if (CHECK_UNMUTATED_REPEAT) {
+				testUnmutated(allTests, testsForThisRun);
 			}
 		}
 		Runtime.getRuntime().removeShutdownHook(shutDownHook);
@@ -211,20 +214,49 @@ public class SelectiveTestSuite extends TestSuite {
 		MutationForRun.getInstance().reportAppliedMutations();
 	}
 
+	private void testUnmutated(Map<String, TestCase> allTests,
+			Set<String> testsForThisRun) {
+		actualMutation = QueryManager.generateUnmutated(actualMutation);
+		if (actualMutation.getMutationResult() == null) {
+			logger.info("Starting unmutated tests");
+			ResultReporter.setActualMutation(actualMutation);
+			resultReporter.addUnmutated(actualMutation);
+			logger.info("Unmutated mutation:" + actualMutation);
+			TestResult unmutatedTestResult = new TestResult();
+			actualMutationTestResult = unmutatedTestResult;
+			MutationTestListener unmutatedListener = new MutationTestListener();
+			actualListener = unmutatedListener;
+			unmutatedTestResult.addListener(unmutatedListener);
+			runTests(allTests, unmutatedTestResult, testsForThisRun);
+			resultReporter.report(unmutatedTestResult, actualMutation,
+					unmutatedListener);
+			logResults();
+		}
+	}
+
+	private void logResults() {
+		logger
+				.info(String.format(
+						"Check Result runs: %d failures:%d errors:%d ",
+						actualMutationTestResult.runCount(),
+						actualMutationTestResult.failureCount(),
+						actualMutationTestResult.errorCount()));
+	}
+
 	/**
 	 * Returns a list of TestCase names for given Collection of TestCases.
 	 *
 	 * @param testCases
 	 * @return
 	 */
-	private Collection<String> getStringList(Collection<TestCase> testCases) {
-		List<String> result = new ArrayList<String>();
-		for (TestCase tc : testCases) {
-			result.add(getFullTestCaseName(tc));
-		}
-		return result;
-	}
-
+	// private Collection<String> getStringList(Collection<TestCase> testCases)
+	// {
+	// List<String> result = new ArrayList<String>();
+	// for (TestCase tc : testCases) {
+	// result.add(getFullTestCaseName(tc));
+	// }
+	// return result;
+	// }
 	/**
 	 * Executes the specified tests. Used to trigger the special tests for this
 	 * mutation.
@@ -234,7 +266,7 @@ public class SelectiveTestSuite extends TestSuite {
 	 * @param testResult
 	 *            Test Result that will hold the results of the tests.
 	 * @param testsForThisRun
-	 *            Testts that should be executed in this run.
+	 *            Tests that should be executed in this run.
 	 */
 	private void runTests(Map<String, TestCase> allTests,
 			TestResult testResult, Set<String> testsForThisRun) {
@@ -260,20 +292,19 @@ public class SelectiveTestSuite extends TestSuite {
 		}
 	}
 
+	/**
+	 * Runs given test in a new thread with specified timeout
+	 * (DEFAULT_TIMEOUT_IN_SECONDS) and stores the results in given testResult.
+	 *
+	 * @param test
+	 *            TestCase that is run.
+	 * @param testResult
+	 *            TestResult that is used to store the results.
+	 *
+	 */
 	private void runWithTimeout(final TestCase test, final TestResult testResult) {
 		ExecutorService service = Executors.newSingleThreadExecutor();
-		Callable<Object> callable = new Callable<Object>() {
-			public Object call() throws Exception {
-				try {
-					runTest(test, testResult);
-				} catch (Exception e) {
-					logger.info("Caught exception" + e);
-					e.printStackTrace();
-					testResult.addError(test, e);
-				}
-				return null;
-			}
-		};
+		Callable<Object> callable = getCallable(test, testResult);
 		Future<Object> result = service.submit(callable);
 		service.shutdown();
 		try {
@@ -294,7 +325,24 @@ public class SelectiveTestSuite extends TestSuite {
 		}
 	}
 
-	private static Map<String, TestCase> getAllTests(TestSuite s) {
+	private Callable<Object> getCallable(final TestCase test,
+			final TestResult testResult) {
+		Callable<Object> callable = new Callable<Object>() {
+			public Object call() throws Exception {
+				try {
+					runTest(test, testResult);
+				} catch (Exception e) {
+					logger.info("Caught exception" + e);
+					e.printStackTrace();
+					testResult.addError(test, e);
+				}
+				return null;
+			}
+		};
+		return callable;
+	}
+
+	public static Map<String, TestCase> getAllTests(TestSuite s) {
 		Map<String, TestCase> resultMap = new HashMap<String, TestCase>();
 		for (Enumeration e = s.tests(); e.hasMoreElements();) {
 			Object test = e.nextElement();
@@ -319,6 +367,13 @@ public class SelectiveTestSuite extends TestSuite {
 		return resultMap;
 	}
 
+	/**
+	 * Returns the full (JUnit) name for the given TestCase.
+	 *
+	 * @param testCase
+	 *            TestCase for which the name is computed.
+	 * @return The string representation of this TestCase.
+	 */
 	private static String getFullTestCaseName(TestCase testCase) {
 		String fullTestName = testCase.getClass().getName() + "."
 				+ testCase.getName();
@@ -330,6 +385,23 @@ public class SelectiveTestSuite extends TestSuite {
 	 */
 	public Mutation getActualMutation() {
 		return actualMutation;
+	}
+
+	/**
+	 * Transforms a {@link TestSuite} to a {@link SelectiveTestSuite}. This
+	 * method is called by instrumented code to insert this class instead of the
+	 * TestSuite.
+	 *
+	 * @param testSuite
+	 *            The original TestSuite.
+	 * @return The {@link SelectiveTestSuite} that contains the given TestSuite.
+	 */
+	public static SelectiveTestSuite toSelectiveTestSuite(TestSuite testSuite) {
+		logger.info("Transforming TestSuite to enable mutations");
+		SelectiveTestSuite returnTestSuite = new SelectiveTestSuite(testSuite
+				.getName());
+		returnTestSuite.addTest(testSuite);
+		return returnTestSuite;
 	}
 
 }
