@@ -1,5 +1,7 @@
 package org.softevo.mutation.properties;
 
+import java.io.File;
+
 import org.apache.log4j.Logger;
 import org.softevo.mutation.run.threaded.ThreadPool;
 
@@ -7,18 +9,16 @@ public class MutationProperties {
 
 	private static Logger logger = Logger.getLogger(MutationProperties.class);
 
-	public static final String ASPECTJ_DIR = "/scratch/schuler/aspectJ";
+	public static final String ASPECTJ_DIR = "/scratch/schuler/aspectJ/";
 
 	public static final String SAMPLE_FILE_CLASS_NAME = "org.aspectj.weaver.Advice";
 
 	public static final String SAMPLE_FILE = ASPECTJ_DIR + "/weaver/bin/"
 			+ SAMPLE_FILE_CLASS_NAME.replace('.', '/') + ".class";
 
-	public static final String CONFIG_DIR = "/scratch/schuler/mutation-test-config";
+	public static final String CONFIG_DIR = "/scratch/schuler/mutation-test-config/";
 
-	public static final String CLOVER_REPORT_DIR = CONFIG_DIR + "/clover_html";
-
-	public static final String TEST_FILE = CONFIG_DIR + "/selected-tests.txt";
+	public static final String CLOVER_REPORT_DIR = CONFIG_DIR + "clover_html/";
 
 	public static final String MUTATIONS_TO_APPLY_FILE = CONFIG_DIR
 			+ "/mutations-to-apply.xml";
@@ -56,12 +56,12 @@ public class MutationProperties {
 		return false;
 	}
 
-	/**
-	 * Directory where the processes are executed
-	 */
-	public static final String EXEC_DIR = "/scratch/schuler/mutationTest/src/scripts/";
+	public static final String RESULT_DIR = CONFIG_DIR + "result/";
 
-	public static final String RESULT_DIR = CONFIG_DIR + "/result/";
+	/**
+	 * Directory the serialized files are stored.
+	 */
+	public static final String RESULT_OBJECTS_DIR = RESULT_DIR + "objects/";
 
 	public static final String MUTATIONS_CLASS_RESULT_XML = "mutations-class-result.xml";
 
@@ -99,6 +99,17 @@ public class MutationProperties {
 	 */
 	public static final boolean COVERAGE_INFFORMATION = getCoverage();
 
+	public static final String SCRIPT_COMMAND_KEY = "mutation.script.command";
+
+	/**
+	 * Directory where the processes are executed
+	 */
+	public static final String EXEC_DIR = ".";
+
+	public static final String TESTCASES_FILE = CONFIG_DIR + "/testCases.xml";
+
+	// "src/scripts/";
+
 	private static boolean getCoverage() {
 		String coverageInformation = System
 				.getProperty(COVERAG_INFORMATION_KEY);
@@ -111,8 +122,7 @@ public class MutationProperties {
 	}
 
 	private static String getPrefix() {
-		String project_prefix = System
-				.getProperty(PROJECT_PREFIX_KEY);
+		String project_prefix = System.getProperty(PROJECT_PREFIX_KEY);
 		if (project_prefix == null) {
 			ThreadPool.logger.warn("No project prefix found (Property: "
 					+ PROJECT_PREFIX_KEY + " not set)");

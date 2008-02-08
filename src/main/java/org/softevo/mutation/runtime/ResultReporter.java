@@ -17,7 +17,7 @@ import org.softevo.mutation.results.persistence.QueryManager;
 
 /**
  *
- * Class that stores the results of the testcases.
+ * Class that stores the results of the TestCases.
  *
  * @author David Schuler
  *
@@ -35,7 +35,6 @@ public class ResultReporter {
 	private static Set<Mutation> touchedMutations = new HashSet<Mutation>();
 
 	private static Set<Mutation> unMutatedMutations = new HashSet<Mutation>();
-
 
 	private static String actualTestCase;
 

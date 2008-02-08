@@ -5,18 +5,17 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-
 public class InstanceManager {
 
 	private static Logger logger = Logger.getLogger(InstanceManager.class);
 
 	private List<String> freeInstances;
 
-	public InstanceManager() {
+	private InstanceManager(String[] instances) {
 		freeInstances = new Vector<String>();
-		freeInstances.add("/scratch/schuler/output-mutation-test/instance1");
-		freeInstances.add("/scratch/schuler/output-mutation-test/instance2");
-		freeInstances.add("/scratch/schuler/output-mutation-test/instance3");
+		for (String str : instances) {
+			freeInstances.add(str);
+		}
 	}
 
 	public synchronized boolean hasInstance() {
@@ -32,8 +31,9 @@ public class InstanceManager {
 			logger.info("Trying to remove instance");
 			try {
 				freeInstances.remove(0);
-			} catch (Exception e) {
-				logger.warn("Caugth Exception" + e);
+			} catch (Throwable e) {
+				logger.warn("Caught Exception" + e);
+
 			}
 			logger.info("got instance" + result);
 		}
@@ -46,4 +46,13 @@ public class InstanceManager {
 		logger.info("instance added");
 	}
 
+
+	public static InstanceManager aspectJInstanceManager(){
+		String[] aspectJInstances = new String[]{
+				"/scratch/schuler/output-mutation-test/instance1",
+				"/scratch/schuler/output-mutation-test/instance2",
+				"/scratch/schuler/output-mutation-test/instance3",
+		};
+		return new InstanceManager(aspectJInstances);
+	}
 }

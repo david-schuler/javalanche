@@ -6,12 +6,14 @@ import java.security.ProtectionDomain;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
 import org.softevo.mutation.bytecodeMutations.MutationTransformer;
 import org.softevo.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import org.softevo.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
+import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.properties.MutationProperties;
 
 /**
@@ -42,6 +44,8 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	private static RemoveSystemExitTransformer systemExitTransformer = new RemoveSystemExitTransformer();
 
+
+
 	private static final String[] systemExitClasses = new String[] {
 			"org.aspectj.tools.ajbrowser.ui.swing.TopFrame",
 			"org.aspectj.tools.ajdoc.JavadocRunner$1",
@@ -65,6 +69,8 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	private static List<String> systemExitClassList = Arrays
 			.asList(systemExitClasses);
+
+	private static Set<String> testCases = (Set<String>) XmlIo.fromXml(MutationProperties.TESTCASES_FILE);
 
 	private static MutationDecision mutationDecision = new MutationDecision() {
 

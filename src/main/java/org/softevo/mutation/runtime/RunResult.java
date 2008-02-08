@@ -96,10 +96,10 @@ public class RunResult {
 				+ "\n%d Mutations where actually touched.",
 				numberOfAppliedMutations, numberOfUnMutatedMutations, reported,
 				touched);
-		s += '\n';
-		s += touched + "  " + touchedMutations.size() + '\n';
-		s += reported + "  " + reportedMutations.size() + '\n';
-		s += numberOfAppliedMutations + "  " + appliedMutations.size() + '\n';
+//		s += '\n';
+//		s += touched + "  " + touchedMutations.size() + '\n';
+//		s += reported + "  " + reportedMutations.size() + '\n';
+//		s += numberOfAppliedMutations + "  " + appliedMutations.size() + '\n';
 		return s;
 	}
 

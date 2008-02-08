@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.softevo.mutation.io.XmlIo;
@@ -59,6 +61,11 @@ public class ProcessWrapper extends Thread {
 
 	private InstanceManager instances;
 
+	public ProcessWrapper(String command, File taskFile, File dir,
+			File outputFile, File resultFile, int taskId) {
+		this(command, taskFile, dir, outputFile, resultFile, taskId, null);
+	}
+
 	/**
 	 * Construct a new ProcessWrapper.
 	 *
@@ -78,7 +85,7 @@ public class ProcessWrapper extends Thread {
 			InstanceManager instances) {
 		super();
 		this.taskId = taskId;
-		this.debugPort = 1000 + taskId;
+		this.debugPort = 1045 + taskId;
 		this.command = command;
 		this.taskFile = taskFile;
 		this.dir = dir;
@@ -94,11 +101,13 @@ public class ProcessWrapper extends Thread {
 	 * @see java.lang.Thread#run()
 	 */
 	public void run() {
-		System.out.println("Process started" + this);
+		logger.info("Process started:\n" + this);
 		try {
-			while (aspectjDir == null) {
-				aspectjDir = instances.getInstance();
-				sleep(5000);
+			if (instances != null) {
+				while (aspectjDir == null) {
+					aspectjDir = instances.getInstance();
+					sleep(5000);
+				}
 			}
 			String[] cmdArray = getCommand();
 			process = Runtime.getRuntime().exec(cmdArray, new String[0], dir);
@@ -112,7 +121,7 @@ public class ProcessWrapper extends Thread {
 			outputPipe.start();
 			errorPipe.start();
 			process.waitFor();
-			synchronized (instances) {
+			if (instances != null) {
 				instances.addInstance(aspectjDir);
 			}
 			closePipes();
@@ -120,6 +129,8 @@ public class ProcessWrapper extends Thread {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
 		exitvalue = process.exitValue();
 		end();
@@ -136,17 +147,24 @@ public class ProcessWrapper extends Thread {
 	 * @return The command to start the process.
 	 */
 	private String[] getCommand() {
-		String[] cmdArray = new String[5];
-		cmdArray[0] = command;
-		cmdArray[1] = "-D" + MutationProperties.RESULT_FILE_KEY + "="
+		List<String> commandList =  new ArrayList<String>(5);
+//		String[] cmdArray = new String[5];
+//		cmdArray[0] = command;
+		commandList.add(command);
+		String resultFileOption = "-D" + MutationProperties.RESULT_FILE_KEY + "="
 				+ resultFile.getAbsolutePath();
-		cmdArray[2] = "-D" + MutationProperties.MUTATION_FILE_KEY + "="
+		commandList.add(resultFileOption);
+		String taskFileOption= "-D" + MutationProperties.MUTATION_FILE_KEY + "="
 				+ taskFile.getAbsolutePath();
-		cmdArray[3] = "-D" + MutationProperties.DEBUG_PORT_KEY + "="
+		commandList.add(taskFileOption);
+		String debugPortOption= "-D" + MutationProperties.DEBUG_PORT_KEY + "="
 				+ debugPort;
-		cmdArray[4] = aspectjDir;
-		// String.format("-D%s=%s",
-		return cmdArray;
+		commandList.add(debugPortOption);
+		// TODO addproject ID
+		if (instances != null) {
+			commandList.add(aspectjDir);
+		}
+		return commandList.toArray(new String[commandList.size()]);
 	}
 
 	private void closePipes() {

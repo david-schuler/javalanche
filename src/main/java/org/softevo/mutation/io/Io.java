@@ -18,8 +18,7 @@ public class Io {
 
 	private static Logger logger = Logger.getLogger(Io.class);
 
-
-	public static void writeFile(String content, File file){
+	public static void writeFile(String content, File file) {
 		try {
 			logger.info("Start writing: " + file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
@@ -30,7 +29,6 @@ public class Io {
 			e.printStackTrace();
 		}
 	}
-
 
 	public static List<Long> getIDsFromFile(File file) {
 		List<Long> idList = new ArrayList<Long>();
@@ -49,6 +47,29 @@ public class Io {
 		return idList;
 	}
 
+	/**
+	 * Reads a file and returns a List of its lines.
+	 *
+	 * @param file
+	 *            The file to read.
+	 * @return The List of lines read.
+	 */
+	public static List<String> getLinesFromFile(File file) {
+		List<String> lines = new ArrayList<String>();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			while (br.ready()) {
+				String line = br.readLine();
+				lines.add(line);
+			}
+			br.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return lines;
+	}
 
 	public static byte[] getBytesFromFile(File file) throws IOException {
 		InputStream is = new FileInputStream(file);

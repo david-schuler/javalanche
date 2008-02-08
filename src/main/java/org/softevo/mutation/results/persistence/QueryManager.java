@@ -149,7 +149,7 @@ public class QueryManager {
 	 * @param mutation
 	 *            The mutation to save.
 	 */
-	public static void saveMutation(Mutation mutation) {
+	public static synchronized void saveMutation(Mutation mutation) {
 		Mutation mutationInDb = getMutationOrNull(mutation);
 		if (mutationInDb != null) {
 			logger.info("Mutation already contained - not saving to db: "
@@ -456,7 +456,6 @@ public class QueryManager {
 		return numberOfMutations.intValue();
 	}
 
-
 	public static List<Mutation> getMutationListFromDb(int numberOfMutations) {
 		String prefix = MutationProperties.PROJECT_PREFIX;
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -467,7 +466,8 @@ public class QueryManager {
 			queryString = "SELECT m.* FROM Mutation m WHERE m.mutationresult_id IS NULL  AND m.mutationType != 0 AND m.className LIKE '"
 					+ prefix + "%' ";
 		}
-		Query query = session.createSQLQuery(queryString).addEntity(Mutation.class);
+		Query query = session.createSQLQuery(queryString).addEntity(
+				Mutation.class);
 		query.setMaxResults(numberOfMutations);
 		List results = query.list();
 		List<Mutation> idList = new ArrayList<Mutation>();
@@ -485,8 +485,8 @@ public class QueryManager {
 	 *
 	 * @return a list of mutation ids.
 	 */
-	public static List<Long> getMutationsIdListFromDb(int numberOfMutations) {
-		String prefix = MutationProperties.PROJECT_PREFIX;
+	public static List<Long> getMutationsIdListFromDb(int numberOfMutations,
+			String prefix) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		String queryString = "SELECT m.id FROM Mutation m JOIN TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN TestCoverageClassResult_TestCoverageLineResult AS class_line ON class_line.testcoverageclassresult_id = tccr.id JOIN TestCoverageLineResult AS tclr ON tclr.id = class_line.lineresults_id 	WHERE m.mutationresult_id IS NULL AND m.linenumber = tclr.linenumber AND m.mutationType != 0 AND m.className LIKE '"

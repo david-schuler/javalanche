@@ -33,13 +33,8 @@ import org.softevo.mutation.results.persistence.QueryManager;
  * @author David Schuler
  *
  */
-
 public class SelectiveTestSuite extends TestSuite {
 
-	/**
-	 * $Date: 2007-10-19 11:37:30 +0200 (Fri, 19 Oct 2007) $
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -68,18 +63,39 @@ public class SelectiveTestSuite extends TestSuite {
 	 */
 	static Logger logger = Logger.getLogger(SelectiveTestSuite.class);
 
+	/**
+	 * Mutation Switcher to enable and disable mutations.
+	 */
 	private MutationSwitcher mutationSwitcher;
 
+	/**
+	 * To report the results of the mutation testing.
+	 */
 	private ResultReporter resultReporter = new ResultReporter();
 
-	private MutationTestListener actualListener;
-
-	private Mutation actualMutation;
-
-	private TestResult actualMutationTestResult;
-
+	/**
+	 * Shutdownhook to collect test results when System.exit() is called.
+	 */
 	private Thread shutDownHook;
 
+	/**
+	 * Currently used MutationTestListner.
+	 */
+	private MutationTestListener actualListener;
+
+	/**
+	 * Currently active Mutation.
+	 */
+	private Mutation actualMutation;
+
+	/**
+	 * Currently used TestResult.
+	 */
+	private TestResult actualMutationTestResult;
+
+	/**
+	 * Currently active test.
+	 */
 	private Test actualTest;
 
 	static {
@@ -91,14 +107,11 @@ public class SelectiveTestSuite extends TestSuite {
 	 * integrated in the Process.
 	 */
 	private static void staticLogMessage() {
-		System.out.println("Selective Test Suite");
+		logger.info("Class SelectiveTestSuite is initialized");
 		if (DEBUG) {
-			logger.info("TESTMODE");
+			logger.warn("SelecitveTestSuite is in DEBUG MODE");
 		}
 		logger.info(System.getProperty("java.security.policy"));
-		logger.info("$Date: 2007-10-19 11:37:30 +0200 (Fri, 19 Oct 2007) $");
-		logger
-				.info("$LastChangedDate: 2007-10-19 11:37:30 +0200 (Fri, 19 Oct 2007) $");
 	}
 
 	private void addShutdownHook() {
@@ -128,7 +141,7 @@ public class SelectiveTestSuite extends TestSuite {
 							actualMutation, actualListener);
 				} else {
 					logger
-							.warn("Maybe could not report error that caused the shutdown. Caused by mutation: "
+							.warn("Maybe error that caused the shutdown could not report. Caused by mutation: "
 									+ actualMutation);
 				}
 				logger.info("" + resultReporter.summary());
@@ -164,7 +177,8 @@ public class SelectiveTestSuite extends TestSuite {
 		Thread currentThread = Thread.currentThread();
 		StackTraceElement[] sts = currentThread.getStackTrace();
 		String stackTraceString = Arrays.toString(sts);
-		logger.info("SelectiveTestSuite.run entered. Stacktrace:\n" + stackTraceString);
+		logger.info("SelectiveTestSuite.run entered. Stacktrace:\n"
+				+ stackTraceString);
 		logger.log(Level.INFO, "All Tests collected");
 		mutationSwitcher = new MutationSwitcher();
 		Map<String, TestCase> allTests = getAllTests(this);
@@ -214,6 +228,15 @@ public class SelectiveTestSuite extends TestSuite {
 		MutationForRun.getInstance().reportAppliedMutations();
 	}
 
+	/**
+	 * Executes the same tests as for the previously enabled mutation and
+	 * reports these results.
+	 *
+	 * @param allTests
+	 *            All tests in the TestSuite
+	 * @param testsForThisRun
+	 *            Tests that should be executed
+	 */
 	private void testUnmutated(Map<String, TestCase> allTests,
 			Set<String> testsForThisRun) {
 		actualMutation = QueryManager.generateUnmutated(actualMutation);
@@ -243,20 +266,6 @@ public class SelectiveTestSuite extends TestSuite {
 						actualMutationTestResult.errorCount()));
 	}
 
-	/**
-	 * Returns a list of TestCase names for given Collection of TestCases.
-	 *
-	 * @param testCases
-	 * @return
-	 */
-	// private Collection<String> getStringList(Collection<TestCase> testCases)
-	// {
-	// List<String> result = new ArrayList<String>();
-	// for (TestCase tc : testCases) {
-	// result.add(getFullTestCaseName(tc));
-	// }
-	// return result;
-	// }
 	/**
 	 * Executes the specified tests. Used to trigger the special tests for this
 	 * mutation.
@@ -306,6 +315,7 @@ public class SelectiveTestSuite extends TestSuite {
 		ExecutorService service = Executors.newSingleThreadExecutor();
 		Callable<Object> callable = getCallable(test, testResult);
 		Future<Object> result = service.submit(callable);
+		logger.info("start timed test");
 		service.shutdown();
 		try {
 			boolean terminated = service.awaitTermination(
@@ -323,8 +333,20 @@ public class SelectiveTestSuite extends TestSuite {
 			e.printStackTrace();
 			testResult.addError(test, e);
 		}
+		logger.info("end timed test");
+
 	}
 
+	/**
+	 * Helper method that returns a Callable that executes the given test and
+	 * testResult.
+	 *
+	 * @param test
+	 *            TestCase that is executed.
+	 * @param testResult
+	 *            TestResult where the the testResults are collected.
+	 * @return The Callable that executes the test.
+	 */
 	private Callable<Object> getCallable(final TestCase test,
 			final TestResult testResult) {
 		Callable<Object> callable = new Callable<Object>() {
@@ -342,9 +364,17 @@ public class SelectiveTestSuite extends TestSuite {
 		return callable;
 	}
 
-	public static Map<String, TestCase> getAllTests(TestSuite s) {
+	/**
+	 * Returns a Map with all test contained in this TestSuite. The TestSuite is
+	 * recursively traversed to search for TestCases.
+	 *
+	 * @param testSuite
+	 *            TestSuite for which the tests are collected.
+	 * @return Return a Map that with all test contained in this TestSuite.
+	 */
+	public static Map<String, TestCase> getAllTests(TestSuite testSuite) {
 		Map<String, TestCase> resultMap = new HashMap<String, TestCase>();
-		for (Enumeration e = s.tests(); e.hasMoreElements();) {
+		for (Enumeration e = testSuite.tests(); e.hasMoreElements();) {
 			Object test = e.nextElement();
 			if (test instanceof TestSuite) {
 				TestSuite suite = (TestSuite) test;
@@ -353,11 +383,7 @@ public class SelectiveTestSuite extends TestSuite {
 				TestCase testCase = (TestCase) test;
 				String fullTestName = getFullTestCaseName(testCase);
 				resultMap.put(fullTestName, testCase);
-				if (fullTestName.contains("AbstractTraceTest")) {
-					logger.info("Found abstract Test" + testCase);
-				}
 			} else if (test instanceof Test) {
-				// do nothing
 				logger.info("Test not added. Class: " + test.getClass());
 			} else {
 				throw new RuntimeException("Not handled type: "

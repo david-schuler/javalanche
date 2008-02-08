@@ -16,6 +16,24 @@ public class XmlIo {
 
 	private static Logger logger = Logger.getLogger(XmlIo.class);
 
+	public static void toXMLPrimitive(int i,String fileName) {
+		toXML(i,fileName);
+	}
+
+	public static void toXMLPrimitive(float f,String fileName) {
+		toXML(f,fileName);
+	}
+
+	public static void toXMLPrimitive(long l,String fileName) {
+		toXML(l,fileName);
+	}
+
+	public static void toXMLPrimitive(double d,String fileName) {
+		toXML(d, fileName);
+	}
+
+
+
 	public static void toXML(Object o, File file) {
 		XStream xStream = new XStream();
 		String xml = xStream.toXML(o);
@@ -27,6 +45,10 @@ public class XmlIo {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void toXML(Object o, String filename) {
+		toXML(o, new File(filename));
 	}
 
 	public static Object fromXml(File file) {
@@ -66,5 +88,9 @@ public class XmlIo {
 			}
 		}
 		return resultObject;
+	}
+
+	public static Object fromXml(String fileName) {
+		return fromXml(new File(fileName));
 	}
 }

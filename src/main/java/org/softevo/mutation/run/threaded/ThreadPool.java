@@ -35,36 +35,36 @@ public class ThreadPool {
 	/**
 	 * Number of parallel running threads.
 	 */
-	private static final int NUMBER_OF_THREADS = 3;
+	private static final int NUMBER_OF_THREADS = 2;
 
 	// /**
 	// * Number of mutations that are fetched randomly from the database.
 	// */
-	// private static final int MAX_MUTATIONS = 500;// 20000;
-	//
-	// /**
-	// * Number of tasks that will be submitted to the thread pool.
-	// */
-	// private static final int NUMBER_OF_TASKS = 20;// 100;
-	//
-	// private static final int MUTATIONS_PER_TASK = 10;// 1000;
-	//
+	private static final int MAX_MUTATIONS = 500;// 20000;
+
+	/**
+	 * Number of tasks that will be submitted to the thread pool.
+	 */
+	private static final int NUMBER_OF_TASKS = 20;// 100;
+
+	private static final int MUTATIONS_PER_TASK = 10;// 1000;
+
 	// /**
 	// * Maximum running time for one sub process.
 	// */
 	// private static final long MAX_TIME_FOR_SUB_PROCESS = 15 * 60 * 1000;
 
-	/**
-	 * Number of mutations that are fetched randomly from the database.
-	 */
-	public static final int MAX_MUTATIONS = 5500;
-
-	/**
-	 * Number of tasks that will be submitted to the thread pool.
-	 */
-	private static final int NUMBER_OF_TASKS = 100;
-
-	private static final int MUTATIONS_PER_TASK = 75;
+	// /**
+	// * Number of mutations that are fetched randomly from the database.
+	// */
+	// public static final int MAX_MUTATIONS = 5500;
+	//
+	// /**
+	// * Number of tasks that will be submitted to the thread pool.
+	// */
+	// private static final int NUMBER_OF_TASKS = 100;
+	//
+	// private static final int MUTATIONS_PER_TASK = 75;
 
 	/**
 	 * Maximum running time for one sub process.
@@ -85,8 +85,10 @@ public class ThreadPool {
 	/**
 	 * Command that is used to execute on mutation task.
 	 */
-//	private static final String MUTATION_COMMAND = "/scratch/schuler/mutationTest/src/scripts/threaded-run-tests.sh";
-	private static final String MUTATION_COMMAND = "src/scripts/threaded-run-tests.sh";
+	// private static final String SCRIPT_COMMAND =
+	// "/scratch/schuler/mutationTest/src/scripts/threaded-run-tests.sh";
+	private static final String SCRIPT_COMMAND = System
+			.getProperty(MutationProperties.SCRIPT_COMMAND_KEY);
 
 	/**
 	 * Processes that are added to the thread pool per turn. after one turn the
@@ -114,7 +116,8 @@ public class ThreadPool {
 
 	private int triedShutdowns = 0;
 
-	public InstanceManager freeInstances = new InstanceManager();
+	private InstanceManager freeInstances = null; // TODO
+													// InstanceManager.aspectJInstanceManager();
 
 	public static void main(String[] args) {
 		ThreadPool tp = new ThreadPool();
@@ -245,7 +248,7 @@ public class ThreadPool {
 		String resultFile = String.format(MutationProperties.RESULT_DIR
 				+ "/process-result-%02d.xml", processCounter);
 
-		ProcessWrapper ps = new ProcessWrapper(MUTATION_COMMAND, taskIdFile,
+		ProcessWrapper ps = new ProcessWrapper(SCRIPT_COMMAND, taskIdFile,
 				new File(MutationProperties.EXEC_DIR), new File(outputFile),
 				new File(resultFile), processCounter, freeInstances);
 		processes.add(ps);
@@ -369,6 +372,7 @@ public class ThreadPool {
 	}
 
 	private void refreshMutations() {
-		mutationIDs = QueryManager.getMutationsIdListFromDb(MAX_MUTATIONS);
+		mutationIDs = QueryManager.getMutationsIdListFromDb(MAX_MUTATIONS,
+				MutationProperties.PROJECT_PREFIX);
 	}
 }

@@ -83,7 +83,7 @@ public class BugsData {
 			if (filename.startsWith(ASPECTJ_PREFIX)
 					&& filename.endsWith("java")) {
 
-				String fnew = getClassName(filename);
+				String fnew = getClassNameFromFilename(filename);
 				if (fnew.toLowerCase().contains("test")) {
 					testClasses.add(fnew);
 				} else {
@@ -105,14 +105,20 @@ public class BugsData {
 		return map;
 	}
 
-
-
-	public static String getClassName(String filename) {
-		String newFileName =filename;
+	/**
+	 * Returns the the classname (seperated with dots) from the filename, if it
+	 * liese in the directrorystructure (../org/aspectj/...)
+	 *
+	 * @param filename
+	 *            The full name of the file.
+	 * @return dot seperated classname
+	 */
+	public static String getClassNameFromFilename(String filename) {
+		String newFileName = filename;
 		if (filename.contains(ASPECTJ_DIRECTORY_STRING)) {
 			int startPosition = filename.indexOf(ASPECTJ_DIRECTORY_STRING);
-			newFileName = filename.substring(startPosition,
-					filename.length() - 5);
+			newFileName = filename.substring(startPosition, filename.length()
+					- ".java".length());
 			newFileName = newFileName.replace('/', '.');
 
 		}
