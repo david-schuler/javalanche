@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.softevo.mutation.javaagent.MutationForRun;
+import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.QueryManager;
 
@@ -34,8 +35,6 @@ public class MutationSwitcher {
 	 */
 	private Mutation actualMutation;
 
-
-
 	private void initMutations() {
 		if (mutations == null) {
 			mutations = MutationForRun.getInstance().getMutations();
@@ -59,6 +58,7 @@ public class MutationSwitcher {
 
 	/**
 	 * Checks if there is a mutation to apply.
+	 *
 	 * @return True, if next() will return a mutation.
 	 */
 	public boolean hasNext() {
@@ -69,7 +69,8 @@ public class MutationSwitcher {
 	}
 
 	/**
-	 * Takes the next mutation without a result and sets it as the actual mutation.
+	 * Takes the next mutation without a result and sets it as the actual
+	 * mutation.
 	 *
 	 * @return The mutation that is now the actual mutation.
 	 */
@@ -98,6 +99,8 @@ public class MutationSwitcher {
 					+ actualMutation.getLineNumber() + " - "
 					+ actualMutation.toString());
 			System.setProperty(actualMutation.getMutationVariable(), "1");
+			System.setProperty(MutationProperties.ACTUAL_MUTATION_KEY,
+					actualMutation.getId() + "");
 			ResultReporter.setActualMutation(actualMutation);
 		}
 	}
@@ -108,6 +111,7 @@ public class MutationSwitcher {
 	public void switchOff() {
 		if (actualMutation != null) {
 			System.clearProperty(actualMutation.getMutationVariable());
+			System.clearProperty(MutationProperties.ACTUAL_MUTATION_KEY);
 			logger.info("disabling mutation: "
 					+ actualMutation.getMutationVariable());
 			ResultReporter.setActualMutation(null);

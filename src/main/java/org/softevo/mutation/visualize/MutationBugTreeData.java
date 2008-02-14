@@ -24,9 +24,9 @@ import prefuse.data.Table;
 import prefuse.data.Tree;
 import prefuse.util.ui.UILib;
 
-public class MutationTreeData {
+public class MutationBugTreeData {
 
-	private static Logger logger = Logger.getLogger(MutationTreeData.class);
+	private static Logger logger = Logger.getLogger(MutationBugTreeData.class);
 
 	private static final String NAME = "name";
 
@@ -35,12 +35,12 @@ public class MutationTreeData {
 	private static final String SHORT_NAME = "shortName";
 
 	private static Map<String, Integer> iBugsData = BugsData
-			.getBugsForClasses();
+			.getIBugsDataForClasses();
 
 	private static Map<String, MutationsClassData> mutationData = MutationsClassData
 			.getMapFromFile(new File(MutationProperties.MUTATIONS_CLASS_RESULT_XML));
 
-	static final String IBUGS_FAILURES = "ibugsFailures";
+	static final String BUGS = "bugs";
 
 	static final String KILLED = "killed";
 
@@ -51,7 +51,6 @@ public class MutationTreeData {
 	public static final String FRACTION = "fraction";
 
 	private static class MNode {
-
 
 		String name;
 
@@ -91,7 +90,7 @@ public class MutationTreeData {
 			nodes.addColumn(TOTAL, int.class);
 			nodes.addColumn(FRACTION, int.class);
 			nodes.addColumn(SHORT_NAME, String.class);
-			nodes.addColumn(IBUGS_FAILURES, int.class);
+			nodes.addColumn(BUGS, int.class);
 			nodes.addColumn("size", double.class);
 			nodes.addColumn(TreeMap.MOUSEOVER_LABEL, String.class);
 			Node child = tree.addChild(root);
@@ -127,9 +126,9 @@ public class MutationTreeData {
 			node.setDouble("size", 1.);
 			if (iBugsData.containsKey(name)) {
 				logger.info("Ibugs data found for class" + name);
-				node.set(IBUGS_FAILURES, iBugsData.get(name));
+				node.set(BUGS, iBugsData.get(name));
 			} else {
-				node.set(IBUGS_FAILURES, 0);
+				node.set(BUGS, 0);
 			}
 			for (MNode mnode : children.values()) {
 				Node child = tree.addChild(node);
@@ -140,16 +139,9 @@ public class MutationTreeData {
 
 	MNode root = new MNode("");
 
-	public static void main(String[] args) {
-		List<Mutation> mutations = getMutations();
-		MutationTreeData mutationTreeData = new MutationTreeData();
-		for (Mutation mutation : mutations) {
-			mutationTreeData.addNode(mutation);
-		}
-		showTreeMap(mutationTreeData);
-	}
 
-	private static void showTreeMap(MutationTreeData mutationTreeData) {
+
+	private static void showTreeMap(MutationBugTreeData mutationTreeData) {
 		UILib.setPlatformLookAndFeel();
 		String label = SHORT_NAME;
 		Tree tree = mutationTreeData.root.getTreeData();
@@ -203,5 +195,14 @@ public class MutationTreeData {
 		tx.commit();
 		session.close();
 		return mutations;
+	}
+
+	public static void main(String[] args) {
+		List<Mutation> mutations = getMutations();
+		MutationBugTreeData mutationTreeData = new MutationBugTreeData();
+		for (Mutation mutation : mutations) {
+			mutationTreeData.addNode(mutation);
+		}
+		showTreeMap(mutationTreeData);
 	}
 }

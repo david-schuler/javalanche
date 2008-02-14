@@ -69,11 +69,14 @@ import prefuse.visual.sort.TreeDepthItemSorter;
  */
 public class TreeMap extends Display {
 
+	/**
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private static Logger logger = Logger.getLogger(TreeMap.class);
 
 	static final String MOUSEOVER_LABEL = "arg1";
 
-	public static final String TREE_CHI = "data/chi-ontology.xml.gz";
 
 	public static final String NOT_KILLED = "notkilled";
 
@@ -126,20 +129,20 @@ public class TreeMap extends Display {
 		m_vis.setInteractive(treeNodes, noLeaf, false);
 
 		DataColorAction fill = new DataColorAction("tree.nodes",
-				MutationTreeData.FRACTION, Constants.LINEAR_SCALE,
+				MutationBugTreeData.FRACTION, Constants.LINEAR_SCALE,
 				VisualItem.FILLCOLOR, palette);
 		fill.setFilterPredicate((Predicate) ExpressionParser
 				.parse("childcount()=0"));
 
 
 		DataColorAction bugsFill = new DataColorAction("tree.nodes",
-				MutationTreeData.IBUGS_FAILURES, Constants.LINEAR_SCALE,
+				MutationBugTreeData.BUGS, Constants.LINEAR_SCALE,
 				VisualItem.FILLCOLOR, palette);
 		bugsFill.setFilterPredicate((Predicate) ExpressionParser
 				.parse("childcount()=0"));
 
 		DataSizeAction dataSizeAction = new DataSizeAction("tree.nodes",
-				MutationTreeData.NUMBER_OF_MUTATIONS);
+				MutationBugTreeData.NUMBER_OF_MUTATIONS);
 		dataSizeAction.setMaximumSize(200.0);
 		dataSizeAction.setMinimumSize(0.1);
 		dataSizeAction.setIs2DArea(true);
@@ -285,10 +288,10 @@ public class TreeMap extends Display {
 		treemap.addControlListener(new ControlAdapter() {
 			public void itemEntered(VisualItem item, MouseEvent e) {
 				StringBuilder sb = new StringBuilder();
-				sb.append("Total: "  + item.get(MutationTreeData.TOTAL) + "(" + item.get(MutationTreeData.NUMBER_OF_MUTATIONS) + ")");
-				sb.append(" Killed: "  + item.get(MutationTreeData.KILLED));
-				sb.append(" Survived: "  + item.get(MutationTreeData.SURVIVED));
-				sb.append(" IBugs: "  + item.get(MutationTreeData.IBUGS_FAILURES));
+				sb.append("Total: "  + item.get(MutationBugTreeData.TOTAL) + "(" + item.get(MutationBugTreeData.NUMBER_OF_MUTATIONS) + ")");
+				sb.append(" Killed: "  + item.get(MutationBugTreeData.KILLED));
+				sb.append(" Survived: "  + item.get(MutationBugTreeData.SURVIVED));
+				sb.append(" Bugs: "  + item.get(MutationBugTreeData.BUGS));
 				title.setText(sb.toString());
 			}
 
@@ -402,7 +405,7 @@ public class TreeMap extends Display {
 					return 0; // no fill for parent nodes
 				} else {
 					Integer notKilled = (Integer) nitem
-							.get(MutationTreeData.NUMBER_OF_MUTATIONS);
+							.get(MutationBugTreeData.NUMBER_OF_MUTATIONS);
 
 					if (m_vis.isInGroup(item, Visualization.SEARCH_ITEMS))
 						return ColorLib.rgb(0, 0, 255);
@@ -482,8 +485,8 @@ public class TreeMap extends Display {
 		}
 
 		public int getColor(VisualItem item) {
-			if (item.getInt(MutationTreeData.IBUGS_FAILURES) > 0) {
-				logger.info("iBugs count" + item.getInt(MutationTreeData.IBUGS_FAILURES));
+			if (item.getInt(MutationBugTreeData.BUGS) > 0) {
+				logger.info("iBugs count" + item.getInt(MutationBugTreeData.BUGS));
 				return ColorLib.rgb(0, 0, 255);
 			}
 			return item.getFillColor();

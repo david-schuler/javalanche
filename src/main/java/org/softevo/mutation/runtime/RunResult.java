@@ -40,6 +40,11 @@ public class RunResult {
 	private List<Long> appliedIds = new ArrayList<Long>();
 
 	/**
+	 * Indicates if this run finished normally or with an exception.
+	 */
+	private final boolean finishedNormal;
+
+	/**
 	 * @return the mutations the number of for which results are stored.
 	 */
 	public int getMutations() {
@@ -55,8 +60,9 @@ public class RunResult {
 
 	public RunResult(Set<Mutation> reportedMutations,
 			Set<Mutation> touchedMutations, List<Mutation> appliedMutations,
-			Set<Mutation> unMutatedMutations) {
+			Set<Mutation> unMutatedMutations, boolean finishedNormal) {
 		super();
+		this.finishedNormal = finishedNormal;
 		this.reported = reportedMutations.size();
 		this.reportedMutations = reportedMutations;
 		this.touched = touchedMutations.size();
@@ -115,5 +121,12 @@ public class RunResult {
 	 */
 	public List<Long> getReportedIds() {
 		return reportedIds;
+	}
+
+	/**
+	 * @return the finishedNormal
+	 */
+	public boolean isFinishedNormal() {
+		return finishedNormal;
 	}
 }

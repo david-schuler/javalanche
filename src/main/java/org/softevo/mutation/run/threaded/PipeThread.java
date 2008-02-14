@@ -4,8 +4,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ *
+ * Thread that forwards the output of a {@link InputStream} to an
+ * {@link OutputStream}.
+ *
+ * @author David Schuler
+ *
+ */
+/**
+ * @author David Schuler
+ *
+ */
 class PipeThread extends Thread {
 
+	/**
+	 * Size of the buffer
+	 */
 	private static final int BUFFER_SIZE = 1024;
 
 	private static final boolean DEBUG = false;
@@ -42,7 +57,7 @@ class PipeThread extends Thread {
 		synchronized (this) {
 			running = true;
 		}
-		System.out.println("Pipe started " + pipeID  + " Debug: " + DEBUG );
+		System.out.println("Pipe started " + pipeID + " Debug: " + DEBUG);
 		try {
 			int bytesRead;
 			while (running == true && is != null
@@ -70,21 +85,25 @@ class PipeThread extends Thread {
 	}
 
 	/**
-	 * @return the running
+	 * @return True, if pipe should be running.
 	 */
 	public boolean isRunning() {
 		return running;
 	}
 
 	/**
-	 * @param running
-	 *            the running to set
+	 * Return the ID of the pipe.
+	 *
+	 * @return the ID of the pipe
 	 */
-	public synchronized void setRunning(boolean running) {
-		this.running = running;
-	}
-
 	public int getPipeID() {
 		return pipeID;
+	}
+
+	/**
+	 * Stop the Pipe.
+	 */
+	public synchronized void stopPipe() {
+		this.running = false;
 	}
 }

@@ -104,7 +104,6 @@ public class MutationsClassBugData {
 
 	private static MutationsClassBugData parseLine(String line) {
 		String[] split = line.split(",");
-		MutationsClassBugData returnEntry = null;
 		String className = split[0];
 		int numberOfBugs = Integer.valueOf(split[1]);
 		int mutationsTotal = Integer.valueOf(split[2]);

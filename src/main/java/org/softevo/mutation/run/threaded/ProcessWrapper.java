@@ -57,7 +57,7 @@ public class ProcessWrapper extends Thread {
 
 	private int taskId;
 
-	private String aspectjDir;
+	private String instanceDir;
 
 	private InstanceManager instances;
 
@@ -104,8 +104,8 @@ public class ProcessWrapper extends Thread {
 		logger.info("Process started:\n" + this);
 		try {
 			if (instances != null) {
-				while (aspectjDir == null) {
-					aspectjDir = instances.getInstance();
+				while (instanceDir == null) {
+					instanceDir = instances.getInstance();
 					sleep(5000);
 				}
 			}
@@ -122,7 +122,7 @@ public class ProcessWrapper extends Thread {
 			errorPipe.start();
 			process.waitFor();
 			if (instances != null) {
-				instances.addInstance(aspectjDir);
+				instances.addInstance(instanceDir);
 			}
 			closePipes();
 		} catch (IOException e) {
@@ -147,24 +147,37 @@ public class ProcessWrapper extends Thread {
 	 * @return The command to start the process.
 	 */
 	private String[] getCommand() {
-		List<String> commandList =  new ArrayList<String>(5);
-//		String[] cmdArray = new String[5];
-//		cmdArray[0] = command;
+		List<String> commandList = new ArrayList<String>(5);
 		commandList.add(command);
-		String resultFileOption = "-D" + MutationProperties.RESULT_FILE_KEY + "="
-				+ resultFile.getAbsolutePath();
+		String resultFileOption = getPropertyParameter(
+				MutationProperties.RESULT_FILE_KEY, resultFile
+						.getAbsolutePath());
 		commandList.add(resultFileOption);
-		String taskFileOption= "-D" + MutationProperties.MUTATION_FILE_KEY + "="
-				+ taskFile.getAbsolutePath();
+		String taskFileOption = getPropertyParameter(
+				MutationProperties.MUTATION_FILE_KEY, taskFile
+						.getAbsolutePath());
 		commandList.add(taskFileOption);
-		String debugPortOption= "-D" + MutationProperties.DEBUG_PORT_KEY + "="
-				+ debugPort;
+		String debugPortOption = getPropertyParameter(
+				MutationProperties.DEBUG_PORT_KEY, debugPort);
 		commandList.add(debugPortOption);
-		// TODO addproject ID
 		if (instances != null) {
-			commandList.add(aspectjDir);
+			commandList.add(instanceDir);
 		}
 		return commandList.toArray(new String[commandList.size()]);
+	}
+
+	/**
+	 * Return the key value pair as java commandline property argument in the
+	 * form -Dkey=value.
+	 *
+	 * @param key
+	 *            the key of the property
+	 * @param value
+	 *            the value of the property
+	 * @return key value pair as Java commandline argument
+	 */
+	private String getPropertyParameter(String key, Object value) {
+		return "-D" + key + "=" + value.toString();
 	}
 
 	private void closePipes() {
@@ -182,7 +195,7 @@ public class ProcessWrapper extends Thread {
 	 */
 	private void closePipe(PipeThread pipeThread) {
 		if (pipeThread != null) {
-			pipeThread.setRunning(false);
+			pipeThread.stopPipe();
 			try {
 				pipeThread.join(100 * 1000);
 			} catch (InterruptedException e) {
@@ -210,7 +223,7 @@ public class ProcessWrapper extends Thread {
 		sb.append('\n');
 		sb.append("Command: " + Arrays.toString(getCommand()));
 		sb.append('\n');
-		sb.append("Aspectj Dir: " + aspectjDir);
+		sb.append("Aspectj Dir: " + instanceDir);
 		return sb.toString();
 	}
 
@@ -228,6 +241,11 @@ public class ProcessWrapper extends Thread {
 		return running;
 	}
 
+	/**
+	 * Read the result file that is written by the mutation testing.
+	 *
+	 * @return
+	 */
 	public RunResult getRunResult() {
 		if (finished && runResult == null) {
 			if (resultFile.exists()) {

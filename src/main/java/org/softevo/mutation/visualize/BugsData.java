@@ -66,11 +66,11 @@ public class BugsData {
 	}
 
 	public static void main(String[] args) {
-		Map<String, Integer> map = getBugsForClasses();
+		Map<String, Integer> map = getIBugsDataForClasses();
 		printBugsForClasses(map);
 	}
 
-	public static Map<String, Integer> getBugsForClasses() {
+	public static Map<String, Integer> getIBugsDataForClasses() {
 		File file = new File(IBUGS_XML_FILE);
 		IBugsSaxHandler ibugsHandler = new IBugsSaxHandler();
 		parseXmlFile(file, ibugsHandler);

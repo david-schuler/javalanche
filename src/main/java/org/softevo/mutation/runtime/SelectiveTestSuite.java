@@ -144,7 +144,7 @@ public class SelectiveTestSuite extends TestSuite {
 							.warn("Maybe error that caused the shutdown could not report. Caused by mutation: "
 									+ actualMutation);
 				}
-				logger.info("" + resultReporter.summary());
+				logger.info("" + resultReporter.summary(false));
 				MutationForRun.getInstance().reportAppliedMutations();
 			}
 		};
@@ -224,7 +224,7 @@ public class SelectiveTestSuite extends TestSuite {
 		}
 		Runtime.getRuntime().removeShutdownHook(shutDownHook);
 		logger.log(Level.INFO, "Test Runs finished");
-		logger.info("" + resultReporter.summary());
+		logger.info("" + resultReporter.summary(true));
 		MutationForRun.getInstance().reportAppliedMutations();
 	}
 

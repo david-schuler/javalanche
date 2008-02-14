@@ -36,7 +36,7 @@ public class PrintResults {
 		Transaction tx = session.beginTransaction();
 		Query query = session
 				.createQuery("FROM Mutation WHERE mutationResult IS NOT NULL AND mutationType=0");
-		// query.setMaxResults(max);
+		//query.setMaxResults(max);
 		List<Mutation> results = query.list();
 		Set<TestMessage> errors = new HashSet<TestMessage>();
 		Set<TestMessage> failures = new HashSet<TestMessage>();

@@ -31,9 +31,9 @@ public class DetectTestClassAdapter extends ClassAdapter {
 	public void visit(int version, int access, String name, String signature,
 			String superName, String[] interfaces) {
 		super.visit(version, access, name, signature, superName, interfaces);
-		className = name;
+		className = name.replace('/', '.');
 		try {
-			Class c = Class.forName(name.replace('/', '.'));
+			Class c = Class.forName(className);
 			Set<Class> classes = getAllClassesAndInterfaces(c);
 			// logger.info(c + " - " + classes);
 			if (isTestCase(classes)) {

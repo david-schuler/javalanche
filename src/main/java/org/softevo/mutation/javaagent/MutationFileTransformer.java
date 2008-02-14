@@ -14,6 +14,7 @@ import org.softevo.mutation.bytecodeMutations.MutationTransformer;
 import org.softevo.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import org.softevo.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
 import org.softevo.mutation.io.XmlIo;
+import org.softevo.mutation.objectInspector.asmAdapters.ObjectInspectorTransformer;
 import org.softevo.mutation.properties.MutationProperties;
 
 /**
@@ -23,16 +24,11 @@ import org.softevo.mutation.properties.MutationProperties;
  * @author David Schuler
  *
  */
+@SuppressWarnings("unchecked")
 public class MutationFileTransformer implements ClassFileTransformer {
 
 	private static Logger logger = Logger
 			.getLogger(MutationFileTransformer.class);
-
-	static {
-		logger.info("Loading MutationFileTransformer");
-		logger.info("Log4J Configuration at: " + System.getProperty("log4j.configuration"));
-
-	}
 
 	private static String testName = ".testclasses";
 
@@ -43,8 +39,6 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	private static Collection<String> classesToMutate = mm.getClassNames();
 
 	private static RemoveSystemExitTransformer systemExitTransformer = new RemoveSystemExitTransformer();
-
-
 
 	private static final String[] systemExitClasses = new String[] {
 			"org.aspectj.tools.ajbrowser.ui.swing.TopFrame",
@@ -70,7 +64,16 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	private static List<String> systemExitClassList = Arrays
 			.asList(systemExitClasses);
 
-	private static Set<String> testCases = (Set<String>) XmlIo.fromXml(MutationProperties.TESTCASES_FILE);
+	private static Set<String> testCases = (Set<String>) XmlIo
+			.fromXml(MutationProperties.TESTCASES_FILE);
+
+	static {
+		logger.info("Loading MutationFileTransformer");
+		logger.info("Log4J Configuration at: "
+				+ System.getProperty("log4j.configuration"));
+		logger.info("TestCases");
+		logger.info(testCases);
+	}
 
 	private static MutationDecision mutationDecision = new MutationDecision() {
 
@@ -100,7 +103,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
 		String classNameWithDots = className.replace('/', '.');
-//		logger.info(className + " is passed to transformer");
+		// logger.info(className + " is passed to transformer");
 		if (isSystemExitClass(classNameWithDots)) {
 			logger.info("Trying to remove calls to system exit from class"
 					+ classNameWithDots);
@@ -108,10 +111,26 @@ public class MutationFileTransformer implements ClassFileTransformer {
 					.transformBytecode(classfileBuffer);
 		}
 
-		if(classNameWithDots.endsWith("AllTests")|| compareWithSuiteProperty(classNameWithDots) ){
+		if (classNameWithDots.endsWith("AllTests")
+				|| compareWithSuiteProperty(classNameWithDots)) {
 			logger.info("Trying to integrate SelectiveTestSuite");
 			IntegrateSuiteTransformer integrateSuiteTransformer = new IntegrateSuiteTransformer();
-			classfileBuffer = integrateSuiteTransformer.transformBytecode(classfileBuffer);
+			classfileBuffer = integrateSuiteTransformer
+					.transformBytecode(classfileBuffer);
+		}
+
+		if (isObservedTestCase(classNameWithDots)) {
+			try {
+				logger.info("Trying to transform test class "
+						+ classNameWithDots);
+				ObjectInspectorTransformer objectInspectorTransformer = new ObjectInspectorTransformer();
+				classfileBuffer = objectInspectorTransformer
+						.transformBytecode(classfileBuffer);
+			} catch (Exception e) {
+				logger.warn("Exception Thrown" + e);
+				e.printStackTrace();
+			}
+			logger.info("Test class transformed " + classNameWithDots);
 		}
 
 		if (mutationDecision.shouldBeHandled(classNameWithDots)) {
@@ -130,10 +149,18 @@ public class MutationFileTransformer implements ClassFileTransformer {
 		return classfileBuffer;
 	}
 
-	private  boolean compareWithSuiteProperty(String classNameWithDots) {
-		String testSuiteName = System.getProperty(MutationProperties.TEST_SUITE_KEY);
+	private boolean isObservedTestCase(String classNameWithDots) {
+		if (testCases.contains(classNameWithDots)) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean compareWithSuiteProperty(String classNameWithDots) {
+		String testSuiteName = System
+				.getProperty(MutationProperties.TEST_SUITE_KEY);
 		boolean returnValue = false;
-		if(classNameWithDots.contains(testSuiteName)){
+		if (classNameWithDots.contains(testSuiteName)) {
 			returnValue = true;
 		}
 		return returnValue;

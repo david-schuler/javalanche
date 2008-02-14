@@ -31,10 +31,13 @@ public class ObjectInspectorClassAdapter extends ClassAdapter {
 			String signature, String[] exceptions) {
 		MethodVisitor mv = super.visitMethod(access, name, desc, signature,
 				exceptions);
-		ObjectInspectorMethodAdapter objectInspectorMethodAdapter = new ObjectInspectorMethodAdapter(
-				mv, access, name, desc, className);
-		methodVisitors.add(objectInspectorMethodAdapter);
-		return objectInspectorMethodAdapter;
+		if (name.startsWith("test")) {
+			ObjectInspectorMethodAdapter objectInspectorMethodAdapter = new ObjectInspectorMethodAdapter(
+					mv, access, name, desc, className);
+			methodVisitors.add(objectInspectorMethodAdapter);
+			return objectInspectorMethodAdapter;
+		}
+	return mv;
 	}
 
 	public Map<String, List<VariableInfo>> getVariableNames() {
@@ -46,7 +49,8 @@ public class ObjectInspectorClassAdapter extends ClassAdapter {
 	}
 
 	public void saveResultMap() {
-		XmlIo.toXML(getVariableNames(), MutationProperties.RESULT_OBJECTS_DIR + className + "-variableNames.xml");
+		XmlIo.toXML(getVariableNames(), MutationProperties.RESULT_OBJECTS_DIR
+				+ className + "-variableNames.xml");
 	}
 
 	@Override

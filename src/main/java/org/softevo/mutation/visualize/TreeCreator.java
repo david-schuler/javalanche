@@ -22,7 +22,7 @@ public class TreeCreator {
 		Table mNodes = tree.getNodeTable();
 		mNodes.addColumn("name", String.class);
 		mNodes.addColumn("size", double.class);
-		mNodes.addColumn(MutationTreeData.NUMBER_OF_MUTATIONS, int.class);
+		mNodes.addColumn(MutationBugTreeData.NUMBER_OF_MUTATIONS, int.class);
 
 		mNodes.addColumn(TreeMap.MOUSEOVER_LABEL, String.class);
 		random = new Random();
@@ -46,7 +46,7 @@ public class TreeCreator {
 			nadd.set("name", childName);
 			// nadd.set("notkilled", random.nextInt(255));
 			// nadd.setDouble("size", random.nextInt(4) * 5.00 +1 );
-			nadd.setInt(MutationTreeData.NUMBER_OF_MUTATIONS, random
+			nadd.setInt(MutationBugTreeData.NUMBER_OF_MUTATIONS, random
 					.nextInt(100));
 			if (depth > 0) {
 				addChildren(tree2, nadd, 2, depth - 1, childName);

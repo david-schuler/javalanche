@@ -47,7 +47,7 @@ public class ThreadPool {
 	 */
 	private static final int NUMBER_OF_TASKS = 20;// 100;
 
-	private static final int MUTATIONS_PER_TASK = 10;// 1000;
+	private static final int MUTATIONS_PER_TASK = 50;// 1000;
 
 	// /**
 	// * Maximum running time for one sub process.
@@ -117,13 +117,17 @@ public class ThreadPool {
 	private int triedShutdowns = 0;
 
 	private InstanceManager freeInstances = null; // TODO
-													// InstanceManager.aspectJInstanceManager();
+
+	// InstanceManager.aspectJInstanceManager();
 
 	public static void main(String[] args) {
 		ThreadPool tp = new ThreadPool();
 		tp.startTimed();
 	}
 
+	/**
+	 * start the processes and collect timing information.
+	 */
 	private void startTimed() {
 		long startTime = System.currentTimeMillis();
 		logger.info("Start fetching " + MAX_MUTATIONS + " mutations");
@@ -132,7 +136,7 @@ public class ThreadPool {
 		long fetchTime = System.currentTimeMillis();
 		logger.info("Fetched " + mutationIDs.size() + " mutations in "
 				+ formatMilliseconds(fetchTime - startTime));
-		start();
+		runTasks();
 		long duration = System.currentTimeMillis() - fetchTime;
 		long actuallMutationsInDb = QueryManager
 				.getNumberOfMutationsWithResult()
@@ -187,10 +191,6 @@ public class ThreadPool {
 		long minutes = duration / 60000;
 		int seconds = (int) ((duration % 60000) / 1000);
 		return minutes + "'" + seconds + "''";
-	}
-
-	private void start() {
-		runTasks();
 	}
 
 	private void runTasks() {

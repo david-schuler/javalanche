@@ -117,9 +117,9 @@ public class ResultReporter {
 	 *
 	 * @return The String containing the summary.
 	 */
-	public String summary() {
+	public String summary(boolean finishedNormal) {
 		RunResult runResult = new RunResult(reportedMutations,
-				touchedMutations, MutationForRun.getAppliedMutations(), unMutatedMutations);
+				touchedMutations, MutationForRun.getAppliedMutations(), unMutatedMutations, finishedNormal);
 
 		String resultFile = System
 				.getProperty(MutationProperties.RESULT_FILE_KEY);

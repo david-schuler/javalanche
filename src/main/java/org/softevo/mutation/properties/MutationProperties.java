@@ -61,7 +61,7 @@ public class MutationProperties {
 	/**
 	 * Directory the serialized files are stored.
 	 */
-	public static final String RESULT_OBJECTS_DIR = RESULT_DIR + "objects/";
+	public static final String RESULT_OBJECTS_DIR = CONFIG_DIR + "objects/";
 
 	public static final String MUTATIONS_CLASS_RESULT_XML = "mutations-class-result.xml";
 
@@ -107,6 +107,10 @@ public class MutationProperties {
 	public static final String EXEC_DIR = ".";
 
 	public static final String TESTCASES_FILE = CONFIG_DIR + "/testCases.xml";
+
+	public static final String ACTUAL_MUTATION_KEY = "mutation.actual.mutaiton";
+
+	public static final String NOT_MUTATED = "notMutated";
 
 	// "src/scripts/";
 

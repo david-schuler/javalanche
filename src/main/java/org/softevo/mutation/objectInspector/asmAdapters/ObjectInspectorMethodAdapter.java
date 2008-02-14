@@ -35,7 +35,7 @@ public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 		System.out.println("local Variable: " + name + " - " + index + " - "
 				+ desc);
 		variableInfo.add(new VariableInfo(name, desc, index,
-				getFileNameForIndex(index)));
+				getFileNameForIndex(index,className,methodName)));
 	}
 
 	@Override
@@ -73,8 +73,7 @@ public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 			// // int loadOpcode = type.getOpcode(Opcodes.ILOAD);
 			if (entry.getValue() == ALOAD) {
 				mv.visitVarInsn(entry.getValue(), entry.getKey());
-				String fileName = getFileNameForIndex(entry.getKey());
-				mv.visitLdcInsn(fileName);
+				insertFileNameStatements(entry.getKey());
 				mv.visitMethodInsn(INVOKESTATIC,
 						"org/softevo/mutation/io/XmlIo", "toXML",
 						"(Ljava/lang/Object;Ljava/lang/String;)V");
@@ -87,39 +86,32 @@ public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 				// // mv.visitLdcInsn(entry.toString());
 				// mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream",
 				// "println", "(Ljava/lang/Object;)V");
-			}
-			else if(entry.getValue() == ILOAD){
+			} else if (entry.getValue() == ILOAD) {
 				mv.visitVarInsn(entry.getValue(), entry.getKey());
-				String fileName = getFileNameForIndex(entry.getKey());
-				mv.visitLdcInsn(fileName);
+				insertFileNameStatements(entry.getKey());
 				mv.visitMethodInsn(INVOKESTATIC,
 						"org/softevo/mutation/io/XmlIo", methodToCall,
 						"(ILjava/lang/String;)V");
 
-			}
-			else if(entry.getValue() == FLOAD){
+			} else if (entry.getValue() == FLOAD) {
 				mv.visitVarInsn(entry.getValue(), entry.getKey());
-				String fileName = getFileNameForIndex(entry.getKey());
-				mv.visitLdcInsn(fileName);
+				insertFileNameStatements(entry.getKey());
 				mv.visitMethodInsn(INVOKESTATIC,
 						"org/softevo/mutation/io/XmlIo", methodToCall,
 						"(FLjava/lang/String;)V");
 
 			}
 
-			else if(entry.getValue() == LLOAD){
+			else if (entry.getValue() == LLOAD) {
 				mv.visitVarInsn(entry.getValue(), entry.getKey());
-				String fileName = getFileNameForIndex(entry.getKey());
-				mv.visitLdcInsn(fileName);
+				insertFileNameStatements(entry.getKey());
 				mv.visitMethodInsn(INVOKESTATIC,
 						"org/softevo/mutation/io/XmlIo", methodToCall,
 						"(LLjava/lang/String;)V");
 
-			}
-			else if(entry.getValue() == DLOAD){
+			} else if (entry.getValue() == DLOAD) {
 				mv.visitVarInsn(entry.getValue(), entry.getKey());
-				String fileName = getFileNameForIndex(entry.getKey());
-				mv.visitLdcInsn(fileName);
+				insertFileNameStatements(entry.getKey());
 				mv.visitMethodInsn(INVOKESTATIC,
 						"org/softevo/mutation/io/XmlIo", methodToCall,
 						"(DLjava/lang/String;)V");
@@ -129,8 +121,30 @@ public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 		}
 	}
 
-	private String getFileNameForIndex(int index) {
-		String fileName = MutationProperties.RESULT_OBJECTS_DIR + "/" + className + "-" + methodName + "-" + index + ".xml";
+	private void insertFileNameStatements(int n) {
+		mv.visitIntInsn(SIPUSH, n);
+		mv.visitLdcInsn(className);
+		mv.visitLdcInsn(methodName);
+		mv
+				.visitMethodInsn(
+						INVOKESTATIC,
+						"org/softevo/mutation/objectInspector/asmAdapters/ObjectInspectorMethodAdapter",
+						"getFileNameForIndex",
+						"(ILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
+	}
+
+	public static String getFileNameForIndex(int index, String className,
+			String methodName) {
+		String mutationID = MutationProperties.NOT_MUTATED;
+		String prop = System
+				.getProperty(MutationProperties.ACTUAL_MUTATION_KEY);
+		if (prop != null) {
+			mutationID = prop;
+		}
+		String fileName = MutationProperties.RESULT_OBJECTS_DIR + "/"
+				+ className + "-" + methodName + "-" + mutationID + "-" + index
+				+ ".xml";
+
 		return fileName;
 	}
 
