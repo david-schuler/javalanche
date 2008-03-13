@@ -24,9 +24,6 @@ public class ProcessWrapper extends Thread {
 
 	private static Logger logger = Logger.getLogger(ProcessWrapper.class);
 
-	private static final String KILL_COMMAND = MutationProperties.EXEC_DIR
-			+ "/kill-by-id.sh";
-
 	private String command;
 
 	private File dir;
@@ -91,8 +88,7 @@ public class ProcessWrapper extends Thread {
 		this.dir = dir;
 		this.outputFile = outputFile;
 		this.resultFile = resultFile;
-		this.instances = instances;
-		System.out.println("Process created" + this);
+		this.instances = instances;	
 	}
 
 	/**

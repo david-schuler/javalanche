@@ -31,13 +31,13 @@ public class ObjectInspectorClassAdapter extends ClassAdapter {
 			String signature, String[] exceptions) {
 		MethodVisitor mv = super.visitMethod(access, name, desc, signature,
 				exceptions);
-		if (name.startsWith("test")) {
+//		if (name.startsWith("test")) {
 			ObjectInspectorMethodAdapter objectInspectorMethodAdapter = new ObjectInspectorMethodAdapter(
 					mv, access, name, desc, className);
 			methodVisitors.add(objectInspectorMethodAdapter);
 			return objectInspectorMethodAdapter;
-		}
-	return mv;
+//		}
+//	return mv;
 	}
 
 	public Map<String, List<VariableInfo>> getVariableNames() {

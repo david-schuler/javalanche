@@ -3,18 +3,18 @@ package org.softevo.mutation.run.threaded;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.io.Io;
 import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.QueryManager;
+import org.softevo.mutation.run.threaded.task.MutationTask;
 import org.softevo.mutation.runtime.RunResult;
+import org.softevo.mutation.util.Formater;
 
 /**
  * Class executes several instances of the mutation test tool in parallel using
@@ -37,41 +37,10 @@ public class ThreadPool {
 	 */
 	private static final int NUMBER_OF_THREADS = 2;
 
-	// /**
-	// * Number of mutations that are fetched randomly from the database.
-	// */
-	private static final int MAX_MUTATIONS = 500;// 20000;
-
-	/**
-	 * Number of tasks that will be submitted to the thread pool.
-	 */
-	private static final int NUMBER_OF_TASKS = 20;// 100;
-
-	private static final int MUTATIONS_PER_TASK = 50;// 1000;
-
-	// /**
-	// * Maximum running time for one sub process.
-	// */
-	// private static final long MAX_TIME_FOR_SUB_PROCESS = 15 * 60 * 1000;
-
-	// /**
-	// * Number of mutations that are fetched randomly from the database.
-	// */
-	// public static final int MAX_MUTATIONS = 5500;
-	//
-	// /**
-	// * Number of tasks that will be submitted to the thread pool.
-	// */
-	// private static final int NUMBER_OF_TASKS = 100;
-	//
-	// private static final int MUTATIONS_PER_TASK = 75;
-
 	/**
 	 * Maximum running time for one sub process.
 	 */
 	private static final long MAX_TIME_FOR_SUB_PROCESS = 60 * 60 * 1000;
-
-	private List<Long> allQueriedMutations = new ArrayList<Long>();
 
 	static {
 		File resultDir = new File(MutationProperties.RESULT_DIR);
@@ -90,19 +59,15 @@ public class ThreadPool {
 	private static final String SCRIPT_COMMAND = System
 			.getProperty(MutationProperties.SCRIPT_COMMAND_KEY);
 
-	/**
-	 * Processes that are added to the thread pool per turn. after one turn the
-	 * ids of mutations without results are refreshed.
-	 */
-	private static final int PROCESSES_PER_TURN = 5;
+	// /**
+	// * Processes that are added to the thread pool per turn. after one turn
+	// the
+	// * ids of mutations without results are refreshed.
+	// */
+	// private static final int PROCESSES_PER_TURN = 5;
 
 	private final ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors
 			.newFixedThreadPool(NUMBER_OF_THREADS);
-
-	/**
-	 * List of mutaionIds that have no result and are covered by a unit test.
-	 */
-	private List<Long> mutationIDs;
 
 	/**
 	 * All processes that where added to the thread pool.
@@ -126,38 +91,31 @@ public class ThreadPool {
 	}
 
 	/**
-	 * start the processes and collect timing information.
+	 * Start the processes and collect timing information.
 	 */
 	private void startTimed() {
 		long startTime = System.currentTimeMillis();
-		logger.info("Start fetching " + MAX_MUTATIONS + " mutations");
-		refreshMutations();
-		// mutationIDs = getFakeList();
-		long fetchTime = System.currentTimeMillis();
-		logger.info("Fetched " + mutationIDs.size() + " mutations in "
-				+ formatMilliseconds(fetchTime - startTime));
 		runTasks();
-		long duration = System.currentTimeMillis() - fetchTime;
+		long duration = System.currentTimeMillis() - startTime;
 		long actuallMutationsInDb = QueryManager
 				.getNumberOfMutationsWithResult()
 				- mutationResultsPre;
-		logger.info("Tried to run " + MUTATIONS_PER_TASK * NUMBER_OF_TASKS
-				+ " mutations - got " + actuallMutationsInDb
-				+ "  results\nRun for: " + formatMilliseconds(duration));
+		logger.info("Got " + actuallMutationsInDb + "  results\nRun for: "
+				+ Formater.formatMilliseconds(duration));
 		writeResults();
 	}
 
 	private void writeResults() {
-		logger.info("Getting" + allQueriedMutations.size() + " Mutations");
-		List<Mutation> dbMutations = QueryManager
-				.getMutationsFromDbByID(allQueriedMutations
-						.toArray(new Long[0]));
+//		logger.info("Getting" + allQueriedMutations.size() + " Mutations");
+//		List<Mutation> dbMutations = QueryManager
+//				.getMutationsFromDbByID(allQueriedMutations
+//						.toArray(new Long[0]));
 		List<Long> mutationsWithResult = new ArrayList<Long>();
-		for (Mutation m : dbMutations) {
-			if (m.getMutationResult() != null) {
-				mutationsWithResult.add(m.getId());
-			}
-		}
+//		for (Mutation m : dbMutations) {
+//			if (m.getMutationResult() != null) {
+//				mutationsWithResult.add(m.getId());
+//			}
+//		}
 		XmlIo.toXML(mutationsWithResult, new File(MutationProperties.RESULT_DIR
 				+ "/all-mutations.xml"));
 		List<Long> mutationsFromResultFiles = new ArrayList<Long>();
@@ -187,15 +145,8 @@ public class ThreadPool {
 				+ "/ids-not-in-db.xml"));
 	}
 
-	private String formatMilliseconds(long duration) {
-		long minutes = duration / 60000;
-		int seconds = (int) ((duration % 60000) / 1000);
-		return minutes + "'" + seconds + "''";
-	}
-
 	private void runTasks() {
-		addProcesses(Math.min(PROCESSES_PER_TURN, NUMBER_OF_TASKS
-				- processCounter));
+		addProcesses();
 		while (!pool.isTerminated()) {
 			try {
 				boolean processesFinished = pool.awaitTermination(CHECK_PERIOD,
@@ -218,36 +169,27 @@ public class ThreadPool {
 	 * @param numberOfProcesses
 	 *            Number of processes the should be added.
 	 */
-	private void addProcesses(int numberOfProcesses) {
-		logger.info(String.format("Adding %d  processes", numberOfProcesses));
-		for (int i = 0; i < numberOfProcesses; i++) {
-			createProcess();
+	private void addProcesses() {
+		List<MutationTask> tasks = MutationTask.getTasks();
+		logger.info(String.format("Adding %d  processes", tasks.size()));
+		for (MutationTask task : tasks) {
+			createProcess(task);
 		}
 	}
 
 	/**
 	 * Creates a new process and adds it to the ThreadPool.
+	 *
+	 * @param task
 	 */
-	private void createProcess() {
+	private void createProcess(MutationTask task) {
 		processCounter++;
 		String outputFile = String.format(MutationProperties.RESULT_DIR
-				+ "/process-output-%02d.txt", processCounter);
-		String repeatLastRun = System.getProperty("mutation.repeat");
-		File taskIdFile;
-		if (repeatLastRun != null && repeatLastRun.equals("true")) {
-			String filename = String.format(MutationProperties.RESULT_DIR
-					+ "mutation-task-%02d.txt", processCounter);
-			taskIdFile = new File(filename);
-		} else {
-			List<Long> list = getMutionIDs(MUTATIONS_PER_TASK);
-			allQueriedMutations.addAll(list);
-			taskIdFile = writeListToFile(list, processCounter);
+				+ "/process-output-%02d.txt", task.getID());
 
-		}
-
+		File taskIdFile = task.getTaskFile();
 		String resultFile = String.format(MutationProperties.RESULT_DIR
-				+ "/process-result-%02d.xml", processCounter);
-
+				+ "/process-result-%02d.xml", task.getID());
 		ProcessWrapper ps = new ProcessWrapper(SCRIPT_COMMAND, taskIdFile,
 				new File(MutationProperties.EXEC_DIR), new File(outputFile),
 				new File(resultFile), processCounter, freeInstances);
@@ -265,14 +207,13 @@ public class ThreadPool {
 		int processesRunning = handleRunningProcess();
 		logger.info(processesFinished + " processes are finished and "
 				+ processesRunning + " are running");
-		if (processesRunning < NUMBER_OF_THREADS
-				&& NUMBER_OF_TASKS > processCounter) {
-			logger.info("Adding new processes");
-			refreshMutations();
-			addProcesses(Math.min(PROCESSES_PER_TURN, NUMBER_OF_TASKS
-					- processCounter));
-		}
-		if (processesRunning == 0 && processesFinished == NUMBER_OF_TASKS) {
+		// if (processesRunning < NUMBER_OF_THREADS
+		// && NUMBER_OF_TASKS > processCounter) {
+		// logger.info("Adding new processes");
+		// addProcesses(Math.min(PROCESSES_PER_TURN, NUMBER_OF_TASKS
+		// - processCounter));
+		// }
+		if (processesRunning == 0) {
 			logger.info("trying to shut down the thread pool");
 			pool.shutdown();
 			triedShutdowns++;
@@ -290,13 +231,16 @@ public class ThreadPool {
 			if (ps.isRunning()) {
 				processesRunning++;
 				long timeRunning = ps.getTimeRunnning();
-				logger.info("Process is running for "
-						+ formatMilliseconds(timeRunning) + " out of "
-						+ formatMilliseconds(MAX_TIME_FOR_SUB_PROCESS));
+				logger
+						.info("Process is running for "
+								+ Formater.formatMilliseconds(timeRunning)
+								+ " out of "
+								+ Formater
+										.formatMilliseconds(MAX_TIME_FOR_SUB_PROCESS));
 				if (timeRunning >= MAX_TIME_FOR_SUB_PROCESS) {
 					logger.info("Destroying process" + ps
 							+ " because time running exceeded limit: "
-							+ formatMilliseconds(timeRunning));
+							+ Formater.formatMilliseconds(timeRunning));
 					boolean couldBeRemoved = pool.remove(ps);
 					logger.info(couldBeRemoved ? "Task was removed"
 							: " Task could not be removed");
@@ -335,44 +279,4 @@ public class ThreadPool {
 		// NOMUTATIONS
 	}
 
-	private File writeListToFile(List<Long> list, int id) {
-		String filename = String.format(MutationProperties.RESULT_DIR
-				+ "mutation-task-%02d.txt", id);
-		File resultFile = new File(filename);
-		StringBuilder sb = new StringBuilder();
-		for (Long l : list) {
-			sb.append(l);
-			sb.append("\n");
-		}
-		Io.writeFile(sb.toString(), resultFile);
-		return resultFile;
-	}
-
-	private List<Long> getFakeList() {
-		List<Long> list = new ArrayList<Long>();
-		for (long i = 0; i < 40000; i++) {
-			list.add(i);
-		}
-		return list;
-	}
-
-	private List<Long> getMutionIDs(int numberOfIds) {
-		List<Long> list = new ArrayList<Long>();
-		Random r = new Random();
-		for (int i = 0; i < numberOfIds; i++) {
-			if (mutationIDs.size() > 0) {
-				int position = r.nextInt(mutationIDs.size());
-				list.add(mutationIDs.remove(position));
-			} else {
-				logger.info("Not enough mutations fetched from db");
-				break;
-			}
-		}
-		return list;
-	}
-
-	private void refreshMutations() {
-		mutationIDs = QueryManager.getMutationsIdListFromDb(MAX_MUTATIONS,
-				MutationProperties.PROJECT_PREFIX);
-	}
 }

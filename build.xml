@@ -12,7 +12,9 @@
 	<property name="build.dir" value="target" />
 
 
+
 	<!-- Application specific properties -->
+	<property name="threaded.conf.dir" value="/scratch/schuler/mutation-test-config" />
 	<property name="threaded.result.dir" value="/scratch/schuler/mutation-test-config/result" />
 	<property name="threaded.main.class" value="org.softevo.mutation.run.threaded.ThreadPool" />
 	<property name="mutation.test.output.dir" value="/scratch/schuler/output-mutation-test/" />
@@ -197,7 +199,7 @@
 		</exec>
 	</target>
 
-	<target name="copyAndDeletResults">
+	<target name="copyAndDeleteResults">
 		<tstamp>
 			<format property="copy.tstamp" pattern="yyyy-MM-dd_hh-mm" locale="de" />
 		</tstamp>
@@ -205,17 +207,46 @@
 		<echo>
 			${copy.tstamp}
 		</echo>
-		<copy todir="${threaded.result.dir}${copy.tstamp}" >
-			<fileset dir="${threaded.result.dir}"/>
+		<copy todir="${threaded.result.dir}${copy.tstamp}">
+			<fileset dir="${threaded.result.dir}" />
 		</copy>
 		<delete dir="${threaded.result.dir}" />
 		<mkdir dir="${threaded.result.dir}" />
 
 	</target>
 
-	<target name="runThreaded" description="run mutation tests multithreaded" depends="copyAndDeletResults">
+	<target name="cleanResults" description="delete all the results-files produced by mutation testing, not results in db">
+		<delete includeemptydirs="true">
+			<fileset dir="${threaded.conf.dir}" includes="result**/*.*" />
+		</delete>
+		<delete includeemptydirs="true">
+			<fileset dir="${threaded.conf.dir}">
+				<include name="**/*" />
+				<exclude name="**/*.*" />
+			</fileset>
+		</delete>
+		<mkdir dir="${threaded.result.dir}" />
+	</target>
+
+	<target name="runThreadedJTopas" description="run mutation tests multithreaded on jtopas">
 		<java classname="org.softevo.mutation.run.threaded.ThreadPool" maxmemory="1024m" fork="true">
-			<sysproperty key="mutation.package.prefix" 	value="de.susebox" />
+			<!--
+				<jvmarg value="-Xdebug" />
+				<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044" />
+			-->
+			<sysproperty key="mutation.package.prefix" value="de.susebox" />
+			<sysproperty key="mutation.coverage.information" value="false" />
+			<sysproperty key="mutation.script.command" value="src/scripts/threaded-run-jtopas.sh" />
+			<classpath>
+				<path location="target/classes" />
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="runThreaded" description="run mutation tests multithreaded" depends="copyAndDeleteResults">
+		<java classname="org.softevo.mutation.run.threaded.ThreadPool" maxmemory="1024m" fork="true">
+			<sysproperty key="mutation.package.prefix" value="de.susebox" />
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
@@ -382,11 +413,12 @@
 
 
 	<target name="compareUnmutated" description="Compare Mutation Results with the unmutated runs">
-		<java classname="org.softevo.mutation.run.CompareWithUnmutated" maxmemory="8192m" fork="true" jvm="./java-nice.sh">
+		<java classname="org.softevo.mutation.run.CompareWithUnmutated" maxmemory="1024m" fork="true" jvm="./java-nice.sh">
 			<!--
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044" />
 			 -->
+			<jvmarg value="-Dmutation.package.prefix=de.susebox" />
 			<classpath>
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
@@ -414,6 +446,39 @@
 				<path refid="mutation.classpath" />
 				<path location="target/classes" />
 				<path location="${user.home}/workspace2/prefuse/bin" />
+			</classpath>
+		</java>
+	</target>
+
+
+	<target name="treemapJar" description="creates a jar for the treemap">
+		<delete file="test.jar" />
+		<copy file="src/main/resources/log4j-silent.properties" tofile="target/log4j.properties" />
+		<jar destfile="test.jar" basedir=".">
+			<fileset file="bugdata_v2.csv" />
+			<fileset file="target/log4j.properties" />
+			<zipfileset src="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib/log4j-1.2.9.jar" />
+			<fileset dir="/Users/schuler/workspace2/prefuse/bin">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="target/classes">
+				<include name="**/*.class" />
+			</fileset>
+			<exclude name="**/*.*" />
+			<exclude name="**" />
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Main-Class" value="org.softevo.mutation.visualize.BugTreeMap" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="createMutationTasks" depends="copyAndDeleteResults" description="creates mutation tasks for multi-threaded execution of the tasks">
+		<java classname="org.softevo.mutation.run.threaded.task.MutationTaskCreator" maxmemory="1024m" fork="true">
+			<sysproperty key="mutation.package.prefix" value="de.susebox" />
+			<classpath>
+				<path refid="mutation.classpath" />
+				<path location="target/classes" />
 			</classpath>
 		</java>
 	</target>

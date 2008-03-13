@@ -48,9 +48,7 @@ import prefuse.util.ColorLib;
 import prefuse.util.ColorMap;
 import prefuse.util.FontLib;
 import prefuse.util.PrefuseLib;
-import prefuse.util.UpdateListener;
 import prefuse.util.ui.JFastLabel;
-import prefuse.util.ui.JSearchPanel;
 import prefuse.util.ui.UILib;
 import prefuse.visual.DecoratorItem;
 import prefuse.visual.NodeItem;
@@ -69,6 +67,8 @@ import prefuse.visual.sort.TreeDepthItemSorter;
  */
 public class TreeMap extends Display {
 
+	private static boolean BUGS_ONLY = true;
+
 	/**
 	 */
 	private static final long serialVersionUID = 1L;
@@ -76,7 +76,6 @@ public class TreeMap extends Display {
 	private static Logger logger = Logger.getLogger(TreeMap.class);
 
 	static final String MOUSEOVER_LABEL = "arg1";
-
 
 	public static final String NOT_KILLED = "notkilled";
 
@@ -107,7 +106,7 @@ public class TreeMap extends Display {
 
 	private static final String labels1 = "labels1";
 
-	private static final String IBUGS_PAINT = "iBugsPaint";
+	private static final String BUGS_PAINT = "BugsPaint";
 
 	private SearchQueryBinding searchQ;
 
@@ -134,15 +133,14 @@ public class TreeMap extends Display {
 		fill.setFilterPredicate((Predicate) ExpressionParser
 				.parse("childcount()=0"));
 
-
-		DataColorAction bugsFill = new DataColorAction("tree.nodes",
+		DataColorAction bugFill = new DataColorAction("tree.nodes",
 				MutationBugTreeData.BUGS, Constants.LINEAR_SCALE,
 				VisualItem.FILLCOLOR, palette);
-		bugsFill.setFilterPredicate((Predicate) ExpressionParser
+		bugFill.setFilterPredicate((Predicate) ExpressionParser
 				.parse("childcount()=0"));
 
 		DataSizeAction dataSizeAction = new DataSizeAction("tree.nodes",
-				MutationBugTreeData.NUMBER_OF_MUTATIONS);
+				MutationBugTreeData.SLOC);
 		dataSizeAction.setMaximumSize(200.0);
 		dataSizeAction.setMinimumSize(0.1);
 		dataSizeAction.setIs2DArea(true);
@@ -180,7 +178,7 @@ public class TreeMap extends Display {
 
 		// color settings
 		ActionList colors = new ActionList();
-		colors.add(fill);
+		colors.add(bugFill);
 		colors.add(borderColor);
 
 		m_vis.putAction("colors", colors);
@@ -192,11 +190,11 @@ public class TreeMap extends Display {
 		animatePaint.add(new FillColorAction(treeNodes));
 		m_vis.putAction("animatePaint", animatePaint);
 
-		ActionList iBugsPaint = new ActionList(400);
-		iBugsPaint.add(new ColorAnimator(treeNodes));
-		iBugsPaint.add(new RepaintAction());
-		iBugsPaint.add(bugsFill);
-		m_vis.putAction(IBUGS_PAINT, iBugsPaint);
+		ActionList bugPaint = new ActionList(400);
+		bugPaint.add(new ColorAnimator(treeNodes));
+		bugPaint.add(new RepaintAction());
+		bugPaint.add(bugFill);
+		m_vis.putAction(BUGS_PAINT, bugPaint);
 
 		// create the single filtering and layout action list
 		ActionList layout = new ActionList();
@@ -214,8 +212,8 @@ public class TreeMap extends Display {
 		addControlListener(new ControlAdapter() {
 			public void itemEntered(VisualItem item, MouseEvent e) {
 				item.setStrokeColor(borderColor.getColor(item));
-				double realSize = item.getSize();
-				double intendedSize = item.getDouble("size");
+				// double realSize = item.getSize();
+				// double intendedSize = item.getDouble("size");
 				// item.set(MOUSEOVER_LABEL, "Actualsize: " + realSize
 				// + " Intended Size: " + intendedSize + " Ratio: "
 				// + realSize / intendedSize);
@@ -230,15 +228,16 @@ public class TreeMap extends Display {
 			}
 		});
 
-		searchQ = new SearchQueryBinding(vt.getNodeTable(), label);
-		m_vis.addFocusGroup(Visualization.SEARCH_ITEMS, searchQ.getSearchSet());
-		searchQ.getPredicate().addExpressionListener(new UpdateListener() {
-			public void update(Object src) {
-				m_vis.cancel("animatePaint");
-				m_vis.run("colors");
-				m_vis.run("animatePaint");
-			}
-		});
+		// searchQ = new SearchQueryBinding(vt.getNodeTable(), label);
+		// m_vis.addFocusGroup(Visualization.SEARCH_ITEMS,
+		// searchQ.getSearchSet());
+		// searchQ.getPredicate().addExpressionListener(new UpdateListener() {
+		// public void update(Object src) {
+		// m_vis.cancel("animatePaint");
+		// m_vis.run("colors");
+		// m_vis.run("animatePaint");
+		// }
+		// });
 
 		// perform layout
 		m_vis.run("size");
@@ -268,30 +267,43 @@ public class TreeMap extends Display {
 		return getTreemapComponent("name", TreeCreator.createTree());
 	}
 
+	@SuppressWarnings("serial")
 	public static JComponent getTreemapComponent(final String label,
 			final Tree tree) {
 		// create a new treemap
 		final TreeMap treemap = new TreeMap(tree, label);
 
 		// create a search panel for the tree map
-		JSearchPanel search = treemap.getSearchQuery().createSearchPanel();
-		search.setShowResultCount(true);
-		search.setBorder(BorderFactory.createEmptyBorder(5, 5, 4, 0));
-		search.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 11));
+		// JSearchPanel search = treemap.getSearchQuery().createSearchPanel();
+		// search.setShowResultCount(true);
+		// search.setBorder(BorderFactory.createEmptyBorder(5, 5, 4, 0));
+		// search.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 11));
 
-		final JFastLabel title = new JFastLabel("                                  ");
+		final JFastLabel title = new JFastLabel(
+				"                                  ");
 		title.setPreferredSize(new Dimension(450, 20));
 		title.setVerticalAlignment(SwingConstants.BOTTOM);
 		title.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
-		title.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 16));
+		title.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 14));
 
 		treemap.addControlListener(new ControlAdapter() {
+
+
 			public void itemEntered(VisualItem item, MouseEvent e) {
 				StringBuilder sb = new StringBuilder();
-				sb.append("Total: "  + item.get(MutationBugTreeData.TOTAL) + "(" + item.get(MutationBugTreeData.NUMBER_OF_MUTATIONS) + ")");
-				sb.append(" Killed: "  + item.get(MutationBugTreeData.KILLED));
-				sb.append(" Survived: "  + item.get(MutationBugTreeData.SURVIVED));
-				sb.append(" Bugs: "  + item.get(MutationBugTreeData.BUGS));
+				if (!BUGS_ONLY) {
+					sb.append("Total: " + item.get(MutationBugTreeData.TOTAL)
+							+ "("
+							+ item.get(MutationBugTreeData.NUMBER_OF_MUTATIONS)
+							+ ")");
+					sb.append(" Killed: "
+							+ item.get(MutationBugTreeData.KILLED));
+					sb.append(" Survived: "
+							+ item.get(MutationBugTreeData.SURVIVED));
+				}
+				sb.append(" Bugs: " + item.get(MutationBugTreeData.BUGS));
+				sb.append(" Sloc: " + item.get(MutationBugTreeData.SLOC));
+
 				title.setText(sb.toString());
 			}
 
@@ -304,7 +316,7 @@ public class TreeMap extends Display {
 		t2.setPreferredSize(new Dimension(350, 20));
 		t2.setVerticalAlignment(SwingConstants.BOTTOM);
 		t2.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
-		t2.setFont(FontLib.getFont("Arial", Font.PLAIN, 10));
+		t2.setFont(FontLib.getFont("Arial", Font.PLAIN, 14));
 		treemap.addControlListener(new ControlAdapter() {
 			public void itemEntered(VisualItem item, MouseEvent e) {
 				t2.setText(item.getString(label));
@@ -324,8 +336,12 @@ public class TreeMap extends Display {
 
 		JButton button = new JButton(action);
 
-		Box box = UILib.getBox(new Component[] { title, t2, button }, true, 10,
-				3, 0);
+		Component[] components = new Component[] { t2, title, button };
+		if (BUGS_ONLY) {
+			components = new Component[] { t2, title };
+		}
+
+		Box box = UILib.getBox(components, true, 10, 3, 0);
 
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(treemap, BorderLayout.CENTER);
@@ -337,19 +353,15 @@ public class TreeMap extends Display {
 	boolean showBugData;
 
 	public void toggleBugData() {
-		// m_vis.cancel("animatePaint");
-		// m_vis.run("colors");
-		// m_vis.run("animatePaint");
 
 		if (showBugData) {
-			logger.info("Running bug data paint");
-			m_vis.cancel(IBUGS_PAINT);
-//			m_vis.run("colors");
-			m_vis.run(IBUGS_PAINT);
+			logger.info("Showing Bug Data");
+			m_vis.cancel(BUGS_PAINT);
+			// m_vis.run("colors");
+			m_vis.run(BUGS_PAINT);
 			showBugData = false;
 		} else {
-			logger.info("Running color paint"  );
-			m_vis.cancel(IBUGS_PAINT);
+			m_vis.cancel(BUGS_PAINT);
 			m_vis.run("colors");
 			m_vis.repaint();
 			showBugData = true;
@@ -478,15 +490,14 @@ public class TreeMap extends Display {
 
 	public static class IBugsColorAction extends ColorAction {
 
-
-
 		public IBugsColorAction(String group) {
 			super(group, VisualItem.FILLCOLOR);
 		}
 
 		public int getColor(VisualItem item) {
 			if (item.getInt(MutationBugTreeData.BUGS) > 0) {
-				logger.info("iBugs count" + item.getInt(MutationBugTreeData.BUGS));
+				logger.info("Bugs count"
+						+ item.getInt(MutationBugTreeData.BUGS));
 				return ColorLib.rgb(0, 0, 255);
 			}
 			return item.getFillColor();

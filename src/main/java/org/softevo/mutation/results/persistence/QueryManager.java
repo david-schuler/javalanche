@@ -17,15 +17,10 @@ import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.Mutation.MutationType;
-import org.softevo.mutation.run.threaded.ThreadPool;
 
 /**
  * Class that provides static method that execute queries.
  *
- * @author David Schuler
- *
- */
-/**
  * @author David Schuler
  *
  */

@@ -149,8 +149,20 @@ public class MutationFileTransformer implements ClassFileTransformer {
 		return classfileBuffer;
 	}
 
+	/**
+	 * Decides if the objects that exist in this test case should be serialized.
+	 * This is configured in an xml file (
+	 *
+	 * @see MutationProperties.TESTCASES_FILE).
+	 *
+	 * @param classNameWithDots
+	 *            The name of the class seperated with dots
+	 * @return True, if the objects should be serialized.
+	 */
 	private boolean isObservedTestCase(String classNameWithDots) {
 		if (testCases.contains(classNameWithDots)) {
+			return true;
+		} else if (classNameWithDots.endsWith("InspectorTest")) {
 			return true;
 		}
 		return false;

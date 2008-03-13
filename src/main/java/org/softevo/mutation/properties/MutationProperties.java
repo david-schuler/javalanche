@@ -1,7 +1,5 @@
 package org.softevo.mutation.properties;
 
-import java.io.File;
-
 import org.apache.log4j.Logger;
 import org.softevo.mutation.run.threaded.ThreadPool;
 
@@ -46,15 +44,15 @@ public class MutationProperties {
 
 	public static final String DEBUG_PORT_KEY = "mutation.debug.port";
 
-	private static boolean getDebug() {
-		String debugProperty = System.getProperty(MUTATION_TEST_DEBUG_KEY);
-		if (debugProperty != null && !debugProperty.equals("false")) {
-			logger.info("Debugging enabled");
-			return true;
-		}
-		logger.info("Debugging not enabled");
-		return false;
-	}
+//	private static boolean getDebug() {
+//		String debugProperty = System.getProperty(MUTATION_TEST_DEBUG_KEY);
+//		if (debugProperty != null && !debugProperty.equals("false")) {
+//			logger.info("Debugging enabled");
+//			return true;
+//		}
+//		logger.info("Debugging not enabled");
+//		return false;
+//	}
 
 	public static final String RESULT_DIR = CONFIG_DIR + "result/";
 

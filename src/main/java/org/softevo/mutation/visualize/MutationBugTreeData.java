@@ -28,11 +28,11 @@ public class MutationBugTreeData {
 
 	private static Logger logger = Logger.getLogger(MutationBugTreeData.class);
 
-	private static final String NAME = "name";
+	static final String NAME = "name";
 
 	public static final String NUMBER_OF_MUTATIONS = "numberOfMutations";
 
-	private static final String SHORT_NAME = "shortName";
+	static final String SHORT_NAME = "shortName";
 
 	private static Map<String, Integer> iBugsData = BugsData
 			.getIBugsDataForClasses();
@@ -49,6 +49,8 @@ public class MutationBugTreeData {
 	static final String TOTAL = "total";
 
 	public static final String FRACTION = "fraction";
+
+	public static final String SLOC = "sloc";
 
 	private static class MNode {
 
@@ -91,6 +93,7 @@ public class MutationBugTreeData {
 			nodes.addColumn(FRACTION, int.class);
 			nodes.addColumn(SHORT_NAME, String.class);
 			nodes.addColumn(BUGS, int.class);
+			nodes.addColumn(SLOC, int.class);
 			nodes.addColumn("size", double.class);
 			nodes.addColumn(TreeMap.MOUSEOVER_LABEL, String.class);
 			Node child = tree.addChild(root);

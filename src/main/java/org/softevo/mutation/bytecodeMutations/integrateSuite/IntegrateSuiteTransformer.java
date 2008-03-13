@@ -1,6 +1,5 @@
 package org.softevo.mutation.bytecodeMutations.integrateSuite;
 
-import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -29,8 +28,7 @@ public class IntegrateSuiteTransformer extends BytecodeTransformer {
 
 	}
 
-	private static Logger logger = Logger
-			.getLogger(IntegrateSuiteTransformer.class);
+
 
 	@Override
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {

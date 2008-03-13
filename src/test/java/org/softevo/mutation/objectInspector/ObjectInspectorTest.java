@@ -43,7 +43,7 @@ public class ObjectInspectorTest {
 					cr
 							.accept(
 									new ObjectInspectorClassAdapter(
-											cc), ClassReader.EXPAND_FRAMES);
+											tcv), ClassReader.EXPAND_FRAMES);
 					byte[] bytecode = cw.toByteArray();
 					return super
 							.defineClass(name, bytecode, 0, bytecode.length);
@@ -57,6 +57,7 @@ public class ObjectInspectorTest {
 
 	}
 
+	@SuppressWarnings({ "unchecked", "static-access" })
 	public void testInspectObjects() {
 
 		Class ob = ObjectsForMethod.class;
@@ -89,11 +90,13 @@ public class ObjectInspectorTest {
 		Class cc = tcl.loadClass(RCLASSNAME);
 		Method m1 = cc.getMethod("method1");
 		Method m2 = cc.getMethod("method2");
+		Method m3 = cc.getMethod("method3");
 		try {
 			Object o = m1.invoke(null, new Object[0]);
 			Assert.assertEquals(new Integer(1), o);
 			o = m2.invoke(null, new Object[0]);
 			Assert.assertEquals(new Integer(1), o);
+			o = m3.invoke(null, new Object[0]);
 		} catch (InvocationTargetException e) {
 			throw (Exception) e.getTargetException();
 		}

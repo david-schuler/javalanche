@@ -29,5 +29,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-annotations/3.3.0.ga/hibernate-annotations-3.3.0.ga.jar" sourcepath="M2_REPO/org/hibernate/hibernate-annotations/3.3.0.ga/hibernate-annotations-3.3.0.ga-sources.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/prefuse"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/PostgreData"/>
+	<classpathentry kind="var" path="JTOPAS"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-import org.softevo.mutation.io.Io;
 import org.softevo.mutation.io.XmlIo;
 
 import com.thoughtworks.xstream.XStream;

@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,5 +92,22 @@ public class Io {
 		}
 		is.close();
 		return bytes;
+	}
+
+	public static List<String> getLinesFromFile(InputStream inputStream) {
+		List<String> lines = new ArrayList<String>();
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+			while (br.ready()) {
+				String line = br.readLine();
+				lines.add(line);
+			}
+			br.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return lines;
 	}
 }

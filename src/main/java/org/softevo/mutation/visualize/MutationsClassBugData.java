@@ -1,6 +1,7 @@
 package org.softevo.mutation.visualize;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,15 +88,31 @@ public class MutationsClassBugData {
 		Io.writeFile(sb.toString(), file);
 	}
 
+	public static Map<String, MutationsClassBugData> fromCsvFile(
+			InputStream inputStream) {
+		List<String> lines = Io.getLinesFromFile(inputStream);
+		return readFromCSVLines(lines);
+	}
+
 	public static Map<String, MutationsClassBugData> fromCsvFile(String filename) {
-		List<String> lines = Io.getLinesFromFile(new File(filename));
+		return fromCsvFile(new File(filename));
+	}
+
+	public static Map<String, MutationsClassBugData> fromCsvFile(File file) {
+		List<String> lines = Io.getLinesFromFile(file);
+		return readFromCSVLines(lines);
+	}
+
+	private static Map<String, MutationsClassBugData> readFromCSVLines(
+			List<String> lines) {
 		logger.info(lines.size());
 		Map<String, MutationsClassBugData> data = new HashMap<String, MutationsClassBugData>();
 		for (int i = 1; i < lines.size(); i++) {
 			String line = lines.get(i);
 			MutationsClassBugData mutationsClassBugData = parseLine(line);
 			if (mutationsClassBugData != null) {
-				data.put(mutationsClassBugData.getClassName(), mutationsClassBugData);
+				data.put(mutationsClassBugData.getClassName(),
+						mutationsClassBugData);
 			}
 		}
 		logger.info("Total Files: " + data.size());
@@ -109,8 +126,12 @@ public class MutationsClassBugData {
 		int mutationsTotal = Integer.valueOf(split[2]);
 		int mutationsKilled = Integer.valueOf(split[3]);
 		int mutationsSurvived = Integer.valueOf(split[4]);
+		int sloc = -1;
+		if (split.length > 5) {
+			sloc = Integer.valueOf(split[5]);
+		}
 		return new MutationsClassBugData(className, mutationsTotal,
-				mutationsKilled, mutationsSurvived, numberOfBugs, -1);
+				mutationsKilled, mutationsSurvived, numberOfBugs, sloc);
 	}
 
 	/**
@@ -142,4 +163,40 @@ public class MutationsClassBugData {
 	public void setSloc(int sloc) {
 		this.sloc = sloc;
 	}
+
+	/**
+	 * @return the logger
+	 */
+	public static Logger getLogger() {
+		return logger;
+	}
+
+	/**
+	 * @return the mutationsKilled
+	 */
+	public int getMutationsKilled() {
+		return mutationsKilled;
+	}
+
+	/**
+	 * @return the mutationsSurvived
+	 */
+	public int getMutationsSurvived() {
+		return mutationsSurvived;
+	}
+
+	/**
+	 * @return the mutationsTotal
+	 */
+	public int getMutationsTotal() {
+		return mutationsTotal;
+	}
+
+	/**
+	 * @return the numberOfBugs
+	 */
+	public int getNumberOfBugs() {
+		return numberOfBugs;
+	}
+
 }
