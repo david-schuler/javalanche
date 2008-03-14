@@ -276,13 +276,18 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.0.3</version>
+			<version>nightly</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.prefuse</groupId>
 			<artifactId>prefuse</artifactId>
 			<version>beta-20060220</version>
+		</dependency>
+		<dependency>
+			<groupId>de.unisb</groupId>
+			<artifactId>bytecodeTransformer</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
