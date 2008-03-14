@@ -1,11 +1,40 @@
 package org.softevo.mutation.properties;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.apache.log4j.Logger;
-import org.softevo.mutation.run.threaded.ThreadPool;
 
 public class MutationProperties {
 
 	private static Logger logger = Logger.getLogger(MutationProperties.class);
+
+	public static final String PROPERTIES_FILE = "mutation.incl.properties";
+
+	public static final Properties PROPERTIES = getProperties();
+
+	private static Properties getProperties() {
+		Properties properties = new Properties();
+		InputStream is = MutationProperties.class.getClassLoader()
+				.getResourceAsStream(PROPERTIES_FILE);
+		try {
+			properties.load(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if (properties != null) {
+			System.out.println(properties.keySet());
+		}
+		if (properties == null) {
+			logger.warn("Could not read properties file:  " + PROPERTIES_FILE);
+		}
+		return properties;
+	}
+
+	public static final String OUTPUT_DIR = PROPERTIES
+			.getProperty("mutation.output.dir");
 
 	public static final String ASPECTJ_DIR = "/scratch/schuler/aspectJ/";
 
@@ -14,20 +43,18 @@ public class MutationProperties {
 	public static final String SAMPLE_FILE = ASPECTJ_DIR + "/weaver/bin/"
 			+ SAMPLE_FILE_CLASS_NAME.replace('.', '/') + ".class";
 
-	public static final String CONFIG_DIR = "/scratch/schuler/mutation-test-config/";
+	public static final String CLOVER_REPORT_DIR = OUTPUT_DIR + "clover_html/";
 
-	public static final String CLOVER_REPORT_DIR = CONFIG_DIR + "clover_html/";
-
-	public static final String MUTATIONS_TO_APPLY_FILE = CONFIG_DIR
+	public static final String MUTATIONS_TO_APPLY_FILE = OUTPUT_DIR
 			+ "/mutations-to-apply.xml";
 
-	public static final String CLOVER_RESULTS_FILE = CONFIG_DIR
+	public static final String CLOVER_RESULTS_FILE = OUTPUT_DIR
 			+ "/clover-coverage-results.xml";
 
-	public static final String TESTS_TO_EXECUTE_FILE = CONFIG_DIR
-			+ "/tests-to-execute.txt";
+	// public static final String TESTS_TO_EXECUTE_FILE = OUTPUT_DIR
+	// + "/tests-to-execute.txt";
 
-	public static final String MUTATION_RESULT_FILE = CONFIG_DIR
+	public static final String MUTATION_RESULT_FILE = OUTPUT_DIR
 			+ "/mutation-results.txt";
 
 	public static final String[] TEST_CLASSES_TO_INSTRUMENT = { "org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps" };
@@ -44,22 +71,22 @@ public class MutationProperties {
 
 	public static final String DEBUG_PORT_KEY = "mutation.debug.port";
 
-//	private static boolean getDebug() {
-//		String debugProperty = System.getProperty(MUTATION_TEST_DEBUG_KEY);
-//		if (debugProperty != null && !debugProperty.equals("false")) {
-//			logger.info("Debugging enabled");
-//			return true;
-//		}
-//		logger.info("Debugging not enabled");
-//		return false;
-//	}
+	// private static boolean getDebug() {
+	// String debugProperty = System.getProperty(MUTATION_TEST_DEBUG_KEY);
+	// if (debugProperty != null && !debugProperty.equals("false")) {
+	// logger.info("Debugging enabled");
+	// return true;
+	// }
+	// logger.info("Debugging not enabled");
+	// return false;
+	// }
 
-	public static final String RESULT_DIR = CONFIG_DIR + "result/";
+	public static final String RESULT_DIR = OUTPUT_DIR + "result/";
 
 	/**
 	 * Directory the serialized files are stored.
 	 */
-	public static final String RESULT_OBJECTS_DIR = CONFIG_DIR + "objects/";
+	public static final String RESULT_OBJECTS_DIR = OUTPUT_DIR + "objects/";
 
 	public static final String MUTATIONS_CLASS_RESULT_XML = "mutations-class-result.xml";
 
@@ -97,20 +124,61 @@ public class MutationProperties {
 	 */
 	public static final boolean COVERAGE_INFFORMATION = getCoverage();
 
-	public static final String SCRIPT_COMMAND_KEY = "mutation.script.command";
+
 
 	/**
 	 * Directory where the processes are executed
 	 */
 	public static final String EXEC_DIR = ".";
 
-	public static final String TESTCASES_FILE = CONFIG_DIR + "/testCases.xml";
+	public static final String TESTCASES_FILE = OUTPUT_DIR + "/testCases.xml";
 
-	public static final String ACTUAL_MUTATION_KEY = "mutation.actual.mutaiton";
+	public static final String ACTUAL_MUTATION_KEY = "mutation.actual.mutation";
 
 	public static final String NOT_MUTATED = "notMutated";
 
-	// "src/scripts/";
+	public static final boolean OBSERVE_OBJECTS = false; // TODO read from
+															// property
+
+	public static final String NUMBER_OF_THREADS_KEY = "mutation.number.of.threads";
+
+	public static final int NUMBER_OF_THREADS = getPropertyOrDefault(
+			NUMBER_OF_THREADS_KEY, 2);
+
+	public static final String MAX_TIME_FOR_SUB_PROCESS_KEY = "mutation.max.time.for.subprocess";
+
+	public static final long MAX_TIME_FOR_SUB_PROCESS = getPropertyOrDefault(
+			MAX_TIME_FOR_SUB_PROCESS_KEY, 30 * 60 * 1000);
+
+	public static final String SCRIPT_COMMAND_KEY = "mutation.script.command";
+
+	public static final String SCRIPT_COMMAND = getProperty(SCRIPT_COMMAND_KEY);
+
+	private static final int getPropertyOrDefault(String key, int defaultValue) {
+		String result = getPropertyOrDefault(key, defaultValue + "");
+		return Integer.parseInt(result);
+	}
+
+	private static final String getPropertyOrDefault(String key,
+			String defaultValue) {
+		String result = getProperty(key);
+		if (result == null) {
+			result = defaultValue;
+		}
+		return result;
+	}
+
+	private static String getProperty(String key) {
+		String result = null;
+		if (System.getProperty(key) != null) {
+			result = System.getProperty(key);
+		}
+		// no else if property may also be null
+		if (result == null && PROPERTIES.containsKey(key)) {
+			result = PROPERTIES.getProperty(key);
+		}
+		return result;
+	}
 
 	private static boolean getCoverage() {
 		String coverageInformation = System
@@ -126,7 +194,7 @@ public class MutationProperties {
 	private static String getPrefix() {
 		String project_prefix = System.getProperty(PROJECT_PREFIX_KEY);
 		if (project_prefix == null) {
-			ThreadPool.logger.warn("No project prefix found (Property: "
+			logger.warn("No project prefix found (Property: "
 					+ PROJECT_PREFIX_KEY + " not set)");
 		}
 		return project_prefix;

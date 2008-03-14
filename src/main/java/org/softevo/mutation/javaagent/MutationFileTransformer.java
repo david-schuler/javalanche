@@ -160,10 +160,12 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	 * @return True, if the objects should be serialized.
 	 */
 	private boolean isObservedTestCase(String classNameWithDots) {
-		if (testCases.contains(classNameWithDots)) {
-			return true;
-		} else if (classNameWithDots.endsWith("InspectorTest")) {
-			return true;
+		if (MutationProperties.OBSERVE_OBJECTS) {
+			if (testCases.contains(classNameWithDots)) {
+				return true;
+			} else if (classNameWithDots.endsWith("InspectorTest")) {
+				return true;
+			}
 		}
 		return false;
 	}

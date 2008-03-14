@@ -28,25 +28,43 @@ public class MutationTaskCreator {
 	private static Logger logger = Logger.getLogger(MutationTaskCreator.class);
 
 	/**
-	 * Number of tasks that will be created.
+	 * Default number of tasks that will be created.
 	 */
-	private static final int NUMBER_OF_TASKS = 18;// 100;
+	private static final int DEFAULT_NUMBER_OF_TASKS = 20;
 
 	/**
-	 * Number of mutations per task.
+	 * Default number of mutations per task.
 	 */
-	private static final int MUTATIONS_PER_TASK = 50;// 1000;
+	private static final int DEFAULT_MUTATIONS_PER_TASK = 40;
+
+	private static final String MUTATION_PER_TASK_KEY = "mutation.mutations.per.task";
+
+	private static final String MUTATION_NUMBER_OF_TASKS_KEY = "mutation.number.of.tasks";
 
 	public static void createMutationTasks() {
-		createMutationTasks(NUMBER_OF_TASKS, MUTATIONS_PER_TASK);
+		int numberOfTasks = DEFAULT_NUMBER_OF_TASKS;
+		int mutationsPerTask = DEFAULT_MUTATIONS_PER_TASK;
+		String numberOfTasksProperty = System.getProperty(MUTATION_NUMBER_OF_TASKS_KEY);
+		if(numberOfTasksProperty != null){
+			numberOfTasks = Integer.parseInt(numberOfTasksProperty);
+		}
+		String mutationsPerTaskProperty = System.getProperty(MUTATION_PER_TASK_KEY);
+		if(mutationsPerTaskProperty != null){
+			mutationsPerTask = Integer.parseInt(mutationsPerTaskProperty);
+		}
+
+		createMutationTasks(numberOfTasks, mutationsPerTask);
 	}
 
 	/**
-	 * Generates given number of mutation task, where each task hasconsists of a
-	 * given number of mutations.
+	 * Generates given number of mutation task, where each task consists of a
+	 * given number of mutations. Note: The
+	 * {@link MutationProperties.PROJECT_PREFIX} variable has to be set.
 	 *
-	 * @param numberOfTasks number of tasks that should be created
-	 * @param mutationsPerTask number of mutations per task
+	 * @param numberOfTasks
+	 *            number of tasks that should be created
+	 * @param mutationsPerTask
+	 *            number of mutations per task
 	 */
 	public static void createMutationTasks(int numberOfTasks,
 			int mutationsPerTask) {
@@ -91,29 +109,6 @@ public class MutationTaskCreator {
 	public static void main(String[] args) {
 		createMutationTasks();
 	}
-	// public fetchRandomMutations() {
-	// long startTime = System.currentTimeMillis();
-	// logger.info("Start fetching " + MAX_MUTATIONS + " mutations");
-	// refreshMutations();
-	// // mutationIDs = getFakeList();
-	// long fetchTime = System.currentTimeMillis();
-	// logger.info("Fetched " + mutationIDs.size() + " mutations in "
-	// + Formater.formatMilliseconds(fetchTime - startTime));
-	// }
 
-	// private static List<Long> getMutionIDs(int numberOfIds) {
-	// List<Long> list = new ArrayList<Long>();
-	// Random r = new Random();
-	// for (int i = 0; i < numberOfIds; i++) {
-	// if (mutationIDs.size() > 0) {
-	// int position = r.nextInt(mutationIDs.size());
-	// list.add(mutationIDs.remove(position));
-	// } else {
-	// logger.info("Not enough mutations fetched from db");
-	// break;
-	// }
-	// }
-	// return list;
-	// }
 
 }

@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.run.threaded.task.MutationTask;
 import org.softevo.mutation.runtime.RunResult;
@@ -35,12 +34,12 @@ public class ThreadPool {
 	/**
 	 * Number of parallel running threads.
 	 */
-	private static final int NUMBER_OF_THREADS = 2;
+	private static final int NUMBER_OF_THREADS = MutationProperties.NUMBER_OF_THREADS;
 
 	/**
 	 * Maximum running time for one sub process.
 	 */
-	private static final long MAX_TIME_FOR_SUB_PROCESS = 60 * 60 * 1000;
+	private static final long MAX_TIME_FOR_SUB_PROCESS = MutationProperties.MAX_TIME_FOR_SUB_PROCESS;
 
 	static {
 		File resultDir = new File(MutationProperties.RESULT_DIR);
@@ -49,22 +48,10 @@ public class ThreadPool {
 		}
 	}
 
-	// private static final String TASK_NAME = "test-no-compile";
-
 	/**
 	 * Command that is used to execute on mutation task.
 	 */
-	// private static final String SCRIPT_COMMAND =
-	// "/scratch/schuler/mutationTest/src/scripts/threaded-run-tests.sh";
-	private static final String SCRIPT_COMMAND = System
-			.getProperty(MutationProperties.SCRIPT_COMMAND_KEY);
-
-	// /**
-	// * Processes that are added to the thread pool per turn. after one turn
-	// the
-	// * ids of mutations without results are refreshed.
-	// */
-	// private static final int PROCESSES_PER_TURN = 5;
+	private static final String SCRIPT_COMMAND = MutationProperties.SCRIPT_COMMAND;
 
 	private final ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors
 			.newFixedThreadPool(NUMBER_OF_THREADS);
@@ -94,6 +81,7 @@ public class ThreadPool {
 	 * Start the processes and collect timing information.
 	 */
 	private void startTimed() {
+		printAndCheckProperties();
 		long startTime = System.currentTimeMillis();
 		runTasks();
 		long duration = System.currentTimeMillis() - startTime;
@@ -105,17 +93,53 @@ public class ThreadPool {
 		writeResults();
 	}
 
+	private void printAndCheckProperties() {
+		if (SCRIPT_COMMAND != null) {
+			logger.info("Command to start mutations " + SCRIPT_COMMAND);
+		} else {
+			String message = "Command to start mutations is not set. This can be done with the system property "
+					+ MutationProperties.SCRIPT_COMMAND_KEY;
+			logger.fatal(message);
+			throw new RuntimeException(message);
+		}
+		if (NUMBER_OF_THREADS > 0) {
+			String message = "Number of parallel threads that will be used: "
+					+ NUMBER_OF_THREADS;
+			logger.info(message);
+		} else {
+			String message = "Invalid number of threads set: "
+					+ NUMBER_OF_THREADS
+					+ " The number of thread can be set with the system property "
+					+ MutationProperties.NUMBER_OF_THREADS_KEY;
+			logger.fatal(message);
+			throw new RuntimeException(message);
+		}
+		if (MAX_TIME_FOR_SUB_PROCESS > 0) {
+			String message = "Time limit for subprocesses: "
+					+ Formater.formatMilliseconds(MAX_TIME_FOR_SUB_PROCESS);
+			logger.info(message);
+		} else {
+			String message = "Invalid time limit for subprocesses set: "
+					+ MAX_TIME_FOR_SUB_PROCESS
+					+ " The time limit can be set with the system property "
+					+ MutationProperties.MAX_TIME_FOR_SUB_PROCESS_KEY;
+			logger.fatal(message);
+			throw new RuntimeException(message);
+		}
+
+	}
+
 	private void writeResults() {
-//		logger.info("Getting" + allQueriedMutations.size() + " Mutations");
-//		List<Mutation> dbMutations = QueryManager
-//				.getMutationsFromDbByID(allQueriedMutations
-//						.toArray(new Long[0]));
+		// logger.info("Getting" + allQueriedMutations.size() + " Mutations");
+		// List<Mutation> dbMutations = QueryManager
+		// .getMutationsFromDbByID(allQueriedMutations
+		// .toArray(new Long[0]));
 		List<Long> mutationsWithResult = new ArrayList<Long>();
-//		for (Mutation m : dbMutations) {
-//			if (m.getMutationResult() != null) {
-//				mutationsWithResult.add(m.getId());
-//			}
-//		}
+		// for (Mutation m : dbMutations) {
+		// if (m.getMutationResult() != null) {
+		// mutationsWithResult.add(m.getId());
+		// }
+		// }
 		XmlIo.toXML(mutationsWithResult, new File(MutationProperties.RESULT_DIR
 				+ "/all-mutations.xml"));
 		List<Long> mutationsFromResultFiles = new ArrayList<Long>();

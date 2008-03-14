@@ -11,9 +11,9 @@ import org.softevo.mutation.results.SingleTestResult;
 
 public class KilledAnalyzer implements MutatedUnmutatedAnalyzer {
 
-	private List<Mutation> failures = new ArrayList<Mutation>();
+	private List<String> killedMutations = new ArrayList<String>();
 
-	private int passing = 0;
+	private List<String> notKilledMutations = new ArrayList<String>();
 
 	private int killed;
 
@@ -35,16 +35,30 @@ public class KilledAnalyzer implements MutatedUnmutatedAnalyzer {
 				&& mutatedErrors + mutatedFailures > unMutatedErrors
 						+ unMutatedFailures) {
 			killed++;
+			killedMutations.add(mutated.toString());
 		} else {
+			notKilledMutations.add(mutated.toString());
 			notKilled++;
 		}
 
 	}
 
 	public String getResults() {
-		return String.format("Mutations killed %d\n"
-				+ "Mutations not killed: %d\n" + "Total: %d", killed,
-				notKilled, killed + notKilled);
+		StringBuilder sb = new StringBuilder();
+		sb.append("Killed Mutations:");
+		for (String killed : killedMutations) {
+			sb.append(killed.toString());
+		}
+		sb.append("\n\nNot Killed Mutations:");
+		for (String killed : notKilledMutations) {
+			sb.append("\t" + killed.toString());
+		}
+		sb.append('\n');
+		sb.append('\n');
+		sb.append(String.format("Mutations killed: %d\n"
+				+ "Mutations not killed: %d\n" + "Total: %d", killedMutations
+				.size(), notKilledMutations.size(), killedMutations.size()
+				+ notKilledMutations.size()));
+		return sb.toString();
 	}
-
 }

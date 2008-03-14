@@ -20,16 +20,20 @@ public class CompareWithUnmutated {
 
 	private static Logger logger = Logger.getLogger(CompareWithUnmutated.class);
 
-
-
 	public static void main(String[] args) {
-
-		MutatedUnmutatedAnalyzer[] allAnalyzers = new MutatedUnmutatedAnalyzer[] {
-				new TestsAnalyzer(), new KilledAnalyzer(), new KilledForClassAnalyzer(),
-				new UnMutatedTestAnalyzer() };
-
-//		checkResults(allAnalyzers);
-		checkResults(new MutatedUnmutatedAnalyzer[]{new ShowCheckErrorsAnalyzer()});
+		MutatedUnmutatedAnalyzer[] analyzers = new MutatedUnmutatedAnalyzer[] { new KilledAnalyzer() };
+		if (args.length >= 1) {
+			if (args[0].equals("all")) {
+				MutatedUnmutatedAnalyzer[] allAnalyzers = new MutatedUnmutatedAnalyzer[] {
+						new TestsAnalyzer(), new KilledAnalyzer(),
+						new KilledForClassAnalyzer(),
+						new UnMutatedTestAnalyzer() };
+				analyzers = allAnalyzers;
+			} else if (args[0].equals("check")) {
+				analyzers = new MutatedUnmutatedAnalyzer[] { new ShowCheckErrorsAnalyzer() };
+			}
+		}
+		checkResults(analyzers);
 	}
 
 	public static void checkResults(MutatedUnmutatedAnalyzer[] analyzers) {
@@ -52,7 +56,9 @@ public class CompareWithUnmutated {
 	}
 
 	private static List doQuery(Session session, String prefix) {
-		String queryString = "SELECT {m1.*}, {m2.*} FROM Mutation m1 INNER JOIN Mutation m2 ON m1.lineNumber = m2.lineNumber AND m1.className = m2.className WHERE m1.className LIKE '" +prefix +"%' AND m1.mutationType != 0 AND m2.mutationType = 0 AND m1.mutationResult_id IS NOT NULL AND m2.mutationResult_id IS NOT NULL";
+		String queryString = "SELECT {m1.*}, {m2.*} FROM Mutation m1 INNER JOIN Mutation m2 ON m1.lineNumber = m2.lineNumber AND m1.className = m2.className WHERE m1.className LIKE '"
+				+ prefix
+				+ "%' AND m1.mutationType != 0 AND m2.mutationType = 0 AND m1.mutationResult_id IS NOT NULL AND m2.mutationResult_id IS NOT NULL";
 		SQLQuery query = session.createSQLQuery(queryString);
 		query.addEntity("m1", Mutation.class);
 		query.addEntity("m2", Mutation.class);

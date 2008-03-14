@@ -6,13 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.AdviceAdapter;
 import org.softevo.mutation.objectInspector.VariableInfo;
 import org.softevo.mutation.properties.MutationProperties;
-
-import static org.objectweb.asm.Opcodes.*;
 
 public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 
