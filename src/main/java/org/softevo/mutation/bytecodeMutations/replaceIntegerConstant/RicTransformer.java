@@ -10,7 +10,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
-import org.softevo.bytecodetransformer.processFiles.BytecodeTransformer;
+import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class RicTransformer extends BytecodeTransformer {
 

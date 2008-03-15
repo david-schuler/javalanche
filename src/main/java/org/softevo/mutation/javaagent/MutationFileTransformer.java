@@ -102,49 +102,56 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
-		String classNameWithDots = className.replace('/', '.');
-		// logger.info(className + " is passed to transformer");
-		if (isSystemExitClass(classNameWithDots)) {
-			logger.info("Trying to remove calls to system exit from class"
-					+ classNameWithDots);
-			classfileBuffer = systemExitTransformer
-					.transformBytecode(classfileBuffer);
-		}
-
-		if (classNameWithDots.endsWith("AllTests")
-				|| compareWithSuiteProperty(classNameWithDots)) {
-			logger.info("Trying to integrate SelectiveTestSuite");
-			IntegrateSuiteTransformer integrateSuiteTransformer = new IntegrateSuiteTransformer();
-			classfileBuffer = integrateSuiteTransformer
-					.transformBytecode(classfileBuffer);
-		}
-
-		if (isObservedTestCase(classNameWithDots)) {
-			try {
-				logger.info("Trying to transform test class "
+		try {
+			String classNameWithDots = className.replace('/', '.');
+			// logger.info(className + " is passed to transformer");
+			if (isSystemExitClass(classNameWithDots)) {
+				logger.info("Trying to remove calls to system exit from class"
 						+ classNameWithDots);
-				ObjectInspectorTransformer objectInspectorTransformer = new ObjectInspectorTransformer();
-				classfileBuffer = objectInspectorTransformer
+				classfileBuffer = systemExitTransformer
 						.transformBytecode(classfileBuffer);
-			} catch (Exception e) {
-				logger.warn("Exception Thrown" + e);
-				e.printStackTrace();
 			}
-			logger.info("Test class transformed " + classNameWithDots);
-		}
 
-		if (mutationDecision.shouldBeHandled(classNameWithDots)) {
-			logger.info("Transforming: " + classNameWithDots);
-			byte[] transformedBytecode = null;
-			try {
-				transformedBytecode = mutationTransformer
+			if (classNameWithDots.endsWith("AllTests")
+					|| compareWithSuiteProperty(classNameWithDots)) {
+				logger.info("Trying to integrate SelectiveTestSuite");
+				IntegrateSuiteTransformer integrateSuiteTransformer = new IntegrateSuiteTransformer();
+				classfileBuffer = integrateSuiteTransformer
 						.transformBytecode(classfileBuffer);
-			} catch (Exception e) {
-				logger.info("Exception thrown: " + e);
-				e.printStackTrace();
 			}
-			logger.info("Class transformed: " + classNameWithDots);
-			return transformedBytecode;
+
+			if (isObservedTestCase(classNameWithDots)) {
+				try {
+					logger.info("Trying to transform test class "
+							+ classNameWithDots);
+					ObjectInspectorTransformer objectInspectorTransformer = new ObjectInspectorTransformer();
+					classfileBuffer = objectInspectorTransformer
+							.transformBytecode(classfileBuffer);
+				} catch (Exception e) {
+					logger.warn("Exception Thrown" + e);
+					e.printStackTrace();
+				}
+				logger.info("Test class transformed " + classNameWithDots);
+			}
+
+			if (mutationDecision.shouldBeHandled(classNameWithDots)) {
+				logger.info("Transforming: " + classNameWithDots);
+				byte[] transformedBytecode = null;
+				try {
+					transformedBytecode = mutationTransformer
+							.transformBytecode(classfileBuffer);
+				} catch (Exception e) {
+					logger.info("Exception thrown: " + e);
+					e.printStackTrace();
+				}
+				logger.info("Class transformed: " + classNameWithDots);
+				return transformedBytecode;
+			}
+		} catch (Exception e) {
+			logger.fatal(e.getMessage());
+			e.printStackTrace();
+			System.exit(0);
+//			throw new RuntimeException(e.getMessage());
 		}
 		return classfileBuffer;
 	}
@@ -171,10 +178,10 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	}
 
 	private boolean compareWithSuiteProperty(String classNameWithDots) {
+		boolean returnValue = false;
 		String testSuiteName = System
 				.getProperty(MutationProperties.TEST_SUITE_KEY);
-		boolean returnValue = false;
-		if (classNameWithDots.contains(testSuiteName)) {
+		if (testSuiteName != null && classNameWithDots.contains(testSuiteName)) {
 			returnValue = true;
 		}
 		return returnValue;

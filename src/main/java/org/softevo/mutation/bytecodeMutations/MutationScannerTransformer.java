@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
-import org.softevo.bytecodetransformer.processFiles.BytecodeTransformer;
+import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 
 public class MutationScannerTransformer extends BytecodeTransformer {
@@ -22,7 +22,6 @@ public class MutationScannerTransformer extends BytecodeTransformer {
 	@Override
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
 		ClassVisitor cc = new CheckClassAdapter(cw);
-		//new TraceClassVisitor(cc, new PrintWriter(System.out))
 		return new MutationsCollectorClassAdapter(cc, mpc);
 	}
 }

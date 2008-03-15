@@ -6,7 +6,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckClassAdapter;
-import org.softevo.bytecodetransformer.processFiles.BytecodeTransformer;
+import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class RemoveSystemExitTransformer extends BytecodeTransformer {
 

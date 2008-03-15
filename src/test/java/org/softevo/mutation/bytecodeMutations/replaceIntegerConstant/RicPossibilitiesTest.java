@@ -5,12 +5,13 @@ import java.io.File;
 import org.junit.Test;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
-import org.softevo.bytecodetransformer.processFiles.BytecodeTransformer;
-import org.softevo.bytecodetransformer.processFiles.FileTransformer;
+import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
+import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
+
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.PossibilitiesRicClassAdapter;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicCollectorTransformer;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
-import org.softevo.mutation.properties.MutationProperties;
+import org.softevo.mutation.properties.TestProperties;
 
 
 
@@ -18,14 +19,14 @@ public class RicPossibilitiesTest {
 
 	@Test
 	public void testForOneClass(){
-		FileTransformer ft = new FileTransformer(new File(MutationProperties.SAMPLE_FILE));
+		FileTransformer ft = new FileTransformer(new File(TestProperties.SAMPLE_FILE));
 		ft.process(new RICTransformer());
 	}
 
 
 	@Test
 	public void testForOneClass2(){
-		FileTransformer ft = new FileTransformer(new File(MutationProperties.SAMPLE_FILE));
+		FileTransformer ft = new FileTransformer(new File(TestProperties.SAMPLE_FILE));
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 		ft.process(new RicCollectorTransformer(mpc));
 	}

@@ -1,26 +1,33 @@
 package org.softevo.mutation.bytecodeMutations.arithmetic;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.softevo.bytecodetransformer.processFiles.FileTransformer;
-import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
-import org.softevo.mutation.bytecodeMutations.arithmetic.testclasses.Arithmetic;
+import org.objectweb.asm.ClassReader;
+import org.softevo.mutation.debug.MissedMutationTest;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
-import org.softevo.mutation.properties.MutationProperties;
+import org.softevo.mutation.properties.TestProperties;
+
+import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class ArtihmeticPossibilitiesTest {
 
 	@Test
 	public void testNegateJumps() {
-		FileTransformer ft = new FileTransformer(new File(
-				MutationProperties.SAMPLE_FILE));
+		InputStream is = MissedMutationTest.class.getClassLoader()
+				.getResourceAsStream(TestProperties.ADVICE_CLAZZ);
+		System.out.println(is);
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
-		ft.process(new ArithmeticReplaceCollectorTransformer(mpc));
+		BytecodeTransformer bt = new ArithmeticReplaceCollectorTransformer(mpc);
+		try {
+			bt.transformBytecode(new ClassReader(is));
+		} catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail(e.getMessage());
+		}
 		Assert.assertTrue(mpc.size() > 10);
-		ByteCodeTestUtils.addMutations(Arithmetic.class.getName());
 	}
-
 }

@@ -5,16 +5,16 @@ import java.io.File;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.softevo.bytecodetransformer.processFiles.FileTransformer;
+import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
-import org.softevo.mutation.properties.MutationProperties;
+import org.softevo.mutation.properties.TestProperties;
 
 public class NegateJumpsPossibilitiesTest {
 
 	@Test
 	public void testNegateJumps() {
 		FileTransformer ft = new FileTransformer(new File(
-				MutationProperties.SAMPLE_FILE));
+				TestProperties.SAMPLE_FILE));
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 		ft.process(new NegateJumpsCollectorTransformer(mpc));
 		Assert.assertTrue(mpc.size() > 40);

@@ -1,6 +1,6 @@
 package org.softevo.mutation.bytecodeMutations;
 
-import org.softevo.bytecodetransformer.processFiles.BytecodeTransformer;
+import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 
 public abstract class CollectorByteCodeTransformer extends BytecodeTransformer {

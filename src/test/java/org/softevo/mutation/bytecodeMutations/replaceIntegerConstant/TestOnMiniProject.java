@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstantsTest;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.HibernateUtil;
@@ -24,8 +23,12 @@ import org.softevo.mutation.runtime.SelectiveTestSuite;
 public class TestOnMiniProject {
 
 	static {
-		ByteCodeTestUtils.redefineMutations("org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants");
-//		MutationManager.setApplyAllMutation(true);
+		String classname = "org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants";
+		ByteCodeTestUtils.deleteMutations(classname);
+		ByteCodeTestUtils.generateTestDataInDB(System.getProperty("user.dir")
+				+ "/target/test-classes/" + classname.replace('.', '/')
+				+ ".class", new RicCollectorTransformer(null));
+
 	}
 
 	private static final Class TEST_CLASS = IntegerConstants.class;
@@ -48,7 +51,6 @@ public class TestOnMiniProject {
 		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
 		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
 				linenumbers);
-		MutationPossibilityCollector.generateTestDataInDB(TEST_CLASS_FILENAME);
 	}
 
 	@After

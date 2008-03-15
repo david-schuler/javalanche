@@ -10,13 +10,16 @@ import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.softevo.mutation.hibernate.HibernateTest;
-import org.softevo.mutation.properties.MutationProperties;
+import org.softevo.mutation.properties.TestProperties;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.runtime.MutationTestListener;
+import org.softevo.mutation.testutil.TestUtil;
 
 public class QueryManagerTestClass {
 
@@ -28,6 +31,12 @@ public class QueryManagerTestClass {
 
 	private static Mutation testMutation = new Mutation(className,
 			testLineNumber, 0, testMutationType);
+
+	@BeforeClass
+	public static void setUpClass(){
+		TestUtil.getMutationsForClazzOnClasspath(TestProperties.ADVICE_CLAZZ);
+	}
+
 
 	@Before
 	public void setUp() {
@@ -84,10 +93,11 @@ public class QueryManagerTestClass {
 		QueryManager.getTestCases(className, lineNumber);
 	}
 
+	@Ignore("TODO Generate Coverage data for artificial coverage data instead of using aspectj data")
 	@Test
 	public void testGetTestCases() {
 		List<Mutation> mutationList = QueryManager
-				.getAllMutationsForClass(MutationProperties.SAMPLE_FILE_CLASS_NAME);
+				.getAllMutationsForClass(TestProperties.SAMPLE_FILE_CLASS_NAME);
 		int totalTests = 0;
 		for (Mutation mutation : mutationList) {
 			String[] testcases = QueryManager.getTestCases(mutation);
@@ -110,15 +120,16 @@ public class QueryManagerTestClass {
 	@Test
 	public void testhasMutationForClass() {
 		boolean hasClass = QueryManager
-				.hasMutationsforClass(MutationProperties.SAMPLE_FILE_CLASS_NAME);
+				.hasMutationsforClass(TestProperties.SAMPLE_FILE_CLASS_NAME);
 		Assert.assertTrue(String.format("Expected class %s in db",
-				MutationProperties.SAMPLE_FILE_CLASS_NAME), hasClass);
+				TestProperties.SAMPLE_FILE_CLASS_NAME), hasClass);
 	}
 
+	@Ignore("TODO Generate Coverage data for artificial coverage data instead of using aspectj data")
 	@Test
 	public void testIsCoveredMutation() {
 		List<Mutation> mutationList = QueryManager
-				.getAllMutationsForClass(MutationProperties.SAMPLE_FILE_CLASS_NAME);
+				.getAllMutationsForClass(TestProperties.SAMPLE_FILE_CLASS_NAME);
 		int coverCount = 0;
 		for (Mutation mutation : mutationList) {
 			if (QueryManager.isCoveredMutation(mutation)) {

@@ -10,7 +10,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Assert;
-import org.softevo.bytecodetransformer.processFiles.FileTransformer;
+import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
 import org.softevo.mutation.coverageResults.db.TestCoverageClassResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
@@ -186,7 +186,7 @@ public class ByteCodeTestUtils {
 		tx.commit();
 		session.close();
 		Assert.assertTrue("Expected failing tests because of mutations",
-				nonNulls >= mList.size()/2);
+				nonNulls >= mList.size() / 2);
 	}
 
 	@SuppressWarnings("unchecked")

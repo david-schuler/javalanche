@@ -38,11 +38,6 @@ public class MutationProperties {
 
 	public static final String ASPECTJ_DIR = "/scratch/schuler/aspectJ/";
 
-	public static final String SAMPLE_FILE_CLASS_NAME = "org.aspectj.weaver.Advice";
-
-	public static final String SAMPLE_FILE = ASPECTJ_DIR + "/weaver/bin/"
-			+ SAMPLE_FILE_CLASS_NAME.replace('.', '/') + ".class";
-
 	public static final String CLOVER_REPORT_DIR = OUTPUT_DIR + "clover_html/";
 
 	public static final String MUTATIONS_TO_APPLY_FILE = OUTPUT_DIR

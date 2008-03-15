@@ -11,7 +11,7 @@ public class SysExit {
 		System.exit(0);
 		return i;
 	}
-
+	
 	public void method2() {
 		int a = 4 + 4;
 		if (a != Integer.MAX_VALUE) {

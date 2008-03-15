@@ -67,14 +67,14 @@ public class HibernateTest {
 		session.close();
 	}
 
-	@Test
+	@Test(timeout=5000)
 	public void hibernateQueryByType() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session.createQuery("from Mutation where mutationtype="
 				+ testMutaion.getMutationType().ordinal());
-		List results = query.list();
 		query.setMaxResults(100);
+		List results = query.list();
 		for (Object o : results) {
 			if (o instanceof Mutation) {
 			} else {

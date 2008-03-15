@@ -1,10 +1,18 @@
 package org.softevo.mutation.bytecodeMutations.sysexit.testclasses;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 import junit.framework.TestCase;
 
 public class SysExitTest extends TestCase {
 
-	public void testMethod1() {
+	@Test
+	public void testDoNothing(){}
+
+	@Ignore("Not to execute during normal tests")
+	@Test
+	public void tmethod1() {
 		SysExit sExit = new SysExit();
 		try {
 			sExit.method1();

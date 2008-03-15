@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.softevo.bytecodetransformer.processFiles.FileTransformer;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicCollectorTransformer;
-import org.softevo.mutation.properties.MutationProperties;
+import org.softevo.mutation.properties.TestProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;
+
+import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
 
 public class MutationPossibilityCollector {
 
@@ -33,10 +34,7 @@ public class MutationPossibilityCollector {
 	}
 
 	public void toDB() {
-		for (Mutation mutation : possibilities) {
-			QueryManager.saveMutation(mutation);
-		}
-
+		QueryManager.saveMutations(possibilities);
 	}
 
 	public static void generateUnmutated() {
@@ -60,7 +58,7 @@ public class MutationPossibilityCollector {
 	}
 
 	public static void main(String[] args) {
-		generateTestDataInDB(MutationProperties.SAMPLE_FILE);
+		generateTestDataInDB(TestProperties.SAMPLE_FILE);
 		generateUnmutated();
 	}
 

@@ -13,19 +13,24 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
+import org.softevo.mutation.bytecodeMutations.arithmetic.ArithmeticReplaceCollectorTransformer;
 import org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.Jumps;
 import org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.JumpsTest;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.runtime.SelectiveTestSuite;
 
 public class NegateJumpsTest {
 
 	static {
-//		MutationManager.setApplyAllMutation(true);
-		ByteCodeTestUtils.redefineMutations("org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.Jumps");
+		String classname = "org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.Jumps";
+		ByteCodeTestUtils.deleteMutations(classname);
+		ByteCodeTestUtils.generateTestDataInDB(System.getProperty("user.dir")
+				+ "/target/test-classes/" + classname.replace('.', '/')
+				+ ".class", new NegateJumpsCollectorTransformer(null));
 	}
 
 	private static final Class TEST_CLASS = Jumps.class;
@@ -44,22 +49,20 @@ public class NegateJumpsTest {
 
 	@Before
 	public void setup() {
-		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
-		ByteCodeTestUtils.generateTestDataInDB(TEST_CLASS_FILENAME,
-				new NegateJumpsCollectorTransformer(null));
 		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
 				linenumbers);
 	}
 
 	@After
 	public void tearDown() {
-		 ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
+		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
 		ByteCodeTestUtils.deleteCoverageData(TEST_CLASS_NAME);
 	}
 
 	@Test
 	public void runTests() {
-		System.setProperty(MutationProperties.RESULT_FILE_KEY, "target/unittestResults.xml");
+		System.setProperty(MutationProperties.RESULT_FILE_KEY,
+				"target/unittestResults.xml");
 		ByteCodeTestUtils.redefineMutations(TEST_CLASS_NAME);
 		SelectiveTestSuite selectiveTestSuite = new SelectiveTestSuite();
 		TestSuite suite = new TestSuite(JumpsTest.class);
@@ -83,7 +86,7 @@ public class NegateJumpsTest {
 		for (Mutation m : mList) {
 			System.out.println(m);
 			SingleTestResult singleTestResult = m.getMutationResult();
-			if (singleTestResult != null) {
+			if (singleTestResult != null && m.getMutationType() != MutationType.NO_MUTATION) {
 				nonNulls++;
 				Assert.assertTrue(2 >= singleTestResult.getNumberOfErrors()
 						+ singleTestResult.getNumberOfFailures());

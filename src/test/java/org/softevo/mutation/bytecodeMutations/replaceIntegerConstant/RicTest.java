@@ -7,7 +7,7 @@ import java.io.IOException;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicTransformer;
-import org.softevo.mutation.properties.MutationProperties;
+import org.softevo.mutation.properties.TestProperties;
 
 public class RicTest {
 
@@ -24,14 +24,14 @@ public class RicTest {
 		ClassReader classReader = null;
 		try {
 			classReader = new ClassReader(new BufferedInputStream(
-					new FileInputStream(MutationProperties.SAMPLE_FILE)));
+					new FileInputStream(TestProperties.SAMPLE_FILE)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		RicTransformer ricTransformer = new RicTransformer();
 		byte[] bytes = ricTransformer.transformBytecode(classReader);
 		HelperLoader helperLoader = new HelperLoader();
-		helperLoader.define(MutationProperties.SAMPLE_FILE_CLASS_NAME, bytes);
+		helperLoader.define(TestProperties.SAMPLE_FILE_CLASS_NAME, bytes);
 	}
 
 }

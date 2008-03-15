@@ -14,15 +14,19 @@ import org.softevo.mutation.runtime.SelectiveTestSuite;
 public class ArithmeticReplaceTest {
 
 	static {
-
-		ByteCodeTestUtils.redefineMutations("org.softevo.mutation.bytecodeMutations.arithmetic.testclasses.Arithmetic");
-//		MutationManager.setApplyAllMutation(true);
+		String classname = "org.softevo.mutation.bytecodeMutations.arithmetic.testclasses.Arithmetic";
+		ByteCodeTestUtils.deleteMutations(classname);
+		ByteCodeTestUtils.generateTestDataInDB(System.getProperty("user.dir")
+		 + "/target/test-classes/"  + classname.replace('.', '/') + ".class",
+				new ArithmeticReplaceCollectorTransformer(null));
 	}
 
 	private static final Class TEST_CLASS = Arithmetic.class;
 
-
 	private static final String TEST_CLASS_NAME = TEST_CLASS.getName();
+
+	// private static final String TEST_CLASS_NAME =
+	// "org.softevo.mutation.bytecodeMutations.arithmetic.testclasses.Arithmetic";
 
 	private static final String UNITTEST_CLASS_TYPE = ArithmeticTest.class
 			.getName();
@@ -40,10 +44,6 @@ public class ArithmeticReplaceTest {
 		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
 				linenumbers);
 		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
-		ByteCodeTestUtils.generateTestDataInDB(TEST_CLASS_FILENAME,
-				new ArithmeticReplaceCollectorTransformer(null));
-
-//		ByteCodeTestUtils.addMutations(TEST_CLASS.getName());
 	}
 
 	@After
