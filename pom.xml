@@ -137,7 +137,7 @@
 			<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>process-resources</phase>
+						<phase>process-classes</phase>
 						<configuration>
 							<tasks>
 								<ant antfile="${basedir}/mavenAnt.xml" inheritRefs="true">
