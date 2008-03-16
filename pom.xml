@@ -41,9 +41,17 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-				  	<forkMode>pertest</forkMode>
+				  	<!--<forkMode>pertest</forkMode>-->
                     <argLine>-javaagent:${user.home}/workspace2/mutationTest/target/javaagent.jar</argLine>
                     <useSystemClassLoader>true</useSystemClassLoader>
+					   <excludes>
+						<exclude>**/TestProperties.java</exclude>
+						<exclude>**/TestUtil.java</exclude>
+						<exclude>**/TestJtopasClass.java</exclude>
+						<exclude>**/TestLangUtil.java</exclude>
+						<exclude>**/TestLangUtil$TestClassLoader*</exclude>
+						<exclude>**/TestJtopasClass$TestingClassLoader*</exclude>
+					  </excludes>
                 </configuration>
             </plugin>
 			
@@ -125,6 +133,24 @@
 					</descriptors>
 				</configuration>
 			</plugin>
+			<plugin>
+			<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<configuration>
+							<tasks>
+								<ant antfile="${basedir}/mavenAnt.xml" inheritRefs="true">
+									<target name="createJavaagent" />
+								</ant>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			
 			<!--<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -201,8 +227,16 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.1</version>
+<!--			<scope>test</scope> -->
+		</dependency>
+		
+<!--		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.1</version>
 			<scope>test</scope>
 		</dependency>
+	-->	
 		
 		<dependency>
 			<groupId>asm</groupId>
@@ -268,12 +302,6 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>org.softevo</groupId>
-			<artifactId>staticTransformer</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		
-		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>nightly</version>
@@ -284,6 +312,7 @@
 			<artifactId>prefuse</artifactId>
 			<version>beta-20060220</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>de.unisb</groupId>
 			<artifactId>bytecodeTransformer</artifactId>
