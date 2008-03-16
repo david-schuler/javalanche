@@ -3,7 +3,6 @@ package org.softevo.mutation.testutil;
 import java.io.IOException;
 import java.io.InputStream;
 
-import junit.framework.Assert;
 
 import org.objectweb.asm.ClassReader;
 import org.softevo.mutation.bytecodeMutations.MutationScannerTransformer;

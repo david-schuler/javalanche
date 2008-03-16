@@ -10,9 +10,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Assert;
-import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
-
-import org.softevo.mutation.bytecodeMutations.negateJumps.NegateJumpsCollectorTransformer;
 import org.softevo.mutation.coverageResults.db.TestCoverageClassResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
@@ -24,6 +21,8 @@ import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
+
+import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
 
 /**
  *

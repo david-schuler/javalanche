@@ -1,22 +1,27 @@
 package org.softevo.mutation;
 
-import java.io.File;
-import java.io.IOException;
+import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.objectweb.asm.ClassReader;
 import org.softevo.mutation.bytecodeMutations.MutationScannerTransformer;
 import org.softevo.mutation.bytecodeMutations.MutationTransformer;
-import org.softevo.mutation.io.Io;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
+import org.softevo.mutation.properties.TestProperties;
 import org.softevo.mutation.results.persistence.MutationManager;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
-import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
 
 public class TestLangUtil {
 
-	private String CLASS_LOCATION = "/scratch/schuler/aspectj/util/bin/org/aspectj/util/LangUtil.class";
+	private static Logger logger = Logger.getLogger(TestLangUtil.class);
+
+	private static final String LANG_UTIL = "keyForLangUtil";
 
 	private static class TestClassLoader extends ClassLoader {
 
@@ -28,8 +33,8 @@ public class TestLangUtil {
 
 		@Override
 		public Class<?> loadClass(String name) throws ClassNotFoundException {
-			if (name.equals("TEST")) {
-				return defineClass("org.aspectj.util.LangUtil", transformed, 0,
+			if (name.equals(LANG_UTIL)) {
+				return defineClass(TestProperties.LANG_UTIL_CLASS_NAME, transformed, 0,
 						transformed.length);
 			}
 			return super.loadClass(name);
@@ -39,26 +44,28 @@ public class TestLangUtil {
 	@Ignore("AspectJ has to be on the classpath")
 	@Test
 	public void testLangUtil() {
-		System.out.println("Test Started");
-		FileTransformer ft = new FileTransformer(new File(CLASS_LOCATION));
-		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
-		ft.process(new MutationScannerTransformer(mpc));
-		mpc.toDB();
-		MutationManager.setApplyAllMutation(true);
-		System.out.println("Mutations Addded");
-		BytecodeTransformer bct = new MutationTransformer();
-		byte[] bytes = null;
 		try {
-			bytes = Io.getBytesFromFile(new File(CLASS_LOCATION));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		byte[] transformed = bct.transformBytecode(bytes);
-		TestClassLoader tcl = new TestClassLoader(transformed);
-		try {
-			tcl.loadClass("TEST");
+			System.out.println("Test Started");
+			MutationPossibilityCollector mpc = new MutationPossibilityCollector();
+			BytecodeTransformer bt = new MutationScannerTransformer(mpc);
+			InputStream is = TestLangUtil.class
+					.getResourceAsStream(TestProperties.LANG_UTIL_CLAZZ);
+			bt.transformBytecode(new ClassReader(is));
+			mpc.toDB();
+			MutationManager.setApplyAllMutation(true);
+			logger.info("Mutations added");
+			BytecodeTransformer bct = new MutationTransformer();
+			InputStream is2 = TestLangUtil.class
+					.getResourceAsStream(TestProperties.LANG_UTIL_CLAZZ);
+			byte[] transformed;
+			transformed = bct.transformBytecode(new ClassReader(is2));
+			TestClassLoader tcl = new TestClassLoader(transformed);
+			tcl.loadClass(LANG_UTIL);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			fail(e1.getMessage());
 		}
 		MutationManager.setApplyAllMutation(false);
 	}

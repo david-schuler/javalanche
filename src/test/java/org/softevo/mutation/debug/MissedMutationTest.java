@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.softevo.mutation.bytecodeMutations.MutationScannerTransformer;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
+import org.softevo.mutation.properties.TestProperties;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
@@ -18,7 +19,7 @@ public class MissedMutationTest {
 	@Test
 	public void testLangUtil() {
 		InputStream is = MissedMutationTest.class.getClassLoader()
-				.getResourceAsStream("LangUtil.clazz");
+				.getResourceAsStream(TestProperties.LANG_UTIL_CLAZZ);
 		try {
 			MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 			BytecodeTransformer bt = new MutationScannerTransformer(mpc);

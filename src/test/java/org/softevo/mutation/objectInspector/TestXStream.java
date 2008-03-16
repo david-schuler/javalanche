@@ -17,11 +17,11 @@ public class TestXStream {
 		XStream xstream = new XStream();
 		String xml = xstream.toXML(l);
 		System.out.println(xml);
-		File f = new File("test.xml");
+		File f = new File("test-x-stream-testfile.xml");
+		f.deleteOnExit();
 		XmlIo.toXML(l, "name");
 		Object l2 = XmlIo.fromXml(f);
 		System.out.println(l.equals(l2));
 		l2.getClass();
-
 	}
 }

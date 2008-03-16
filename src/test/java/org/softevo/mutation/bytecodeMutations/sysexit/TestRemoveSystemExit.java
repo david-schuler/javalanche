@@ -8,10 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
 import org.softevo.mutation.bytecodeMutations.negateJumps.NegateJumpsCollectorTransformer;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstantsTest;
 import org.softevo.mutation.bytecodeMutations.sysexit.testclasses.SysExit;
 import org.softevo.mutation.bytecodeMutations.sysexit.testclasses.SysExitTest;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.runtime.SelectiveTestSuite;
 
 public class TestRemoveSystemExit {
