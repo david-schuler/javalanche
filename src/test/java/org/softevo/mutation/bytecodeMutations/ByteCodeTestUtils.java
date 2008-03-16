@@ -11,6 +11,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Assert;
 import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
+
+import org.softevo.mutation.bytecodeMutations.negateJumps.NegateJumpsCollectorTransformer;
 import org.softevo.mutation.coverageResults.db.TestCoverageClassResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
@@ -218,5 +220,13 @@ public class ByteCodeTestUtils {
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 		ft.process(new MutationScannerTransformer(mpc));
 		mpc.toDB();
+	}
+
+	public static void doSetup(String classname, CollectorByteCodeTransformer collector) {
+		deleteMutations(classname);
+		generateTestDataInDB(System.getProperty("user.dir")
+				+ "/target/classes/" + classname.replace('.', '/')
+				+ ".class", collector);
+		redefineMutations(classname);
 	}
 }

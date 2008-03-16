@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
+	package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;

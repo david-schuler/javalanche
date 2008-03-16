@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicCollectorTransformer;
-import org.softevo.mutation.properties.TestProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;
@@ -57,10 +56,6 @@ public class MutationPossibilityCollector {
 		mpc.toDB();
 	}
 
-	public static void main(String[] args) {
-		generateTestDataInDB(TestProperties.SAMPLE_FILE);
-		generateUnmutated();
-	}
 
 	/**
 	 * Returns the number of collected mutation possibilities.

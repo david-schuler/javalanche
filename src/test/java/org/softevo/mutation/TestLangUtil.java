@@ -3,6 +3,8 @@ package org.softevo.mutation;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.Ignore;
+import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.MutationScannerTransformer;
 import org.softevo.mutation.bytecodeMutations.MutationTransformer;
 import org.softevo.mutation.io.Io;
@@ -34,13 +36,14 @@ public class TestLangUtil {
 		}
 	}
 
-//	@Test
+	@Ignore("AspectJ has to be on the classpath")
+	@Test
 	public void testLangUtil() {
 		System.out.println("Test Started");
 		FileTransformer ft = new FileTransformer(new File(CLASS_LOCATION));
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 		ft.process(new MutationScannerTransformer(mpc));
-//		mpc.toDB();
+		mpc.toDB();
 		MutationManager.setApplyAllMutation(true);
 		System.out.println("Mutations Addded");
 		BytecodeTransformer bct = new MutationTransformer();

@@ -20,15 +20,11 @@ import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.runtime.SelectiveTestSuite;
 
-public class TestOnMiniProject {
+public class ReplaceIntegerTest {
 
 	static {
 		String classname = "org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants";
-		ByteCodeTestUtils.deleteMutations(classname);
-		ByteCodeTestUtils.generateTestDataInDB(System.getProperty("user.dir")
-				+ "/target/test-classes/" + classname.replace('.', '/')
-				+ ".class", new RicCollectorTransformer(null));
-
+		ByteCodeTestUtils.doSetup(classname,new RicCollectorTransformer(null));
 	}
 
 	private static final Class TEST_CLASS = IntegerConstants.class;
@@ -48,7 +44,7 @@ public class TestOnMiniProject {
 
 	@Before
 	public void setup() {
-		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
+//		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
 		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
 				linenumbers);
 	}
@@ -61,7 +57,6 @@ public class TestOnMiniProject {
 
 	@Test
 	public void runTests() {
-		ByteCodeTestUtils.redefineMutations(TEST_CLASS_NAME);
 		SelectiveTestSuite selectiveTestSuite = new SelectiveTestSuite();
 		TestSuite suite = new TestSuite(IntegerConstantsTest.class);
 		selectiveTestSuite.addTest(suite);
@@ -90,7 +85,7 @@ public class TestOnMiniProject {
 			SingleTestResult singleTestResult = m.getMutationResult();
 			if (singleTestResult != null) {
 				nonNulls++;
-				if (m.getLineNumber() != 16 && m.getLineNumber() != 18) {
+				if (m.getMutationType() != Mutation.MutationType.NO_MUTATION && m.getLineNumber() != 16 && m.getLineNumber() != 18) {
 					Assert.assertEquals("Mutation: " + m, 1, singleTestResult
 							.getNumberOfErrors()
 							+ singleTestResult.getNumberOfFailures());

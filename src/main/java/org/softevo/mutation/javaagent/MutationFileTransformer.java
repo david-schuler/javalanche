@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
 import org.softevo.mutation.bytecodeMutations.MutationTransformer;
 import org.softevo.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import org.softevo.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
@@ -84,7 +83,6 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			if (classNameWithDots.contains(testName)
 					&& !classNameWithDots.endsWith("Test")) {
 				// Hack for unittesting
-				ByteCodeTestUtils.redefineMutations(classNameWithDots);
 				return true;
 			}
 			return false;

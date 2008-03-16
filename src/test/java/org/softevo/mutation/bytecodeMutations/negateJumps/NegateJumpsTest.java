@@ -13,7 +13,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
-import org.softevo.mutation.bytecodeMutations.arithmetic.ArithmeticReplaceCollectorTransformer;
 import org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.Jumps;
 import org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.JumpsTest;
 import org.softevo.mutation.properties.MutationProperties;
@@ -27,10 +26,9 @@ public class NegateJumpsTest {
 
 	static {
 		String classname = "org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.Jumps";
-		ByteCodeTestUtils.deleteMutations(classname);
-		ByteCodeTestUtils.generateTestDataInDB(System.getProperty("user.dir")
-				+ "/target/test-classes/" + classname.replace('.', '/')
-				+ ".class", new NegateJumpsCollectorTransformer(null));
+		ByteCodeTestUtils.doSetup(classname,
+				new NegateJumpsCollectorTransformer(null));
+
 	}
 
 	private static final Class TEST_CLASS = Jumps.class;
@@ -86,7 +84,8 @@ public class NegateJumpsTest {
 		for (Mutation m : mList) {
 			System.out.println(m);
 			SingleTestResult singleTestResult = m.getMutationResult();
-			if (singleTestResult != null && m.getMutationType() != MutationType.NO_MUTATION) {
+			if (singleTestResult != null
+					&& m.getMutationType() != MutationType.NO_MUTATION) {
 				nonNulls++;
 				Assert.assertTrue(2 >= singleTestResult.getNumberOfErrors()
 						+ singleTestResult.getNumberOfFailures());

@@ -7,6 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
+import org.softevo.mutation.bytecodeMutations.negateJumps.NegateJumpsCollectorTransformer;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstantsTest;
 import org.softevo.mutation.bytecodeMutations.sysexit.testclasses.SysExit;
 import org.softevo.mutation.bytecodeMutations.sysexit.testclasses.SysExitTest;
@@ -15,10 +16,15 @@ import org.softevo.mutation.runtime.SelectiveTestSuite;
 
 public class TestRemoveSystemExit {
 
+
 	static {
-		ByteCodeTestUtils.redefineMutations("org.softevo.mutation.bytecodeMutations.sysexit.testclasses.SysExit");
-//		MutationManager.setApplyAllMutation(true);
+		String classname = "org.softevo.mutation.bytecodeMutations.sysexit.testclasses.SysExit";
+		ByteCodeTestUtils.deleteMutations(classname);
+		ByteCodeTestUtils.generateTestDataInDB(System.getProperty("user.dir")
+				+ "/target/classes/" + classname.replace('.', '/')
+				+ ".class", new NegateJumpsCollectorTransformer(null));
 	}
+
 
 	private static final Class TEST_CLASS = SysExit.class;
 
@@ -37,10 +43,8 @@ public class TestRemoveSystemExit {
 
 	@Before
 	public void setup() {
-		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
 		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
 				linenumbers);
-		MutationPossibilityCollector.generateTestDataInDB(TEST_CLASS_FILENAME);
 	}
 
 	@After
@@ -52,7 +56,7 @@ public class TestRemoveSystemExit {
 	@Test
 	public void runTests() {
 		SelectiveTestSuite selectiveTestSuite = new SelectiveTestSuite();
-		TestSuite suite = new TestSuite(IntegerConstantsTest.class);
+		TestSuite suite = new TestSuite(SysExitTest.class);
 		selectiveTestSuite.addTest(suite);
 		@SuppressWarnings("unused")
 		SysExit loadClass = new SysExit();

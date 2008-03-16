@@ -15,10 +15,7 @@ public class ArithmeticReplaceTest {
 
 	static {
 		String classname = "org.softevo.mutation.bytecodeMutations.arithmetic.testclasses.Arithmetic";
-		ByteCodeTestUtils.deleteMutations(classname);
-		ByteCodeTestUtils.generateTestDataInDB(System.getProperty("user.dir")
-		 + "/target/test-classes/"  + classname.replace('.', '/') + ".class",
-				new ArithmeticReplaceCollectorTransformer(null));
+		ByteCodeTestUtils.doSetup(classname, new ArithmeticReplaceCollectorTransformer(null));
 	}
 
 	private static final Class TEST_CLASS = Arithmetic.class;
