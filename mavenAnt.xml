@@ -1,0 +1,12 @@
+<project name="MavenAnt" default="" basedir=".">
+
+	<target name="createJavaagent" description="Create the javaagent">
+		<echo message="creating javaagent from ant" />
+		 <jar destfile="target/javaagent.jar"  manifest="src/main/resources/MANIFEST.txt">
+			<fileset dir="target/classes"
+			 includes="**/mutation/javaagent/*.class"
+			 />
+		</jar>
+	</target>
+
+</project>
