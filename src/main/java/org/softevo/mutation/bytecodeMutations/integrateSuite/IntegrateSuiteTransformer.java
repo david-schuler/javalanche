@@ -9,10 +9,26 @@ import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class IntegrateSuiteTransformer extends BytecodeTransformer {
 
+	private String targetClass;
+
+	private String integrationMethod;
+
+	private String integrationMethodSignature;
+
 	private static class IntegrateSuiteClassAdapter extends ClassAdapter {
 
-		public IntegrateSuiteClassAdapter(ClassVisitor cv) {
+		private String targetClass;
+
+		private String integrationMethod;
+
+		private String integrationMethodSignature;
+
+		public IntegrateSuiteClassAdapter(ClassVisitor cv, String targetClass,
+				String integrationMethod, String integrationMethodSignature) {
 			super(cv);
+			this.targetClass = targetClass;
+			this.integrationMethod = integrationMethod;
+			this.integrationMethodSignature = integrationMethodSignature;
 		}
 
 		@Override
@@ -21,18 +37,41 @@ public class IntegrateSuiteTransformer extends BytecodeTransformer {
 			MethodVisitor mv = super.visitMethod(access, name, desc, signature,
 					exceptions);
 			if (name.equals("suite")) {
-				mv =  new IntegrateTestSuiteMethodAdapter(mv);
+				mv = new IntegrateTestSuiteMethodAdapter(mv, targetClass,
+						integrationMethod, integrationMethodSignature);
 			}
 			return mv;
 		}
-
 	}
 
-
+	public IntegrateSuiteTransformer(String targetClass,
+			String integrationMethod, String integrationMethodSignature) {
+		super();
+		this.targetClass = targetClass;
+		this.integrationMethod = integrationMethod;
+		this.integrationMethodSignature = integrationMethodSignature;
+	}
 
 	@Override
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
 		ClassVisitor cc = new CheckClassAdapter(cw);
-		return new IntegrateSuiteClassAdapter(cc);
+		return new IntegrateSuiteClassAdapter(cc, targetClass,
+				integrationMethod, integrationMethodSignature);
+	}
+
+	public static BytecodeTransformer getIntegrateSelectiveTestSuiteTransformer() {
+		String targetClass = "org/softevo/mutation/runtime/SelectiveTestSuite";
+		String integrationMethod = "toSelectiveTestSuite";
+		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lorg/softevo/mutation/runtime/SelectiveTestSuite;";
+		return new IntegrateSuiteTransformer(targetClass, integrationMethod,
+				integrationMethodSignature);
+	}
+
+	public static BytecodeTransformer getIntegrateRandomPermutationTestSuiteTransformer() {
+		String targetClass = "org/softevo/mutation/runtime/RandomPermutationTestSuite";
+		String integrationMethod = "toRandomPermutationTestSuite";
+		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lorg/softevo/mutation/runtime/RandomPermutationTestSuite;";
+		return new IntegrateSuiteTransformer(targetClass, integrationMethod,
+				integrationMethodSignature);
 	}
 }

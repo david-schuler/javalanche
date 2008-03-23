@@ -16,6 +16,8 @@ import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.objectInspector.asmAdapters.ObjectInspectorTransformer;
 import org.softevo.mutation.properties.MutationProperties;
 
+import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
+
 /**
  * {@link MutationTransformer} is used to apply mutations during runtime via a
  * java agent.
@@ -113,7 +115,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			if (classNameWithDots.endsWith("AllTests")
 					|| compareWithSuiteProperty(classNameWithDots)) {
 				logger.info("Trying to integrate SelectiveTestSuite");
-				IntegrateSuiteTransformer integrateSuiteTransformer = new IntegrateSuiteTransformer();
+				BytecodeTransformer integrateSuiteTransformer =  IntegrateSuiteTransformer.getIntegrateSelectiveTestSuiteTransformer();
 				classfileBuffer = integrateSuiteTransformer
 						.transformBytecode(classfileBuffer);
 			}
@@ -175,7 +177,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 		return false;
 	}
 
-	private boolean compareWithSuiteProperty(String classNameWithDots) {
+	public static boolean compareWithSuiteProperty(String classNameWithDots) {
 		boolean returnValue = false;
 		String testSuiteName = System
 				.getProperty(MutationProperties.TEST_SUITE_KEY);

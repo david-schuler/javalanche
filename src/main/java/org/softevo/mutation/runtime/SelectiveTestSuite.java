@@ -179,7 +179,7 @@ public class SelectiveTestSuite extends TestSuite {
 		String stackTraceString = Arrays.toString(sts);
 		logger.info("SelectiveTestSuite.run entered. Stacktrace:\n"
 				+ stackTraceString);
-		logger.log(Level.INFO, "All Tests collected");
+		logger.log(Level.DEBUG, "All Tests collected");
 		mutationSwitcher = new MutationSwitcher();
 		Map<String, TestCase> allTests = getAllTests(this);
 		int debugCount = DEBUG_MUTATION_TO_EXECUTE;

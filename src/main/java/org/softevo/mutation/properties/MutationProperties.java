@@ -149,6 +149,10 @@ public class MutationProperties {
 
 	public static final String SCRIPT_COMMAND = getProperty(SCRIPT_COMMAND_KEY);
 
+	public static final String TEST_TESTSUITE_KEY = "mutation.test.testsuite";
+
+	public static final String TEST_TESTSUITE = getProperty(TEST_TESTSUITE_KEY);
+
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
 		return Integer.parseInt(result);

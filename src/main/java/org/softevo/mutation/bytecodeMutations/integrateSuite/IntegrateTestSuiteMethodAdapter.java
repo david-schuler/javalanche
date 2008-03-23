@@ -8,21 +8,29 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class IntegrateTestSuiteMethodAdapter extends MethodAdapter {
 
-	public IntegrateTestSuiteMethodAdapter(MethodVisitor mv) {
+	private String targetClass;
+
+	private String integrationMethod;
+
+	private String integrationMethodSignature;
+
+	public IntegrateTestSuiteMethodAdapter(MethodVisitor mv,
+			String targetClass, String integrationMethod,
+			String integrationMethodSignature) {
 		super(mv);
+		this.targetClass = targetClass;
+		this.integrationMethod = integrationMethod;
+		this.integrationMethodSignature = integrationMethodSignature;
 	}
 
 	@Override
 	public void visitInsn(int opcode) {
 		if (opcode == Opcodes.ARETURN) {
-			mv
-					.visitMethodInsn(
-							INVOKESTATIC,
-							"org/softevo/mutation/runtime/SelectiveTestSuite",
-							"toSelectiveTestSuite",
-							"(Ljunit/framework/TestSuite;)Lorg/softevo/mutation/runtime/SelectiveTestSuite;");
+			mv.visitMethodInsn(INVOKESTATIC, targetClass, integrationMethod,
+					integrationMethodSignature);
 
 		}
 		mv.visitInsn(opcode);
 	}
+
 }
