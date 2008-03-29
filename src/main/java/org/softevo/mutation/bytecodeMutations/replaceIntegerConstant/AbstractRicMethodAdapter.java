@@ -16,13 +16,11 @@ public abstract class AbstractRicMethodAdapter extends AbstractMutationAdapter {
 
 	@Override
 	public void visitInsn(int opcode) {
-		if(mutationCode){
+		if (mutationCode) {
 			super.visitInsn(opcode);
 			return;
 		}
-		if (forwardCalls) {
-			super.visitInsn(opcode);
-		}
+
 		switch (opcode) {
 		case Opcodes.ICONST_M1:
 			intConstant(-1);
@@ -66,9 +64,11 @@ public abstract class AbstractRicMethodAdapter extends AbstractMutationAdapter {
 		case Opcodes.DCONST_1:
 			doubleConstant(1);
 			break;
-
 		default:
 			break;
+		}
+		if (forwardCalls) {
+			super.visitInsn(opcode);
 		}
 	}
 
@@ -86,15 +86,15 @@ public abstract class AbstractRicMethodAdapter extends AbstractMutationAdapter {
 
 	@Override
 	public void visitLdcInsn(Object constant) {
-		if(mutationCode){
+		if (mutationCode) {
 			super.visitLdcInsn(constant);
 			return;
 		}
-		if (forwardCalls) {
-			super.visitLdcInsn(constant);
-		}
 		if (constant instanceof Number) {
 			ldc(constant);
+			if (forwardCalls) {
+				super.visitLdcInsn(constant);
+			}
 		} else {
 			super.visitLdcInsn(constant);
 		}
@@ -103,15 +103,15 @@ public abstract class AbstractRicMethodAdapter extends AbstractMutationAdapter {
 
 	@Override
 	public void visitIntInsn(int opcode, int operand) {
-		if(mutationCode){
-			super.visitIntInsn(opcode,operand);
-			return;
-		}
-		if (forwardCalls) {
+		if (mutationCode) {
 			super.visitIntInsn(opcode, operand);
+			return;
 		}
 		if (opcode == Opcodes.BIPUSH || opcode == Opcodes.SIPUSH) {
 			intConstant(operand);
+			if (forwardCalls) {
+				super.visitIntInsn(opcode, operand);
+			}
 		} else {
 			super.visitIntInsn(opcode, operand);
 		}

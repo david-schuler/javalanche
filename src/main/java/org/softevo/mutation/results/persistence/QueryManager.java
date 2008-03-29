@@ -54,23 +54,29 @@ public class QueryManager {
 	 * @return The Mutation from the database or null if it is not contained.
 	 */
 	public static Mutation getMutationOrNull(Mutation mutation) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
 		Mutation m = null;
-		if (mutation.getId() != null) {
-			m = (Mutation) session.get(Mutation.class, mutation.getId());
+		try {
+			if (mutation.getId() != null) {
+				m = (Mutation) session.get(Mutation.class, mutation.getId());
+			}
+			if (m == null) {
+				Query query = session
+						.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and m.mutationForLine=:mforl and m.mutationType=:type");
+				query.setParameter("name", mutation.getClassName());
+				query.setParameter("number", mutation.getLineNumber());
+				query.setParameter("type", mutation.getMutationType());
+				query.setParameter("mforl", mutation.getMutationForLine());
+				m = (Mutation) query.uniqueResult();
+			}
+			tx.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			session.close();
 		}
-		if (m == null) {
-			Query query = session
-					.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and m.mutationForLine=:mforl and m.mutationType=:type");
-			query.setParameter("name", mutation.getClassName());
-			query.setParameter("number", mutation.getLineNumber());
-			query.setParameter("type", mutation.getMutationType());
-			query.setParameter("mforl", mutation.getMutationForLine());
-			m = (Mutation) query.uniqueResult();
-		}
-		tx.commit();
-		session.close();
 		return m;
 	}
 

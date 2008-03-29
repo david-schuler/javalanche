@@ -5,6 +5,7 @@ import java.util.Map;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.softevo.mutation.bytecodeMutations.AbstractMutationAdapter;
+import org.softevo.mutation.bytecodeMutations.mutationCoverage.CoverageData;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
 
@@ -42,6 +43,7 @@ public class NegateJumpsPossibilitiesMethodAdapter extends
 				possibilitiesForLine, Mutation.MutationType.NEGATE_JUMP);
 		possibilitiesForLine++;
 		mpc.addPossibility(mutation);
+		CoverageData.insertCoverageCalls(mv, mutation);
 	}
 
 	@Override

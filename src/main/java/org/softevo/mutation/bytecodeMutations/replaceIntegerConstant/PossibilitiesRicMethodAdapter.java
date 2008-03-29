@@ -2,6 +2,7 @@ package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.softevo.mutation.bytecodeMutations.mutationCoverage.CoverageData;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
 
@@ -31,6 +32,9 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 		mutationPossibilityCollector.addPossibility(mutationPlus1);
 		mutationPossibilityCollector.addPossibility(mutationMinus1);
 		mutationPossibilityCollector.addPossibility(mutationZero);
+		CoverageData.insertCoverageCalls(mv, mutationPlus1);
+		CoverageData.insertCoverageCalls(mv, mutationMinus1);
+		CoverageData.insertCoverageCalls(mv, mutationZero);
 		possibilities++;
 	}
 

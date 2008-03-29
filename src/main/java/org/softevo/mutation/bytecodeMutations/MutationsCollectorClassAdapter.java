@@ -12,7 +12,7 @@ import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 public class MutationsCollectorClassAdapter extends ClassAdapter{
 	private String className;
 
-	private boolean debug;
+	private boolean debug=true;
 
 	private final MutationPossibilityCollector mpc;
 

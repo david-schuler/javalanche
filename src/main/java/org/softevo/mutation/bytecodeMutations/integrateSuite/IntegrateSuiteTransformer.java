@@ -74,4 +74,12 @@ public class IntegrateSuiteTransformer extends BytecodeTransformer {
 		return new IntegrateSuiteTransformer(targetClass, integrationMethod,
 				integrationMethodSignature);
 	}
+
+	public static BytecodeTransformer getIntegrateScanAndCoverageTestSuiteTransformer() {
+		String targetClass = "org/softevo/mutation/runtime/ScanAndCoverageTestSuite";
+		String integrationMethod = "toScanAndCoverageTestSuite";
+		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lorg/softevo/mutation/runtime/ScanAndCoverageTestSuite;";
+		return new IntegrateSuiteTransformer(targetClass, integrationMethod,
+				integrationMethodSignature);
+	}
 }

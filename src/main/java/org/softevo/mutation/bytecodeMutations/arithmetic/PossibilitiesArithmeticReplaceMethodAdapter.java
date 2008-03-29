@@ -5,13 +5,15 @@ import java.util.Map;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.softevo.mutation.bytecodeMutations.AbstractMutationAdapter;
+import org.softevo.mutation.bytecodeMutations.mutationCoverage.CoverageData;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
 
 public class PossibilitiesArithmeticReplaceMethodAdapter extends
 		AbstractMutationAdapter {
 
-	private static Map replaceMap = ReplaceMap.getReplaceMap();
+	private static Map<Integer, Integer> replaceMap = ReplaceMap
+			.getReplaceMap();
 
 	private int possForLine;
 
@@ -26,10 +28,10 @@ public class PossibilitiesArithmeticReplaceMethodAdapter extends
 
 	@Override
 	public void visitInsn(int opcode) {
-		super.visitInsn(opcode);
 		if (replaceMap.containsKey(opcode)) {
 			addPossibility();
 		}
+		super.visitInsn(opcode);
 		// case Opcodes.SWAP: // TODO
 		// break;
 		// case Opcodes.IADD:
@@ -112,9 +114,10 @@ public class PossibilitiesArithmeticReplaceMethodAdapter extends
 	}
 
 	private void addPossibility() {
-		Mutation m = new Mutation(className, getLineNumber(), possForLine,
-				Mutation.MutationType.ARITHMETIC_REPLACE);
-		mpc.addPossibility(m);
+		Mutation mutation = new Mutation(className, getLineNumber(),
+				possForLine, Mutation.MutationType.ARITHMETIC_REPLACE);
+		mpc.addPossibility(mutation);
 		possForLine++;
+		CoverageData.insertCoverageCalls(mv, mutation);
 	}
 }
