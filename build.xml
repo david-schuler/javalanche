@@ -22,7 +22,7 @@
 
 	<!-- Classpath declaration -->
 	<path id="project.classpath">
-		<fileset dir="target/lib/">
+		<fileset dir="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib/">
 			<include name="**/*.jar" />
 			<include name="**/*.zip" />
 		</fileset>
