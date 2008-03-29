@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+        <title>Mutation Test</title>
+        <meta name="description" content="" />
+        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+        <meta name="keywords" content="mutation test java"/>
+        <meta name="description" content="Mutaiton Test"/>
+        <link rel="stylesheet" title="Normal" type="text/css" media="screen" href="style.css" />
+    </head>
+    <body>
+        <div id="main">
+            <div id="header">
+                <h1>Mutation Test</h1>
+            </div>
+            <div id="menu">
+                <ul>
+                    <li class="selected"><a href="./index.html">Install</a></li>
+                    <li><a href="./index.html#run">Run the tool</a></li>
+                   <!-- <li><a href="./index.html#info">Further Information</a></li> -->
+                </ul>
+            </div>
+            <div id="content">
+                <div class="article">
+                    <h2>Install</h2>
+                    
+                    <h3>Requirements</h3>
+                    To run the mutation testing tool, you need the following software on your system:<br/>
+                    <ul>
+                        <li> A Java 1.5 Runtime Environment</li>
+                        <li> The <a href="http://ant.apache.org/">ant</a> build tool.    </li>
+                        <li> A  <a href="http://www.mysql.com/">MySQL</a> Database </li>
+                    </ul>
+                    <h3>Install</h3>
+                    Install the mutation testing tool and a mysql database.
+                    Configure hibernate in <code>src/main/resources/hibernate.cfg.xml</code>
+                    </ul>
+                    
+                </div>
+                <div class="article" id="run">
+                    <h2>Run the tool</h2>
+                    <h3>Adjust the Properties File</h3>
+                    Adjust the property file <code>src/main/resources/mutation.incl.properties</code>, this file will later be included
+                    in build file to do the mutaiton testing.<br/>
+                                        
+                    Following properties have to be adjusted (see comments for further documentation):
+                    
+                    
+                    <div class="antblock">
+                    #output directory for the results of the tool<br/>
+                    mutation.output.dir=/scratch/schuler/mutation-test-config/<br/>
+                    #base dir of the mutation testing tool<br/>
+                    mutation.base.dir=/Users/schuler/workspace2/mutationTest/<br/>
+                    </div>                  
+                    
+                    
+                    <h3>Scan for Mutation Possibilities</h3>                    
+                    The first step is to scan for mutations. Therefore the projects test suite has to be executed,
+                    and the tool scans for all posibilities where to mutate.<br/>
+                    For example an ant task that executes a junit test suite has to be modified in the following way.
+                    Original:
+                    <div class="antblock">          
+&lt;target&nbsp;name=&quot;junit&quot;&nbsp;depends=&quot;jar&quot;&gt;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&lt;junit&nbsp;dir=&quot;${basedir}&quot;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fork=&quot;true&quot;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forkmode=&quot;once&quot;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;maxmemory=&quot;1536m&quot;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;includeAntRuntime=&quot;true&quot;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printsummary=&quot;yes&quot;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;showoutput=&quot;true&quot;&gt;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;test.classpath&quot;/&gt;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;formatter&nbsp;type=&quot;xml&quot;/&gt;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;batchtest&nbsp;todir=&quot;outputs&quot;&gt;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${test.bin}&quot;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;includes=&quot;**/SuseboxTestSuite.class&quot;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;excludes=&quot;**/TestTokenizerSpeed$TagInfo*&quot;/&gt;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/batchtest&gt;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/junit&gt;
+<br/>&lt;/target&gt;
+                    </div>
+                    Modified (lines that were changed are bold):
+                    <div class="antblock">
+<b>&lt;target&nbsp;name=&quot;scan&quot;&nbsp;depends=&quot;jar&quot;&gt;<br/></b>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;junit&nbsp;dir=&quot;${basedir}&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fork=&quot;true&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forkmode=&quot;once&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;maxmemory=&quot;1536m&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;includeAntRuntime=&quot;true&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printsummary=&quot;yes&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;showoutput=&quot;true&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;test.classpath&quot;/&gt;<br/>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;mutation.classpath&quot;&nbsp;/&gt;<br/></b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-javaagent:${mutation.javaagent}&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dscan=true&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dmutation.package.prefix=de.susebox&quot;/&gt;<br/></b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;formatter&nbsp;type=&quot;xml&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;batchtest&nbsp;todir=&quot;outputs&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${test.bin}&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;includes=&quot;**/SuseboxTestSuite.class&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;excludes=&quot;**/TestTokenizerSpeed$TagInfo*&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/batchtest&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/junit&gt;<br/>
+&lt;/target&gt;<br/>
+                    </div>
+                    
+                    <table>
+                        <tr><th>Argument</th><th>Description</th></tr>
+                        <tr><td>-javaagent:${mutation.javaagent} </td><td> The location of the javaagent that transforms the class files. </td></tr   >
+                        <tr><td>-Dscan=true </td><td> Tells the javaagent that it should scan for mutations </td></tr>
+                        <tr><td>-Dmutation.package.prefix=de.susebox </td><td> The prefix of the classes that should be mutated. 
+                        Only classes with a fully qualified name (package + class name) that starts with this prefix are mutated.</td></tr>
+                      
+                    </table>
+                    
+                    
+                    In order to use the properties, the <code>mutation.incl.properties</code> file has
+                    to be included in the build file (<code>build.xml</code>):
+                    
+                    <div class="antblock">
+                    &lt;property file=&quot;/path/to/mutation.incl.properties&quot; /&gt;
+                    </div>
+                    Furthermore, the mutation testing tool is added to the classpath with the <code>mutation.classpath</code> refid.
+                    Therfore, this entry has to be added to the build file.
+                    <div class="antblock">
+&lt;path&nbsp;id=&quot;mutation.classpath&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;pathelement&nbsp;location=&quot;${mutation.classes.dir}&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${mutation.jars.dir}&quot;&nbsp;includes=&quot;*.jar&quot;/&gt;&nbsp;<br/>
+&lt;/path&gt;                    
+                    </div>
+                    
+                    
+                    
+                    <h3>Create task files</h3>
+                    Typically you do not want to execute all possible mutations
+                    in one run. Therfore files are created that specify which mutations
+                    to execute.<br/>
+                    This is done with the class <code>org.softevo.mutation.run.threaded.task.MutationTaskCreator</code>.
+                    For example, an ant target that creates the task would look like this.
+                    
+                    <div class="antblock">
+&lt;target&nbsp;name=&quot;createTasks&quot;&nbsp;&nbsp;&nbsp;description=&quot;create&nbsp;task&nbsp;files&nbsp;to&nbsp;execute&nbsp;the&nbsp;mutations&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;classname=&quot;org.softevo.mutation.run.threaded.task.MutationTaskCreator&quot;&nbsp;maxmemory=&quot;1024m&quot;&nbsp;fork=&quot;true&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.package.prefix&quot;&nbsp;value=&quot;de.susebox&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.coverage.information&quot;&nbsp;value=&quot;false&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.number.of.tasks&quot;&nbsp;value=&quot;8&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.mutations.per.task&quot;&nbsp;value=&quot;10&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;location=&quot;target/classes&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;mutation.classpath&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/java&gt;<br/>
+&lt;/target&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          <br/>
+                    </div>
+                    
+                    <table>
+                        <tr><th>Argument</th><th>Description</th></tr>
+                        <tr><td>-Dmutation.package.prefix=de.susebox </td><td> The prefix of the classes for which mutaitons should be included in the task files. Only classes with a fully qualified name (package + class name) that starts with this prefix are scaned for mutations.</td></tr>
+
+                        <tr><td>mutation.coverage.information</td><td> Tells if coverage information is available in the database. </td></tr>
+                        <tr><td>mutation.number.of.tasks </td><td> Number of tasks to be created. </td></tr>
+                        <tr><td>mutation.mutations.per.task </td><td> Number of mutations per task.</td></tr>
+                            
+                    </table>
+                    
+                    <h3>Execute one task</h3>
+                    A task can be executed with the following modified ant task:
+                    
+                    
+                    <div class="antblock">
+&lt;target&nbsp;name=&quot;run-mutations&quot;&nbsp;depends=&quot;jar&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;junit&nbsp;dir=&quot;${basedir}&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fork=&quot;true&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forkmode=&quot;once&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;maxmemory=&quot;1536m&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;includeAntRuntime=&quot;true&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printsummary=&quot;yes&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;showoutput=&quot;true&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;test.classpath&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;mutation.classpath&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-javaagent:${mutation.javaagent}&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dmutation.coverage.information=false&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dmutation.package.prefix=de.susebox&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dmutation.test.suite=SuseboxTestSuite&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.file&quot;&nbsp;value=&quot;${mutation.file}&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.result.file&quot;&nbsp;value=&quot;${mutation.result.file}&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;formatter&nbsp;type=&quot;xml&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;batchtest&nbsp;todir=&quot;outputs&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${test.bin}&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;includes=&quot;**/SuseboxTestSuite.class&quot;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;excludes=&quot;**/TestTokenizerSpeed$TagInfo*&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/batchtest&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/junit&gt;<br/>
+&lt;/target&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    
+                    </div>
+                    And the following command executes the mutations
+                    
+                    <div class="antblock">
+                    ant \<br/>
+                    -Dmutation.file=/scratch/schuler/mutation-test-config/result/mutation-task-01.txt \<br/>
+                    -Dmutation.result.file=/scratch/schuler/mutation-test-config/result/result-mutation-task-01.xml \<br/>
+                    run-mutations
+                    </div>
+                    
+                    
+                    <h3>Execute Mutiple Tasks</h3>
+                    Multiple tasks cn also be executed in parallel on different 
+	                JVMs. This can be done via the class <code>org.softevo.mutation.run.threaded.ThreadPool</code>
+    				For example following ant target calls this class.            
+                    <div class="antblock">
+&lt;target&nbsp;name=&quot;run-threaded-mutations&quot;&nbsp;description=&quot;run&nbsp;mutation&nbsp;tests&nbsp;multithreaded&nbsp;on&nbsp;jtopas&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;classname=&quot;org.softevo.mutation.run.threaded.ThreadPool&quot;&nbsp;maxmemory=&quot;1024m&quot;&nbsp;fork=&quot;true&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.script.command&quot;&nbsp;value=&quot;${basedir}/run-mutations.sh&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.number.of.threads&quot;&nbsp;value=&quot;2&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;location=&quot;target/classes&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;mutation.classpath&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/java&gt;<br/>
+&lt;/target&gt;
+                    </div>
+					
+					<table>
+                        <tr><th>Argument</th><th>Description</th></tr>
+                        <tr><td>-Dmutation.script.command </td><td> A command that is used to start on jvm. 
+						For example this can be a script that class the corresponding ant task. The parameters <code> -Dmutation.file</code> and <code>-Dmutation.result.file</code> are passed to this command. See an example below.</td></tr>
+						<tr><td>-Dmutation.number.of.threads </td><td>  Number of threads that are executed in parallel.</td></tr>
+
+                    </table>
+					<br/>
+					The following shell script can be used for this task
+					<div class="antblock" >
+					#! /bin/sh<br/>
+					cd /scratch/schuler/mutation-jtopas/jtopas/<br/>
+					ant run-mutations $*<br/>
+					</div>
+                    <h3>Analyze Results</h3>
+                    
+                    The results of the mutation testing can be analyzed with the
+                    class <code>org.softevo.mutation.run.CompareWithUnmutated</code>.
+                    An ant task that executes this class looks like this:<br/>
+                    
+                    <div class="antblock">
+&lt;target&nbsp;name=&quot;analyzeResults&quot;&nbsp;description=&quot;Analyzes&nbsp;the&nbsp;mutationt&nbsp;testing&nbsp;results.&nbsp;Compare&nbsp;mutated&nbsp;runs&nbsp;with&nbsp;the&nbsp;unmutated&nbsp;runs&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;classname=&quot;org.softevo.mutation.run.CompareWithUnmutated&quot;&nbsp;maxmemory=&quot;1024m&quot;&nbsp;fork=&quot;true&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dmutation.package.prefix=de.susebox&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;mutation.classpath&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/java&gt;<br/>
+&lt;/target&gt;
+                    
+                    </div>
+                    
+                    <table>
+                        <tr><th>Argument</th><th>Description</th></tr>
+                        <tr><td>-Dmutation.package.prefix=de.susebox </td><td> The prefix of the classes that should be analyzed. 
+                        Only classes with a fully qualified name (package + class name) that starts with this prefix are analyzed.</td></tr>
+                      
+                    </table>
+                    </div>
+         
+            </div>
+            <div id="footer">
+                <p>
+                    Designed by <a href="http://www.pixelcarnage.com/">PixelCarnage</a>.<br />Released under the GNU GPL for free distributation and modification.
+                </p>
+            </div>
+        </div>
+    </body>
+</html>
