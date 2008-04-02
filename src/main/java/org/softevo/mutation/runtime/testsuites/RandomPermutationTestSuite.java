@@ -1,4 +1,4 @@
-package org.softevo.mutation.runtime;
+package org.softevo.mutation.runtime.testsuites;
 
 import java.util.ArrayList;
 import java.util.Collections;

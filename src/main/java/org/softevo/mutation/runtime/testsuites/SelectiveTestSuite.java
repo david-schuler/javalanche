@@ -1,4 +1,4 @@
-package org.softevo.mutation.runtime;
+package org.softevo.mutation.runtime.testsuites;
 
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -24,6 +24,9 @@ import org.softevo.mutation.javaagent.MutationPreMain;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.QueryManager;
+import org.softevo.mutation.runtime.MutationSwitcher;
+import org.softevo.mutation.runtime.MutationTestListener;
+import org.softevo.mutation.runtime.ResultReporter;
 
 /**
  * Subclass of JUnits {@link TestSuite} class. It is used to execute the tests
