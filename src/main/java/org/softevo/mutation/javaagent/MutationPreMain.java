@@ -3,6 +3,7 @@ package org.softevo.mutation.javaagent;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 
+import org.softevo.mutation.javaagent.classFileTransfomer.IntegrateRandomPermutationTransformer;
 import org.softevo.mutation.properties.MutationProperties;
 
 import static org.softevo.mutation.properties.MutationProperties.*;
