@@ -1,4 +1,4 @@
-package org.softevo.mutation.javaagent;
+package org.softevo.mutation.javaagent.classFileTransfomer;
 
 /**
  * Interface provides a method that decides whether a class should be

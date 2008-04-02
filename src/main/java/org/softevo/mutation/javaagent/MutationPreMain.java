@@ -4,6 +4,8 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 
 import org.softevo.mutation.javaagent.classFileTransfomer.IntegrateRandomPermutationTransformer;
+import org.softevo.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
+import org.softevo.mutation.javaagent.classFileTransfomer.MutationScanner;
 import org.softevo.mutation.properties.MutationProperties;
 
 import static org.softevo.mutation.properties.MutationProperties.*;
