@@ -3,8 +3,10 @@ package org.softevo.mutation.javaagent;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 
-import org.softevo.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import org.softevo.mutation.properties.MutationProperties;
+
+import static org.softevo.mutation.properties.MutationProperties.*;
+import static org.softevo.mutation.properties.MutationProperties.RunMode.*;
 
 public class MutationPreMain {
 
@@ -15,31 +17,35 @@ public class MutationPreMain {
 	public static void premain(String agentArguments,
 			Instrumentation instrumentation) {
 		try {
-			String scanForMutations = System
-					.getProperty(MutationProperties.SCAN_FOR_MUTATIONS);
-
-			if (scanForMutations != null) {
-				if (!scanForMutations.equals("false")) {
-					scanningEnabled = true;
-					System.out.println("Scanning for mutations");
-					addClassFileTransformer(instrumentation,new MutationScanner());
-					return;
-				}
-			}
-			String testTestSuite= MutationProperties.TEST_TESTSUITE;
-			if(testTestSuite != null){
-				System.out.println("Integrating Random Permutation Test Suite");
-				addClassFileTransformer(instrumentation,new IntegrateRandomPermutationTransformer());
+			if (RUN_MODE == MUTAION_TEST) {
+				System.out.println("Run mutation tests");
+				addClassFileTransformer(instrumentation,
+						new MutationFileTransformer());
+			} else if (RUN_MODE == SCAN) {
+				scanningEnabled = true;
+				System.out.println("Scanning for mutations");
+				addClassFileTransformer(instrumentation, new MutationScanner());
 				return;
+			} else if (RUN_MODE == TEST_TESTSUIT_FIRST) {
+				System.out.println("Integrating RandomPermutationTestSuite");
+				addClassFileTransformer(instrumentation,
+						new IntegrateRandomPermutationTransformer());
+				return;
+			} else if (RUN_MODE == TEST_TESTSUITE_SECOND) {
+				System.out.println("Check test suite data in db");
+				addClassFileTransformer(instrumentation,
+						new IntegrateRandomPermutationTransformer());
+
 			}
-			addClassFileTransformer(instrumentation,new MutationFileTransformer());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
 
-	private static void addClassFileTransformer(Instrumentation instrumentation, ClassFileTransformer clt) {
+	private static void addClassFileTransformer(
+			Instrumentation instrumentation, ClassFileTransformer clt) {
 		classFileTransformer = clt;
 		instrumentation.addTransformer(classFileTransformer);
 	}

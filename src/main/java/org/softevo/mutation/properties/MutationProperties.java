@@ -54,7 +54,34 @@ public class MutationProperties {
 
 	public static final String[] TEST_CLASSES_TO_INSTRUMENT = { "org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps" };
 
-	public static final String SCAN_FOR_MUTATIONS = "scan";
+	/*
+	 * Different run modes.
+	 */
+
+	public enum RunMode {
+		SCAN("scan"), MUTAION_TEST("mutation"), TEST_TESTSUIT_FIRST("test1"), TEST_TESTSUITE_SECOND(
+				"test2");
+
+		private String key;
+
+		RunMode(String key) {
+			this.key = key;
+		}
+
+		/**
+		 * @return the key
+		 */
+		public String getKey() {
+			return key;
+		}
+
+	}
+
+	private static final String RUN_MODE_KEY = "mutation.run.mode";
+
+	public static final RunMode RUN_MODE = getRunMode();
+
+	public static final String SCAN_FOR_MUTATIONS_KEY = "scan";
 
 	public static final String RESULT_FILE_KEY = "mutation.result.file";
 
@@ -105,6 +132,9 @@ public class MutationProperties {
 	 */
 	public static final String TEST_SUITE_KEY = "mutation.test.suite";
 
+	public static final String TEST_SUITE = getProperty(TEST_SUITE_KEY);
+
+
 	/**
 	 * The key for the system property that specifies if there is coverage
 	 * information in the db.
@@ -119,8 +149,6 @@ public class MutationProperties {
 	 */
 	public static final boolean COVERAGE_INFFORMATION = getCoverage();
 
-
-
 	/**
 	 * Directory where the processes are executed
 	 */
@@ -133,7 +161,7 @@ public class MutationProperties {
 	public static final String NOT_MUTATED = "notMutated";
 
 	public static final boolean OBSERVE_OBJECTS = false; // TODO read from
-															// property
+	// property
 
 	public static final String NUMBER_OF_THREADS_KEY = "mutation.number.of.threads";
 
@@ -156,6 +184,16 @@ public class MutationProperties {
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
 		return Integer.parseInt(result);
+	}
+
+	private static RunMode getRunMode() {
+		String runModeString = getProperty(RUN_MODE_KEY).toLowerCase();
+		for (RunMode runMode : RunMode.values()) {
+			if (runMode.getKey().equals(runModeString)) {
+				return runMode;
+			}
+		}
+		return RunMode.MUTAION_TEST;
 	}
 
 	private static final String getPropertyOrDefault(String key,

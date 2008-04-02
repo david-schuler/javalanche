@@ -29,13 +29,17 @@ import org.softevo.mutation.results.Mutation.MutationType;
  * @author David Schuler
  *
  */
-/**
- * @author David Schuler
- *
- */
 public class QueryManager {
 
 	private static Logger logger = Logger.getLogger(QueryManager.class);
+
+
+	/**
+	 *Prevent initialization.
+	 */
+	private QueryManager(){
+
+	}
 
 	/**
 	 * Get Mutation that corresponds to given mutation from the database.

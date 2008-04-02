@@ -1,75 +1,26 @@
 package org.softevo.mutation.runtime.testsuites;
 
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
+import junit.framework.Test;
 
 import org.apache.log4j.Logger;
 import org.softevo.mutation.bytecodeMutations.mutationCoverage.CoverageData;
 
 public class ScanAndCoverageTestSuite extends TestSuite {
 
-	private static Logger logger = Logger
-			.getLogger(ScanAndCoverageTestSuite.class);
+	static Logger logger = Logger.getLogger(ScanAndCoverageTestSuite.class);
 
 	public ScanAndCoverageTestSuite(String name) {
 		super(name);
 	}
 
-	public static Map<String, TestCase> getAllTests(TestSuite testSuite) {
-		Map<String, TestCase> resultMap = new HashMap<String, TestCase>();
-
-		for (Enumeration<Test> e = testSuite.tests(); e.hasMoreElements();) {
-			Test test = e.nextElement();
-			if (test instanceof TestSuite) {
-				TestSuite suite = (TestSuite) test;
-				Map<String, TestCase> suiteTests = getAllTests(suite);
-				Set<Entry<String, TestCase>> set = suiteTests.entrySet();
-				for (Entry<String, TestCase> entry : set) {
-					if (resultMap.containsKey(entry.getKey())) {
-						logger.error("Key already contained " + entry.getKey());
-						throw new RuntimeException("Test already contained");
-					} else {
-						resultMap.put(entry.getKey(), entry.getValue());
-					}
-				}
-
-			} else if (test instanceof TestCase) {
-				TestCase testCase = (TestCase) test;
-				String fullTestName = getFullTestCaseName(testCase);
-				if (resultMap.containsKey(fullTestName)) {
-					logger.error("Key already contained" + fullTestName);
-					String key = fullTestName;
-					int i = 1;
-					while (resultMap.containsKey(key)) {
-						i++;
-						key = fullTestName + "-" + i;
-					}
-					resultMap.put(key, testCase);
-//					throw new RuntimeException("Kee already contained");
-
-				} else {
-					resultMap.put(fullTestName, testCase);
-				}
-				resultMap.put(fullTestName, testCase);
-			} else if (test instanceof Test) {
-				logger.info("Test not added. Class: " + test.getClass());
-			} else {
-				throw new RuntimeException("Not handled type: "
-						+ test.getClass());
-			}
-		}
-		return resultMap;
-	}
-
-	private static String getFullTestCaseName(TestCase testCase) {
+	static String getFullTestCaseName(TestCase testCase) {
 		String fullTestName = testCase.getClass().getName() + "."
 				+ testCase.getName();
 		return fullTestName;
@@ -77,16 +28,17 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 
 	@Override
 	public void run(TestResult result) {
-		TestResult testResult = new TestResult();
-		super.run(testResult);
-		System.out.println("First Test Result " + testResult.runCount());
-		Map<String, TestCase> allTests = getAllTests(this);
-		if (allTests.size() != testResult.runCount()) {
-			throw new RuntimeException("found to less tests");
+		TestResult firstTestResult = new TestResult();
+		super.run(firstTestResult);
+		logger.info("First test result " + firstTestResult.runCount());
+		Map<String, Test> allTests = TestSuiteUtil.getAllTests(this);
+		if (allTests.size() != firstTestResult.runCount()) {
+			throw new RuntimeException("Found unequal number of tests"
+					+ allTests.size() + "  " + firstTestResult.runCount());
 		}
 		int testCount = 0;
-		Set<Entry<String, TestCase>> allTestEntrySet = allTests.entrySet();
-		for (Map.Entry<String, TestCase> entry : allTestEntrySet) {
+		Set<Entry<String, Test>> allTestEntrySet = allTests.entrySet();
+		for (Map.Entry<String, Test> entry : allTestEntrySet) {
 			testCount++;
 			logger.info("Running Test (" + testCount + "/"
 					+ allTestEntrySet.size() + ")" + entry.getValue());
@@ -118,8 +70,8 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 	 * of the TestSuite.
 	 *
 	 * @param testSuite
-	 *            The original TestSuite.
-	 * @return The {@link ScanAndCoverageTestSuite} that contains the given
+	 *            the original TestSuite.
+	 * @return the {@link ScanAndCoverageTestSuite} that contains the given
 	 *         TestSuite.
 	 */
 	public static ScanAndCoverageTestSuite toScanAndCoverageTestSuite(

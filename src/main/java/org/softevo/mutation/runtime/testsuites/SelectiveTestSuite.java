@@ -171,7 +171,7 @@ public class SelectiveTestSuite extends TestSuite {
 	 */
 	@Override
 	public void run(TestResult result) {
-		if (System.getProperty(MutationProperties.SCAN_FOR_MUTATIONS) != null
+		if (System.getProperty(MutationProperties.SCAN_FOR_MUTATIONS_KEY) != null
 				|| MutationPreMain.scanningEnabled) {
 			logger.info("Running scanner");
 			super.run(result);
