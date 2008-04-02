@@ -18,7 +18,7 @@ import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.persistence.HibernateUtil;
-import org.softevo.mutation.runtime.SelectiveTestSuite;
+import org.softevo.mutation.runtime.testsuites.SelectiveTestSuite;
 
 public class ReplaceIntegerTest {
 

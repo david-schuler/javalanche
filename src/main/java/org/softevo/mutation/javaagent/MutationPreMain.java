@@ -3,10 +3,10 @@ package org.softevo.mutation.javaagent;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 
+import org.softevo.mutation.javaagent.classFileTransfomer.IntegrateCheckNamesSuiteTransformer;
 import org.softevo.mutation.javaagent.classFileTransfomer.IntegrateRandomPermutationTransformer;
 import org.softevo.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
 import org.softevo.mutation.javaagent.classFileTransfomer.MutationScanner;
-import org.softevo.mutation.properties.MutationProperties;
 
 import static org.softevo.mutation.properties.MutationProperties.*;
 import static org.softevo.mutation.properties.MutationProperties.RunMode.*;
@@ -24,6 +24,7 @@ public class MutationPreMain {
 				System.out.println("Run mutation tests");
 				addClassFileTransformer(instrumentation,
 						new MutationFileTransformer());
+				return;
 			} else if (RUN_MODE == SCAN) {
 				scanningEnabled = true;
 				System.out.println("Scanning for mutations");
@@ -37,10 +38,9 @@ public class MutationPreMain {
 			} else if (RUN_MODE == TEST_TESTSUITE_SECOND) {
 				System.out.println("Check test suite data in db");
 				addClassFileTransformer(instrumentation,
-						new IntegrateRandomPermutationTransformer());
-
+						new IntegrateCheckNamesSuiteTransformer());
+				return;
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);

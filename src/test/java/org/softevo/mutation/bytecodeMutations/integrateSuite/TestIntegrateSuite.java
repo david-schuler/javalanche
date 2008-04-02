@@ -10,7 +10,7 @@ import junit.framework.TestSuite;
 
 import org.junit.Test;
 import org.softevo.mutation.bytecodeMutations.integrateSuite.testClasses.AllTests;
-import org.softevo.mutation.runtime.SelectiveTestSuite;
+import org.softevo.mutation.runtime.testsuites.SelectiveTestSuite;
 
 public class TestIntegrateSuite {
 

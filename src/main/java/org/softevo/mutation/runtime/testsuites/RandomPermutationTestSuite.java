@@ -56,27 +56,7 @@ public class RandomPermutationTestSuite extends TestSuite {
 		super(name);
 	}
 
-	public static Map<String, TestCase> getAllTests(TestSuite testSuite) {
-		Map<String, TestCase> resultMap = new HashMap<String, TestCase>();
 
-		for (Enumeration e = testSuite.tests(); e.hasMoreElements();) {
-			Object test = e.nextElement();
-			if (test instanceof TestSuite) {
-				TestSuite suite = (TestSuite) test;
-				resultMap.putAll(getAllTests(suite));
-			} else if (test instanceof TestCase) {
-				TestCase testCase = (TestCase) test;
-				String fullTestName = getFullTestCaseName(testCase);
-				resultMap.put(fullTestName, testCase);
-			} else if (test instanceof Test) {
-				logger.info("Test not added. Class: " + test.getClass());
-			} else {
-				throw new RuntimeException("Not handled type: "
-						+ test.getClass());
-			}
-		}
-		return resultMap;
-	}
 
 	private static String getFullTestCaseName(TestCase testCase) {
 		String fullTestName = testCase.getClass().getName() + "."
@@ -86,13 +66,13 @@ public class RandomPermutationTestSuite extends TestSuite {
 
 	@Override
 	public void run(TestResult result) {
-		Map<String, TestCase> allTests = getAllTests(this);
+		Map<String, Test> allTests = TestSuiteUtil.getAllTests(this);
 		Map<String, List<TestResult>> testResults = new HashMap<String, List<TestResult>>();
 		int totalTestsRun = 0;
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < DEFAULT_LIMIT; i++) {
 			logger.info("Round" + i);
-			List<Map.Entry<String, TestCase>> shuffeledList = getShuffledTestList(allTests);
+			List<Map.Entry<String, Test>> shuffeledList = getShuffledTestList(allTests);
 			int testsRun = runListOfTests(shuffeledList, testResults);
 			totalTestsRun += testsRun;
 		}
@@ -102,7 +82,7 @@ public class RandomPermutationTestSuite extends TestSuite {
 	}
 
 	private void analyzeTestResults(Map<String, List<TestResult>> testResults,
-			Map<String, TestCase> allTests) {
+			Map<String, Test> allTests) {
 		Set<String> testsDifferentOutcome = new HashSet<String>();
 		Set<String> testsFailing = new HashSet<String>();
 		for (Entry<String, List<TestResult>> entry : testResults.entrySet()) {
@@ -150,19 +130,19 @@ public class RandomPermutationTestSuite extends TestSuite {
 
 	}
 
-	private List<Map.Entry<String, TestCase>> getShuffledTestList(
-			Map<String, TestCase> allTests) {
-		Set<Map.Entry<String, TestCase>> entrySet = allTests.entrySet();
-		List<Map.Entry<String, TestCase>> shuffeledList = new ArrayList<Entry<String, TestCase>>(
+	private List<Map.Entry<String, Test>> getShuffledTestList(
+			Map<String, Test> allTests) {
+		Set<Map.Entry<String, Test>> entrySet = allTests.entrySet();
+		List<Map.Entry<String, Test>> shuffeledList = new ArrayList<Entry<String, Test>>(
 				entrySet);
 		Collections.shuffle(shuffeledList);
 		return shuffeledList;
 	}
 
-	private int runListOfTests(List<Map.Entry<String, TestCase>> shuffeledList,
+	private int runListOfTests(List<Map.Entry<String, Test>> shuffeledList,
 			Map<String, List<TestResult>> testResults) {
 		int testsRun = 0;
-		for (Map.Entry<String, TestCase> entry : shuffeledList) {
+		for (Map.Entry<String, Test> entry : shuffeledList) {
 			TestResult resultForTest = new TestResult();
 			String testName = entry.getKey();
 			logger.info("Running Test " + entry.getValue());

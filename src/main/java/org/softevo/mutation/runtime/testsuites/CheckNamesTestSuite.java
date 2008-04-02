@@ -66,6 +66,8 @@ public class CheckNamesTestSuite extends TestSuite {
 								+ testName.getName());
 			}
 		}
+		logger.warn(String.format("Found all %d tests from db ", testNames
+				.size()));
 		for (String testNameFromMap : allTests.keySet()) {
 			if (!testNames.contains(testNameFromMap)) {
 				throw new RuntimeException(
@@ -73,6 +75,8 @@ public class CheckNamesTestSuite extends TestSuite {
 								+ testNameFromMap);
 			}
 		}
+		logger.warn(String.format("Found all %d actual tests in db ", allTests
+				.size()));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -80,8 +84,10 @@ public class CheckNamesTestSuite extends TestSuite {
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session
-				.createQuery("from TestName as tm where tm.name LIKE ':prefix%'");
-		query.setString("prefix", MutationProperties.PROJECT_PREFIX);
+				.createQuery("from TestName as tm where tm.name LIKE '"
+				+ MutationProperties.PROJECT_PREFIX + "%'");
+//		System.out.println(MutationProperties.PROJECT_PREFIX);
+//		query.setString("prefix", MutationProperties.PROJECT_PREFIX);
 		List<TestName> testnames = query.list();
 		tx.commit();
 		session.close();
@@ -97,7 +103,7 @@ public class CheckNamesTestSuite extends TestSuite {
 	 *            the original TestSuite
 	 * @return a {@link CheckNamesTestSuite} that contains the given TestSuite
 	 */
-	public static CheckNamesTestSuite toSelectiveTestSuite(TestSuite testSuite) {
+	public static CheckNamesTestSuite toCheckNamesTestSuite(TestSuite testSuite) {
 		logger.info("Transforming TestSuite to enable mutations");
 		CheckNamesTestSuite returnTestSuite = new CheckNamesTestSuite(testSuite
 				.getName());

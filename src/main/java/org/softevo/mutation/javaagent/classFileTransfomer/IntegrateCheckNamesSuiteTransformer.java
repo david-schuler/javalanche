@@ -11,10 +11,10 @@ import static org.softevo.mutation.javaagent.classFileTransfomer.ClassFileTransf
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
-public class IntegrateCheckNamesSuitTransformer implements ClassFileTransformer {
+public class IntegrateCheckNamesSuiteTransformer implements ClassFileTransformer {
 
 	private static Logger logger = Logger
-			.getLogger(IntegrateCheckNamesSuitTransformer.class);
+			.getLogger(IntegrateCheckNamesSuiteTransformer.class);
 
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
@@ -22,7 +22,7 @@ public class IntegrateCheckNamesSuitTransformer implements ClassFileTransformer 
 		String classNameWithDots = className.replace('/', '.');
 		try {
 			if (compareWithSuiteProperty(classNameWithDots)) {
-				logger.info("Trying to integrate CheckNamesTestSuite");
+				logger.info("Trying to integrate CheckNamesTestSuite for class " + classNameWithDots);
 				BytecodeTransformer integrateCheckNamesTransformer = IntegrateSuiteTransformer
 						.getIntegrateCheckNamesTransformer();
 				classfileBuffer = integrateCheckNamesTransformer

@@ -10,7 +10,7 @@ import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
 import org.softevo.mutation.bytecodeMutations.negateJumps.NegateJumpsCollectorTransformer;
 import org.softevo.mutation.bytecodeMutations.sysexit.testclasses.SysExit;
 import org.softevo.mutation.bytecodeMutations.sysexit.testclasses.SysExitTest;
-import org.softevo.mutation.runtime.SelectiveTestSuite;
+import org.softevo.mutation.runtime.testsuites.SelectiveTestSuite;
 
 public class TestRemoveSystemExit {
 
