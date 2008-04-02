@@ -100,6 +100,7 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 			}
 			logger.info("Test Finished (" + testCount + ")" + entry.getValue());
 		}
+		CoverageData.endCoverage();
 	}
 
 	private void unsetTestName(String testName) {

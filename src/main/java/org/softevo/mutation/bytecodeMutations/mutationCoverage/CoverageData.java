@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.MethodVisitor;
+import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.QueryManager;
 
@@ -38,21 +39,18 @@ public class CoverageData {
 		call++;
 		if (call % 10000 == 0) {
 			logger.info("touch called " + call + "times");
-			logger.info("touch called by id " + id + " method "
-					+ SingletonHolder.instance.testName.get());
+			logger.info("Test " + SingletonHolder.instance.testName.get()
+					+ " touched mutation " + id);
+
 		}
 		// CoverageData instance = SingletonHolder.instance;
-		// // logger.info("Test " + instance.testName.get() + " touched
-		// mutation"
-		// // + id);
-		// Set<String> coveredTests;
-		// if (instance.coverageData.containsKey(id)) {
-		// coveredTests = SingletonHolder.instance.coverageData.get(id);
-		// } else {
-		// coveredTests = new HashSet<String>();
-		// instance.coverageData.put(id, coveredTests);
-		// }
-		// coveredTests.add(instance.testName.get());
+		Set<String> coveredTests = SingletonHolder.instance.coverageData
+				.get(id);
+		if (coveredTests == null) {
+			coveredTests = new HashSet<String>();
+			SingletonHolder.instance.coverageData.put(id, coveredTests);
+		}
+		coveredTests.add(SingletonHolder.instance.testName.get());
 	}
 
 	public static void setTestName(String testName) {
@@ -114,5 +112,10 @@ public class CoverageData {
 						INVOKESTATIC,
 						"org/softevo/mutation/bytecodeMutations/mutationCoverage/CoverageData",
 						"touch", "(J)V");
+	}
+
+	public static void endCoverage() {
+		QueryManager.saveCoverageResults(SingletonHolder.instance.coverageData);
+		XmlIo.toXML(SingletonHolder.instance.coverageData, "coverageData.xml");
 	}
 }

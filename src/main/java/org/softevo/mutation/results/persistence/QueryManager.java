@@ -2,12 +2,15 @@ package org.softevo.mutation.results.persistence;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -15,12 +18,18 @@ import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
 import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
+import org.softevo.mutation.results.MutationCoverage;
 import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.TestName;
 import org.softevo.mutation.results.Mutation.MutationType;
 
 /**
  * Class that provides static method that execute queries.
  *
+ * @author David Schuler
+ *
+ */
+/**
  * @author David Schuler
  *
  */
@@ -507,4 +516,105 @@ public class QueryManager {
 		session.close();
 		return idList;
 	}
+
+	/**
+	 * Save the given coverage data to the database.
+	 *
+	 * @param coverageData
+	 *            a map that contains the collected coverage data
+	 */
+	@SuppressWarnings("unchecked")
+	public static void saveCoverageResults(Map<Long, Set<String>> coverageData) {
+		Session session = HibernateUtil.openSession();
+		Transaction tx = session.beginTransaction();
+//		Query nullQuery = session
+//				.createQuery("from TestName as m where m.name IS NULL");
+//		TestName nullValue = (TestName) nullQuery.uniqueResult();
+		Query query = session.createQuery("from TestName");// as m where m.name
+															// IN (:names)");
+		// query.setParameterList("names", entry.getValue());
+		List<TestName> testNameQueryList = query.list();
+		Map<String, TestName> testNameMap = new HashMap<String, TestName>();
+		for (TestName tn : testNameQueryList) {
+			testNameMap.put(tn.getName(), tn);
+		}
+
+		for (Map.Entry<Long, Set<String>> entry : coverageData.entrySet()) {
+			List<TestName> testNames = new ArrayList<TestName>();
+			for (String testCase : entry.getValue()) {
+				TestName testName = null;
+				if (testCase == null) {
+					testCase = "NO INFO";
+				}
+				if (testNameMap != null && testNameMap.containsKey(testCase)) {
+					testName = testNameMap.get(testCase);
+				} else {
+					testName = new TestName(testCase);
+					session.save(testName);
+					testNameMap.put(testCase, testName);
+				}
+				testNames.add(testName);
+    			}
+			MutationCoverage mutationCoverage = new MutationCoverage(entry
+					.getKey(), testNames);
+			session.save(mutationCoverage);
+		}
+		tx.commit();
+		session.close();
+	}
+
+	/**
+	 * Returns the coverage data for given mutation id, or null if it has none.
+	 *
+	 * @param id
+	 *            the id of the mutation.
+	 * @return the coverage data or null
+	 */
+	public static MutationCoverage getMutationCoverageData(long id) {
+		Session session = HibernateUtil.openSession();
+		Transaction tx = session.beginTransaction();
+
+		Query query = session
+				.createQuery("from MutationCoverage as m where m.mutationID = :mutation_id");
+		query.setLong("mutation_id", id);
+		MutationCoverage mc = (MutationCoverage) query.uniqueResult();
+		Hibernate.initialize(mc.getTestsNames());
+		tx.commit();
+		session.close();
+		return mc;
+	}
+
+	/**
+	 * Delete Coverage data for given set of mutationids. rage data
+	 *
+	 * @param ids
+	 *            mutation ids that should be deleted.
+	 */
+	@SuppressWarnings("unchecked")
+	public static void deleteCoverageResult(List<Long> ids) {
+		Session session = HibernateUtil.openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("from MutationCoverage as m where m.mutationID IN (:mutation_ids)");
+		query.setParameterList("mutation_ids", ids);
+		List<MutationCoverage> mcs = query.list();
+		for (MutationCoverage mc : mcs) {
+			session.delete(mc);
+		}
+		tx.commit();
+		session.close();
+	}
+
+	public static void deleteCoverageResultByMutaiton(List<Mutation> mutations) {
+		List<Long> ids = new ArrayList<Long>();
+		for (Mutation mutation : mutations) {
+			if (mutation.getId() != null) {
+				ids.add(mutation.getId());
+			} else {
+				throw new RuntimeException("Mutation with id null" + mutation);
+			}
+		}
+		deleteCoverageResult(ids);
+	}
+
 }
