@@ -18,6 +18,7 @@ public class ArithmeticReplaceTest {
 		ByteCodeTestUtils.doSetup(classname, new ArithmeticReplaceCollectorTransformer(null));
 	}
 
+	@SuppressWarnings("unchecked")
 	private static final Class TEST_CLASS = Arithmetic.class;
 
 	private static final String TEST_CLASS_NAME = TEST_CLASS.getName();
@@ -28,8 +29,8 @@ public class ArithmeticReplaceTest {
 	private static final String UNITTEST_CLASS_TYPE = ArithmeticTest.class
 			.getName();
 
-	private static final String TEST_CLASS_FILENAME = ByteCodeTestUtils
-			.getFileNameForClass(TEST_CLASS);
+//	private static final String TEST_CLASS_FILENAME = ByteCodeTestUtils
+//			.getFileNameForClass(TEST_CLASS);
 
 	private static String[] testCaseNames = ByteCodeTestUtils
 			.generateTestCaseNames(UNITTEST_CLASS_TYPE, 5);

@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationCoverage;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 /**
@@ -128,8 +127,6 @@ public class MutationSwitcher {
 		if (MutationProperties.USE_EXTERNAL_COVERAGE_DATA) {
 			testCases = QueryManager.getTestCasesExternalData(actualMutation);
 		} else {
-			MutationCoverage mutationCoverage = QueryManager
-					.getMutationCoverageData(actualMutation.getId());
 			return QueryManager.getTestsCollectedData(actualMutation);
 		}
 		if (testCases == null) {

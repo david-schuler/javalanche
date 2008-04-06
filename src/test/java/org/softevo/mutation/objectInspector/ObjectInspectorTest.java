@@ -29,7 +29,7 @@ public class ObjectInspectorTest {
 		}
 
 		@SuppressWarnings("unchecked")
-		public Class loadClass(final String name) throws ClassNotFoundException {
+		public Class<?> loadClass(final String name) throws ClassNotFoundException {
 			if (name.equals(RCLASSNAME)) {
 				try {
 					ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES
@@ -60,7 +60,7 @@ public class ObjectInspectorTest {
 	@SuppressWarnings({ "unchecked", "static-access" })
 	public void testInspectObjects() {
 
-		Class ob = ObjectsForMethod.class;
+		Class<ObjectsForMethod> ob = ObjectsForMethod.class;
 		System.err.println();
 		try {
 			new TestingClassLoader().loadClass(RCLASSNAME);
@@ -87,7 +87,7 @@ public class ObjectInspectorTest {
 	@Test
 	public void test() throws Exception {
 		TestingClassLoader tcl = new TestingClassLoader();
-		Class cc = tcl.loadClass(RCLASSNAME);
+		Class<?> cc = tcl.loadClass(RCLASSNAME);
 		Method m1 = cc.getMethod("method1");
 		Method m2 = cc.getMethod("method2");
 		Method m3 = cc.getMethod("method3");

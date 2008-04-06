@@ -3,9 +3,6 @@ package org.softevo.mutation.runtime.testsuites;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-
 import org.apache.log4j.Logger;
 
 import junit.framework.Test;

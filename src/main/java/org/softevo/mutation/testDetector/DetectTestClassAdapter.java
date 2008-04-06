@@ -14,6 +14,7 @@ import org.objectweb.asm.ClassVisitor;
  * @author David Schuler
  *
  */
+@SuppressWarnings("unchecked")
 public class DetectTestClassAdapter extends ClassAdapter {
 
 	private static Logger logger = Logger
@@ -45,6 +46,7 @@ public class DetectTestClassAdapter extends ClassAdapter {
 		}
 
 	}
+
 
 	private boolean isTestCase(Set<Class> classes) {
 		return classes.contains(TestCase.class);

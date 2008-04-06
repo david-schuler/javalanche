@@ -40,8 +40,6 @@ public class ResultReporter {
 
 	private static boolean firstTouch = true;
 
-	private int unmutated;
-
 	public synchronized void report(TestResult mutationTestResult,
 			Mutation mutation, MutationTestListener mutationTestListener) {
 		if (mutationTestResult == null || mutation == null || mutation == null) {

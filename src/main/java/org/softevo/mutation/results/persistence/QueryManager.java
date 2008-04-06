@@ -2,7 +2,6 @@ package org.softevo.mutation.results.persistence;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +29,7 @@ import org.softevo.mutation.results.Mutation.MutationType;
  * @author David Schuler
  *
  */
+@SuppressWarnings("unchecked")
 public class QueryManager {
 
 	private static Logger logger = Logger.getLogger(QueryManager.class);
@@ -121,6 +121,7 @@ public class QueryManager {
 	 *            The number of Mutations to fetch.
 	 * @return The List of fetched Mutations.
 	 */
+	@SuppressWarnings("unchecked")
 	public static List<Mutation> getMutations(int maxResults) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -247,7 +248,7 @@ public class QueryManager {
 	 *
 	 * @param tests
 	 *            A collection of test case names.
-	 * @return A colllection of mutations that are covered by the given test
+	 * @return A collection of mutations that are covered by the given test
 	 *         cases.
 	 */
 	public static Collection<Mutation> getAllMutationsForTestCases(
@@ -534,7 +535,6 @@ public class QueryManager {
 	 * @param coverageData
 	 *            a map that contains the collected coverage data
 	 */
-	@SuppressWarnings("unchecked")
 	public static void saveCoverageResults(Map<Long, Set<String>> coverageData) {
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();

@@ -10,6 +10,10 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 /**
+ *
+ * Class that stores a mutation. It stores its type, where it is (was) applied
+ * and the results of the tests.
+ *
  * @author David Schuler
  *
  */
@@ -41,6 +45,10 @@ public class Mutation {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private SingleTestResult mutationResult;
 
+	/**
+	 * Default constructor needed by Hibernate.
+	 */
+	@SuppressWarnings("unused")
 	private Mutation() {
 	}
 

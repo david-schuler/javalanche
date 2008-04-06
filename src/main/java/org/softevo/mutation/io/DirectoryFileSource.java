@@ -46,6 +46,8 @@ public class DirectoryFileSource extends DirectoryWalker {
 	 * @see org.apache.commons.io.DirectoryWalker#handleDirectory(java.io.File,
 	 *      int, java.util.Collection)
 	 */
+	@SuppressWarnings("unchecked") // Overriding pre 1.5 Code
+
 	@Override
 	protected boolean handleDirectory(File directory, int depth,
 			Collection results) {

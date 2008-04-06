@@ -1,8 +1,6 @@
 package org.softevo.mutation.runtime.testsuites;
 
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -13,14 +11,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.softevo.mutation.javaagent.MutationForRun;
-import org.softevo.mutation.javaagent.MutationPreMain;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.QueryManager;
@@ -192,7 +187,7 @@ public class SelectiveTestSuite extends TestSuite {
 			actualMutation = mutationSwitcher.next();
 			try {
 				@SuppressWarnings("unused")
-				Class c = Class.forName(actualMutation.getClassName());
+				Class<?> c = Class.forName(actualMutation.getClassName());
 			} catch (ClassNotFoundException e) {
 				logger.error("Class " + actualMutation.getClassName()
 						+ " not on classpath");
@@ -364,47 +359,48 @@ public class SelectiveTestSuite extends TestSuite {
 		return callable;
 	}
 
-	/**
-	 * Returns a Map with all test contained in this TestSuite. The TestSuite is
-	 * recursively traversed to search for TestCases.
-	 *
-	 * @param testSuite
-	 *            TestSuite for which the tests are collected.
-	 * @return Return a Map that with all test contained in this TestSuite.
-	 */
-	public static Map<String, TestCase> getAllTestsOld(TestSuite testSuite) {
-		Map<String, TestCase> resultMap = new HashMap<String, TestCase>();
-		for (Enumeration e = testSuite.tests(); e.hasMoreElements();) {
-			Object test = e.nextElement();
-			if (test instanceof TestSuite) {
-				TestSuite suite = (TestSuite) test;
-				resultMap.putAll(getAllTestsOld(suite));
-			} else if (test instanceof TestCase) {
-				TestCase testCase = (TestCase) test;
-				String fullTestName = getFullTestCaseName(testCase);
-				resultMap.put(fullTestName, testCase);
-			} else if (test instanceof Test) {
-				logger.info("Test not added. Class: " + test.getClass());
-			} else {
-				throw new RuntimeException("Not handled type: "
-						+ test.getClass());
-			}
-		}
-		return resultMap;
-	}
+	// /**
+	// * Returns a Map with all test contained in this TestSuite. The TestSuite
+	// is
+	// * recursively traversed to search for TestCases.
+	// *
+	// * @param testSuite
+	// * TestSuite for which the tests are collected.
+	// * @return Return a Map that with all test contained in this TestSuite.
+	// */
+	// public static Map<String, TestCase> getAllTestsOld(TestSuite testSuite) {
+	// Map<String, TestCase> resultMap = new HashMap<String, TestCase>();
+	// for (Enumeration e = testSuite.tests(); e.hasMoreElements();) {
+	// Object test = e.nextElement();
+	// if (test instanceof TestSuite) {
+	// TestSuite suite = (TestSuite) test;
+	// resultMap.putAll(getAllTestsOld(suite));
+	// } else if (test instanceof TestCase) {
+	// TestCase testCase = (TestCase) test;
+	// String fullTestName = getFullTestCaseName(testCase);
+	// resultMap.put(fullTestName, testCase);
+	// } else if (test instanceof Test) {
+	// logger.info("Test not added. Class: " + test.getClass());
+	// } else {
+	// throw new RuntimeException("Not handled type: "
+	// + test.getClass());
+	// }
+	// }
+	//		return resultMap;
+	//	}
 
-	/**
-	 * Returns the full (JUnit) name for the given TestCase.
-	 *
-	 * @param testCase
-	 *            TestCase for which the name is computed.
-	 * @return The string representation of this TestCase.
-	 */
-	private static String getFullTestCaseName(TestCase testCase) {
-		String fullTestName = testCase.getClass().getName() + "."
-				+ testCase.getName();
-		return fullTestName;
-	}
+//	/**
+//	 * Returns the full (JUnit) name for the given TestCase.
+//	 *
+//	 * @param testCase
+//	 *            TestCase for which the name is computed.
+//	 * @return The string representation of this TestCase.
+//	 */
+//	private static String getFullTestCaseName(TestCase testCase) {
+//		String fullTestName = testCase.getClass().getName() + "."
+//				+ testCase.getName();
+//		return fullTestName;
+//	}
 
 	/**
 	 * @return the actualMutation that is currently applied.

@@ -69,6 +69,7 @@ public class SingleTestResult {
 		this.date = date;
 	}
 
+	@SuppressWarnings("unused") // Needed by hibernate
 	private SingleTestResult() {
 	}
 

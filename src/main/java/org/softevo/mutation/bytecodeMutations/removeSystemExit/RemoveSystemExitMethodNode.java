@@ -2,7 +2,6 @@ package org.softevo.mutation.bytecodeMutations.removeSystemExit;
 
 import java.util.Iterator;
 
-
 import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
@@ -11,6 +10,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -29,6 +29,8 @@ public class RemoveSystemExitMethodNode extends MethodAdapter {
 		next = mv;
 	}
 
+	@SuppressWarnings("unchecked")
+	// Call to pre 1.5 Code
 	@Override
 	public void visitEnd() {
 		MethodNode mn = (MethodNode) mv;
@@ -37,8 +39,6 @@ public class RemoveSystemExitMethodNode extends MethodAdapter {
 		AbstractInsnNode prev = null;
 		InsnList newInstrucionList = new InsnList();
 		while (i.hasNext()) {
-
-			// TODO add Labels
 			boolean addInstruction = true;
 			AbstractInsnNode i1 = (AbstractInsnNode) i.next();
 			if (i1 instanceof MethodInsnNode) {
@@ -52,7 +52,7 @@ public class RemoveSystemExitMethodNode extends MethodAdapter {
 					Label mutationStartLabel = new Label();
 					mutationStartLabel.info = new MutationMarker(true);
 
-					// il.add(new LabelNode(mutationStartLabel));
+					il.add(new LabelNode(mutationStartLabel));
 					il.add(new TypeInsnNode(Opcodes.NEW,
 							"java/lang/RuntimeException"));
 					il.add(new InsnNode(Opcodes.DUP));
@@ -64,24 +64,25 @@ public class RemoveSystemExitMethodNode extends MethodAdapter {
 
 					Label mutationEndLabel = new Label();
 					mutationEndLabel.info = new MutationMarker(false);
-					// il.add(new LabelNode(mutationEndLabel));
+					il.add(new LabelNode(mutationEndLabel));
 					newInstrucionList.add(il);
 					addInstruction = false;
 				}
 			}
-			if(addInstruction){
-				try{
-				insns.remove(i1);
-				newInstrucionList.add(i1);
-				}catch (Exception e) {
+			if (addInstruction) {
+				try {
+					insns.remove(i1);
+					newInstrucionList.add(i1);
+				} catch (Exception e) {
 					logger.error(e);
 				}
-//				newInstrucionList.add(new InsnNode(Opcodes.ICONST_5));
+				// newInstrucionList.add(new InsnNode(Opcodes.ICONST_5));
 			}
 			prev = i1;
 		}
 		mn.instructions = newInstrucionList;
-//		logger.error("new Imstruction List:" + newInstrucionList.size() + " " + insns.size() + " " + mn.instructions.size());
+		// logger.error("new Imstruction List:" + newInstrucionList.size() + " "
+		// + insns.size() + " " + mn.instructions.size());
 		mn.accept(next);
 	}
 }

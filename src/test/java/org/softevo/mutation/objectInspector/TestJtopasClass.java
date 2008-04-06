@@ -1,14 +1,11 @@
 package org.softevo.mutation.objectInspector;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.junit.Assert;
-import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
@@ -27,7 +24,7 @@ public class TestJtopasClass {
 		}
 
 		@SuppressWarnings("unchecked")
-		public Class loadClass(final String name) throws ClassNotFoundException {
+		public Class<?> loadClass(final String name) throws ClassNotFoundException {
 			if (name.equals(TEST_CLASS_CLASSNAME)) {
 				try {
 					ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES
@@ -58,7 +55,7 @@ public class TestJtopasClass {
 		TestingClassLoader tcl;
 		try {
 			tcl = new TestingClassLoader();
-			Class cc = tcl.loadClass(TEST_CLASS_CLASSNAME);
+			Class<?> cc = tcl.loadClass(TEST_CLASS_CLASSNAME);
 			Assert.assertNotNull(cc);
 			Method m1 = cc.getMethod("testTokenPos");
 			try {

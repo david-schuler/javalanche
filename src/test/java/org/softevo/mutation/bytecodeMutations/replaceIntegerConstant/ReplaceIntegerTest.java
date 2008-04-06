@@ -27,6 +27,7 @@ public class ReplaceIntegerTest {
 		ByteCodeTestUtils.doSetup(classname,new RicCollectorTransformer(null));
 	}
 
+	@SuppressWarnings("unchecked")
 	private static final Class TEST_CLASS = IntegerConstants.class;
 
 	private static final String TEST_CLASS_NAME = TEST_CLASS.getName();
@@ -34,8 +35,8 @@ public class ReplaceIntegerTest {
 	private static final String UNITTEST_CLASS_NAME = IntegerConstantsTest.class
 			.getName();
 
-	private static final String TEST_CLASS_FILENAME = ByteCodeTestUtils
-			.getFileNameForClass(TEST_CLASS);
+//	private static final String TEST_CLASS_FILENAME = ByteCodeTestUtils
+//			.getFileNameForClass(TEST_CLASS);
 
 	private static String[] testCaseNames = ByteCodeTestUtils
 			.generateTestCaseNames(UNITTEST_CLASS_NAME, 3);

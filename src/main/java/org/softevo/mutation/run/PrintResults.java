@@ -137,7 +137,7 @@ public class PrintResults {
 		Query query = session
 				.createQuery("FROM Mutation WHERE mutationResult IS NOT NULL");
 		query.setMaxResults(max);
-		List results = query.list();
+		List<?> results = query.list();
 		for (Object object : results) {
 			logger.info(object);
 		}

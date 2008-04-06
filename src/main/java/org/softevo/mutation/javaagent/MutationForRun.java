@@ -110,6 +110,7 @@ public class MutationForRun {
 		return mutationsToReturn;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static List<Mutation> getMutationsFromDB() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -118,16 +119,8 @@ public class MutationForRun {
 						"SELECT m.* FROM Mutation m JOIN TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN TestCoverageClassResult_TestCoverageLineResult AS class_line ON class_line.testcoverageclassresult_id = tccr.id JOIN TestCoverageLineResult AS tclr ON tclr.id = class_line.lineresults_id 	WHERE m.mutationresult_id IS NULL AND m.linenumber = tclr.linenumber")
 				.addEntity(Mutation.class);
 		query.setMaxResults(DEFAOUT_MUTATIONS_PER_RUN);
-		List results = query.list();
-		List<Mutation> mutationList = new ArrayList<Mutation>();
-		for (Object m : results) {
-			Mutation mutation = (Mutation) m;
-			// Query hqlQuery = session.createQuery("Mutation as m inner join
-			// fetch m.mutationResult inner join fetch m.mutationResult.failures
-			// inner join fetch m.mutationResult.errors inner join fetch
-			// m.mutationResult.passing WHERE m.id = :id" );
-			// hqlQuery.setLong("id", mutation.getId());
-			// Mutation mutationToAdd = (Mutation) hqlQuery.uniqueResult();
+		List<Mutation> mutationList= query.list();
+		for (Mutation mutation : mutationList) {
 			Mutation mutationToAdd = mutation;
 			logger.info("Mutation id:" + mutationToAdd.getId());
 			logger.info(mutationToAdd);

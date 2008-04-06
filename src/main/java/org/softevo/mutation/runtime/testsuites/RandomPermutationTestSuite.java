@@ -2,7 +2,6 @@ package org.softevo.mutation.runtime.testsuites;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,13 +9,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
-import org.softevo.mutation.io.XmlIo;
-
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
+
+import org.apache.log4j.Logger;
+import org.softevo.mutation.io.XmlIo;
 
 /**
  * Executes the tests in a random order multiple times. In order to see if they
@@ -56,13 +54,6 @@ public class RandomPermutationTestSuite extends TestSuite {
 		super(name);
 	}
 
-
-
-	private static String getFullTestCaseName(TestCase testCase) {
-		String fullTestName = testCase.getClass().getName() + "."
-				+ testCase.getName();
-		return fullTestName;
-	}
 
 	@Override
 	public void run(TestResult result) {

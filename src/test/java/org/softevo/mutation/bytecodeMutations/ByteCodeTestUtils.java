@@ -145,6 +145,7 @@ public class ByteCodeTestUtils {
 		return testCaseNames;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static String getFileNameForClass(Class clazz) {
 		String result = null;
 		try {
