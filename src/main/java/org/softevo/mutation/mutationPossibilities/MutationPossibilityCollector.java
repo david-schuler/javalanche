@@ -56,7 +56,6 @@ public class MutationPossibilityCollector {
 		mpc.toDB();
 	}
 
-
 	/**
 	 * Returns the number of collected mutation possibilities.
 	 *
@@ -68,10 +67,12 @@ public class MutationPossibilityCollector {
 
 	public void updateDB() {
 		int mutations = possibilities.size();
-		logger.info("Collected " + mutations
-				+ " mutation possibilities. \nTrying to save mutations.");
-		QueryManager.saveMutations(possibilities);
-		logger.info(mutations + " mutations saved");
+		logger.info("Collected " + mutations + " mutation possibilities.");
+		if (mutations > 0) {
+			logger.info("Trying to save mutations.");
+			QueryManager.saveMutations(possibilities);
+			logger.info(mutations + " mutations saved");
+		}
 	}
 
 	public void clear() {

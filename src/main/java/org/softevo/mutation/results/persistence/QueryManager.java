@@ -2,6 +2,7 @@ package org.softevo.mutation.results.persistence;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,11 +34,10 @@ public class QueryManager {
 
 	private static Logger logger = Logger.getLogger(QueryManager.class);
 
-
 	/**
-	 *Prevent initialization.
+	 * Prevent initialization.
 	 */
-	private QueryManager(){
+	private QueryManager() {
 
 	}
 
@@ -190,8 +190,9 @@ public class QueryManager {
 		session.close();
 	}
 
-	public static String[] getTestCases(Mutation mutation) {
-		return getTestCases(mutation.getClassName(), mutation.getLineNumber());
+	public static String[] getTestCasesExternalData(Mutation mutation) {
+		return getTestCasesExternalData(mutation.getClassName(), mutation
+				.getLineNumber());
 	}
 
 	/**
@@ -205,7 +206,8 @@ public class QueryManager {
 	 * @return An array that contains the names of the testcases that cover this
 	 *         line.
 	 */
-	public static String[] getTestCases(String className, int lineNumber) {
+	public static String[] getTestCasesExternalData(String className,
+			int lineNumber) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session
@@ -448,9 +450,14 @@ public class QueryManager {
 
 		int counter = 0;
 		for (Mutation mutation : mutationsToSave) {
-			counter++;
-			logger.info(counter + ": Trying to save mutation :" + mutation);
-			session.save(mutation);
+			if (mutation.getId() != null) {
+				logger.debug("Not saving mutation. Mutation already in db "
+						+ mutation);
+			} else {
+				counter++;
+				logger.info(counter + ": Trying to save mutation :" + mutation);
+				session.save(mutation);
+			}
 		}
 		tx.commit();
 		session.close();
@@ -531,11 +538,11 @@ public class QueryManager {
 	public static void saveCoverageResults(Map<Long, Set<String>> coverageData) {
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
-//		Query nullQuery = session
-//				.createQuery("from TestName as m where m.name IS NULL");
-//		TestName nullValue = (TestName) nullQuery.uniqueResult();
+		// Query nullQuery = session
+		// .createQuery("from TestName as m where m.name IS NULL");
+		// TestName nullValue = (TestName) nullQuery.uniqueResult();
 		Query query = session.createQuery("from TestName");// as m where m.name
-															// IN (:names)");
+		// IN (:names)");
 		// query.setParameterList("names", entry.getValue());
 		List<TestName> testNameQueryList = query.list();
 		Map<String, TestName> testNameMap = new HashMap<String, TestName>();
@@ -558,11 +565,12 @@ public class QueryManager {
 					testNameMap.put(testCase, testName);
 				}
 				testNames.add(testName);
-    			}
+			}
 			MutationCoverage mutationCoverage = new MutationCoverage(entry
 					.getKey(), testNames);
 			session.save(mutationCoverage);
 		}
+
 		tx.commit();
 		session.close();
 	}
@@ -577,12 +585,15 @@ public class QueryManager {
 	public static MutationCoverage getMutationCoverageData(long id) {
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
-
 		Query query = session
 				.createQuery("from MutationCoverage as m where m.mutationID = :mutation_id");
 		query.setLong("mutation_id", id);
 		MutationCoverage mc = (MutationCoverage) query.uniqueResult();
-		Hibernate.initialize(mc.getTestsNames());
+		if (mc != null) {
+			Hibernate.initialize(mc.getTestsNames());
+		} else {
+			logger.warn("found no coverage data for mutation with id " + id);
+		}
 		tx.commit();
 		session.close();
 		return mc;
@@ -619,6 +630,43 @@ public class QueryManager {
 			}
 		}
 		deleteCoverageResult(ids);
+	}
+
+	/**
+	 *
+	 * Add testnames to the database although they did not cover any mutation.
+	 *
+	 * @param testsRun
+	 */
+	@SuppressWarnings("unchecked")
+	public static void saveTestsWithNoCoverage(Set<String> testsRun) {
+		Session session = HibernateUtil.openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session.createQuery("from TestName");
+		List<TestName> testNameQueryList = query.list();
+		List<String> testsToAdd = new ArrayList<String>(testsRun);
+		for (TestName tn : testNameQueryList) {
+			testsToAdd.remove(tn.getName());
+		}
+		for (String addTest : testsToAdd) {
+			session.save(new TestName(addTest));
+		}
+		tx.commit();
+		session.close();
+	}
+
+	public static Set<String> getTestsCollectedData(Mutation mutation) {
+		MutationCoverage mutationCoverage = getMutationCoverageData(mutation
+				.getId());
+		if (mutationCoverage == null) {
+			return null;
+		}
+		List<TestName> testsNames = mutationCoverage.getTestsNames();
+		Set<String> tests = new HashSet<String>();
+		for (TestName testName : testsNames) {
+			tests.add(testName.getName());
+		}
+		return tests;
 	}
 
 }

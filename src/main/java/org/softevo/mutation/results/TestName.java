@@ -1,5 +1,6 @@
 package org.softevo.mutation.results;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -11,17 +12,16 @@ public class TestName {
 	@GeneratedValue
 	private Long id;
 
+	@Column(unique = true)
 	private String name;
 
 	public TestName() {
 	}
 
-
 	public TestName(String name) {
 		super();
 		this.name = name;
 	}
-
 
 	/**
 	 * @return the id
@@ -38,18 +38,19 @@ public class TestName {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
-
 
 }

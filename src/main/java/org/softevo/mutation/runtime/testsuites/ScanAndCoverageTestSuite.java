@@ -1,5 +1,7 @@
 package org.softevo.mutation.runtime.testsuites;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -11,6 +13,7 @@ import junit.framework.Test;
 
 import org.apache.log4j.Logger;
 import org.softevo.mutation.bytecodeMutations.mutationCoverage.CoverageData;
+import org.softevo.mutation.io.XmlIo;
 
 public class ScanAndCoverageTestSuite extends TestSuite {
 
@@ -38,20 +41,25 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 		}
 		int testCount = 0;
 		Set<Entry<String, Test>> allTestEntrySet = allTests.entrySet();
+		List<String> testsRun = new ArrayList<String>();
 		for (Map.Entry<String, Test> entry : allTestEntrySet) {
 			testCount++;
+			String testName = entry.getKey();
 			logger.info("Running Test (" + testCount + "/"
-					+ allTestEntrySet.size() + ")" + entry.getValue());
+					+ allTestEntrySet.size() + ")" + testName);
 			try {
-				setTestName(entry.getKey());
+				setTestName(testName);
 				runTest(entry.getValue(), result);
-				unsetTestName(entry.getKey());
+				unsetTestName(testName);
+				testsRun.add(testName);
 			} catch (Error e) {
-				logger.warn("Exception During test " + e.getMessage());
+				logger.warn("Exception During test " + testName + " "
+						+ e.getMessage());
 				e.printStackTrace();
 			}
-			logger.info("Test Finished (" + testCount + ")" + entry.getValue());
+			logger.info("Test Finished (" + testCount + ")" + testName);
 		}
+		XmlIo.toXML(testsRun, "tests-runByScanAndCoveragetestSuite.xml");
 		CoverageData.endCoverage();
 	}
 

@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.softevo.mutation.results;
 
 import javax.persistence.CascadeType;

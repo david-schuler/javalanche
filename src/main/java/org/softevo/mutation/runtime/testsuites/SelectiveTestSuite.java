@@ -171,20 +171,17 @@ public class SelectiveTestSuite extends TestSuite {
 	 */
 	@Override
 	public void run(TestResult result) {
-		if (System.getProperty(MutationProperties.SCAN_FOR_MUTATIONS_KEY) != null
-				|| MutationPreMain.scanningEnabled) {
-			logger.info("Running scanner");
-			super.run(result);
-			return;
-		}
+
 		Thread currentThread = Thread.currentThread();
 		StackTraceElement[] sts = currentThread.getStackTrace();
 		String stackTraceString = Arrays.toString(sts);
 		logger.info("SelectiveTestSuite.run entered. Stacktrace:\n"
-				+ stackTraceString);
-		logger.log(Level.DEBUG, "All Tests collected");
+
+		+ stackTraceString);
+		logger.debug("All Tests collected");
+
 		mutationSwitcher = new MutationSwitcher();
-		Map<String, TestCase> allTests = getAllTests(this);
+		Map<String, Test> allTests = TestSuiteUtil.getAllTests(this);
 		int debugCount = DEBUG_MUTATION_TO_EXECUTE;
 		while (mutationSwitcher.hasNext()) {
 			if (DEBUG) {
@@ -197,9 +194,10 @@ public class SelectiveTestSuite extends TestSuite {
 				@SuppressWarnings("unused")
 				Class c = Class.forName(actualMutation.getClassName());
 			} catch (ClassNotFoundException e) {
-				logger.info("Class " + actualMutation.getClassName()
+				logger.error("Class " + actualMutation.getClassName()
 						+ " not on classpath");
-				continue;
+				throw new RuntimeException(
+						"Mutation classes are missing on the class path ", e);
 			}
 			if (result.shouldStop())
 				break;
@@ -226,7 +224,7 @@ public class SelectiveTestSuite extends TestSuite {
 			}
 		}
 		Runtime.getRuntime().removeShutdownHook(shutDownHook);
-		logger.log(Level.INFO, "Test Runs finished");
+		logger.debug("Test Runs finished");
 		logger.info("" + resultReporter.summary(true));
 		MutationForRun.getInstance().reportAppliedMutations();
 	}
@@ -240,14 +238,14 @@ public class SelectiveTestSuite extends TestSuite {
 	 * @param testsForThisRun
 	 *            Tests that should be executed
 	 */
-	private void testUnmutated(Map<String, TestCase> allTests,
+	private void testUnmutated(Map<String, Test> allTests,
 			Set<String> testsForThisRun) {
 		actualMutation = QueryManager.generateUnmutated(actualMutation);
 		if (actualMutation.getMutationResult() == null) {
-			logger.info("Starting unmutated tests");
+			logger.debug("Starting unmutated tests");
 			ResultReporter.setActualMutation(actualMutation);
 			resultReporter.addUnmutated(actualMutation);
-			logger.info("Unmutated mutation:" + actualMutation);
+			logger.debug("Unmutated mutation:" + actualMutation);
 			TestResult unmutatedTestResult = new TestResult();
 			actualMutationTestResult = unmutatedTestResult;
 			MutationTestListener unmutatedListener = new MutationTestListener();
@@ -280,20 +278,19 @@ public class SelectiveTestSuite extends TestSuite {
 	 * @param testsForThisRun
 	 *            Tests that should be executed in this run.
 	 */
-	private void runTests(Map<String, TestCase> allTests,
-			TestResult testResult, Set<String> testsForThisRun) {
+	private void runTests(Map<String, Test> allTests, TestResult testResult,
+			Set<String> testsForThisRun) {
 		for (String testName : testsForThisRun) {
-			TestCase test = allTests.get(testName);
+			Test test = allTests.get(testName);
 			actualTest = test;
 			if (test == null) {
-				// throw new RuntimeException("Test not found " + testName
-				// + "\n All Tests: " + allTests);
 				logger.warn("Test not found " + testName);
+				throw new RuntimeException("Test not found " + testName
+						+ "\n All Tests: " + allTests);
 			} else {
 				try {
 					ResultReporter.setActualTestCase(test.toString());
 					runWithTimeout(test, testResult);
-					// runTest(test, testResult);
 				} catch (Exception e) {
 					logger.warn(String.format(
 							"Exception thrown by test %s Exception: %s", test
@@ -314,11 +311,11 @@ public class SelectiveTestSuite extends TestSuite {
 	 *            TestResult that is used to store the results.
 	 *
 	 */
-	private void runWithTimeout(final TestCase test, final TestResult testResult) {
+	private void runWithTimeout(final Test test, final TestResult testResult) {
 		ExecutorService service = Executors.newSingleThreadExecutor();
 		Callable<Object> callable = getCallable(test, testResult);
 		Future<Object> result = service.submit(callable);
-		logger.info("start timed test");
+		logger.debug("start timed test" + test);
 		service.shutdown();
 		try {
 			boolean terminated = service.awaitTermination(
@@ -336,7 +333,7 @@ public class SelectiveTestSuite extends TestSuite {
 			e.printStackTrace();
 			testResult.addError(test, e);
 		}
-		logger.info("end timed test");
+		logger.debug("end timed test" + test);
 
 	}
 
@@ -350,7 +347,7 @@ public class SelectiveTestSuite extends TestSuite {
 	 *            TestResult where the the testResults are collected.
 	 * @return The Callable that executes the test.
 	 */
-	private Callable<Object> getCallable(final TestCase test,
+	private Callable<Object> getCallable(final Test test,
 			final TestResult testResult) {
 		Callable<Object> callable = new Callable<Object>() {
 			public Object call() throws Exception {
@@ -375,13 +372,13 @@ public class SelectiveTestSuite extends TestSuite {
 	 *            TestSuite for which the tests are collected.
 	 * @return Return a Map that with all test contained in this TestSuite.
 	 */
-	public static Map<String, TestCase> getAllTests(TestSuite testSuite) {
+	public static Map<String, TestCase> getAllTestsOld(TestSuite testSuite) {
 		Map<String, TestCase> resultMap = new HashMap<String, TestCase>();
 		for (Enumeration e = testSuite.tests(); e.hasMoreElements();) {
 			Object test = e.nextElement();
 			if (test instanceof TestSuite) {
 				TestSuite suite = (TestSuite) test;
-				resultMap.putAll(getAllTests(suite));
+				resultMap.putAll(getAllTestsOld(suite));
 			} else if (test instanceof TestCase) {
 				TestCase testCase = (TestCase) test;
 				String fullTestName = getFullTestCaseName(testCase);

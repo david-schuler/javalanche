@@ -1,5 +1,7 @@
 package org.softevo.mutation.runtime.testsuites;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,8 +36,9 @@ public class CheckNamesTestSuite extends TestSuite {
 		logger.info("First test result " + firstTestResult.runCount());
 		Map<String, Test> allTests = TestSuiteUtil.getAllTests(this);
 		if (allTests.size() != firstTestResult.runCount()) {
-			throw new RuntimeException("Found unequal number of tests"
-					+ allTests.size() + "  " + firstTestResult.runCount());
+			throw new RuntimeException("Found unequal number of tests."
+					+ "\n Tests to run: " + allTests.size()
+					+ "\n Tests that were run: " + firstTestResult.runCount());
 		}
 		checkTests(allTests);
 		int testCount = 0;
@@ -59,23 +62,26 @@ public class CheckNamesTestSuite extends TestSuite {
 
 	private void checkTests(Map<String, Test> allTests) {
 		List<TestName> testNames = getTestsFromDB();
+		List<String> testNamesStringList = new ArrayList<String>();
 		for (TestName testName : testNames) {
+			testNamesStringList.add(testName.getName());
 			if (!allTests.containsKey(testName.getName())) {
 				throw new RuntimeException(
 						"Test from db not contained in this run: "
 								+ testName.getName());
 			}
 		}
-		logger.warn(String.format("Found all %d tests from db ", testNames
+		logger.info(String.format("Found all %d tests from db ", testNames
 				.size()));
 		for (String testNameFromMap : allTests.keySet()) {
-			if (!testNames.contains(testNameFromMap)) {
+			if (!testNamesStringList.contains(testNameFromMap)) {
 				throw new RuntimeException(
 						"Test of this run not contained in db:  "
-								+ testNameFromMap);
+								+ testNameFromMap + "\nList:\n"
+								+ testNamesStringList);
 			}
 		}
-		logger.warn(String.format("Found all %d actual tests in db ", allTests
+		logger.info(String.format("Found all %d actual tests in db ", allTests
 				.size()));
 	}
 
@@ -85,9 +91,9 @@ public class CheckNamesTestSuite extends TestSuite {
 		Transaction tx = session.beginTransaction();
 		Query query = session
 				.createQuery("from TestName as tm where tm.name LIKE '"
-				+ MutationProperties.PROJECT_PREFIX + "%'");
-//		System.out.println(MutationProperties.PROJECT_PREFIX);
-//		query.setString("prefix", MutationProperties.PROJECT_PREFIX);
+						+ MutationProperties.PROJECT_PREFIX + "%'");
+		// System.out.println(MutationProperties.PROJECT_PREFIX);
+		// query.setString("prefix", MutationProperties.PROJECT_PREFIX);
 		List<TestName> testnames = query.list();
 		tx.commit();
 		session.close();

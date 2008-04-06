@@ -114,10 +114,12 @@ public class PossibilitiesArithmeticReplaceMethodAdapter extends
 	}
 
 	private void addPossibility() {
+		if(!mutationCode){
 		Mutation mutation = new Mutation(className, getLineNumber(),
 				possForLine, Mutation.MutationType.ARITHMETIC_REPLACE);
 		mpc.addPossibility(mutation);
 		possForLine++;
 		CoverageData.insertCoverageCalls(mv, mutation);
+		}
 	}
 }

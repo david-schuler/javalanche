@@ -81,8 +81,6 @@ public class MutationProperties {
 
 	public static final RunMode RUN_MODE = getRunMode();
 
-	public static final String SCAN_FOR_MUTATIONS_KEY = "scan";
-
 	public static final String RESULT_FILE_KEY = "mutation.result.file";
 
 	public static final String MUTATION_FILE_KEY = "mutation.file";
@@ -134,7 +132,6 @@ public class MutationProperties {
 
 	public static final String TEST_SUITE = getProperty(TEST_SUITE_KEY);
 
-
 	/**
 	 * The key for the system property that specifies if there is coverage
 	 * information in the db.
@@ -181,16 +178,37 @@ public class MutationProperties {
 
 	public static final String TEST_TESTSUITE = getProperty(TEST_TESTSUITE_KEY);
 
+	public static final String USE_EXTERNAL_COVERAGE_DATA_KEY = "mutation.external.coverage.data";
+
+	public static final boolean USE_EXTERNAL_COVERAGE_DATA = getPropertyOrDefault(
+			USE_EXTERNAL_COVERAGE_DATA_KEY, false);
+
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
 		return Integer.parseInt(result);
 	}
 
+	private static boolean getPropertyOrDefault(String key, boolean b) {
+		String property = getProperty(key);
+		if (property == null) {
+			return b;
+		} else {
+			String propertyTrimmed = property.trim().toLowerCase();
+			if (propertyTrimmed.equals("true") || propertyTrimmed.equals("yes")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private static RunMode getRunMode() {
-		String runModeString = getProperty(RUN_MODE_KEY).toLowerCase();
-		for (RunMode runMode : RunMode.values()) {
-			if (runMode.getKey().equals(runModeString)) {
-				return runMode;
+		String runModeString = getProperty(RUN_MODE_KEY);
+		if (runModeString != null) {
+			runModeString = runModeString.toLowerCase();
+			for (RunMode runMode : RunMode.values()) {
+				if (runMode.getKey().equals(runModeString)) {
+					return runMode;
+				}
 			}
 		}
 		return RunMode.MUTAION_TEST;

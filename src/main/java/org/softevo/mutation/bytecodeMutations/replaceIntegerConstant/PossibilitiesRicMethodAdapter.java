@@ -22,22 +22,23 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 	}
 
 	private void countMutation() {
-		Mutation mutationPlus1 = new Mutation(className, getLineNumber(),
-				possibilitiesForLine, Mutation.MutationType.RIC_PLUS_1);
-		Mutation mutationMinus1 = new Mutation(className, getLineNumber(),
-				possibilitiesForLine, Mutation.MutationType.RIC_MINUS_1);
-		Mutation mutationZero = new Mutation(className, getLineNumber(),
-				possibilitiesForLine, Mutation.MutationType.RIC_ZERO);
-		possibilitiesForLine++;
-		mutationPossibilityCollector.addPossibility(mutationPlus1);
-		mutationPossibilityCollector.addPossibility(mutationMinus1);
-		mutationPossibilityCollector.addPossibility(mutationZero);
-		CoverageData.insertCoverageCalls(mv, mutationPlus1);
-		CoverageData.insertCoverageCalls(mv, mutationMinus1);
-		CoverageData.insertCoverageCalls(mv, mutationZero);
-		possibilities++;
+		if (!mutationCode) {
+			Mutation mutationPlus1 = new Mutation(className, getLineNumber(),
+					possibilitiesForLine, Mutation.MutationType.RIC_PLUS_1);
+			Mutation mutationMinus1 = new Mutation(className, getLineNumber(),
+					possibilitiesForLine, Mutation.MutationType.RIC_MINUS_1);
+			Mutation mutationZero = new Mutation(className, getLineNumber(),
+					possibilitiesForLine, Mutation.MutationType.RIC_ZERO);
+			possibilitiesForLine++;
+			mutationPossibilityCollector.addPossibility(mutationPlus1);
+			mutationPossibilityCollector.addPossibility(mutationMinus1);
+			mutationPossibilityCollector.addPossibility(mutationZero);
+			CoverageData.insertCoverageCalls(mv, mutationPlus1);
+			CoverageData.insertCoverageCalls(mv, mutationMinus1);
+			CoverageData.insertCoverageCalls(mv, mutationZero);
+			possibilities++;
+		}
 	}
-
 
 	@Override
 	protected void biOrSiPush(int operand) {

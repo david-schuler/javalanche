@@ -75,7 +75,7 @@ public class ArithmeticReplaceMethodAdapter extends AbstractMutationAdapter {
 				possibilitiesForLine, Mutation.MutationType.ARITHMETIC_REPLACE);
 
 		possibilitiesForLine++;
-		logger.debug("ArihmeticReplace");
+		logger.debug("Querying mutation " + queryMutation);
 		if (MutationManager.shouldApplyMutation(queryMutation)) {
 			Mutation mutationFromDB = QueryManager.getMutation(queryMutation);
 			MutationCode unMutated = new SingleInsnMutationCode(null, opcode);

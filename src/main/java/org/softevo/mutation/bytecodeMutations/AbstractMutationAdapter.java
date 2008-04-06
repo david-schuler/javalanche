@@ -16,7 +16,7 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 
 	protected String methodName;
 
-	protected boolean mutationCode = false;
+	protected boolean mutationCode = false;//TODO IMPLEMENT FOR SCANNER
 
 	public AbstractMutationAdapter(MethodVisitor mv, String className,
 			String methodName) {

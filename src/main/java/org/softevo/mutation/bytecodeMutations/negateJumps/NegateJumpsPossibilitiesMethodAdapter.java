@@ -39,11 +39,13 @@ public class NegateJumpsPossibilitiesMethodAdapter extends
 	}
 
 	private void addJumpMutationPossibility() {
-		Mutation mutation = new Mutation(className, getLineNumber(),
-				possibilitiesForLine, Mutation.MutationType.NEGATE_JUMP);
-		possibilitiesForLine++;
-		mpc.addPossibility(mutation);
-		CoverageData.insertCoverageCalls(mv, mutation);
+		if (!mutationCode) {
+			Mutation mutation = new Mutation(className, getLineNumber(),
+					possibilitiesForLine, Mutation.MutationType.NEGATE_JUMP);
+			possibilitiesForLine++;
+			mpc.addPossibility(mutation);
+			CoverageData.insertCoverageCalls(mv, mutation);
+		}
 	}
 
 	@Override

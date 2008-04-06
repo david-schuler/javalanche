@@ -26,12 +26,23 @@ public class ResultDeleter {
 
 	private static Logger logger = Logger.getLogger(ResultDeleter.class);
 
+	public static void deleteAllWithPrefix() {
+		String prefix = MutationProperties.PROJECT_PREFIX;
+		String query = "FROM Mutation WHERE mutationResult IS NOT NULL className LIKE '"
+				+ prefix + "%'";
+		deleteMutationResultsFromQuery(query);
+	}
+
 	@SuppressWarnings("unchecked")
 	public static void deleteAllMutationResult() {
+		String query = "from Mutation where mutationResult IS NOT NULL";
+		deleteMutationResultsFromQuery(query);
+	}
+
+	private static void deleteMutationResultsFromQuery(String query) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		String queryString = String
-				.format("from Mutation where mutationResult IS NOT NULL");
+		String queryString = String.format(query);
 		Query q = session.createQuery(queryString);
 		List<Mutation> mutations = q.list();
 		for (Mutation m : mutations) {
@@ -48,9 +59,14 @@ public class ResultDeleter {
 	}
 
 	public static void main(String[] args) {
+
 		if (args.length >= 1) {
 			if (args[0].toLowerCase().equals("all")) {
-				deleteAllMutationResult();
+				if (MutationProperties.PROJECT_PREFIX != null) {
+
+				} else {
+					deleteAllMutationResult();
+				}
 			} else if (args[0].toLowerCase().equals("files")) {
 				deleteFromFiles();
 			} else {

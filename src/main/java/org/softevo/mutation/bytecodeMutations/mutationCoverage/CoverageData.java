@@ -1,5 +1,7 @@
 package org.softevo.mutation.bytecodeMutations.mutationCoverage;
 
+import static org.objectweb.asm.Opcodes.INVOKESTATIC;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,12 +9,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.softevo.mutation.bytecodeMutations.MutationMarker;
 import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.QueryManager;
-
-import static org.objectweb.asm.Opcodes.*;
 
 public class CoverageData {
 
@@ -26,6 +28,8 @@ public class CoverageData {
 
 	private Map<Long, Set<String>> coverageData = new HashMap<Long, Set<String>>();
 
+	private Set<String> testsRun = new HashSet<String>();
+
 	private CoverageData() {
 	}
 
@@ -37,7 +41,7 @@ public class CoverageData {
 
 	public static void touch(long id) {
 		call++;
-		if (call % 10000 == 0) {
+		if (call % 1000000 == 0) {
 			logger.info("touch called " + call + "times");
 			logger.info("Test " + SingletonHolder.instance.testName.get()
 					+ " touched mutation " + id);
@@ -55,7 +59,10 @@ public class CoverageData {
 
 	public static void setTestName(String testName) {
 		logger.info("Setting testname " + testName);
+
 		CoverageData instance = SingletonHolder.instance;
+		instance.testsRun.add(testName);
+
 		if (instance.testName.get() == null) {
 			instance.testName.set(testName);
 		} else {
@@ -94,7 +101,10 @@ public class CoverageData {
 	}
 
 	public static void insertCoverageCalls(MethodVisitor mv, Mutation mutation) {
-
+		Label endLabel = new Label();
+		Label mutationStartLabel = new Label();
+		mutationStartLabel.info = new MutationMarker(true);
+		mv.visitLabel(mutationStartLabel);
 		Long id = mutation.getId();
 		if (id == null) {
 			Mutation mutationFromDb = QueryManager.getMutationOrNull(mutation);
@@ -112,10 +122,20 @@ public class CoverageData {
 						INVOKESTATIC,
 						"org/softevo/mutation/bytecodeMutations/mutationCoverage/CoverageData",
 						"touch", "(J)V");
+		mv.visitLabel(endLabel);
 	}
 
 	public static void endCoverage() {
+		logger.info("Saving coverage data for " +getInstance().coverageData.size() + " mutations");
 		QueryManager.saveCoverageResults(SingletonHolder.instance.coverageData);
+		QueryManager.saveTestsWithNoCoverage(SingletonHolder.instance.testsRun);
 		XmlIo.toXML(SingletonHolder.instance.coverageData, "coverageData.xml");
+	}
+
+	/**
+	 * @return the testsRun
+	 */
+	public Set<String> getTestsRun() {
+		return testsRun;
 	}
 }

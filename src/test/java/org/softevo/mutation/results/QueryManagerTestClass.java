@@ -90,7 +90,7 @@ public class QueryManagerTestClass {
 	public void testTestsForLine() {
 		String className = "org.aspectj.ajdt.internal.compiler.lookup.EclipseFactory";
 		int lineNumber = 218;
-		QueryManager.getTestCases(className, lineNumber);
+		QueryManager.getTestCasesExternalData(className, lineNumber);
 	}
 
 	@Ignore("TODO Generate Coverage data for artificial coverage data instead of using aspectj data")
@@ -100,7 +100,7 @@ public class QueryManagerTestClass {
 				.getAllMutationsForClass(TestProperties.SAMPLE_FILE_CLASS_NAME);
 		int totalTests = 0;
 		for (Mutation mutation : mutationList) {
-			String[] testcases = QueryManager.getTestCases(mutation);
+			String[] testcases = QueryManager.getTestCasesExternalData(mutation);
 			if (testcases != null) {
 				totalTests += testcases.length;
 			}

@@ -13,8 +13,6 @@ import static org.softevo.mutation.properties.MutationProperties.RunMode.*;
 
 public class MutationPreMain {
 
-	public static boolean scanningEnabled;
-
 	private static ClassFileTransformer classFileTransformer = null;
 
 	public static void premain(String agentArguments,
@@ -26,7 +24,6 @@ public class MutationPreMain {
 						new MutationFileTransformer());
 				return;
 			} else if (RUN_MODE == SCAN) {
-				scanningEnabled = true;
 				System.out.println("Scanning for mutations");
 				addClassFileTransformer(instrumentation, new MutationScanner());
 				return;

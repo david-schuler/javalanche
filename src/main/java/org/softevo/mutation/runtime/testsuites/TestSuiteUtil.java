@@ -64,7 +64,7 @@ public class TestSuiteUtil {
 	private static String checkName(String testName, Map<String, Test> resultMap) {
 		String nameToReturn = testName;
 		if (resultMap.containsKey(nameToReturn)) {
-			logger.error("Key already contained: " + testName);
+			logger.debug("Key already contained: " + testName);
 			int i = 1;
 			while (resultMap.containsKey(nameToReturn)) {
 				i++;

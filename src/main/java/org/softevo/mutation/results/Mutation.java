@@ -6,12 +6,16 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 /**
  * @author David Schuler
  *
  */
 @Entity
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "className",
+		"lineNumber", "mutationForLine", "mutationType" }) })
 public class Mutation {
 
 	@Id
@@ -58,8 +62,8 @@ public class Mutation {
 
 	@Override
 	public String toString() {
-		return String.format("%d %s - %d (%d)- %s %s", id, className, lineNumber,
-				mutationForLine, mutationType.toString(),
+		return String.format("%d %s - %d (%d)- %s %s", id, className,
+				lineNumber, mutationForLine, mutationType.toString(),
 				mutationResult == null ? "No Result" : mutationResult
 						.toString());
 	}
@@ -215,7 +219,8 @@ public class Mutation {
 	/**
 	 * Same behaviour as equals without checking for equal ids.
 	 *
-	 * @param comp Mutation to compare.
+	 * @param comp
+	 *            Mutation to compare.
 	 * @return True, if both objects are equal except of their IDs.
 	 */
 	public boolean equalsWithoutId(Mutation comp) {

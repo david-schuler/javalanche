@@ -33,9 +33,7 @@ public class MutationForRun {
 		private static MutationForRun INSTANCE = new MutationForRun();
 	}
 
-	private static final int MAX_MUTATIONS = getMaxMutations();
-
-	private static final String MUTATIONS_PER_RUN_KEY = "mutationsPerRun";
+	private static final int DEFAOUT_MUTATIONS_PER_RUN = 30;
 
 	private List<Mutation> mutations;
 
@@ -45,14 +43,7 @@ public class MutationForRun {
 		return SingletonHolder.INSTANCE;
 	}
 
-	private static int getMaxMutations() {
-		String mutationsPerRun = System.getProperty(MUTATIONS_PER_RUN_KEY);
-		if (mutationsPerRun != null) {
-			int mutations = Integer.parseInt(mutationsPerRun);
-			return mutations;
-		}
-		return 10;
-	}
+
 
 	private MutationForRun() {
 		mutations = getMutationsForRun();
@@ -95,7 +86,7 @@ public class MutationForRun {
 			logger.info("Property not found: " + MUTATION_FILE);
 		}
 		if (mutationsToReturn.size() == 0) {
-			mutationsToReturn =  QueryManager.getMutationListFromDb(MAX_MUTATIONS);
+			mutationsToReturn =  QueryManager.getMutationListFromDb(DEFAOUT_MUTATIONS_PER_RUN);
 		}
 		if (mutationsToReturn != null) {
 			// make sure that we have not got any mutations that have already an
@@ -126,7 +117,7 @@ public class MutationForRun {
 				.createSQLQuery(
 						"SELECT m.* FROM Mutation m JOIN TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN TestCoverageClassResult_TestCoverageLineResult AS class_line ON class_line.testcoverageclassresult_id = tccr.id JOIN TestCoverageLineResult AS tclr ON tclr.id = class_line.lineresults_id 	WHERE m.mutationresult_id IS NULL AND m.linenumber = tclr.linenumber")
 				.addEntity(Mutation.class);
-		query.setMaxResults(MAX_MUTATIONS);
+		query.setMaxResults(DEFAOUT_MUTATIONS_PER_RUN);
 		List results = query.list();
 		List<Mutation> mutationList = new ArrayList<Mutation>();
 		for (Object m : results) {
