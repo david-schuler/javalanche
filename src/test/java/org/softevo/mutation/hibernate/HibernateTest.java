@@ -13,6 +13,8 @@ import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 
+@SuppressWarnings("unchecked")
+// Because of lists returned by hibernate
 public class HibernateTest {
 
 	private Mutation testMutaion = new Mutation("testClass", 21, 0,
@@ -67,7 +69,7 @@ public class HibernateTest {
 		session.close();
 	}
 
-	@Test(timeout=5000)
+	@Test(timeout = 5000)
 	public void hibernateQueryByType() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();

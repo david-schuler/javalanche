@@ -36,6 +36,7 @@ public class CompareWithUnmutated {
 		checkResults(analyzers);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void checkResults(MutatedUnmutatedAnalyzer[] analyzers) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -55,6 +56,7 @@ public class CompareWithUnmutated {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static List doQuery(Session session, String prefix) {
 		String queryString = "SELECT {m1.*}, {m2.*} FROM Mutation m1 INNER JOIN Mutation m2 ON m1.lineNumber = m2.lineNumber AND m1.className = m2.className WHERE m1.className LIKE '"
 				+ prefix

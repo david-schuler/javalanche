@@ -18,6 +18,7 @@ import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
 
+@SuppressWarnings("unchecked")
 public class StressTest {
 	private static Logger logger = Logger.getLogger(StressTest.class);
 

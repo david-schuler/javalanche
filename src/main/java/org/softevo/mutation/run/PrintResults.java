@@ -1,7 +1,5 @@
 package org.softevo.mutation.run;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,12 +11,9 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.softevo.mutation.io.Io;
-import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.TestMessage;
 import org.softevo.mutation.results.persistence.HibernateUtil;
-import org.softevo.mutation.results.persistence.QueryManager;
 
 public class PrintResults {
 
@@ -27,6 +22,7 @@ public class PrintResults {
 	public static void main(String[] args) {
 		// printFirstWithResults(100);
 		// printFromFiles();
+		logger.info("PrintResult started");
 		printUnmutated();
 	}
 
@@ -36,7 +32,7 @@ public class PrintResults {
 		Transaction tx = session.beginTransaction();
 		Query query = session
 				.createQuery("FROM Mutation WHERE mutationResult IS NOT NULL AND mutationType=0");
-		//query.setMaxResults(max);
+		// query.setMaxResults(max);
 		List<Mutation> results = query.list();
 		Set<TestMessage> errors = new HashSet<TestMessage>();
 		Set<TestMessage> failures = new HashSet<TestMessage>();
@@ -113,15 +109,15 @@ public class PrintResults {
 		for (String passing : passingTests) {
 			if (errorTests.contains(passing)) {
 				System.out.println(passing + " contained in error and passing");
-				for(TestMessage tm : errorMap.get(passing)){
-					System.out.println( "\t" + tm);
+				for (TestMessage tm : errorMap.get(passing)) {
+					System.out.println("\t" + tm);
 				}
 			}
 			if (failingTests.contains(passing)) {
 				System.out.println(passing
 						+ " contained in failures and passing");
-				for(TestMessage tm : failureMap.get(passing)){
-					System.out.println( "\t" + tm);
+				for (TestMessage tm : failureMap.get(passing)) {
+					System.out.println("\t" + tm);
 				}
 			}
 		}
@@ -131,43 +127,43 @@ public class PrintResults {
 		session.close();
 	}
 
-	private static void printFirstWithResults(int max) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		Query query = session
-				.createQuery("FROM Mutation WHERE mutationResult IS NOT NULL");
-		query.setMaxResults(max);
-		List<?> results = query.list();
-		for (Object object : results) {
-			logger.info(object);
-		}
-		tx.commit();
-		session.close();
-	}
+	// private static void printFirstWithResults(int max) {
+	// Session session = HibernateUtil.getSessionFactory().openSession();
+	// Transaction tx = session.beginTransaction();
+	// Query query = session
+	// .createQuery("FROM Mutation WHERE mutationResult IS NOT NULL");
+	// query.setMaxResults(max);
+	// List<?> results = query.list();
+	// for (Object object : results) {
+	// logger.info(object);
+	// }
+	// tx.commit();
+	// session.close();
+	// }
+	//
+	// private static void printFromFiles() {
+	// File dir = new File(MutationProperties.RESULT_DIR);
+	// File[] files = dir.listFiles(new FilenameFilter() {
+	// public boolean accept(File dir, String name) {
+	// if (name.startsWith("mutation-task")) {
+	// return true;
+	// }
+	// return false;
+	// }
+	// });
+	// for (File file : files) {
+	// printMutationsForFile(file);
+	// }
+	// }
 
-	private static void printFromFiles() {
-		File dir = new File(MutationProperties.RESULT_DIR);
-		File[] files = dir.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				if (name.startsWith("mutation-task")) {
-					return true;
-				}
-				return false;
-			}
-		});
-		for (File file : files) {
-			printMutationsForFile(file);
-		}
-	}
-
-	private static void printMutationsForFile(File file) {
-		System.out.println("\nResults for File: " + file.toString());
-		List<Long> idList = Io.getIDsFromFile(file);
-		List<Mutation> mutations = QueryManager.getMutationsFromDbByID(idList
-				.toArray(new Long[0]));
-		for (Mutation mutation : mutations) {
-			System.out.println(mutation);
-		}
-	}
+	// private static void printMutationsForFile(File file) {
+	// System.out.println("\nResults for File: " + file.toString());
+	// List<Long> idList = Io.getIDsFromFile(file);
+	// List<Mutation> mutations = QueryManager.getMutationsFromDbByID(idList
+	// .toArray(new Long[0]));
+	// for (Mutation mutation : mutations) {
+	// System.out.println(mutation);
+	// }
+	// }
 
 }

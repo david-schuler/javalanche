@@ -26,12 +26,14 @@ import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
 
 /**
  *
- * Class contains several helper methods for Unittests that test the different
+ * Class contains several helper methods for UnitTests that test the different
  * mutations.
  *
  * @author David Schuler
  *
  */
+// Because of hibernate
+@SuppressWarnings("unchecked")
 public class ByteCodeTestUtils {
 
 	private static final String DEFAULT_OUTPUT_FILE = "redefine-ids.txt";
@@ -222,11 +224,12 @@ public class ByteCodeTestUtils {
 		mpc.toDB();
 	}
 
-	public static void doSetup(String classname, CollectorByteCodeTransformer collector) {
+	public static void doSetup(String classname,
+			CollectorByteCodeTransformer collector) {
 		deleteMutations(classname);
 		generateTestDataInDB(System.getProperty("user.dir")
-				+ "/target/classes/" + classname.replace('.', '/')
-				+ ".class", collector);
+				+ "/target/classes/" + classname.replace('.', '/') + ".class",
+				collector);
 		redefineMutations(classname);
 	}
 }

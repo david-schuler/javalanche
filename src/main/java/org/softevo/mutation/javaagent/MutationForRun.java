@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.softevo.mutation.io.Io;
@@ -33,7 +32,7 @@ public class MutationForRun {
 		private static MutationForRun INSTANCE = new MutationForRun();
 	}
 
-	private static final int DEFAOUT_MUTATIONS_PER_RUN = 30;
+	private static final int DEFAULT_MUTATIONS_PER_RUN = 30;
 
 	private List<Mutation> mutations;
 
@@ -86,7 +85,7 @@ public class MutationForRun {
 			logger.info("Property not found: " + MUTATION_FILE);
 		}
 		if (mutationsToReturn.size() == 0) {
-			mutationsToReturn =  QueryManager.getMutationListFromDb(DEFAOUT_MUTATIONS_PER_RUN);
+			mutationsToReturn =  QueryManager.getMutationListFromDb(DEFAULT_MUTATIONS_PER_RUN);
 		}
 		if (mutationsToReturn != null) {
 			// make sure that we have not got any mutations that have already an
@@ -110,26 +109,6 @@ public class MutationForRun {
 		return mutationsToReturn;
 	}
 
-	@SuppressWarnings("unchecked")
-	private static List<Mutation> getMutationsFromDB() {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		Query query = session
-				.createSQLQuery(
-						"SELECT m.* FROM Mutation m JOIN TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN TestCoverageClassResult_TestCoverageLineResult AS class_line ON class_line.testcoverageclassresult_id = tccr.id JOIN TestCoverageLineResult AS tclr ON tclr.id = class_line.lineresults_id 	WHERE m.mutationresult_id IS NULL AND m.linenumber = tclr.linenumber")
-				.addEntity(Mutation.class);
-		query.setMaxResults(DEFAOUT_MUTATIONS_PER_RUN);
-		List<Mutation> mutationList= query.list();
-		for (Mutation mutation : mutationList) {
-			Mutation mutationToAdd = mutation;
-			logger.info("Mutation id:" + mutationToAdd.getId());
-			logger.info(mutationToAdd);
-			mutationList.add(mutationToAdd);
-		}
-		tx.commit();
-		session.close();
-		return mutationList;
-	}
 
 	private static List<Mutation> getMutationsByFile(File file) {
 		List<Long> idList = Io.getIDsFromFile(file);
