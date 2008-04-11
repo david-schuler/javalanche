@@ -28,7 +28,7 @@ public class ResultDeleter {
 
 	public static void deleteAllWithPrefix() {
 		String prefix = MutationProperties.PROJECT_PREFIX;
-		String query = "FROM Mutation WHERE mutationResult IS NOT NULL className LIKE '"
+		String query = "FROM Mutation WHERE mutationResult IS NOT NULL AND className LIKE '"
 				+ prefix + "%'";
 		deleteMutationResultsFromQuery(query);
 	}
@@ -40,10 +40,9 @@ public class ResultDeleter {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void deleteMutationResultsFromQuery(String query) {
+	private static void deleteMutationResultsFromQuery(String queryString) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		String queryString = String.format(query);
 		Query q = session.createQuery(queryString);
 		List<Mutation> mutations = q.list();
 		for (Mutation m : mutations) {
@@ -57,25 +56,6 @@ public class ResultDeleter {
 				.size()));
 		tx.commit();
 		session.close();
-	}
-
-	public static void main(String[] args) {
-
-		if (args.length >= 1) {
-			if (args[0].toLowerCase().equals("all")) {
-				if (MutationProperties.PROJECT_PREFIX != null) {
-
-				} else {
-					deleteAllMutationResult();
-				}
-			} else if (args[0].toLowerCase().equals("files")) {
-				deleteFromFiles();
-			} else {
-				deleteMutationsResults(args[0]);
-			}
-		} else {
-			System.out.print("Specify an option: a file or all ");
-		}
 	}
 
 	private static void deleteMutationsResults(String filename) {
@@ -157,6 +137,28 @@ public class ResultDeleter {
 				.size()));
 		tx.commit();
 		session.close();
+	}
+
+	public static void main(String[] args) {
+		if (MutationProperties.PROJECT_PREFIX != null) {
+			deleteAllWithPrefix();
+		} else {
+			if (args.length >= 1) {
+				if (args[0].toLowerCase().equals("all")) {
+					if (MutationProperties.PROJECT_PREFIX != null) {
+						deleteAllWithPrefix();
+					} else {
+						deleteAllMutationResult();
+					}
+				} else if (args[0].toLowerCase().equals("files")) {
+					deleteFromFiles();
+				} else {
+					deleteMutationsResults(args[0]);
+				}
+			} else {
+				System.out.print("Specify an option: a file or all ");
+			}
+		}
 	}
 
 }

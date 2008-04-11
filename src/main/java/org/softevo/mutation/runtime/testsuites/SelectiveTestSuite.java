@@ -205,6 +205,8 @@ public class SelectiveTestSuite extends TestSuite {
 				logger.warn("No tests for " + actualMutation);
 				continue;
 			}
+			logger.info("Got " + testsForThisRun.size()
+					+ " tests for mutation " + actualMutation.getId());
 			totalTests += testsForThisRun.size();
 			actualMutationTestResult = new TestResult();
 			mutationSwitcher.switchOn();

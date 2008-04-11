@@ -33,6 +33,7 @@ import org.softevo.mutation.results.Mutation.MutationType;
 @SuppressWarnings("unchecked")
 public class QueryManager {
 
+	private static final String TEST_CASE_NO_INFO = "NO INFO";
 	private static Logger logger = Logger.getLogger(QueryManager.class);
 
 	/**
@@ -577,7 +578,7 @@ public class QueryManager {
 			for (String testCase : entry.getValue()) {
 				TestName testName = null;
 				if (testCase == null) {
-					testCase = "NO INFO";
+					testCase = TEST_CASE_NO_INFO;
 				}
 				if (testNameMap != null && testNameMap.containsKey(testCase)) {
 					testName = testNameMap.get(testCase);
@@ -689,9 +690,11 @@ public class QueryManager {
 		List<TestName> testsNames = mutationCoverage.getTestsNames();
 		Set<String> tests = new HashSet<String>();
 		for (TestName testName : testsNames) {
-			tests.add(testName.getName());
+			String testNameString = testName.getName();
+			if(!testNameString.equals(TEST_CASE_NO_INFO)){
+				tests.add(testNameString);
+			}
 		}
 		return tests;
 	}
-
 }

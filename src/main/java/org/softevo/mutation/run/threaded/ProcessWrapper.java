@@ -54,7 +54,7 @@ public class ProcessWrapper extends Thread {
 
 	private int taskId;
 
-	private String instanceDir;
+//	private String instanceDir;
 
 	private InstanceManager instances;
 
@@ -88,7 +88,7 @@ public class ProcessWrapper extends Thread {
 		this.dir = dir;
 		this.outputFile = outputFile;
 		this.resultFile = resultFile;
-		this.instances = instances;	
+		this.instances = instances;
 	}
 
 	/**
@@ -99,12 +99,12 @@ public class ProcessWrapper extends Thread {
 	public void run() {
 		logger.info("Process started:\n" + this);
 		try {
-			if (instances != null) {
-				while (instanceDir == null) {
-					instanceDir = instances.getInstance();
-					sleep(5000);
-				}
-			}
+//			if (instances != null) {
+//				while (instanceDir == null) {
+//					instanceDir = instances.getInstance();
+//					sleep(5000);
+//				}
+//			}
 			String[] cmdArray = getCommand();
 			process = Runtime.getRuntime().exec(cmdArray, new String[0], dir);
 			logger.info(Arrays.toString(cmdArray));
@@ -117,9 +117,9 @@ public class ProcessWrapper extends Thread {
 			outputPipe.start();
 			errorPipe.start();
 			process.waitFor();
-			if (instances != null) {
-				instances.addInstance(instanceDir);
-			}
+//			if (instances != null) {
+//				instances.addInstance(instanceDir);
+//			}
 			closePipes();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -156,9 +156,9 @@ public class ProcessWrapper extends Thread {
 		String debugPortOption = getPropertyParameter(
 				MutationProperties.DEBUG_PORT_KEY, debugPort);
 		commandList.add(debugPortOption);
-		if (instances != null) {
-			commandList.add(instanceDir);
-		}
+//		if (instances != null) {
+//			commandList.add(instanceDir);
+//		}
 		return commandList.toArray(new String[commandList.size()]);
 	}
 
@@ -218,8 +218,8 @@ public class ProcessWrapper extends Thread {
 		sb.append("Task File: " + taskFile.getAbsolutePath());
 		sb.append('\n');
 		sb.append("Command: " + Arrays.toString(getCommand()));
-		sb.append('\n');
-		sb.append("Aspectj Dir: " + instanceDir);
+//		sb.append('\n');
+//		sb.append("Aspectj Dir: " + instanceDir);
 		return sb.toString();
 	}
 
