@@ -139,12 +139,12 @@ public class MutationProperties {
 	 * -dmutation.coverage.information=false
 	 *
 	 */
-	public static final String COVERAG_INFORMATION_KEY = "mutation.coverage.information";
+	public static final String COVERAGE_INFORMATION_KEY = "mutation.coverage.information";
 
 	/**
 	 * True if coverage information is available in the db.
 	 */
-	public static final boolean COVERAGE_INFFORMATION = getCoverage();
+	public static final boolean COVERAGE_INFFORMATION = getPropertyOrDefault(COVERAGE_INFORMATION_KEY, true);
 
 	/**
 	 * Directory where the processes are executed
@@ -234,17 +234,16 @@ public class MutationProperties {
 		}
 		return result;
 	}
-
-	private static boolean getCoverage() {
-		String coverageInformation = System
-				.getProperty(COVERAG_INFORMATION_KEY);
-		boolean result = false;
-		if (coverageInformation != null
-				&& coverageInformation.toLowerCase().equals("true")) {
-			result = true;
-		}
-		return result;
-	}
+//	private static boolean getCoverage() {
+//		String coverageInformation = System
+//				.getProperty(COVERAGE_INFORMATION_KEY);
+//		boolean result = false;
+//		if (coverageInformation != null
+//				&& coverageInformation.toLowerCase().equals("true")) {
+//			result = true;
+//		}
+//		return result;
+//	}
 
 	private static String getPrefix() {
 		String project_prefix = System.getProperty(PROJECT_PREFIX_KEY);

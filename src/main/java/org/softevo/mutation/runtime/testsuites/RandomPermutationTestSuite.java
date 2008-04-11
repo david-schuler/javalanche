@@ -49,11 +49,9 @@ public class RandomPermutationTestSuite extends TestSuite {
 
 	private static final int DEFAULT_LIMIT = 6;
 
-
 	public RandomPermutationTestSuite(String name) {
 		super(name);
 	}
-
 
 	@Override
 	public void run(TestResult result) {
@@ -118,7 +116,29 @@ public class RandomPermutationTestSuite extends TestSuite {
 		XmlIo.toXML(testsCommonOutcome, TESTS_COMMON_OUTCOME_FILENAME);
 		XmlIo.toXML(testsFailing, TESTS_FAILING_FILENAME);
 		XmlIo.toXML(testsPassing, TESTS_PASSING_FILENAME);
+		printResultInfo(testsDifferentOutcome, testsFailing);
 
+	}
+
+	private void printResultInfo(Set<String> testsDifferentOutcome,
+			Set<String> testsFailing) {
+		if (testsFailing.size() > 0) {
+			System.out.println("There were failing tests");
+			for (String failingTest : testsFailing) {
+				System.out.println("\t" + failingTest);
+			}
+		} else {
+			System.out.println("All tests passed");
+		}
+		if (testsDifferentOutcome.size() > 0) {
+			System.out
+					.println("there where tests with a different outcome for different runs");
+			for (String testName : testsDifferentOutcome) {
+				System.out.println("\t" + testName);
+			}
+		} else {
+			System.out.println("All tests had the same outcome in all runs");
+		}
 	}
 
 	private List<Map.Entry<String, Test>> getShuffledTestList(

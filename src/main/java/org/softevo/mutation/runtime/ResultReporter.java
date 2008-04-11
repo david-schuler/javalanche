@@ -1,7 +1,9 @@
 package org.softevo.mutation.runtime;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestResult;
@@ -28,6 +30,8 @@ public class ResultReporter {
 
 	private static Mutation actualMutation;
 
+	private Map<Mutation, SingleTestResult> results = new HashMap<Mutation, SingleTestResult>();
+
 	private static Set<String> touchingTestCases = new HashSet<String>();
 
 	private static Set<Mutation> reportedMutations = new HashSet<Mutation>();
@@ -49,9 +53,10 @@ public class ResultReporter {
 					+ mutationTestListener == null ? ", mutationTestListener"
 					: "");
 		}
-		SingleTestResult mutated = new SingleTestResult(mutationTestResult,
-				mutationTestListener, touchingTestCases);
-		QueryManager.updateMutation(mutation, mutated);
+		SingleTestResult mutationSingleTestResult = new SingleTestResult(
+				mutationTestResult, mutationTestListener, touchingTestCases);
+		// QueryManager.updateMutation(mutation, mutated);
+		results.put(mutation, mutationSingleTestResult);
 		if (!reportedMutations.contains(mutation)) {
 			reportedMutations.add(mutation);
 		}
@@ -62,6 +67,11 @@ public class ResultReporter {
 		actualMutation = null;
 		actualTestCase = null;
 		firstTouch = true;
+	}
+
+	public void persist(){
+		logger.info("Start storing " + results.size()  + " mutaion test results in db" );
+		QueryManager.updateMutations(results);
 	}
 
 	public static void touch(long mutationID) {
@@ -117,7 +127,8 @@ public class ResultReporter {
 	 */
 	public String summary(boolean finishedNormal) {
 		RunResult runResult = new RunResult(reportedMutations,
-				touchedMutations, MutationForRun.getAppliedMutations(), unMutatedMutations, finishedNormal);
+				touchedMutations, MutationForRun.getAppliedMutations(),
+				unMutatedMutations, finishedNormal);
 
 		String resultFile = System
 				.getProperty(MutationProperties.RESULT_FILE_KEY);

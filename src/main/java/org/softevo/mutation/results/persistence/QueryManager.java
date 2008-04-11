@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -111,6 +112,27 @@ public class QueryManager {
 		m2.setMutationResult(mutationTestResult);
 		tx.commit();
 		session.close();
+	}
+
+	public static void updateMutations(Map<Mutation, SingleTestResult> results) {
+		logger.info("Storing results for " + results.size() + " mutations");
+		Session session = HibernateUtil.openSession();
+		Transaction tx = session.beginTransaction();
+		Set<Entry<Mutation, SingleTestResult>> entrySet = results.entrySet();
+		for (Entry<Mutation, SingleTestResult> entry : entrySet) {
+
+			Mutation mutation = entry.getKey();
+			Mutation m2 = (Mutation) session.get(Mutation.class, mutation
+					.getId());
+			SingleTestResult mutationTestResult = entry.getValue();
+			session.save(mutationTestResult);
+			m2.setMutationResult(mutationTestResult);
+
+		}
+		tx.commit();
+		session.close();
+		logger.info("Succesfully stored results for " + results.size()
+				+ " mutations");
 	}
 
 	/**
@@ -583,6 +605,7 @@ public class QueryManager {
 	 * @return the coverage data or null
 	 */
 	public static MutationCoverage getMutationCoverageData(long id) {
+		logger.debug("Getting coverage data for mutation " + id);
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session
@@ -596,6 +619,8 @@ public class QueryManager {
 		}
 		tx.commit();
 		session.close();
+		logger.debug("Got " + mc.getTestsNames().size()
+				+ " tests that cover mutation " + id);
 		return mc;
 	}
 

@@ -33,7 +33,7 @@ import org.softevo.mutation.runtime.ResultReporter;
  */
 public class SelectiveTestSuite extends TestSuite {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	/**
 	 * Enables debugging ~ only a limited number of mutations are executed.
@@ -54,7 +54,7 @@ public class SelectiveTestSuite extends TestSuite {
 	 * Execute the same tests with mutation disabled right after the mutation
 	 * was tested.
 	 */
-	private static final boolean CHECK_UNMUTATED_REPEAT = true;
+	private static final boolean CHECK_UNMUTATED_REPEAT = false;
 
 	/**
 	 * Log4J logger.
@@ -142,6 +142,7 @@ public class SelectiveTestSuite extends TestSuite {
 							.warn("Maybe error that caused the shutdown could not report. Caused by mutation: "
 									+ actualMutation);
 				}
+				resultReporter.persist();
 				logger.info("" + resultReporter.summary(false));
 				MutationForRun.getInstance().reportAppliedMutations();
 			}
@@ -170,17 +171,18 @@ public class SelectiveTestSuite extends TestSuite {
 		Thread currentThread = Thread.currentThread();
 		StackTraceElement[] sts = currentThread.getStackTrace();
 		String stackTraceString = Arrays.toString(sts);
-		logger.info("SelectiveTestSuite.run entered. Stacktrace:\n"
-
-		+ stackTraceString);
+		logger.info("SelectiveTestSuite.run entered. Version: "
+				+ serialVersionUID + "\nStacktrace:\n" + stackTraceString);
 		logger.debug("All Tests collected");
 
 		mutationSwitcher = new MutationSwitcher();
 		Map<String, Test> allTests = TestSuiteUtil.getAllTests(this);
-		int debugCount = DEBUG_MUTATION_TO_EXECUTE;
+		int totalTests = 0;
+		int totalMutations = 0;
 		while (mutationSwitcher.hasNext()) {
+			totalMutations++;
 			if (DEBUG) {
-				if (debugCount-- < 0) {
+				if (totalMutations > DEBUG_MUTATION_TO_EXECUTE) {
 					break;
 				}
 			}
@@ -196,14 +198,14 @@ public class SelectiveTestSuite extends TestSuite {
 			}
 			if (result.shouldStop())
 				break;
-			Set<String> testsForThisRun = mutationSwitcher.getTests();
-			if (!MutationProperties.COVERAGE_INFFORMATION) {
-				testsForThisRun = allTests.keySet();
-			}
+			Set<String> testsForThisRun = MutationProperties.COVERAGE_INFFORMATION ? mutationSwitcher
+					.getTests()
+					: allTests.keySet();
 			if (testsForThisRun == null) {
 				logger.warn("No tests for " + actualMutation);
 				continue;
 			}
+			totalTests += testsForThisRun.size();
 			actualMutationTestResult = new TestResult();
 			mutationSwitcher.switchOn();
 			actualListener = new MutationTestListener();
@@ -218,8 +220,10 @@ public class SelectiveTestSuite extends TestSuite {
 				testUnmutated(allTests, testsForThisRun);
 			}
 		}
+		resultReporter.persist();
 		Runtime.getRuntime().removeShutdownHook(shutDownHook);
-		logger.debug("Test Runs finished");
+		logger.info("Test Runs finished.\nExecuted tests " + totalTests
+				+ " for " + totalMutations + " mutations ");
 		logger.info("" + resultReporter.summary(true));
 		MutationForRun.getInstance().reportAppliedMutations();
 	}
@@ -386,21 +390,21 @@ public class SelectiveTestSuite extends TestSuite {
 	// + test.getClass());
 	// }
 	// }
-	//		return resultMap;
-	//	}
+	// return resultMap;
+	// }
 
-//	/**
-//	 * Returns the full (JUnit) name for the given TestCase.
-//	 *
-//	 * @param testCase
-//	 *            TestCase for which the name is computed.
-//	 * @return The string representation of this TestCase.
-//	 */
-//	private static String getFullTestCaseName(TestCase testCase) {
-//		String fullTestName = testCase.getClass().getName() + "."
-//				+ testCase.getName();
-//		return fullTestName;
-//	}
+	// /**
+	// * Returns the full (JUnit) name for the given TestCase.
+	// *
+	// * @param testCase
+	// * TestCase for which the name is computed.
+	// * @return The string representation of this TestCase.
+	// */
+	// private static String getFullTestCaseName(TestCase testCase) {
+	// String fullTestName = testCase.getClass().getName() + "."
+	// + testCase.getName();
+	// return fullTestName;
+	// }
 
 	/**
 	 * @return the actualMutation that is currently applied.
