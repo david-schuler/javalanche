@@ -16,6 +16,7 @@ import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;
+import org.softevo.mutation.util.Util;
 
 /**
  *
@@ -42,7 +43,7 @@ public class ResultReporter {
 
 	private static String actualTestCase;
 
-	private static boolean firstTouch = true;
+	private static boolean _firstTouch;
 
 	public synchronized void report(TestResult mutationTestResult,
 			Mutation mutation, MutationTestListener mutationTestListener) {
@@ -55,7 +56,6 @@ public class ResultReporter {
 		}
 		SingleTestResult mutationSingleTestResult = new SingleTestResult(
 				mutationTestResult, mutationTestListener, touchingTestCases);
-		// QueryManager.updateMutation(mutation, mutated);
 		results.put(mutation, mutationSingleTestResult);
 		if (!reportedMutations.contains(mutation)) {
 			reportedMutations.add(mutation);
@@ -66,33 +66,59 @@ public class ResultReporter {
 		touchingTestCases.clear();
 		actualMutation = null;
 		actualTestCase = null;
-		firstTouch = true;
+		// setFirstTouch(true);
 	}
 
-	public void persist(){
-		logger.info("Start storing " + results.size()  + " mutaion test results in db" );
+	private static synchronized void setFirstTouch(boolean b) {
+
+		logger.info("FirstTouch var set to " + b + "by  " + actualTestCase
+				+ "  Thread " + Thread.currentThread() + "Trace  "
+				+ Util.getStackTraceString());
+		_firstTouch = b;
+	}
+
+	public synchronized void persist() {
+		logger.info("Start storing " + results.size()
+				+ " mutaion test results in db");
 		QueryManager.updateMutations(results);
+
+		// logger.info("Start storing 2 (should fail)" + results.size() + "
+		// mutaion test results in db" );
+		// Set<Entry<Mutation, SingleTestResult>> entrySet = results.entrySet();
+		// for (Entry<Mutation, SingleTestResult> entry : entrySet) {
+		// results.put(entry.getKey(), new SingleTestResult(null, null, null));
+		// }
+		// QueryManager.updateMutations(results);
+		// logger.info("Start storing (should fail)" + results.size() + "
+		// mutaion test results in db" );
+		// QueryManager.updateMutations(results);
 	}
 
-	public static void touch(long mutationID) {
-		if (firstTouch) {
+	public static synchronized void touch(long mutationID) {
+		if (isfirstTouch()) {
 			logger.info("Touch called by mutated code in test "
 					+ actualTestCase);
-			firstTouch = false;
+			setFirstTouch(false);
 		}
 		long expectedID = actualMutation.getId();
 		if (mutationID != expectedID) {
-			throw new RuntimeException("Expected ID did not match reported ID"
-					+ actualMutation.getId() + " " + mutationID);
+			String message = "Expected ID did not match reported ID"
+					+ actualMutation.getId() + " " + mutationID;
+			logger.warn(message);
+			throw new RuntimeException(message);
 		} else {
 			touchingTestCases.add(actualTestCase);
 		}
 	}
 
+	private static synchronized boolean isfirstTouch() {
+		return _firstTouch;
+	}
+
 	/**
 	 * @return the actualTestCase
 	 */
-	public static String getActualTestCase() {
+	public static synchronized String getActualTestCase() {
 		return actualTestCase;
 	}
 
@@ -100,14 +126,16 @@ public class ResultReporter {
 	 * @param actualTestCase
 	 *            the actualTestCase to set
 	 */
-	public static void setActualTestCase(String actualTestCase) {
+	public static synchronized void setActualTestCase(String actualTestCase) {
+		setFirstTouch(true);
+		logger.info("test case set" + actualTestCase);
 		ResultReporter.actualTestCase = actualTestCase;
 	}
 
 	/**
 	 * @return the actualMutation
 	 */
-	public static Mutation getActualMutation() {
+	public static synchronized Mutation getActualMutation() {
 		return actualMutation;
 	}
 
@@ -115,7 +143,7 @@ public class ResultReporter {
 	 * @param actualMutation
 	 *            the actualMutation to set
 	 */
-	public static void setActualMutation(Mutation actualMutation) {
+	public static synchronized void setActualMutation(Mutation actualMutation) {
 		ResultReporter.actualMutation = actualMutation;
 	}
 
@@ -129,7 +157,6 @@ public class ResultReporter {
 		RunResult runResult = new RunResult(reportedMutations,
 				touchedMutations, MutationForRun.getAppliedMutations(),
 				unMutatedMutations, finishedNormal);
-
 		String resultFile = System
 				.getProperty(MutationProperties.RESULT_FILE_KEY);
 		if (resultFile != null) {
@@ -146,4 +173,5 @@ public class ResultReporter {
 		assert m.getMutationType().equals(MutationType.NO_MUTATION);
 		unMutatedMutations.add(m);
 	}
+
 }

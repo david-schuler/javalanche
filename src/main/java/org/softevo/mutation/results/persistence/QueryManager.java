@@ -117,23 +117,36 @@ public class QueryManager {
 
 	public static void updateMutations(Map<Mutation, SingleTestResult> results) {
 		logger.info("Storing results for " + results.size() + " mutations");
+		Set<Entry<Mutation, SingleTestResult>> entrySet = results.entrySet();
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
-		Set<Entry<Mutation, SingleTestResult>> entrySet = results.entrySet();
 		for (Entry<Mutation, SingleTestResult> entry : entrySet) {
-
-			Mutation mutation = entry.getKey();
-			Mutation m2 = (Mutation) session.get(Mutation.class, mutation
-					.getId());
 			SingleTestResult mutationTestResult = entry.getValue();
-			session.save(mutationTestResult);
-			m2.setMutationResult(mutationTestResult);
-
+			Mutation mutation = entry.getKey();
+			Mutation mutationFromDB = (Mutation) session.get(Mutation.class,
+					mutation.getId());
+			if (mutationFromDB.getMutationResult() != null) {
+				logger
+						.warn("Mutation already has a test result - not storing the given result");
+				logger.warn("Mutation:" + mutationFromDB);
+				logger.warn("Result (that is not stored): "
+						+ mutationTestResult);
+				session.setReadOnly(mutationFromDB, true);
+				session.close();
+				break;
+			} else {
+				session.save(mutationTestResult);
+				logger.debug("Setting result for mutation "
+						+ mutationFromDB.getId());
+				mutationFromDB.setMutationResult(mutationTestResult);
+			}
 		}
-		tx.commit();
-		session.close();
-		logger.info("Succesfully stored results for " + results.size()
-				+ " mutations");
+		if (session.isOpen()) {
+			tx.commit();
+			session.close();
+			logger.info("Succesfully stored results for " + results.size()
+					+ " mutations");
+		}
 	}
 
 	/**
@@ -534,10 +547,29 @@ public class QueryManager {
 			String prefix) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		String queryString = "SELECT m.id FROM Mutation m JOIN TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN TestCoverageClassResult_TestCoverageLineResult AS class_line ON class_line.testcoverageclassresult_id = tccr.id JOIN TestCoverageLineResult AS tclr ON tclr.id = class_line.lineresults_id 	WHERE m.mutationresult_id IS NULL AND m.linenumber = tclr.linenumber AND m.mutationType != 0 AND m.className LIKE '"
-				+ prefix + "%' ";
+
+		String queryString =
+
+		"SELECT distinct(m.id) FROM Mutation m"
+				+ " JOIN MutationCoverage mc ON m.id = mc.mutationId"
+				+ " JOIN MutationCoverage_TestName mctn ON mc.id = mctn.MutationCoverage_id"
+				+ " JOIN TestName tn ON mctn.testNames_id = tn.id"
+				+ " WHERE tn.name !='NO INFO'"
+				+ " AND m.mutationResult_id IS NULL " + " AND m.mutationType != 0"
+				+ " AND m.className LIKE '" + prefix + "%' ORDER BY  m.id ";
+		// String queryString = "SELECT m.id FROM Mutation m JOIN
+		// TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN
+		// TestCoverageClassResult_TestCoverageLineResult AS class_line ON
+		// class_line.testcoverageclassresult_id = tccr.id JOIN
+		// TestCoverageLineResult
+		// AS tclr ON tclr.id = class_line.lineresults_id WHERE
+		// m.mutationresult_id IS
+		// NULL AND m.linenumber = tclr.linenumber AND m.mutationType != 0 AND
+		// m.className LIKE '"
+		// + prefix + "%' ";
 		if (!MutationProperties.COVERAGE_INFFORMATION) {
-			queryString = "SELECT m.id FROM Mutation m WHERE m.mutationresult_id IS NULL  AND m.mutationType != 0 AND m.className LIKE '"
+			queryString = "SELECT m.id FROM Mutation m WHERE "
+					+ " m.mutationresult_id IS NULL  AND m.mutationType != 0 AND m.className LIKE '"
 					+ prefix + "%' ";
 		}
 		Query query = session.createSQLQuery(queryString);
@@ -615,13 +647,16 @@ public class QueryManager {
 		MutationCoverage mc = (MutationCoverage) query.uniqueResult();
 		if (mc != null) {
 			Hibernate.initialize(mc.getTestsNames());
-		} else {
-			logger.warn("found no coverage data for mutation with id " + id);
 		}
 		tx.commit();
 		session.close();
-		logger.debug("Got " + mc.getTestsNames().size()
-				+ " tests that cover mutation " + id);
+		if (mc != null) {
+			logger.debug("Got " + mc.getTestsNames().size()
+					+ " tests that cover mutation " + id);
+		} else {
+			logger.warn("found no coverage data for mutation with id " + id);
+		}
+
 		return mc;
 	}
 
@@ -691,10 +726,11 @@ public class QueryManager {
 		Set<String> tests = new HashSet<String>();
 		for (TestName testName : testsNames) {
 			String testNameString = testName.getName();
-			if(!testNameString.equals(TEST_CASE_NO_INFO)){
+			if (!testNameString.equals(TEST_CASE_NO_INFO)) {
 				tests.add(testNameString);
 			}
 		}
 		return tests;
 	}
+
 }

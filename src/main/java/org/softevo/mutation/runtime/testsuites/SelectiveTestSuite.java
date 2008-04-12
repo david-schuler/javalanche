@@ -1,6 +1,5 @@
 package org.softevo.mutation.runtime.testsuites;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -22,6 +21,7 @@ import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.runtime.MutationSwitcher;
 import org.softevo.mutation.runtime.MutationTestListener;
 import org.softevo.mutation.runtime.ResultReporter;
+import org.softevo.mutation.util.Util;
 
 /**
  * Subclass of JUnits {@link TestSuite} class. It is used to execute the tests
@@ -48,13 +48,15 @@ public class SelectiveTestSuite extends TestSuite {
 	/**
 	 * Timeout for one single test.
 	 */
-	private static final long DEFAULT_TIMEOUT_IN_SECONDS = 10;
+	private static final long DEFAULT_TIMEOUT_IN_SECONDS = 5;
 
 	/**
 	 * Execute the same tests with mutation disabled right after the mutation
 	 * was tested.
 	 */
 	private static final boolean CHECK_UNMUTATED_REPEAT = false;
+
+	private static final boolean STOP_AFTER_TIMEOUT = true;
 
 	/**
 	 * Log4J logger.
@@ -72,7 +74,7 @@ public class SelectiveTestSuite extends TestSuite {
 	private ResultReporter resultReporter = new ResultReporter();
 
 	/**
-	 * Shutdownhook to collect test results when System.exit() is called.
+	 * Shutdown hook to collect test results when System.exit() is called.
 	 */
 	private Thread shutDownHook;
 
@@ -95,6 +97,8 @@ public class SelectiveTestSuite extends TestSuite {
 	 * Currently active test.
 	 */
 	private Test actualTest;
+
+	private boolean timeoutForMutation;
 
 	static {
 		staticLogMessage();
@@ -168,9 +172,7 @@ public class SelectiveTestSuite extends TestSuite {
 	@Override
 	public void run(TestResult result) {
 
-		Thread currentThread = Thread.currentThread();
-		StackTraceElement[] sts = currentThread.getStackTrace();
-		String stackTraceString = Arrays.toString(sts);
+		String stackTraceString = Util.getStackTraceString();
 		logger.info("SelectiveTestSuite.run entered. Version: "
 				+ serialVersionUID + "\nStacktrace:\n" + stackTraceString);
 		logger.debug("All Tests collected");
@@ -224,8 +226,8 @@ public class SelectiveTestSuite extends TestSuite {
 		}
 		resultReporter.persist();
 		Runtime.getRuntime().removeShutdownHook(shutDownHook);
-		logger.info("Test Runs finished.\nExecuted tests " + totalTests
-				+ " for " + totalMutations + " mutations ");
+		logger.info("Test Runs finished. Executed " + totalTests
+				+ " tests for " + totalMutations + " mutations ");
 		logger.info("" + resultReporter.summary(true));
 		MutationForRun.getInstance().reportAppliedMutations();
 	}
@@ -282,6 +284,10 @@ public class SelectiveTestSuite extends TestSuite {
 	private void runTests(Map<String, Test> allTests, TestResult testResult,
 			Set<String> testsForThisRun) {
 		for (String testName : testsForThisRun) {
+			if (STOP_AFTER_TIMEOUT && timeoutForMutation) {
+				logger.info("Timeout for mutation" + actualMutation.getId() + " Proceeding with next mutation");
+				break;
+			}
 			Test test = allTests.get(testName);
 			actualTest = test;
 			if (test == null) {
@@ -316,7 +322,8 @@ public class SelectiveTestSuite extends TestSuite {
 		ExecutorService service = Executors.newSingleThreadExecutor();
 		Callable<Object> callable = getCallable(test, testResult);
 		Future<Object> result = service.submit(callable);
-		logger.debug("start timed test" + test);
+		logger.debug("Start timed test" + test);
+		long start = System.currentTimeMillis();
 		service.shutdown();
 		try {
 			boolean terminated = service.awaitTermination(
@@ -330,11 +337,15 @@ public class SelectiveTestSuite extends TestSuite {
 			testResult.addError(test, new Exception(String.format(
 					"test timed out after %d seconds",
 					DEFAULT_TIMEOUT_IN_SECONDS)));
+			if (STOP_AFTER_TIMEOUT) {
+				timeoutForMutation = true;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			testResult.addError(test, e);
 		}
-		logger.debug("end timed test" + test);
+		long duration = System.currentTimeMillis() - start;
+		logger.debug("end timed test" + test + " took " + duration + " ms");
 
 	}
 
