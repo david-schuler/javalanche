@@ -256,7 +256,7 @@ public class ThreadPool {
 				processesRunning++;
 				long timeRunning = ps.getTimeRunnning();
 				logger
-						.info("Process is running for "
+						.info("Process [" + ps.getShortDescription() + "]is running for "
 								+ Formater.formatMilliseconds(timeRunning)
 								+ " out of "
 								+ Formater

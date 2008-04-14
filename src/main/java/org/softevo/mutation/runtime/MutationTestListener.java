@@ -1,6 +1,7 @@
 package org.softevo.mutation.runtime;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,8 +60,7 @@ public class MutationTestListener implements TestListener {
 			logger.warn("Result for this test was already reported " + test);
 			return;
 		}
-		// logger.info("Error added for test: " + test + "\nStack Trace:\n"
-		// + Arrays.toString(t.getStackTrace()));
+		logger.debug("Error added for test: " + test + "\nStack Trace:\n" + Arrays.toString(t.getStackTrace()));
 		long duration = getDuration(test);
 		errorMessages.add(new TestMessage(test.toString(), t.toString()
 				+ "\nStack Trace:\n" + stackTraceToString(t.getStackTrace()),
@@ -88,7 +88,7 @@ public class MutationTestListener implements TestListener {
 			logger.warn("Result for this test was already reported " + test);
 			return;
 		}
-		logger.info("Failure added for test: " + test);
+		logger.debug("Failure added for test: " + test);
 		long duration = getDuration(test);
 		failureMessages.add(new TestMessage(test.toString(), t.toString(),
 				duration));
@@ -106,7 +106,7 @@ public class MutationTestListener implements TestListener {
 			passingMessages.add(new TestMessage(test.toString(), "test passed",
 					duration));
 			alreadyReported.add(test);
-			logger.info("Test ended normaly:" + test);
+			logger.debug("Test ended normaly:" + test);
 		}
 	}
 
@@ -133,10 +133,10 @@ public class MutationTestListener implements TestListener {
 			if (!alreadyReported.contains(previousTest)) {
 				logger.warn("No result reported for " + test);
 			} else {
-				logger.info("Gor result for " + test);
+				logger.debug("Got result for " + test);
 			}
 		}
-		logger.info("Test started: " + test);
+		logger.debug("Test started: " + test);
 		long start = System.currentTimeMillis();
 		startTime.put(test, start);
 	}

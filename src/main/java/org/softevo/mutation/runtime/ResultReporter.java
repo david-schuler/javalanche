@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import junit.framework.TestResult;
 
@@ -31,10 +32,6 @@ public class ResultReporter {
 
 	private static Mutation actualMutation;
 
-	private Map<Mutation, SingleTestResult> results = new HashMap<Mutation, SingleTestResult>();
-
-	private static Set<String> touchingTestCases = new HashSet<String>();
-
 	private static Set<Mutation> reportedMutations = new HashSet<Mutation>();
 
 	private static Set<Mutation> touchedMutations = new HashSet<Mutation>();
@@ -43,7 +40,35 @@ public class ResultReporter {
 
 	private static String actualTestCase;
 
-	private static boolean _firstTouch;
+	private static Map<Long, ResultReporter> instances = new HashMap<Long, ResultReporter>();
+
+	private static long actualExpectedID;
+
+	private Set<String> touchingTestCases = new HashSet<String>();
+
+	private SingleTestResult singleTestResult;
+
+	private Mutation mutation;
+
+	private boolean touched;
+
+	private ResultReporter(Mutation mutation) {
+		this.mutation = mutation;
+
+	}
+
+	public static ResultReporter createInstance(Mutation mutation) {
+		ResultReporter r;
+		if (instances.containsKey(mutation.getId())) {
+			throw new RuntimeException(
+					"Already created ResultReporter for mutation" + mutation);
+		} else {
+			r = new ResultReporter(mutation);
+			instances.put(mutation.getId(), r);
+			setActualMutation(mutation);
+		}
+		return r;
+	}
 
 	public synchronized void report(TestResult mutationTestResult,
 			Mutation mutation, MutationTestListener mutationTestListener) {
@@ -51,36 +76,37 @@ public class ResultReporter {
 			throw new IllegalArgumentException("Argument was null: "
 					+ mutationTestResult == null ? "mutationTestResult" : ""
 					+ mutation == null ? ", mutation" : ""
-					+ mutationTestListener == null ? ", mutationTestListener"
-					: "");
+
+			+ mutationTestListener == null ? ", mutationTestListener" : "");
 		}
 		SingleTestResult mutationSingleTestResult = new SingleTestResult(
 				mutationTestResult, mutationTestListener, touchingTestCases);
-		results.put(mutation, mutationSingleTestResult);
 		if (!reportedMutations.contains(mutation)) {
 			reportedMutations.add(mutation);
+		} else {
+			String message = "Mutation " + mutation + " already reported ";
+			logger.info(message);
+			throw new RuntimeException(message);
 		}
-		if (touchingTestCases.size() > 0) {
+		singleTestResult = mutationSingleTestResult;
+		if (touched) {
 			touchedMutations.add(mutation);
 		}
 		touchingTestCases.clear();
 		actualMutation = null;
 		actualTestCase = null;
-		// setFirstTouch(true);
 	}
 
-	private static synchronized void setFirstTouch(boolean b) {
-
-		logger.info("FirstTouch var set to " + b + "by  " + actualTestCase
-				+ "  Thread " + Thread.currentThread() + "Trace  "
-				+ Util.getStackTraceString());
-		_firstTouch = b;
-	}
-
-	public synchronized void persist() {
-		logger.info("Start storing " + results.size()
+	public synchronized static void persist() {
+		logger.info("Start storing " + instances.size()
 				+ " mutaion test results in db");
-		QueryManager.updateMutations(results);
+		Map<Mutation, SingleTestResult> map = new HashMap<Mutation, SingleTestResult>();
+		Set<Entry<Long, ResultReporter>> entrySet = instances.entrySet();
+		for (Entry<Long, ResultReporter> entry : entrySet) {
+			ResultReporter rr = entry.getValue();
+			map.put(rr.mutation, rr.singleTestResult);
+		}
+		QueryManager.updateMutations(map);
 
 		// logger.info("Start storing 2 (should fail)" + results.size() + "
 		// mutaion test results in db" );
@@ -95,24 +121,25 @@ public class ResultReporter {
 	}
 
 	public static synchronized void touch(long mutationID) {
-		if (isfirstTouch()) {
-			logger.info("Touch called by mutated code in test "
-					+ actualTestCase);
-			setFirstTouch(false);
-		}
-		long expectedID = actualMutation.getId();
+		// logger.info("Touc called " + mutationID + " - expected " +
+		// (actualMutation == null ? "null " : actualMutation.getId() + ""));
+		long expectedID = actualExpectedID;
 		if (mutationID != expectedID) {
-			String message = "Expected ID did not match reported ID"
-					+ actualMutation.getId() + " " + mutationID;
+			String message = "Expected ID did not match reported ID "
+					+ actualExpectedID + "  - " + mutationID;
 			logger.warn(message);
 			throw new RuntimeException(message);
 		} else {
-			touchingTestCases.add(actualTestCase);
+			ResultReporter rr = instances.get(expectedID);
+			rr.touchingTestCases.add(actualTestCase);
+			if (!rr.touched) {
+				logger.info("Touch called by mutated code in test: "
+						+ actualTestCase + " for mutation: " + mutationID
+						+ "  Thread " + Thread.currentThread() + "Trace  "
+						+ Util.getStackTraceString());
+				rr.touched = true;
+			}
 		}
-	}
-
-	private static synchronized boolean isfirstTouch() {
-		return _firstTouch;
 	}
 
 	/**
@@ -127,7 +154,6 @@ public class ResultReporter {
 	 *            the actualTestCase to set
 	 */
 	public static synchronized void setActualTestCase(String actualTestCase) {
-		setFirstTouch(true);
 		logger.info("test case set" + actualTestCase);
 		ResultReporter.actualTestCase = actualTestCase;
 	}
@@ -145,6 +171,7 @@ public class ResultReporter {
 	 */
 	public static synchronized void setActualMutation(Mutation actualMutation) {
 		ResultReporter.actualMutation = actualMutation;
+		ResultReporter.actualExpectedID = actualMutation.getId();
 	}
 
 	/**
@@ -153,7 +180,7 @@ public class ResultReporter {
 	 *
 	 * @return The String containing the summary.
 	 */
-	public String summary(boolean finishedNormal) {
+	public static String summary(boolean finishedNormal) {
 		RunResult runResult = new RunResult(reportedMutations,
 				touchedMutations, MutationForRun.getAppliedMutations(),
 				unMutatedMutations, finishedNormal);

@@ -308,4 +308,8 @@ public class ProcessWrapper extends Thread {
 		KillProcess.killProcess(taskId);
 	}
 
+	public String getShortDescription() {
+		return "Process handling " + taskFile.getName();
+	}
+
 }

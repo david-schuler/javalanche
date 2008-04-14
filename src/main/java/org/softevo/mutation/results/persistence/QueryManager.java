@@ -350,7 +350,7 @@ public class QueryManager {
 		return l > 0;
 	}
 
-	private static long getResultFromCountQuery(List results) {
+	public static long getResultFromCountQuery(List results) {
 		Long l = null;
 		if (results.size() > 0 && results.get(0) instanceof Long) {
 			l = (Long) results.get(0);
@@ -650,10 +650,7 @@ public class QueryManager {
 		}
 		tx.commit();
 		session.close();
-		if (mc != null) {
-			logger.debug("Got " + mc.getTestsNames().size()
-					+ " tests that cover mutation " + id);
-		} else {
+		if (mc == null) {
 			logger.warn("found no coverage data for mutation with id " + id);
 		}
 

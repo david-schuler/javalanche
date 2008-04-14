@@ -102,7 +102,7 @@ public class MutationSwitcher {
 			System.setProperty(actualMutation.getMutationVariable(), "1");
 			System.setProperty(MutationProperties.ACTUAL_MUTATION_KEY,
 					actualMutation.getId() + "");
-			ResultReporter.setActualMutation(actualMutation);
+
 		}
 	}
 
@@ -115,7 +115,6 @@ public class MutationSwitcher {
 			System.clearProperty(MutationProperties.ACTUAL_MUTATION_KEY);
 			logger.info("disabling mutation: "
 					+ actualMutation.getMutationVariable());
-			ResultReporter.setActualMutation(null);
 		}
 	}
 

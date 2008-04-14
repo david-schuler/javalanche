@@ -68,8 +68,10 @@ class PipeThread extends Thread {
 				}
 			}
 			synchronized (is) {
-				if (is != null && (bytesRead = is.read(buffer)) != -1) {
-					os.write(buffer, 0, bytesRead);
+				for (int i = 0; i < 10; i++) {
+					if (is != null && (bytesRead = is.read(buffer)) != -1) {
+						os.write(buffer, 0, bytesRead);
+					}
 				}
 			}
 		} catch (IOException e) {
@@ -78,6 +80,7 @@ class PipeThread extends Thread {
 		}
 		try {
 			os.flush();
+			os.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

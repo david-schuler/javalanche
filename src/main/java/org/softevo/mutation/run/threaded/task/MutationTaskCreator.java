@@ -44,12 +44,14 @@ public class MutationTaskCreator {
 	public static void createMutationTasks() {
 		int numberOfTasks = DEFAULT_NUMBER_OF_TASKS;
 		int mutationsPerTask = DEFAULT_MUTATIONS_PER_TASK;
-		String numberOfTasksProperty = System.getProperty(MUTATION_NUMBER_OF_TASKS_KEY);
-		if(numberOfTasksProperty != null){
+		String numberOfTasksProperty = System
+				.getProperty(MUTATION_NUMBER_OF_TASKS_KEY);
+		if (numberOfTasksProperty != null) {
 			numberOfTasks = Integer.parseInt(numberOfTasksProperty);
 		}
-		String mutationsPerTaskProperty = System.getProperty(MUTATION_PER_TASK_KEY);
-		if(mutationsPerTaskProperty != null){
+		String mutationsPerTaskProperty = System
+				.getProperty(MUTATION_PER_TASK_KEY);
+		if (mutationsPerTaskProperty != null) {
 			mutationsPerTask = Integer.parseInt(mutationsPerTaskProperty);
 		}
 
@@ -80,7 +82,14 @@ public class MutationTaskCreator {
 				idsForTask.addAll(mutationIds);
 			}
 			mutationIds.removeAll(idsForTask);
-			writeListToFile(idsForTask, i);
+			if (idsForTask.size() > 0) {
+				writeListToFile(idsForTask, i);
+			} else {
+				logger.info("No more mutations. Finishing after file "
+						+ (i - 1));
+				break;
+
+			}
 		}
 
 	}
@@ -109,6 +118,5 @@ public class MutationTaskCreator {
 	public static void main(String[] args) {
 		createMutationTasks();
 	}
-
 
 }
