@@ -1,5 +1,8 @@
 package org.softevo.mutation.bytecodeMutations;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -9,14 +12,22 @@ import org.softevo.mutation.bytecodeMutations.negateJumps.NegateJumpsPossibiliti
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.PossibilitiesRicMethodAdapter;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 
-public class MutationsCollectorClassAdapter extends ClassAdapter{
+public class MutationsCollectorClassAdapter extends ClassAdapter {
+
 	private String className;
 
-	private boolean debug=true;
+	private boolean debug = true;
 
 	private final MutationPossibilityCollector mpc;
 
-	public MutationsCollectorClassAdapter(ClassVisitor cv, MutationPossibilityCollector mpc) {
+	private Map<Integer, Integer> ricPossibilities = new HashMap<Integer, Integer>();
+
+	private Map<Integer, Integer> arithmeticPossibilities = new HashMap<Integer, Integer>();
+
+	private Map<Integer, Integer> negatePossibilities = new HashMap<Integer, Integer>();
+
+	public MutationsCollectorClassAdapter(ClassVisitor cv,
+			MutationPossibilityCollector mpc) {
 		super(cv);
 		this.mpc = mpc;
 	}
@@ -35,9 +46,13 @@ public class MutationsCollectorClassAdapter extends ClassAdapter{
 		if (debug) {
 			mv = new CheckMethodAdapter(mv);
 		}
-		mv = new PossibilitiesRicMethodAdapter(mv, className, name, mpc);
-		mv = new NegateJumpsPossibilitiesMethodAdapter(mv, className, name,mpc);
-		mv = new PossibilitiesArithmeticReplaceMethodAdapter(mv, className, name, mpc);
+
+		mv = new PossibilitiesRicMethodAdapter(mv, className, name, mpc,
+				ricPossibilities);
+		mv = new NegateJumpsPossibilitiesMethodAdapter(mv, className, name,
+				mpc, negatePossibilities);
+		mv = new PossibilitiesArithmeticReplaceMethodAdapter(mv, className,
+				name, mpc, arithmeticPossibilities);
 		return mv;
 	}
 }

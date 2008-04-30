@@ -24,8 +24,8 @@ public class NegateJumpsMethodAdapter extends AbstractMutationAdapter {
 
 
 	public NegateJumpsMethodAdapter(MethodVisitor mv, String className,
-			String methodName) {
-		super(mv, className, methodName);
+			String methodName, Map<Integer, Integer> possibilities) {
+		super(mv, className, methodName, possibilities);
 	}
 
 	@Override

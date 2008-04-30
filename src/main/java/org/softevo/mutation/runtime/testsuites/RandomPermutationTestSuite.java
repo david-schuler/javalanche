@@ -1,6 +1,7 @@
 package org.softevo.mutation.runtime.testsuites;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,6 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import junit.framework.Test;
 import junit.framework.TestResult;
@@ -49,25 +57,133 @@ public class RandomPermutationTestSuite extends TestSuite {
 
 	private static final int DEFAULT_LIMIT = 6;
 
+	private static final boolean PARALLEL = false;
+
 	public RandomPermutationTestSuite(String name) {
 		super(name);
 	}
 
 	@Override
 	public void run(TestResult result) {
+		if (PARALLEL) {
+			runInParrallel(6);
+		} else {
+			Map<String, Test> allTests = TestSuiteUtil.getAllTests(this);
+			Map<String, List<TestResult>> testResults = new HashMap<String, List<TestResult>>();
+			int totalTestsRun = 0;
+			long start = System.currentTimeMillis();
+			for (int i = 0; i < DEFAULT_LIMIT; i++) {
+				logger.info("Round" + i);
+				List<Map.Entry<String, Test>> shuffeledList = getShuffledTestList(allTests);
+				int testsRun = runListOfTests(shuffeledList, testResults);
+				totalTestsRun += testsRun;
+			}
+			analyzeTestResults(testResults, allTests);
+			long time = System.currentTimeMillis() - start;
+			logger.info("Run " + totalTestsRun + " tests in " + time + " ms");
+		}
+	}
+
+	private void runInParrallel(int processes) {
+
 		Map<String, Test> allTests = TestSuiteUtil.getAllTests(this);
 		Map<String, List<TestResult>> testResults = new HashMap<String, List<TestResult>>();
 		int totalTestsRun = 0;
 		long start = System.currentTimeMillis();
-		for (int i = 0; i < DEFAULT_LIMIT; i++) {
-			logger.info("Round" + i);
-			List<Map.Entry<String, Test>> shuffeledList = getShuffledTestList(allTests);
-			int testsRun = runListOfTests(shuffeledList, testResults);
-			totalTestsRun += testsRun;
+		for (Map.Entry<String, Test> entry : allTests.entrySet()) {
+			String testName = entry.getKey();
+//			if(!testName.equals("de.susebox.jtopas.TestPluginTokenizer.testContentsFormatting-instance-13")){
+//				continue;
+//			}
+			logger.info("Running test " + testName + " in " + processes
+					+ " threads");
+			ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors
+					.newFixedThreadPool(processes);
+			List<TestResult> resultsForThisTest = new ArrayList<TestResult>();
+
+			List<Future> futures = new ArrayList<Future>();
+			Map<Future, TestResult> resultForFuture = new HashMap<Future, TestResult>();
+			for (int i = 0; i < processes; i++) {
+				TestResult resultForTest = new TestResult();
+				Callable<Object> callable = TestSuiteUtil.getCallable(entry
+						.getValue(), resultForTest);
+				Future<Object> submit = pool.submit(callable);
+
+				futures.add(submit);
+
+			}
+			long startPool = System.currentTimeMillis();
+			while (!pool.isTerminated()) {
+				try {
+					boolean allProcessesFinished = pool.awaitTermination(10,
+							TimeUnit.SECONDS);
+					if (pool.getActiveCount() == 0) {
+						pool.shutdown();
+					}
+					if (System.currentTimeMillis() - startPool > 20000) {
+						logger.info("Shutdown pool because of time limit");
+						for (Future<Object> f : futures) {
+							logger.info("Canceling future" + f);
+							logger.info("Currently Running threads");
+							Set<Entry<Thread, StackTraceElement[]>> entrySet = Thread
+									.getAllStackTraces().entrySet();
+							for (Entry<Thread, StackTraceElement[]> threadEntry : entrySet) {
+								Thread t = threadEntry.getKey();
+								StackTraceElement[] stacktrace = threadEntry
+										.getValue();
+								if (t != null) {
+									if(stacktrace!=null)
+									logger.info(t + "  "
+											+ Arrays.toString(stacktrace));
+								}
+								else{
+									logger.info("Thread has no stack trace" + t);
+								}
+									logger.info("Trying to stop" + t);
+								}
+
+
+							try {
+								f.get(10, TimeUnit.MILLISECONDS);
+							} catch (ExecutionException e) {
+								resultForFuture.get(f).addError(
+										entry.getValue(), e);
+								e.printStackTrace();
+								logger.fatal(testName, e);
+							} catch (TimeoutException e) {
+								resultForFuture.get(f).addError(
+										entry.getValue(), e);
+								e.printStackTrace();
+								logger.fatal(testName, e);
+							}
+							logger.info("canceled?  " + f.isCancelled());
+							f.cancel(true);
+						}
+						pool.shutdownNow();
+					}
+					// int processesFinished = getNumberOfFinishedProcesses();
+					// int processesRunning = handleRunningProcess();
+					// logger.info(processesFinished + " processes are finished
+					// and "
+					// + processesRunning + " are running");
+					logger.info("Processess finished: " + allProcessesFinished
+							+ " Active: " + pool.getActiveCount()
+							+ " Completed: " + pool.getCompletedTaskCount());
+					if (allProcessesFinished) {
+						pool.shutdown();
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			totalTestsRun += resultsForThisTest.size();
+			logger.info("All tests finished for: " + testName);
+			testResults.put(testName, resultsForThisTest);
 		}
 		analyzeTestResults(testResults, allTests);
 		long time = System.currentTimeMillis() - start;
 		logger.info("Run " + totalTestsRun + " tests in " + time + " ms");
+
 	}
 
 	private void analyzeTestResults(Map<String, List<TestResult>> testResults,

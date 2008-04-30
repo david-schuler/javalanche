@@ -1,5 +1,8 @@
 package org.softevo.mutation.bytecodeMutations;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
@@ -16,13 +19,19 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 
 	protected String methodName;
 
-	protected boolean mutationCode = false;//TODO IMPLEMENT FOR SCANNER
+	protected boolean insertCoverageCalls = true;
+
+	private Map<Integer, Integer> possibilities;
+
+	protected boolean mutationCode = false;// TODO IMPLEMENT FOR SCANNER
+
 
 	public AbstractMutationAdapter(MethodVisitor mv, String className,
-			String methodName) {
+			String methodName, Map<Integer, Integer> possibilities ) {
 		super(mv);
 		this.className = className;
 		this.methodName = methodName;
+		this.possibilities = possibilities;
 	}
 
 	@Override
@@ -50,6 +59,22 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 					+ getLineNumber() + "  " + this);
 			mutationCode = marker.isStart();
 		}
+	}
+
+	protected void addPossibilityForLine() {
+		if (possibilities.containsKey(lineNumber)) {
+			int pos = possibilities.get(lineNumber);
+			possibilities.put(lineNumber, pos + 1);
+		} else
+			possibilities.put(lineNumber, 1);
+	}
+
+	protected int getPossibilityForLine() {
+		int pos = 0;
+		if (possibilities.containsKey(lineNumber)) {
+			pos = possibilities.get(lineNumber);
+		}
+		return pos;
 	}
 
 }

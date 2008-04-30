@@ -19,6 +19,10 @@ public class MutationPossibilityCollector {
 	private List<Mutation> possibilities = new ArrayList<Mutation>();
 
 	public void addPossibility(Mutation mutationPossibility) {
+		if(possibilities.contains(mutationPossibility)){
+//			throw new RuntimeException("Possibility already contained");
+			logger.warn("Possibility already contained" + mutationPossibility);
+		}
 		possibilities.add(mutationPossibility);
 	}
 

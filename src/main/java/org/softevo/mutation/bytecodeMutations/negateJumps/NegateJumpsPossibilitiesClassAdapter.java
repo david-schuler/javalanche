@@ -1,5 +1,8 @@
 package org.softevo.mutation.bytecodeMutations.negateJumps;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -10,6 +13,8 @@ public class NegateJumpsPossibilitiesClassAdapter extends ClassAdapter {
 	private String className;
 
 	private final MutationPossibilityCollector mpc;
+
+	private Map<Integer, Integer> possibilities = new HashMap<Integer, Integer>();
 
 	public NegateJumpsPossibilitiesClassAdapter(ClassVisitor cv,
 			MutationPossibilityCollector mpc) {
@@ -31,10 +36,10 @@ public class NegateJumpsPossibilitiesClassAdapter extends ClassAdapter {
 		MethodVisitor superVisitor = super.visitMethod(access, name, desc,
 				signature, exceptions);
 		MethodVisitor actualAdapter = new NegateJumpsPossibilitiesMethodAdapter(
-				superVisitor, className, name, mpc);
+				superVisitor, className, name, mpc,possibilities );
 		return actualAdapter;
 	}
-	
-	
+
+
 
 }

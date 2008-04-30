@@ -2,6 +2,7 @@ package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
@@ -107,9 +108,10 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	static Logger logger = Logger.getLogger(RicMethodAdapter.class);
 
 	public RicMethodAdapter(MethodVisitor mv, String className,
-			String methodName) {
-		super(mv, className.replace('/', '.'), methodName);
+			String methodName,Map<Integer, Integer> possibilities) {
+		super(mv, className.replace('/', '.'), methodName, possibilities);
 		logger.info("MethodName:" + methodName);
+
 
 	}
 

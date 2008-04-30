@@ -12,7 +12,6 @@ import org.softevo.mutation.results.Mutation;
 public class NegateJumpsPossibilitiesMethodAdapter extends
 		AbstractMutationAdapter {
 
-	private int possibilitiesForLine = 0;
 
 	private MutationPossibilityCollector mpc;
 
@@ -21,8 +20,8 @@ public class NegateJumpsPossibilitiesMethodAdapter extends
 
 	public NegateJumpsPossibilitiesMethodAdapter(MethodVisitor mv,
 			String className, String methodName,
-			MutationPossibilityCollector mpc) {
-		super(mv, className, methodName);
+			MutationPossibilityCollector mpc, Map<Integer, Integer> possibilities) {
+		super(mv, className, methodName,possibilities);
 		this.mpc = mpc;
 	}
 
@@ -41,17 +40,18 @@ public class NegateJumpsPossibilitiesMethodAdapter extends
 	private void addJumpMutationPossibility() {
 		if (!mutationCode) {
 			Mutation mutation = new Mutation(className, getLineNumber(),
-					possibilitiesForLine, Mutation.MutationType.NEGATE_JUMP);
-			possibilitiesForLine++;
+					getPossibilityForLine(), Mutation.MutationType.NEGATE_JUMP);
+			addPossibilityForLine();
 			mpc.addPossibility(mutation);
-			CoverageData.insertCoverageCalls(mv, mutation);
+			if (insertCoverageCalls) {
+				CoverageData.insertCoverageCalls(mv, mutation);
+			}
 		}
 	}
 
 	@Override
 	public void visitLineNumber(int line, Label start) {
 		super.visitLineNumber(line, start);
-		possibilitiesForLine = 0;
 	}
 
 }

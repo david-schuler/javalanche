@@ -1,5 +1,8 @@
 package org.softevo.mutation.bytecodeMutations;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -12,6 +15,12 @@ import org.softevo.mutation.properties.MutationProperties;
 public class MutationsClassAdapter extends ClassAdapter {
 
 	private String className;
+
+	private Map<Integer, Integer> ricPossibilities = new HashMap<Integer, Integer>();
+
+	private Map<Integer, Integer> arithmeticPossibilities = new HashMap<Integer, Integer>();
+
+	private Map<Integer, Integer> negatePossibilities = new HashMap<Integer, Integer>();
 
 	private static final boolean DEBUG = MutationProperties.DEBUG;
 
@@ -33,9 +42,11 @@ public class MutationsClassAdapter extends ClassAdapter {
 		if (DEBUG) {
 			mv = new CheckMethodAdapter(mv);
 		}
-		mv = new RicMethodAdapter(mv, className, name);
-		mv = new NegateJumpsMethodAdapter(mv, className, name);
-		mv = new ArithmeticReplaceMethodAdapter(mv, className, name);
+		mv = new RicMethodAdapter(mv, className, name, ricPossibilities);
+		mv = new NegateJumpsMethodAdapter(mv, className, name,
+				negatePossibilities);
+		mv = new ArithmeticReplaceMethodAdapter(mv, className, name,
+				arithmeticPossibilities);
 		return mv;
 	}
 }

@@ -1,5 +1,8 @@
 package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
@@ -18,6 +21,8 @@ public class PossibilitiesRicClassAdapter extends ClassAdapter {
 	private String className;
 
 	private MutationPossibilityCollector mutationPossibilityCollector;
+
+	private Map<Integer, Integer> possibilities = new HashMap<Integer, Integer>();
 
 	public PossibilitiesRicClassAdapter(ClassVisitor cv,
 			MutationPossibilityCollector collector) {
@@ -39,17 +44,17 @@ public class PossibilitiesRicClassAdapter extends ClassAdapter {
 		lastMethodName = name;
 		actualAdapter = new PossibilitiesRicMethodAdapter(super.visitMethod(
 				access, name, desc, signature, exceptions), className, name,
-				mutationPossibilityCollector);
+				mutationPossibilityCollector, possibilities);
 		return actualAdapter;
 
 	}
 
 	private void printResultOfLastMethod() {
 		if (actualAdapter != null) {
-			logger.info(String
-					.format("%d possibilitities found for method: %s in %s ",
-							actualAdapter.getPossibilities(), lastMethodName,
-							className));
+//			logger.info(String
+//					.format("%d possibilitities found for method: %s in %s ",
+//							actualAdapter.getPossibilities(), lastMethodName,
+//							className)); TODO
 			actualAdapter = null;
 		}
 	}

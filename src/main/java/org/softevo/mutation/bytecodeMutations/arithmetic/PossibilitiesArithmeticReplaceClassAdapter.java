@@ -1,5 +1,8 @@
 package org.softevo.mutation.bytecodeMutations.arithmetic;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -7,8 +10,13 @@ import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 
 public class PossibilitiesArithmeticReplaceClassAdapter extends ClassAdapter {
 	private String className;
+
 	private final MutationPossibilityCollector mutationPossibilityCollector;
-	public PossibilitiesArithmeticReplaceClassAdapter(ClassVisitor cv, MutationPossibilityCollector mutationPossibilityCollector) {
+
+	private Map<Integer, Integer> possibilities = new HashMap<Integer, Integer>();
+
+	public PossibilitiesArithmeticReplaceClassAdapter(ClassVisitor cv,
+			MutationPossibilityCollector mutationPossibilityCollector) {
 		super(cv);
 		this.mutationPossibilityCollector = mutationPossibilityCollector;
 	}
@@ -24,6 +32,7 @@ public class PossibilitiesArithmeticReplaceClassAdapter extends ClassAdapter {
 	public MethodVisitor visitMethod(int access, String name, String desc,
 			String signature, String[] exceptions) {
 		return new PossibilitiesArithmeticReplaceMethodAdapter(super
-				.visitMethod(access, name, desc, signature, exceptions),className, name, mutationPossibilityCollector);
+				.visitMethod(access, name, desc, signature, exceptions),
+				className, name, mutationPossibilityCollector, possibilities);
 	}
 }

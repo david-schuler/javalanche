@@ -15,14 +15,12 @@ public class PossibilitiesArithmeticReplaceMethodAdapter extends
 	private static Map<Integer, Integer> replaceMap = ReplaceMap
 			.getReplaceMap();
 
-	private int possForLine;
-
 	private MutationPossibilityCollector mpc;
 
 	public PossibilitiesArithmeticReplaceMethodAdapter(MethodVisitor mv,
 			String className, String methodName,
-			MutationPossibilityCollector mpc) {
-		super(mv, className, className);
+			MutationPossibilityCollector mpc, Map<Integer, Integer> possibilities) {
+		super(mv, className, className, possibilities);
 		this.mpc = mpc;
 	}
 
@@ -110,16 +108,18 @@ public class PossibilitiesArithmeticReplaceMethodAdapter extends
 	@Override
 	public void visitLineNumber(int line, Label start) {
 		super.visitLineNumber(line, start);
-		possForLine = 0;
 	}
 
 	private void addPossibility() {
-		if(!mutationCode){
-		Mutation mutation = new Mutation(className, getLineNumber(),
-				possForLine, Mutation.MutationType.ARITHMETIC_REPLACE);
-		mpc.addPossibility(mutation);
-		possForLine++;
-		CoverageData.insertCoverageCalls(mv, mutation);
+		if (!mutationCode) {
+			Mutation mutation = new Mutation(className, getLineNumber(),
+					getPossibilityForLine(),
+					Mutation.MutationType.ARITHMETIC_REPLACE);
+			mpc.addPossibility(mutation);
+			addPossibilityForLine();
+			if (insertCoverageCalls) {
+				CoverageData.insertCoverageCalls(mv, mutation);
+			}
 		}
 	}
 }

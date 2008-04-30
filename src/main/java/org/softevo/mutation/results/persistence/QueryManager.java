@@ -23,6 +23,7 @@ import org.softevo.mutation.results.MutationCoverage;
 import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.TestName;
 import org.softevo.mutation.results.Mutation.MutationType;
+import org.softevo.mutation.util.Util;
 
 /**
  * Class that provides static method that execute queries.
@@ -484,7 +485,6 @@ public class QueryManager {
 	public static void saveMutations(List<Mutation> mutationsToSave) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-
 		int counter = 0;
 		for (Mutation mutation : mutationsToSave) {
 			if (mutation.getId() != null) {
@@ -492,8 +492,15 @@ public class QueryManager {
 						+ mutation);
 			} else {
 				counter++;
+				try{
 				logger.info(counter + ": Trying to save mutation :" + mutation);
 				session.save(mutation);
+				}catch(Exception e){
+					logger.warn("Exception thrown: " + e.getMessage());
+					logger.info(Util.getStackTraceString());
+					logger.info("Mutations to save: " + mutationsToSave);
+					throw new RuntimeException(e);
+				}
 			}
 		}
 		tx.commit();

@@ -1,5 +1,8 @@
 package org.softevo.mutation.bytecodeMutations.arithmetic;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -18,6 +21,7 @@ public class ArithmeticReplaceClassAdapter extends ClassAdapter {
 	 * The name of the class.
 	 */
 	private String className;
+	private Map<Integer, Integer> possibilities = new HashMap<Integer, Integer>();
 
 	/**
 	 * Constructs a new {@link ArithmeticReplaceClassAdapter}
@@ -53,7 +57,7 @@ public class ArithmeticReplaceClassAdapter extends ClassAdapter {
 	public MethodVisitor visitMethod(int access, String name, String desc,
 			String signature, String[] exceptions) {
 		return new ArithmeticReplaceMethodAdapter(super.visitMethod(access,
-				name, desc, signature, exceptions), className, name);
+				name, desc, signature, exceptions), className, name, possibilities );
 	}
 
 }

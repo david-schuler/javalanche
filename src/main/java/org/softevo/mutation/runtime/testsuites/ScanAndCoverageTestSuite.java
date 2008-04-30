@@ -60,6 +60,7 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 			logger.info("Test Finished (" + testCount + ")" + testName);
 		}
 		XmlIo.toXML(testsRun, "tests-runByScanAndCoveragetestSuite.xml");
+
 		CoverageData.endCoverage();
 	}
 

@@ -1,5 +1,7 @@
 package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
 
+import java.util.Map;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.softevo.mutation.bytecodeMutations.AbstractMutationAdapter;
@@ -9,8 +11,9 @@ public abstract class AbstractRicMethodAdapter extends AbstractMutationAdapter {
 	private final boolean forwardCalls;
 
 	public AbstractRicMethodAdapter(MethodVisitor mv, String className,
-			String methodName, boolean forwardCalls) {
-		super(mv, className, methodName);
+			String methodName, boolean forwardCalls,
+			Map<Integer, Integer> possibilities) {
+		super(mv, className, methodName, possibilities);
 		this.forwardCalls = forwardCalls;
 	}
 

@@ -3,10 +3,13 @@ package org.softevo.mutation.runtime.testsuites;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+
 import org.apache.log4j.Logger;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 public class TestSuiteUtil {
@@ -49,7 +52,6 @@ public class TestSuiteUtil {
 		return resultMap;
 	}
 
-
 	private static String getNameForTest(Test test) {
 		String testName = test.getClass().getCanonicalName();
 		if (testName == null) {
@@ -69,6 +71,35 @@ public class TestSuiteUtil {
 			}
 		}
 		return nameToReturn;
+	}
+
+	/**
+	 * Helper method that returns a Callable that executes the given test and
+	 * testResult.
+	 *
+	 * @param test
+	 *            TestCase that is executed.
+	 * @param testResult
+	 *            TestResult where the the testResults are collected.
+	 * @return The Callable that executes the test.
+	 */
+	public static Callable<Object> getCallable(final Test test,
+			final TestResult testResult) {
+		Callable<Object> callable = new Callable<Object>() {
+			public Object call() throws Exception {
+				if (Thread.interrupted())
+					throw new InterruptedException();
+				try {
+					test.run(testResult);
+				} catch (Exception e) {
+					logger.info("Caught exception" + e);
+					e.printStackTrace();
+					testResult.addError(test, e);
+				}
+				return null;
+			}
+		};
+		return callable;
 	}
 
 }

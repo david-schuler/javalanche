@@ -51,8 +51,8 @@ public class ArithmeticReplaceMethodAdapter extends AbstractMutationAdapter {
 			.getLogger(ArithmeticReplaceMethodAdapter.class);
 
 	public ArithmeticReplaceMethodAdapter(MethodVisitor mv, String className,
-			String methodName) {
-		super(mv, className, methodName);
+			String methodName, Map<Integer, Integer> possibilities) {
+		super(mv, className, methodName,possibilities);
 	}
 
 	@Override

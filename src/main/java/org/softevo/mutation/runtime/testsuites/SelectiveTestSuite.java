@@ -71,8 +71,7 @@ public class SelectiveTestSuite extends TestSuite {
 	/**
 	 * To report the results of the mutation testing.
 	 */
-//	private ResultReporter resultReporter = new ResultReporter();
-
+	// private ResultReporter resultReporter = new ResultReporter();
 	/**
 	 * Shutdown hook to collect test results when System.exit() is called.
 	 */
@@ -191,7 +190,8 @@ public class SelectiveTestSuite extends TestSuite {
 				}
 			}
 			actualMutation = mutationSwitcher.next();
-			actualResultReporter = ResultReporter.createInstance(actualMutation);
+			actualResultReporter = ResultReporter
+					.createInstance(actualMutation);
 			try {
 				@SuppressWarnings("unused")
 				Class<?> c = Class.forName(actualMutation.getClassName());
@@ -220,8 +220,8 @@ public class SelectiveTestSuite extends TestSuite {
 
 			runTests(allTests, actualMutationTestResult, testsForThisRun);
 			mutationSwitcher.switchOff();
-			actualResultReporter.report(actualMutationTestResult, actualMutation,
-					actualListener);
+			actualResultReporter.report(actualMutationTestResult,
+					actualMutation, actualListener);
 			logResults();
 			if (CHECK_UNMUTATED_REPEAT) {
 				testUnmutated(allTests, testsForThisRun);
@@ -250,7 +250,7 @@ public class SelectiveTestSuite extends TestSuite {
 		if (actualMutation.getMutationResult() == null) {
 			logger.debug("Starting unmutated tests");
 			ResultReporter.setActualMutation(actualMutation);
-//		TODO	resultReporter.addUnmutated(actualMutation);
+			// TODO resultReporter.addUnmutated(actualMutation);
 			logger.debug("Unmutated mutation:" + actualMutation);
 			TestResult unmutatedTestResult = new TestResult();
 			actualMutationTestResult = unmutatedTestResult;
@@ -258,8 +258,8 @@ public class SelectiveTestSuite extends TestSuite {
 			actualListener = unmutatedListener;
 			unmutatedTestResult.addListener(unmutatedListener);
 			runTests(allTests, unmutatedTestResult, testsForThisRun);
-//			resultReporter.report(unmutatedTestResult, actualMutation,
-//					unmutatedListener);
+			// resultReporter.report(unmutatedTestResult, actualMutation,
+			// unmutatedListener);
 			logResults();
 		}
 	}
@@ -289,7 +289,8 @@ public class SelectiveTestSuite extends TestSuite {
 		timeoutForMutation = false;
 		for (String testName : testsForThisRun) {
 			if (STOP_AFTER_TIMEOUT && timeoutForMutation) {
-				logger.info("Timeout for mutation" + actualMutation.getId() + " Proceeding with next mutation");
+				logger.info("Timeout for mutation" + actualMutation.getId()
+						+ " Proceeding with next mutation");
 				break;
 			}
 			Test test = allTests.get(testName);
@@ -363,7 +364,7 @@ public class SelectiveTestSuite extends TestSuite {
 	 *            TestResult where the the testResults are collected.
 	 * @return The Callable that executes the test.
 	 */
-	private Callable<Object> getCallable(final Test test,
+	public Callable<Object> getCallable(final Test test,
 			final TestResult testResult) {
 		Callable<Object> callable = new Callable<Object>() {
 			public Object call() throws Exception {

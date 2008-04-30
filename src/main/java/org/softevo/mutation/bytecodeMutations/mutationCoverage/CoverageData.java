@@ -115,7 +115,7 @@ public class CoverageData {
 				id = mutation.getId();
 			}
 		}
-		logger.debug("Inserting Coverage calls for:  " + id + " " + mutation);
+		logger.info("Inserting Coverage calls for:  " + id + " " + mutation);
 		mv.visitLdcInsn(mutation.getId());
 		mv
 				.visitMethodInsn(
