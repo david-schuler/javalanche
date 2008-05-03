@@ -18,6 +18,8 @@ import org.softevo.mutation.results.persistence.QueryManager;
 
 public class CoverageData {
 
+	private static final boolean SAVE_INTERVALLS = false;
+
 	private static Logger logger = Logger.getLogger(CoverageData.class);
 
 	public ThreadLocal<String> testName = new ThreadLocal<String>();
@@ -30,6 +32,8 @@ public class CoverageData {
 
 	private Set<String> testsRun = new HashSet<String>();
 
+	private int saveCount = 1;
+
 	private CoverageData() {
 	}
 
@@ -37,15 +41,27 @@ public class CoverageData {
 		return SingletonHolder.instance;
 	}
 
+	public void saveAndEmpty() {
+		logger.info("Saving coverage data for " + coverageData.size()
+				+ " mutations");
+		QueryManager.saveCoverageResults(coverageData);
+		QueryManager.saveTestsWithNoCoverage(testsRun);
+		XmlIo.toXML(coverageData, "coverageData-" + saveCount + ".xml");
+		saveCount++;
+		coverageData = new HashMap<Long, Set<String>>();
+	}
+
 	static int call = 0;
+
+	private static boolean shouldSave;
 
 	public static void touch(long id) {
 		call++;
-		if (call % 1000000 == 0) {
+		if (call % ((int) 1e6) == 0) {
 			logger.info("touch called " + call + "times");
 			logger.info("Test " + SingletonHolder.instance.testName.get()
 					+ " touched mutation " + id);
-
+			shouldSave = true;
 		}
 		// CoverageData instance = SingletonHolder.instance;
 		Set<String> coveredTests = SingletonHolder.instance.coverageData
@@ -115,7 +131,7 @@ public class CoverageData {
 				id = mutation.getId();
 			}
 		}
-		logger.info("Inserting Coverage calls for:  " + id + " " + mutation);
+		logger.debug("Inserting Coverage calls for:  " + id + " " + mutation);
 		mv.visitLdcInsn(mutation.getId());
 		mv
 				.visitMethodInsn(
@@ -125,11 +141,17 @@ public class CoverageData {
 		mv.visitLabel(endLabel);
 	}
 
+	public static void optionalSave() {
+		if (SAVE_INTERVALLS && shouldSave) {
+			CoverageData instance = SingletonHolder.instance;
+			instance.saveAndEmpty();
+			shouldSave = false;
+		}
+	}
+
 	public static void endCoverage() {
-		logger.info("Saving coverage data for " +getInstance().coverageData.size() + " mutations");
-		QueryManager.saveCoverageResults(SingletonHolder.instance.coverageData);
-		QueryManager.saveTestsWithNoCoverage(SingletonHolder.instance.testsRun);
-		XmlIo.toXML(SingletonHolder.instance.coverageData, "coverageData.xml");
+		CoverageData instance = SingletonHolder.instance;
+		instance.saveAndEmpty();
 	}
 
 	/**

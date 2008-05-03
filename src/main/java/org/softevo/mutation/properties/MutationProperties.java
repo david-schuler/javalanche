@@ -183,6 +183,8 @@ public class MutationProperties {
 	public static final boolean USE_EXTERNAL_COVERAGE_DATA = getPropertyOrDefault(
 			USE_EXTERNAL_COVERAGE_DATA_KEY, false);
 
+	public static final boolean TRACE_BYTECODE = false;
+
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
 		return Integer.parseInt(result);

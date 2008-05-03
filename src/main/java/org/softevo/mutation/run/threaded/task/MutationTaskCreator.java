@@ -54,7 +54,6 @@ public class MutationTaskCreator {
 		if (mutationsPerTaskProperty != null) {
 			mutationsPerTask = Integer.parseInt(mutationsPerTaskProperty);
 		}
-
 		createMutationTasks(numberOfTasks, mutationsPerTask);
 	}
 

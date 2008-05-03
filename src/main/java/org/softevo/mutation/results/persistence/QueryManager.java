@@ -492,10 +492,11 @@ public class QueryManager {
 						+ mutation);
 			} else {
 				counter++;
-				try{
-				logger.info(counter + ": Trying to save mutation :" + mutation);
-				session.save(mutation);
-				}catch(Exception e){
+				try {
+					logger.info(counter + ": Trying to save mutation :"
+							+ mutation);
+					session.save(mutation);
+				} catch (Exception e) {
 					logger.warn("Exception thrown: " + e.getMessage());
 					logger.info(Util.getStackTraceString());
 					logger.info("Mutations to save: " + mutationsToSave);
@@ -562,8 +563,9 @@ public class QueryManager {
 				+ " JOIN MutationCoverage_TestName mctn ON mc.id = mctn.MutationCoverage_id"
 				+ " JOIN TestName tn ON mctn.testNames_id = tn.id"
 				+ " WHERE tn.name !='NO INFO'"
-				+ " AND m.mutationResult_id IS NULL " + " AND m.mutationType != 0"
-				+ " AND m.className LIKE '" + prefix + "%' ORDER BY  m.id ";
+				+ " AND m.mutationResult_id IS NULL "
+				+ " AND m.mutationType != 0" + " AND m.className LIKE '"
+				+ prefix + "%' ORDER BY  m.id ";
 		// String queryString = "SELECT m.id FROM Mutation m JOIN
 		// TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN
 		// TestCoverageClassResult_TestCoverageLineResult AS class_line ON
@@ -579,6 +581,7 @@ public class QueryManager {
 					+ " m.mutationresult_id IS NULL  AND m.mutationType != 0 AND m.className LIKE '"
 					+ prefix + "%' ";
 		}
+		System.out.println(queryString);
 		Query query = session.createSQLQuery(queryString);
 		query.setMaxResults(numberOfMutations);
 		List results = query.list();
@@ -612,8 +615,28 @@ public class QueryManager {
 			testNameMap.put(tn.getName(), tn);
 		}
 
+		Map<Long, MutationCoverage> dbCoverageMap = new HashMap<Long, MutationCoverage>();
+
+		Query mutationCoverageCountQuery = session
+				.createQuery("select count(*) FROM MutationCoverage");
+		List resultCount = mutationCoverageCountQuery.list();
+		long l = getResultFromCountQuery(resultCount);
+		if (l > 0) {
+			Query mutationCoverageQuery = session
+					.createQuery("from MutationCoverage WHERE mutationID IN (:mid)");
+			mutationCoverageQuery.setParameterList("mids", coverageData
+					.keySet());
+			logger.debug("getting coverage results from db");
+			List<MutationCoverage> dbResults = mutationCoverageQuery.list();
+			for (MutationCoverage mutationCoverage : dbResults) {
+				dbCoverageMap.put(mutationCoverage.getMutationID(),
+						mutationCoverage);
+			}
+		}
 		for (Map.Entry<Long, Set<String>> entry : coverageData.entrySet()) {
 			List<TestName> testNames = new ArrayList<TestName>();
+			Long mutationID = entry.getKey();
+			logger.debug("save coverage results for mutation  " + mutationID);
 			for (String testCase : entry.getValue()) {
 				TestName testName = null;
 				if (testCase == null) {
@@ -628,13 +651,18 @@ public class QueryManager {
 				}
 				testNames.add(testName);
 			}
-			MutationCoverage mutationCoverage = new MutationCoverage(entry
-					.getKey(), testNames);
-			session.save(mutationCoverage);
-		}
 
+			if (dbCoverageMap.containsKey(mutationID)) {
+				dbCoverageMap.get(mutationID).addTestNames(testNames);
+			} else {
+				MutationCoverage mutationCoverage = new MutationCoverage(
+						mutationID, testNames);
+				session.save(mutationCoverage);
+			}
+		}
 		tx.commit();
 		session.close();
+		logger.debug("coverage data saved to db");
 	}
 
 	/**

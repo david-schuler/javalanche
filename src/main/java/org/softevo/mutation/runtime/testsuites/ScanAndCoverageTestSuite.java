@@ -17,6 +17,7 @@ import org.softevo.mutation.io.XmlIo;
 
 public class ScanAndCoverageTestSuite extends TestSuite {
 
+	private static final boolean IGNORE_EXCEPTIONS = true;
 	static Logger logger = Logger.getLogger(ScanAndCoverageTestSuite.class);
 
 	public ScanAndCoverageTestSuite(String name) {
@@ -31,14 +32,15 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 
 	@Override
 	public void run(TestResult result) {
-		TestResult firstTestResult = new TestResult();
-		super.run(firstTestResult);
-		logger.info("First test result " + firstTestResult.runCount());
+		logger.debug("TestSuite started");
+		// TestResult firstTestResult = nezw TestResult();
+		// super.run(firstTestResult);
+		// logger.info("First test result " + firstTestResult.runCount());
 		Map<String, Test> allTests = TestSuiteUtil.getAllTests(this);
-		if (allTests.size() != firstTestResult.runCount()) {
-			throw new RuntimeException("Found unequal number of tests"
-					+ allTests.size() + "  " + firstTestResult.runCount());
-		}
+		// if (allTests.size() != firstTestResult.runCount()) {
+		// throw new RuntimeException("Found unequal number of tests"
+		// + allTests.size() + " " + firstTestResult.runCount());
+		// }
 		int testCount = 0;
 		Set<Entry<String, Test>> allTestEntrySet = allTests.entrySet();
 		List<String> testsRun = new ArrayList<String>();
@@ -50,18 +52,26 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 			try {
 				setTestName(testName);
 				runTest(entry.getValue(), result);
-				unsetTestName(testName);
-				testsRun.add(testName);
+
+				CoverageData.optionalSave();
 			} catch (Error e) {
 				logger.warn("Exception During test " + testName + " "
 						+ e.getMessage());
 				e.printStackTrace();
+				if (IGNORE_EXCEPTIONS) {
+					logger.warn("Ignoring Exception: no rethrow");
+				} else {
+					throw e;
+				}
+			}finally{
+				unsetTestName(testName);
+				testsRun.add(testName);
 			}
 			logger.info("Test Finished (" + testCount + ")" + testName);
 		}
+		CoverageData.endCoverage();
 		XmlIo.toXML(testsRun, "tests-runByScanAndCoveragetestSuite.xml");
 
-		CoverageData.endCoverage();
 	}
 
 	private void unsetTestName(String testName) {

@@ -154,7 +154,7 @@ public class ResultReporter {
 	 *            the actualTestCase to set
 	 */
 	public static synchronized void setActualTestCase(String actualTestCase) {
-		logger.info("test case set" + actualTestCase);
+		logger.debug("Test case set: " + actualTestCase);
 		ResultReporter.actualTestCase = actualTestCase;
 	}
 

@@ -60,7 +60,8 @@ public class MutationTestListener implements TestListener {
 			logger.warn("Result for this test was already reported " + test);
 			return;
 		}
-		logger.debug("Error added for test: " + test + "\nStack Trace:\n" + Arrays.toString(t.getStackTrace()));
+		logger.debug("Error added for test: " + test + "\nStack Trace:\n"
+				+ Arrays.toString(t.getStackTrace()));
 		long duration = getDuration(test);
 		errorMessages.add(new TestMessage(test.toString(), t.toString()
 				+ "\nStack Trace:\n" + stackTraceToString(t.getStackTrace()),
@@ -118,8 +119,12 @@ public class MutationTestListener implements TestListener {
 	 * @return The duration in milliseconds for this test.
 	 */
 	private long getDuration(Test test) {
-		long duration = System.currentTimeMillis() - startTime.get(test);
-		// startTime.remove(test);
+		long duration = 0;
+		if (startTime.containsKey(test)) {
+			duration = System.currentTimeMillis() - startTime.get(test);
+		} else {
+			logger.warn("No start time for test: " + test);
+		}
 		return duration;
 	}
 

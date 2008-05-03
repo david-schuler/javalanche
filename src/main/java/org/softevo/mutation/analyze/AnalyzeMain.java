@@ -1,23 +1,25 @@
 package org.softevo.mutation.analyze;
 
+import static org.softevo.mutation.properties.MutationProperties.*;
+
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 public class AnalyzeMain {
+
 	public static void main(String[] args) {
 		analyzeMutations(new MutationResultAnalyzer());
 	}
 
 	private static void analyzeMutations(
 			MutationResultAnalyzer mutationResultAnalyzer) {
-		String prefix = MutationProperties.PROJECT_PREFIX;
+		String prefix = PROJECT_PREFIX;
 		if (prefix == null) {
 			throw new RuntimeException("no prefix set");
 		}
@@ -40,7 +42,8 @@ public class AnalyzeMain {
 		Query countQuery = session.createQuery(countQueryString);
 		List countList = countQuery.list();
 		long l = QueryManager.getResultFromCountQuery(countList);
-		System.out.println(l + " mutations where not covered by tests");
+		System.out.println("Analyzed Results for mutations with prefix: " + PROJECT_PREFIX);
+		System.out.println("No results for " + l +  " tests");
 		System.out.println(analyzeResult);
 		tx.commit();
 		session.close();

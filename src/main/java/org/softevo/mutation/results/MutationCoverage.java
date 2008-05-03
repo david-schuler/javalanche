@@ -79,4 +79,13 @@ public class MutationCoverage {
 		this.testNames = testNames;
 	}
 
+	public void addTestName(TestName testName) {
+		testNames.add(testName);
+	}
+
+	public void addTestNames(List<TestName> testNames) {
+		this.testNames.addAll(testNames);
+
+	}
+
 }
