@@ -41,7 +41,7 @@
                     <h2>Run the tool</h2>
                     <h3>Adjust the Properties File</h3>
                     Adjust the property file <code>src/main/resources/mutation.incl.properties</code>, this file will later be included
-                    in build file to do the mutaiton testing.<br/>
+                    in build file to do the mutation testing.<br/>
                                         
                     Following properties have to be adjusted (see comments for further documentation):
                     
@@ -55,7 +55,7 @@
                     
                     
                     <h3>Scan for Mutation Possibilities</h3>                    
-                    The first step is to scan for mutations. Therefore the projects test suite has to be executed,
+                    The first step is to scan for mutations. Therefore, the projects test suite has to be executed,
                     and the tool scans for all posibilities where to mutate.<br/>
                     For example an ant task that executes a junit test suite has to be modified in the following way.
                     <br/><br/>Original:
@@ -123,7 +123,9 @@
 							Only classes with a fully qualified name 
 							(package + class name) that starts with this prefix
 							are scaned for mutations.</td>
-						
+						<tr><td>mutation.test.suite=SuseboxTestSuite</td>
+						<td>Name of the projects main test suite.</td></tr>
+							
                     </table>
                     
                     
@@ -149,7 +151,7 @@
                     in one run. Therfore files are created that specify which mutations
                     to execute.<br/>
                     This is done with the class <code>org.softevo.mutation.run.threaded.task.MutationTaskCreator</code>.
-                    For example, an ant target that creates the task would look like this.
+                    An ant target that creates the several task files looks like this:
                     
                     <div class="antblock">
 &lt;target&nbsp;name=&quot;createTasks&quot;&nbsp;&nbsp;&nbsp;description=&quot;create&nbsp;task&nbsp;files&nbsp;to&nbsp;execute&nbsp;the&nbsp;mutations&quot;&gt;<br/>
@@ -229,9 +231,9 @@
                     
                     
                     <h3>Execute Mutiple Tasks</h3>
-                    Multiple tasks cn also be executed in parallel on different 
-	                JVMs. This can be done via the class <code>org.softevo.mutation.run.threaded.ThreadPool</code>
-    				For example following ant target calls this class.            
+                    Multiple tasks can be executed in parallel on different 
+	                JVMs. This can be done via the class <code>org.softevo.mutation.run.threaded.ThreadPool</code>.
+    				The following ant target calls this class:            
                     <div class="antblock">
 &lt;target&nbsp;name=&quot;run-threaded-mutations&quot;&nbsp;description=&quot;run&nbsp;mutation&nbsp;tests&nbsp;multithreaded&nbsp;on&nbsp;jtopas&quot;&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;classname=&quot;org.softevo.mutation.run.threaded.ThreadPool&quot;&nbsp;maxmemory=&quot;1024m&quot;&nbsp;fork=&quot;true&quot;&gt;<br/>
@@ -247,8 +249,11 @@
 					
 					<table>
                         <tr><th>Argument</th><th>Description</th></tr>
-                        <tr><td>-Dmutation.script.command </td><td> A command that is used to start on jvm. 
-						For example this can be a script that class the corresponding ant task. The parameters <code> -Dmutation.file</code> and <code>-Dmutation.result.file</code> are passed to this command. See an example below.</td></tr>
+                        <tr><td>-Dmutation.script.command </td><td> The command that is used to start the jvm. 
+						This should be a script that calls the corresponding ant task
+						(see example below). 
+						The parameters <code> -Dmutation.file</code> and <code>-Dmutation.result.file</code>
+						are passed to this command.</td></tr>
 						<tr><td>-Dmutation.number.of.threads </td><td>  Number of threads that are executed in parallel.</td></tr>
 
                     </table>
@@ -266,7 +271,8 @@
                     An ant task that executes this class looks like this:<br/>
                     
                     <div class="antblock">
-&lt;target&nbsp;name=&quot;analyzeResults&quot;&nbsp;description=&quot;Analyzes&nbsp;the&nbsp;mutationt&nbsp;testing&nbsp;results.&nbsp;Compare&nbsp;mutated&nbsp;runs&nbsp;with&nbsp;the&nbsp;unmutated&nbsp;runs&quot;&gt;<br/>
+&lt;target&nbsp;name=&quot;analyzeResults&quot;&nbsp;description=&quot;Analyzes&nbsp;the&nbsp;mutationt&nbsp;testing&nbsp;results.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compare&nbsp;mutated&nbsp;runs&nbsp;with&nbsp;the&nbsp;unmutated&nbsp;runs&quot;&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;classname=&quot;org.softevo.mutation.analyze.AnalyzeMain&quot;&nbsp;maxmemory=&quot;1024m&quot;&nbsp;fork=&quot;true&quot;&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dmutation.package.prefix=de.susebox&quot;&nbsp;/&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>

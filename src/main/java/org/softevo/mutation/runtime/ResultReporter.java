@@ -98,8 +98,8 @@ public class ResultReporter {
 	}
 
 	public synchronized static void persist() {
-		logger.info("Start storing " + instances.size()
-				+ " mutaion test results in db");
+		logger.debug("Start storing " + instances.size()
+				+ " mutation test results in db");
 		Map<Mutation, SingleTestResult> map = new HashMap<Mutation, SingleTestResult>();
 		Set<Entry<Long, ResultReporter>> entrySet = instances.entrySet();
 		for (Entry<Long, ResultReporter> entry : entrySet) {
@@ -107,6 +107,8 @@ public class ResultReporter {
 			map.put(rr.mutation, rr.singleTestResult);
 		}
 		QueryManager.updateMutations(map);
+		logger.debug("Stored " + instances.size()
+				+ " mutation test results in db");
 
 		// logger.info("Start storing 2 (should fail)" + results.size() + "
 		// mutaion test results in db" );

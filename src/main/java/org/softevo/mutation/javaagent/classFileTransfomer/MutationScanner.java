@@ -57,7 +57,7 @@ public class MutationScanner implements ClassFileTransformer {
 		// DB must be loaded before transform method is entered. Otherwise
 		// program crashes.
 		Mutation someMutation = new Mutation("SomeMutationToAddToTheDb", 23,
-				23, MutationType.ARITHMETIC_REPLACE);
+				23, MutationType.ARITHMETIC_REPLACE,false);
 		Mutation mutationFromDb = QueryManager.getMutationOrNull(someMutation);
 		if (mutationFromDb == null) {
 			MutationPossibilityCollector mpc1 = new MutationPossibilityCollector();

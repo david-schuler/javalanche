@@ -61,7 +61,7 @@ public class NegateJumpsMethodAdapter extends AbstractMutationAdapter {
 
 	private void insertMutationJump(final int opcode, final Label label) {
 		Mutation queryMutation = new Mutation(className, getLineNumber(),
-				possibilitiesForLine, Mutation.MutationType.NEGATE_JUMP);
+				possibilitiesForLine, Mutation.MutationType.NEGATE_JUMP,isClassInit);
 		possibilitiesForLine++;
 		logger.info("Jump instruction in line: " + getLineNumber());
 		if (MutationManager.shouldApplyMutation(queryMutation)) {

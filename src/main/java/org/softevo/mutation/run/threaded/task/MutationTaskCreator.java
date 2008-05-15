@@ -96,7 +96,7 @@ public class MutationTaskCreator {
 	private static List<Long> getMutations(String prefix, int numberOfIds) {
 		logger.info("Trying to fetch " + numberOfIds + " mutations");
 		List<Long> mutationIds = QueryManager.getMutationsIdListFromDb(
-				numberOfIds, prefix);
+				numberOfIds, prefix,numberOfIds);
 		logger.info("Got " + mutationIds.size() + " mutations");
 		return mutationIds;
 	}

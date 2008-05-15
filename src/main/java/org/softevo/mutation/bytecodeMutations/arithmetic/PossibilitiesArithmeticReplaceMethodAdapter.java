@@ -114,7 +114,7 @@ public class PossibilitiesArithmeticReplaceMethodAdapter extends
 		if (!mutationCode) {
 			Mutation mutation = new Mutation(className, getLineNumber(),
 					getPossibilityForLine(),
-					Mutation.MutationType.ARITHMETIC_REPLACE);
+					Mutation.MutationType.ARITHMETIC_REPLACE,isClassInit);
 			mpc.addPossibility(mutation);
 			addPossibilityForLine();
 			if (insertCoverageCalls) {

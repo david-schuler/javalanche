@@ -43,7 +43,7 @@ public class AnalyzeMain {
 		List countList = countQuery.list();
 		long l = QueryManager.getResultFromCountQuery(countList);
 		System.out.println("Analyzed Results for mutations with prefix: " + PROJECT_PREFIX);
-		System.out.println("No results for " + l +  " tests");
+		System.out.println("No results for " + l +  " mutations");
 		System.out.println(analyzeResult);
 		tx.commit();
 		session.close();

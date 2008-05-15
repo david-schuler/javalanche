@@ -72,7 +72,7 @@ public class ArithmeticReplaceMethodAdapter extends AbstractMutationAdapter {
 
 	private void mutate(int opcode) {
 		Mutation queryMutation = new Mutation(className, getLineNumber(),
-				possibilitiesForLine, Mutation.MutationType.ARITHMETIC_REPLACE);
+				possibilitiesForLine, Mutation.MutationType.ARITHMETIC_REPLACE,isClassInit);
 
 		possibilitiesForLine++;
 		logger.debug("Querying mutation " + queryMutation);

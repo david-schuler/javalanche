@@ -168,9 +168,9 @@ public class MutationForRun {
 			}
 		}
 		logger.info(applied + " Mutations out of " + mutations.size()
-				+ " Where applied to bytecode");
+				+ " where applied to bytecode");
 		if (applied < mutations.size() || notApplied.size() > 0) {
-			logger.error("Not all mutations where applied to source code");
+			logger.error("Not all mutations where applied to bytecode");
 			for (Mutation mutation : notApplied) {
 				logger.warn("Mutation not applied " + mutation);
 			}

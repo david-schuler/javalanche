@@ -109,7 +109,7 @@ public class CoverageDataTest {
 		ArrayList<Mutation> result = new ArrayList<Mutation>();
 		for (long i = 0; i < limit; i++) {
 			Mutation m = new Mutation(TESTCLASS_NAME, 23, 0,
-					MutationType.NEGATE_JUMP);
+					MutationType.NEGATE_JUMP,false);
 			result.add(m);
 		}
 		return result;

@@ -46,7 +46,7 @@ public class MutationPossibilityCollector {
 			if (!QueryManager.hasUnmutated(m.getClassName(), m.getLineNumber())) {
 				Mutation unmutated = new Mutation(m.getClassName(), m
 						.getLineNumber(), m.getMutationForLine(),
-						MutationType.NO_MUTATION);
+						MutationType.NO_MUTATION,m.isClassInit());
 				QueryManager.saveMutation(unmutated);
 			}
 		}

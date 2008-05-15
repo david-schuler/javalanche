@@ -30,7 +30,7 @@ public class TestDelete {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		Mutation m = new Mutation("Test", 99, 0, MutationType.NO_MUTATION);
+		Mutation m = new Mutation("Test", 99, 0, MutationType.NO_MUTATION,false);
 		MutationTestListener mutationTestListener = new MutationTestListener();
 		TestMessage passingTestMessage = new TestMessage(PASS_TEST,
 				"test passed");

@@ -7,13 +7,12 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
+import org.softevo.mutation.javaagent.MutationPreMain;
 import org.softevo.mutation.properties.MutationProperties;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class MutationTransformer extends BytecodeTransformer {
-
-
 
 	private static Logger logger = Logger.getLogger(MutationTransformer.class);
 
@@ -21,8 +20,8 @@ public class MutationTransformer extends BytecodeTransformer {
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
 		ClassVisitor cv = new CheckClassAdapter(cw);
 		logger.info("Mutation Transformer");
-		if (MutationProperties.DEBUG) {
-			cv = new TraceClassVisitor(cv, new PrintWriter(System.out));
+		if (MutationProperties.TRACE_BYTECODE) {
+			cv = new TraceClassVisitor(cv, new PrintWriter(MutationPreMain.sysout));
 		}
 		return new MutationsClassAdapter(cv);
 	}

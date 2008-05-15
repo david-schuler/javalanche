@@ -45,6 +45,8 @@ public class Mutation {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private SingleTestResult mutationResult;
 
+	private boolean classInit;
+
 	/**
 	 * Default constructor needed by Hibernate.
 	 */
@@ -53,12 +55,13 @@ public class Mutation {
 	}
 
 	public Mutation(String className, int line, int mutationForLine,
-			MutationType mutation) {
+			MutationType mutation,boolean classInit) {
 		super();
 		if (className == null || line < 0 || mutation == null) {
 			throw new IllegalArgumentException(String.format(
 					"Arguments were: %s - %d - %s", className, line, mutation));
 		}
+		this.classInit = classInit;
 		if (className.contains("/")) {
 			className = className.replace('/', '.');
 		}
@@ -259,6 +262,13 @@ public class Mutation {
 		} else if (!mutationType.equals(other.mutationType))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the classInit
+	 */
+	public boolean isClassInit() {
+		return classInit;
 	}
 
 }

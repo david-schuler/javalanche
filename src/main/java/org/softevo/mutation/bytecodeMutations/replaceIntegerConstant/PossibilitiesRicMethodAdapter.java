@@ -24,11 +24,14 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 		if (!mutationCode) {
 			int possibilitiesForLine = getPossibilityForLine();
 			Mutation mutationPlus1 = new Mutation(className, getLineNumber(),
-					possibilitiesForLine, Mutation.MutationType.RIC_PLUS_1);
+					possibilitiesForLine, Mutation.MutationType.RIC_PLUS_1,
+					isClassInit);
 			Mutation mutationMinus1 = new Mutation(className, getLineNumber(),
-					possibilitiesForLine, Mutation.MutationType.RIC_MINUS_1);
+					possibilitiesForLine, Mutation.MutationType.RIC_MINUS_1,
+					isClassInit);
 			Mutation mutationZero = new Mutation(className, getLineNumber(),
-					possibilitiesForLine, Mutation.MutationType.RIC_ZERO);
+					possibilitiesForLine, Mutation.MutationType.RIC_ZERO,
+					isClassInit);
 			addPossibilityForLine();
 			mutationPossibilityCollector.addPossibility(mutationPlus1);
 			mutationPossibilityCollector.addPossibility(mutationMinus1);

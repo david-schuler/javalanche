@@ -267,7 +267,8 @@ public class SelectiveTestSuite extends TestSuite {
 	private void logResults() {
 		logger
 				.info(String.format(
-						"Check Result runs: %d failures:%d errors:%d ",
+						"Results for Mutation %d runs: %d failures:%d errors:%d ",
+						actualMutation.getId(),
 						actualMutationTestResult.runCount(),
 						actualMutationTestResult.failureCount(),
 						actualMutationTestResult.errorCount()));
@@ -327,7 +328,7 @@ public class SelectiveTestSuite extends TestSuite {
 		ExecutorService service = Executors.newSingleThreadExecutor();
 		Callable<Object> callable = getCallable(test, testResult);
 		Future<Object> result = service.submit(callable);
-		logger.debug("Start timed test" + test);
+		logger.debug("Start timed test: " + test);
 		long start = System.currentTimeMillis();
 		service.shutdown();
 		try {
@@ -340,7 +341,7 @@ public class SelectiveTestSuite extends TestSuite {
 			result.cancel(true);
 		} catch (TimeoutException e) {
 			testResult.addError(test, new Exception(String.format(
-					"test timed out after %d seconds",
+					"Test timed out after %d seconds",
 					DEFAULT_TIMEOUT_IN_SECONDS)));
 			if (STOP_AFTER_TIMEOUT) {
 				timeoutForMutation = true;
@@ -350,7 +351,7 @@ public class SelectiveTestSuite extends TestSuite {
 			testResult.addError(test, e);
 		}
 		long duration = System.currentTimeMillis() - start;
-		logger.debug("end timed test" + test + " took " + duration + " ms");
+		logger.debug("End timed test: " + test + " - took " + duration + " ms");
 
 	}
 

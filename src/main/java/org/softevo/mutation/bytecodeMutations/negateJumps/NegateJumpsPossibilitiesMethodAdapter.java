@@ -40,7 +40,7 @@ public class NegateJumpsPossibilitiesMethodAdapter extends
 	private void addJumpMutationPossibility() {
 		if (!mutationCode) {
 			Mutation mutation = new Mutation(className, getLineNumber(),
-					getPossibilityForLine(), Mutation.MutationType.NEGATE_JUMP);
+					getPossibilityForLine(), Mutation.MutationType.NEGATE_JUMP,isClassInit);
 			addPossibilityForLine();
 			mpc.addPossibility(mutation);
 			if (insertCoverageCalls) {

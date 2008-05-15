@@ -144,7 +144,8 @@ public class MutationProperties {
 	/**
 	 * True if coverage information is available in the db.
 	 */
-	public static final boolean COVERAGE_INFFORMATION = getPropertyOrDefault(COVERAGE_INFORMATION_KEY, true);
+	public static final boolean COVERAGE_INFFORMATION = getPropertyOrDefault(
+			COVERAGE_INFORMATION_KEY, true);
 
 	/**
 	 * Directory where the processes are executed
@@ -183,7 +184,11 @@ public class MutationProperties {
 	public static final boolean USE_EXTERNAL_COVERAGE_DATA = getPropertyOrDefault(
 			USE_EXTERNAL_COVERAGE_DATA_KEY, false);
 
-	public static final boolean TRACE_BYTECODE = false;
+	public static final String TRACE_BYTECODE_KEY = "mutation.trace";
+
+
+	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
+			TRACE_BYTECODE_KEY, true);
 
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
@@ -236,16 +241,17 @@ public class MutationProperties {
 		}
 		return result;
 	}
-//	private static boolean getCoverage() {
-//		String coverageInformation = System
-//				.getProperty(COVERAGE_INFORMATION_KEY);
-//		boolean result = false;
-//		if (coverageInformation != null
-//				&& coverageInformation.toLowerCase().equals("true")) {
-//			result = true;
-//		}
-//		return result;
-//	}
+
+	// private static boolean getCoverage() {
+	// String coverageInformation = System
+	// .getProperty(COVERAGE_INFORMATION_KEY);
+	// boolean result = false;
+	// if (coverageInformation != null
+	// && coverageInformation.toLowerCase().equals("true")) {
+	// result = true;
+	// }
+	// return result;
+	// }
 
 	private static String getPrefix() {
 		String project_prefix = System.getProperty(PROJECT_PREFIX_KEY);

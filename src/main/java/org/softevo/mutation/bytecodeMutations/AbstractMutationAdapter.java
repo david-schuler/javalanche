@@ -23,15 +23,17 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 
 	private Map<Integer, Integer> possibilities;
 
-	protected boolean mutationCode = false;// TODO IMPLEMENT FOR SCANNER
+	protected boolean mutationCode = false;
 
+	protected final boolean isClassInit;
 
 	public AbstractMutationAdapter(MethodVisitor mv, String className,
-			String methodName, Map<Integer, Integer> possibilities ) {
+			String methodName, Map<Integer, Integer> possibilities) {
 		super(mv);
 		this.className = className;
 		this.methodName = methodName;
 		this.possibilities = possibilities;
+		this.isClassInit = methodName.equals("<clinit>");
 	}
 
 	@Override

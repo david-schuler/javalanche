@@ -209,7 +209,7 @@ public class QueryManager {
 			assert mutationInDb.equalsWithoutId(mutation) : "Expected mutations to be equal: "
 					+ mutation + "   " + mutationInDb;
 		} else {
-			logger.info("Saving Mutation" + mutation);
+			logger.info("Saving mutation: " + mutation);
 			save(mutation);
 		}
 	}
@@ -448,7 +448,7 @@ public class QueryManager {
 		if (!hasUnmutated(mutation)) {
 			unmutated = new Mutation(mutation.getClassName(), mutation
 					.getLineNumber(), mutation.getMutationForLine(),
-					MutationType.NO_MUTATION);
+					MutationType.NO_MUTATION, mutation.isClassInit());
 			saveMutation(unmutated);
 		} else {
 			unmutated = getUnmutated(mutation);
@@ -552,38 +552,31 @@ public class QueryManager {
 	 * @return a list of mutation ids.
 	 */
 	public static List<Long> getMutationsIdListFromDb(int numberOfMutations,
-			String prefix) {
+			String prefix, int limit) {
+
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-
-		String queryString =
-
-		"SELECT distinct(m.id) FROM Mutation m"
+		String queryString = "SELECT distinct(m.id) FROM Mutation m"
 				+ " JOIN MutationCoverage mc ON m.id = mc.mutationId"
 				+ " JOIN MutationCoverage_TestName mctn ON mc.id = mctn.MutationCoverage_id"
 				+ " JOIN TestName tn ON mctn.testNames_id = tn.id"
-				+ " WHERE tn.name !='NO INFO'"
+				+ " WHERE tn.name !='NO INFO' "
+				+ " AND NOT m.classInit "
 				+ " AND m.mutationResult_id IS NULL "
 				+ " AND m.mutationType != 0" + " AND m.className LIKE '"
 				+ prefix + "%' ORDER BY  m.id ";
-		// String queryString = "SELECT m.id FROM Mutation m JOIN
-		// TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN
-		// TestCoverageClassResult_TestCoverageLineResult AS class_line ON
-		// class_line.testcoverageclassresult_id = tccr.id JOIN
-		// TestCoverageLineResult
-		// AS tclr ON tclr.id = class_line.lineresults_id WHERE
-		// m.mutationresult_id IS
-		// NULL AND m.linenumber = tclr.linenumber AND m.mutationType != 0 AND
-		// m.className LIKE '"
-		// + prefix + "%' ";
 		if (!MutationProperties.COVERAGE_INFFORMATION) {
-			queryString = "SELECT m.id FROM Mutation m WHERE "
-					+ " m.mutationresult_id IS NULL  AND m.mutationType != 0 AND m.className LIKE '"
-					+ prefix + "%' ";
+			queryString = "SELECT m.id FROM Mutation m "
+					+ "WHERE  m.mutationresult_id IS NULL "
+					+ "AND NOT m.classInit " + "AND m.mutationType != 0 "
+					+ "AND m.className LIKE '" + prefix + "%' ";
 		}
-		System.out.println(queryString);
+		logger.debug("Executing query: " + queryString);
 		Query query = session.createSQLQuery(queryString);
 		query.setMaxResults(numberOfMutations);
+		if (limit > 0) {
+			query.setMaxResults(limit);
+		}
 		List results = query.list();
 		List<Long> idList = new ArrayList<Long>();
 		for (Object id : results) {

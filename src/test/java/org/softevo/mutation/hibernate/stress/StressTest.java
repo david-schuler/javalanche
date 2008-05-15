@@ -43,7 +43,7 @@ public class StressTest {
 			logger.info("Thread started (id: " + id + ")");
 			for (int i = 0; i < limit; i++) {
 				Mutation m = new Mutation("test.class. " + id + "-" + i, i, i,
-						MutationType.ARITHMETIC_REPLACE);
+						MutationType.ARITHMETIC_REPLACE,false);
 				QueryManager.saveMutation(m);
 				logger.info("Mutation saved: " + m);
 			}

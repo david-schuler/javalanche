@@ -18,7 +18,7 @@ import org.softevo.mutation.results.persistence.HibernateUtil;
 public class HibernateTest {
 
 	private Mutation testMutaion = new Mutation("testClass", 21, 0,
-			MutationType.RIC_PLUS_1);;
+			MutationType.RIC_PLUS_1,false);;
 
 	@Before
 	public void hibernateSave() {
@@ -63,7 +63,7 @@ public class HibernateTest {
 		}
 		Assert.assertTrue("Expected at least one mutation for line"
 				+ testMutaion.getLineNumber(), count > 0);
-		Mutation m = new Mutation("testClass", 21, 0, MutationType.RIC_PLUS_1);
+		Mutation m = new Mutation("testClass", 21, 0, MutationType.RIC_PLUS_1,false);
 		session.save(m);
 		tx.commit();
 		session.close();
