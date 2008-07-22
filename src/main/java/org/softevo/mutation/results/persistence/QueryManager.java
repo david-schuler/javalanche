@@ -522,7 +522,15 @@ public class QueryManager {
 		return numberOfMutations.intValue();
 	}
 
-	public static List<Mutation> getMutationListFromDb(int numberOfMutations) {
+	/**
+	 * Return a list of mutations ids that are covered by tests.
+	 *
+	 * @param numberOfMutations
+	 *            max number of mutations
+	 * @return a list of mutations ids that are covered by tests
+	 */
+	public static List<Mutation> getCoveredMutationListFromDb(
+			int numberOfMutations) {
 		String prefix = MutationProperties.PROJECT_PREFIX;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -532,6 +540,27 @@ public class QueryManager {
 			queryString = "SELECT m.* FROM Mutation m WHERE m.mutationresult_id IS NULL  AND m.mutationType != 0 AND m.className LIKE '"
 					+ prefix + "%' ";
 		}
+		Query query = session.createSQLQuery(queryString).addEntity(
+				Mutation.class);
+		query.setMaxResults(numberOfMutations);
+		List results = query.list();
+		List<Mutation> idList = new ArrayList<Mutation>();
+		for (Object mutation : results) {
+			idList.add((Mutation) mutation);
+		}
+		tx.commit();
+		session.close();
+		return idList;
+	}
+
+
+	public static List<Mutation> getMutationIdListFromDb(
+			int numberOfMutations) {
+		String prefix = MutationProperties.PROJECT_PREFIX;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		String queryString = "SELECT m.* FROM Mutation m WHERE m.mutationType != 0 AND m.className LIKE '"
+				+ prefix + "%' ";
 		Query query = session.createSQLQuery(queryString).addEntity(
 				Mutation.class);
 		query.setMaxResults(numberOfMutations);
@@ -560,8 +589,7 @@ public class QueryManager {
 				+ " JOIN MutationCoverage mc ON m.id = mc.mutationId"
 				+ " JOIN MutationCoverage_TestName mctn ON mc.id = mctn.MutationCoverage_id"
 				+ " JOIN TestName tn ON mctn.testNames_id = tn.id"
-				+ " WHERE tn.name !='NO INFO' "
-				+ " AND NOT m.classInit "
+				+ " WHERE tn.name !='NO INFO' " + " AND NOT m.classInit "
 				+ " AND m.mutationResult_id IS NULL "
 				+ " AND m.mutationType != 0" + " AND m.className LIKE '"
 				+ prefix + "%' ORDER BY  m.id ";
@@ -614,12 +642,15 @@ public class QueryManager {
 				.createQuery("select count(*) FROM MutationCoverage");
 		List resultCount = mutationCoverageCountQuery.list();
 		long l = getResultFromCountQuery(resultCount);
-		if (l > 0) {
+		if (l > 0 && coverageData.keySet().size() > 0) {
 			Query mutationCoverageQuery = session
-					.createQuery("from MutationCoverage WHERE mutationID IN (:mid)");
+					.createQuery("from MutationCoverage WHERE mutationID IN (:mids)");
 			mutationCoverageQuery.setParameterList("mids", coverageData
 					.keySet());
-			logger.debug("getting coverage results from db");
+			logger.debug("getting coverage results from db"
+					+ mutationCoverageQuery.getQueryString());
+			logger.debug(coverageData.keySet());
+			System.exit(0);
 			List<MutationCoverage> dbResults = mutationCoverageQuery.list();
 			for (MutationCoverage mutationCoverage : dbResults) {
 				dbCoverageMap.put(mutationCoverage.getMutationID(),

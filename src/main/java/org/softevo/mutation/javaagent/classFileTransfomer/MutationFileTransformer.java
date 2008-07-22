@@ -112,15 +112,12 @@ public class MutationFileTransformer implements ClassFileTransformer {
 				classfileBuffer = systemExitTransformer
 						.transformBytecode(classfileBuffer);
 			}
-
-			if (classNameWithDots.endsWith("AllTests")
-					|| compareWithSuiteProperty(classNameWithDots)) {
+			if (compareWithSuiteProperty(classNameWithDots) || classNameWithDots.endsWith("AllTests")) {
 				logger.info("Trying to integrate SelectiveTestSuite");
 				BytecodeTransformer integrateSuiteTransformer =  IntegrateSuiteTransformer.getIntegrateSelectiveTestSuiteTransformer();
 				classfileBuffer = integrateSuiteTransformer
 						.transformBytecode(classfileBuffer);
 			}
-
 			if (isObservedTestCase(classNameWithDots)) {
 				try {
 					logger.info("Trying to transform test class "

@@ -85,7 +85,7 @@ public class MutationForRun {
 			logger.info("Property not found: " + MUTATION_FILE);
 		}
 		if (mutationsToReturn.size() == 0) {
-			mutationsToReturn =  QueryManager.getMutationListFromDb(DEFAULT_MUTATIONS_PER_RUN);
+			mutationsToReturn =  QueryManager.getCoveredMutationListFromDb(DEFAULT_MUTATIONS_PER_RUN);
 		}
 		if (mutationsToReturn != null) {
 			// make sure that we have not got any mutations that have already an
