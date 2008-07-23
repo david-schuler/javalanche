@@ -19,6 +19,8 @@ import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.util.Util;
 
+import de.unisb.cs.st.invariants.runtime.InvariantObserver;
+
 /**
  *
  * Class that stores the results of the TestCases.
@@ -91,6 +93,15 @@ public class ResultReporter {
 		singleTestResult = mutationSingleTestResult;
 		if (touched) {
 			touchedMutations.add(mutation);
+		}
+		InvariantObserver instance = InvariantObserver.getInstance();
+		if (instance != null) {
+			int totalViolatedInvariants = instance.getTotalViolatedInvariants();
+			int[] violatedInvariants = instance.getViolatedInvariantsArray();
+			singleTestResult.setTotalViolations(totalViolatedInvariants);
+			singleTestResult.setViolatedInvariants(violatedInvariants);
+			singleTestResult.setDifferentViolatedInvariants(violatedInvariants.length);
+			InvariantObserver.reset();
 		}
 		touchingTestCases.clear();
 		actualMutation = null;

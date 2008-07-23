@@ -59,8 +59,8 @@ public class MutationProperties {
 	 */
 
 	public enum RunMode {
-		SCAN("scan"), MUTAION_TEST("mutation"), TEST_TESTSUIT_FIRST("test1"), TEST_TESTSUITE_SECOND(
-				"test2");
+		SCAN("scan"), MUTATION_TEST("mutation"), TEST_TESTSUIT_FIRST("test1"), TEST_TESTSUITE_SECOND(
+				"test2"), MUTATION_TEST_NO_INVARIANT("mutationNoInvariant");
 
 		private String key;
 
@@ -218,7 +218,7 @@ public class MutationProperties {
 				}
 			}
 		}
-		return RunMode.MUTAION_TEST;
+		return RunMode.MUTATION_TEST;
 	}
 
 	private static final String getPropertyOrDefault(String key,

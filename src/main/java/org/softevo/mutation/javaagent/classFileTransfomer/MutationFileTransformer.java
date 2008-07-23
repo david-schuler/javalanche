@@ -14,8 +14,12 @@ import org.softevo.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTrans
 import org.softevo.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
 import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.javaagent.MutationForRun;
+import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.objectInspector.asmAdapters.ObjectInspectorTransformer;
 import org.softevo.mutation.properties.MutationProperties;
+import org.softevo.mutation.results.Mutation;
+import org.softevo.mutation.results.Mutation.MutationType;
+import org.softevo.mutation.results.persistence.QueryManager;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
@@ -29,8 +33,23 @@ import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 @SuppressWarnings("unchecked")
 public class MutationFileTransformer implements ClassFileTransformer {
 
+
 	private static Logger logger = Logger
 			.getLogger(MutationFileTransformer.class);
+
+	static {
+		// DB must be loaded before transform method is entered. Otherwise
+		// program crashes.
+		Mutation someMutation = new Mutation("SomeMutationToAddToTheDb", 23,
+				23, MutationType.ARITHMETIC_REPLACE,false);
+		Mutation mutationFromDb = QueryManager.getMutationOrNull(someMutation);
+		if (mutationFromDb == null) {
+			MutationPossibilityCollector mpc1 = new MutationPossibilityCollector();
+			mpc1.addPossibility(someMutation);
+			mpc1.toDB();
+		}
+
+	}
 
 	private static String testName = ".testclasses";
 
@@ -66,15 +85,15 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	private static List<String> systemExitClassList = Arrays
 			.asList(systemExitClasses);
 
-	private static Set<String> testCases = (Set<String>) XmlIo
-			.fromXml(MutationProperties.TESTCASES_FILE);
+//	private static Set<String> testCases = (Set<String>) XmlIo
+//			.fromXml(MutationProperties.TESTCASES_FILE);
 
-	static {
+	static{
 		logger.info("Loading MutationFileTransformer");
 		logger.info("Log4J Configuration at: "
 				+ System.getProperty("log4j.configuration"));
-		logger.info("TestCases");
-		logger.info(testCases);
+//		logger.info("TestCases");
+//		logger.info(testCases);
 	}
 
 	private static MutationDecision mutationDecision = new MutationDecision() {
@@ -166,9 +185,10 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	 */
 	private boolean isObservedTestCase(String classNameWithDots) {
 		if (MutationProperties.OBSERVE_OBJECTS) {
-			if (testCases.contains(classNameWithDots)) {
-				return true;
-			} else if (classNameWithDots.endsWith("InspectorTest")) {
+//			if (testCases.contains(classNameWithDots)) {
+//				return true;
+//			} else
+			if (classNameWithDots.endsWith("InspectorTest")) {
 				return true;
 			}
 		}

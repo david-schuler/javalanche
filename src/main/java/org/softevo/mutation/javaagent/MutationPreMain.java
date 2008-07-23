@@ -1,4 +1,4 @@
-package org.softevo.mutation.javaagent;
+ package org.softevo.mutation.javaagent;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -9,11 +9,31 @@ import org.softevo.mutation.javaagent.classFileTransfomer.IntegrateCheckNamesSui
 import org.softevo.mutation.javaagent.classFileTransfomer.IntegrateRandomPermutationTransformer;
 import org.softevo.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
 import org.softevo.mutation.javaagent.classFileTransfomer.MutationScanner;
+import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
+import org.softevo.mutation.results.Mutation;
+import org.softevo.mutation.results.Mutation.MutationType;
+import org.softevo.mutation.results.persistence.QueryManager;
+
+import de.unisb.cs.st.invariants.javaagent.InvariantTransformer;
 
 import static org.softevo.mutation.properties.MutationProperties.*;
 import static org.softevo.mutation.properties.MutationProperties.RunMode.*;
 
 public class MutationPreMain {
+
+	static {
+		// DB must be loaded before transform method is entered. Otherwise
+		// program crashes.
+		Mutation someMutation = new Mutation("SomeMutationToAddToTheDb", 23,
+				23, MutationType.ARITHMETIC_REPLACE,false);
+		Mutation mutationFromDb = QueryManager.getMutationOrNull(someMutation);
+		if (mutationFromDb == null) {
+			MutationPossibilityCollector mpc1 = new MutationPossibilityCollector();
+			mpc1.addPossibility(someMutation);
+			mpc1.toDB();
+		}
+
+	}
 
 	public static final PrintStream sysout = System.out;
 
@@ -22,8 +42,14 @@ public class MutationPreMain {
 	public static void premain(String agentArguments,
 			Instrumentation instrumentation) {
 		try {
-			if (RUN_MODE == MUTAION_TEST) {
-				System.out.println("Run mutation tests");
+			if (RUN_MODE == MUTATION_TEST) {
+				System.out.println("Run mutation tests with invariant checks");
+				addClassFileTransformer(instrumentation, new InvariantTransformer());
+				addClassFileTransformer(instrumentation,
+						new MutationFileTransformer());
+				return;
+			} else if (RUN_MODE == MUTATION_TEST_NO_INVARIANT) {
+				System.out.println("Run mutation tests without invariant checks");
 				addClassFileTransformer(instrumentation,
 						new MutationFileTransformer());
 				return;

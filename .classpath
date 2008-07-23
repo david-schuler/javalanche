@@ -29,5 +29,6 @@
 	<classpathentry kind="var" path="M2_REPO/sibrelib/sibrelib/1.0/sibrelib-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/thoughtworks/xstream/xstream/1.2/xstream-1.2.jar" sourcepath="M2_REPO/com/thoughtworks/xstream/xstream/1.2/xstream-1.2-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3.jar" sourcepath="M2_REPO/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3-sources.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/adabu-my"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

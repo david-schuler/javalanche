@@ -36,24 +36,61 @@ public class SingleTestResult {
 	 */
 	boolean touched;
 
-	@OneToMany(cascade = CascadeType.ALL)//, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL)
+	// , fetch = FetchType.EAGER)
 	@OrderBy("testCaseName")
 	@IndexColumn(name = "failure_list_id")
 	private List<TestMessage> failures = new ArrayList<TestMessage>();
 
-	@OneToMany(cascade = CascadeType.ALL)//, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL)
+	// , fetch = FetchType.EAGER)
 	@JoinTable(name = "SingleTestResult_Errors", joinColumns = { @JoinColumn(name = "singleTestResult_id") }, inverseJoinColumns = @JoinColumn(name = "testMessage_id"))
-	@IndexColumn(name="error_id")
+	@IndexColumn(name = "error_id")
 	private List<TestMessage> errors = new ArrayList<TestMessage>();
 
-	@OneToMany(cascade = CascadeType.ALL)//, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL)
+	// , fetch = FetchType.EAGER)
 	@JoinTable(name = "SingleTestResult_Passing", joinColumns = { @JoinColumn(name = "singleTestResult_id") }, inverseJoinColumns = @JoinColumn(name = "testMessage_id"))
-	@IndexColumn(name="passing_id")
+	@IndexColumn(name = "passing_id")
 	private List<TestMessage> passing = new ArrayList<TestMessage>();
 
-	//Temporal(TemporalType.TIME)
+	// Temporal(TemporalType.TIME)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
+
+	private int[] violatedInvariants;
+
+	private int  differentViolatedInvariants;
+
+	private int totalViolations;
+
+	/**
+	 * @return the violatedInvariants
+	 */
+	public int[] getViolatedInvariants() {
+		return violatedInvariants;
+	}
+
+	/**
+	 * @return the totalViolations
+	 */
+	public int getTotalViolations() {
+		return totalViolations;
+	}
+
+	/**
+	 * @param violatedInvariants the violatedInvariants to set
+	 */
+	public void setViolatedInvariants(int[] violatedInvariants) {
+		this.violatedInvariants = violatedInvariants;
+	}
+
+	/**
+	 * @param totalViolations the totalViolations to set
+	 */
+	public void setTotalViolations(int totalViolations) {
+		this.totalViolations = totalViolations;
+	}
 
 	/**
 	 * @return the date
@@ -63,13 +100,15 @@ public class SingleTestResult {
 	}
 
 	/**
-	 * @param date the date to set
+	 * @param date
+	 *            the date to set
 	 */
 	public void setDate(Date date) {
 		this.date = date;
 	}
 
-	@SuppressWarnings("unused") // Needed by hibernate
+	@SuppressWarnings("unused")
+	// Needed by hibernate
 	private SingleTestResult() {
 	}
 
@@ -85,12 +124,10 @@ public class SingleTestResult {
 			updateTouched(touchingTestCases, failures);
 			updateTouched(touchingTestCases, errors);
 			updateTouched(touchingTestCases, passing);
-//			updateTimes(mutationTestListener.getDurations());
+			// updateTimes(mutationTestListener.getDurations());
 			touched = true;
 		}
 	}
-
-
 
 	private static void updateTouched(Set<String> touchingTestCases,
 			List<TestMessage> testMessages) {
@@ -105,8 +142,8 @@ public class SingleTestResult {
 	public String toString() {
 		StringBuilder sb = new StringBuilder(String.format(
 				"Runs: %d  Failures: %d  Errors: %d LineTouched: %s", runs,
-				failures. size(), errors.size(), touched ? "yes" : "no "));
-		sb.append("date: "+ date);
+				failures.size(), errors.size(), touched ? "yes" : "no "));
+		sb.append("date: " + date);
 		if (failures.size() > 0) {
 			sb.append("Failures:\n");
 			for (TestMessage tm : failures) {
@@ -227,6 +264,20 @@ public class SingleTestResult {
 	 */
 	public void setTouched(boolean touched) {
 		this.touched = touched;
+	}
+
+	/**
+	 * @return the differentViolatedInvariants
+	 */
+	public int getDifferentViolatedInvariants() {
+		return differentViolatedInvariants;
+	}
+
+	/**
+	 * @param differentViolatedInvariants the differentViolatedInvariants to set
+	 */
+	public void setDifferentViolatedInvariants(int differentViolatedInvariants) {
+		this.differentViolatedInvariants = differentViolatedInvariants;
 	}
 
 }
