@@ -14,11 +14,12 @@ import org.softevo.mutation.results.persistence.QueryManager;
 public class AnalyzeMain {
 
 	public static void main(String[] args) {
-		analyzeMutations(new MutationResultAnalyzer());
+//		analyzeMutations(new MutationResultAnalyzer());
+		analyzeMutations(new InvariantAnalyzer());
 	}
 
 	private static void analyzeMutations(
-			MutationResultAnalyzer mutationResultAnalyzer) {
+			MutationAnalyzer mutationResultAnalyzer) {
 		String prefix = PROJECT_PREFIX;
 		if (prefix == null) {
 			throw new RuntimeException("no prefix set");

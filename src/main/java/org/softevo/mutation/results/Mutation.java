@@ -55,7 +55,7 @@ public class Mutation {
 	}
 
 	public Mutation(String className, int line, int mutationForLine,
-			MutationType mutation,boolean classInit) {
+			MutationType mutation, boolean classInit) {
 		super();
 		if (className == null || line < 0 || mutation == null) {
 			throw new IllegalArgumentException(String.format(
@@ -269,6 +269,11 @@ public class Mutation {
 	 */
 	public boolean isClassInit() {
 		return classInit;
+	}
+
+	public boolean isKilled() {
+		return mutationResult.getNumberOfErrors()
+				+ mutationResult.getNumberOfFailures() > 0;
 	}
 
 }
