@@ -14,17 +14,29 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 	public String analyze(Iterable<Mutation> mutations) {
 		int killed = 0;
 		int survived = 0;
+		int classInit = 0;
+		int notCovered = 0;
 		List<Mutation> killedList = new ArrayList<Mutation>();
 		List<Mutation> survivedList = new ArrayList<Mutation>();
 		for (Mutation mutation : mutations) {
+			if (mutation == null) {
+				throw new RuntimeException("Null fetched from db");
+			}
 			SingleTestResult mutationResult = mutation.getMutationResult();
-			if (mutationResult.getNumberOfErrors() > 0
-					|| mutationResult.getNumberOfFailures() > 0) {
+			if (mutationResult != null
+					&& (mutationResult.getNumberOfErrors() > 0 || mutationResult
+							.getNumberOfFailures() > 0)) {
 				killed++;
 				killedList.add(mutation);
 			} else {
 				survived++;
 				survivedList.add(mutation);
+			}
+			if (mutationResult == null) {
+				notCovered++;
+			}
+			if (mutation.isClassInit()) {
+				classInit++;
 			}
 		}
 		int total = survived + killed;
@@ -43,13 +55,17 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 		XmlIo.toXML(killedIds, "killed-ids.xml");
 		XmlIo.toXML(survivedIds, "survived-ids.xml");
 
-
-
 		sb.append("Total mutations:  " + total);
 		sb.append('\n');
 		sb.append("Killed mutations: " + killed);
 		sb.append('\n');
 		sb.append("Survived mutations: " + survived);
+		sb.append('\n');
+		sb.append("Mutation score: " + ((double) killed) / total);
+		sb.append('\n');
+		sb.append("Mutations that were not covered: " + notCovered);
+		sb.append('\n');
+		sb.append("Mutations that can not be killed: " + classInit);
 		sb.append('\n');
 		return sb.toString();
 	}

@@ -650,7 +650,6 @@ public class QueryManager {
 			logger.debug("getting coverage results from db"
 					+ mutationCoverageQuery.getQueryString());
 			logger.debug(coverageData.keySet());
-			System.exit(0);
 			List<MutationCoverage> dbResults = mutationCoverageQuery.list();
 			for (MutationCoverage mutationCoverage : dbResults) {
 				dbCoverageMap.put(mutationCoverage.getMutationID(),

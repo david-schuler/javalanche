@@ -63,7 +63,6 @@ public class CoverageData {
 					+ " touched mutation " + id);
 			shouldSave = true;
 		}
-		// CoverageData instance = SingletonHolder.instance;
 		Set<String> coveredTests = SingletonHolder.instance.coverageData
 				.get(id);
 		if (coveredTests == null) {

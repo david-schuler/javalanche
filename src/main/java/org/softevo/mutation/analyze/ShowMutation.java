@@ -8,18 +8,33 @@ import org.hibernate.Transaction;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 
+/**
+ * Fetches one or more mutations from the database an prints it to the console.
+ */
 public class ShowMutation {
 
 	public static void main(String[] args) {
-		showMutation();
+		if (args.length < 1) {
+			System.out.println("Usage: <mutationID> [<mutationID>]*");
+		}
+		for (int i = 0; i < args.length; i++) {
+			long mutationID = Long.parseLong(args[i]);
+			showMutation(mutationID);
+		}
 	}
 
+	/**
+	 * Fetches one a mutation from the database an prints it to the console.
+	 *
+	 * @param id
+	 *            the id of the mutation to print
+	 */
 	@SuppressWarnings("unchecked")
-	private static void showMutation() {
+	private static void showMutation(long id) {
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session.createQuery("FROM Mutation WHERE id = :id");
-		query.setLong("id", 300l);
+		query.setLong("id", id);
 		@SuppressWarnings("unchecked")
 		List<Mutation> mutations = query.list();
 		for (Mutation mutation : mutations) {

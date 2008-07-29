@@ -43,21 +43,29 @@ public class MutationScanner implements ClassFileTransformer {
 				}
 				return true;
 			}
-			if (classNameWithDots.startsWith("org.aspectj")) {
-				if (QueryManager.hasMutationsforClass(classNameWithDots)) {
-					return false;
-				}
-				return true;
-			}
 			return false;
 		}
 	};
+
+	private static final String TEST_SUITE_PROPERTY = initTestSuiteProperty();
+
+	private static String initTestSuiteProperty() {
+		String testSuiteName = System
+				.getProperty(MutationProperties.TEST_SUITE_KEY);
+		if (testSuiteName == null) {
+			throw new RuntimeException(
+					"No test suite specified. This should be done with property "
+							+ MutationProperties.TEST_SUITE_KEY);
+		}
+		logger.info("Got testsuite name:  " + testSuiteName);
+		return testSuiteName;
+	}
 
 	static {
 		// DB must be loaded before transform method is entered. Otherwise
 		// program crashes.
 		Mutation someMutation = new Mutation("SomeMutationToAddToTheDb", 23,
-				23, MutationType.ARITHMETIC_REPLACE,false);
+				23, MutationType.ARITHMETIC_REPLACE, false);
 		Mutation mutationFromDb = QueryManager.getMutationOrNull(someMutation);
 		if (mutationFromDb == null) {
 			MutationPossibilityCollector mpc1 = new MutationPossibilityCollector();

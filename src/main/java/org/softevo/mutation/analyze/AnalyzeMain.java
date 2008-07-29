@@ -14,39 +14,51 @@ import org.softevo.mutation.results.persistence.QueryManager;
 public class AnalyzeMain {
 
 	public static void main(String[] args) {
-//		analyzeMutations(new MutationResultAnalyzer());
-		analyzeMutations(new InvariantAnalyzer());
+		// analyzeMutations(new MutationResultAnalyzer());
+		analyzeMutations(new MutationAnalyzer[]{new MutationResultAnalyzer(),new InvariantAnalyzer()});
 	}
 
 	private static void analyzeMutations(
-			MutationAnalyzer mutationResultAnalyzer) {
+			MutationAnalyzer[] mutationResultAnalyzers) {
 		String prefix = PROJECT_PREFIX;
 		if (prefix == null) {
 			throw new RuntimeException("no prefix set");
 		}
-		analyzeMutations(mutationResultAnalyzer, prefix);
+		analyzeMutations(mutationResultAnalyzers, prefix);
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void analyzeMutations(MutationAnalyzer mutationAnalyzer,
+	private static void analyzeMutations(MutationAnalyzer[] mutationAnalyzers,
 			String prefix) {
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session
-				.createQuery("FROM Mutation WHERE mutationResult_id != null AND className LIKE '"
+				.createQuery("FROM Mutation WHERE className LIKE '"
 						+ prefix + "%'");
-		// query.setString("prefix", prefix);
 		@SuppressWarnings("unchecked")
 		List<Mutation> mutations = query.list();
-		String analyzeResult = mutationAnalyzer.analyze(mutations);
-		String countQueryString = "SELECT count(*) FROM Mutation WHERE mutationResult = null";
+		StringBuilder sb = new StringBuilder();
+		for (MutationAnalyzer mutationAnalyzer : mutationAnalyzers) {
+			String analyzeResult = mutationAnalyzer.analyze(mutations);
+			sb.append("Results from " + mutationAnalyzer.getClass() +  "\n");
+			sb.append(analyzeResult);
+		}
+		long l = getNumberOfMutationsWithoutResult(session, prefix);
+		System.out.println("Analyzed Results for mutations with prefix: "
+				+ PROJECT_PREFIX);
+		System.out.println("No results for " + l + " mutations");
+		System.out.println(sb.toString());
+		tx.commit();
+		session.close();
+	}
+
+	@SuppressWarnings("unchecked")
+	private static long getNumberOfMutationsWithoutResult(Session session,String prefix) {
+		String countQueryString = "SELECT count(*) FROM Mutation WHERE mutationResult = null AND className LIKE '"
+						+ prefix + "%'";
 		Query countQuery = session.createQuery(countQueryString);
 		List countList = countQuery.list();
 		long l = QueryManager.getResultFromCountQuery(countList);
-		System.out.println("Analyzed Results for mutations with prefix: " + PROJECT_PREFIX);
-		System.out.println("No results for " + l +  " mutations");
-		System.out.println(analyzeResult);
-		tx.commit();
-		session.close();
+		return l;
 	}
 }

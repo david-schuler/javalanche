@@ -73,8 +73,9 @@ public class Mutation {
 
 	@Override
 	public String toString() {
-		return String.format("%d %s - %d (%d)- %s %s", id, className,
-				lineNumber, mutationForLine, mutationType.toString(),
+		return String.format("%d %s %s - %d (%d)- %s \n%s", id, className,
+				isClassInit() ? "in static part" : "not static", lineNumber,
+				mutationForLine, mutationType.toString(),
 				mutationResult == null ? "No Result" : mutationResult
 						.toString());
 	}
