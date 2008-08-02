@@ -144,7 +144,7 @@ public class SelectiveTestSuite extends TestSuite {
 							actualMutation, actualListener);
 				} else {
 					logger
-							.warn("Maybe error that caused the shutdown could not report. Caused by mutation: "
+							.warn("An error that maybe caused the shutdown could not report.\nCaused by mutation: "
 									+ actualMutation);
 				}
 				ResultReporter.persist();

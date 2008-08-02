@@ -1,5 +1,8 @@
 package org.softevo.mutation.javaagent.classFileTransfomer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
@@ -33,7 +36,6 @@ import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 @SuppressWarnings("unchecked")
 public class MutationFileTransformer implements ClassFileTransformer {
 
-
 	private static Logger logger = Logger
 			.getLogger(MutationFileTransformer.class);
 
@@ -41,7 +43,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 		// DB must be loaded before transform method is entered. Otherwise
 		// program crashes.
 		Mutation someMutation = new Mutation("SomeMutationToAddToTheDb", 23,
-				23, MutationType.ARITHMETIC_REPLACE,false);
+				23, MutationType.ARITHMETIC_REPLACE, false);
 		Mutation mutationFromDb = QueryManager.getMutationOrNull(someMutation);
 		if (mutationFromDb == null) {
 			MutationPossibilityCollector mpc1 = new MutationPossibilityCollector();
@@ -85,15 +87,15 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	private static List<String> systemExitClassList = Arrays
 			.asList(systemExitClasses);
 
-//	private static Set<String> testCases = (Set<String>) XmlIo
-//			.fromXml(MutationProperties.TESTCASES_FILE);
+	// private static Set<String> testCases = (Set<String>) XmlIo
+	// .fromXml(MutationProperties.TESTCASES_FILE);
 
-	static{
+	static {
 		logger.info("Loading MutationFileTransformer");
 		logger.info("Log4J Configuration at: "
 				+ System.getProperty("log4j.configuration"));
-//		logger.info("TestCases");
-//		logger.info(testCases);
+		// logger.info("TestCases");
+		// logger.info(testCases);
 	}
 
 	private static MutationDecision mutationDecision = new MutationDecision() {
@@ -122,53 +124,62 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
-		try {
-			String classNameWithDots = className.replace('/', '.');
-			// logger.info(className + " is passed to transformer");
-			if (isSystemExitClass(classNameWithDots)) {
-				logger.info("Trying to remove calls to system exit from class"
-						+ classNameWithDots);
-				classfileBuffer = systemExitTransformer
-						.transformBytecode(classfileBuffer);
-			}
-			if (compareWithSuiteProperty(classNameWithDots) || classNameWithDots.endsWith("AllTests")) {
-				logger.info("Trying to integrate SelectiveTestSuite");
-				BytecodeTransformer integrateSuiteTransformer =  IntegrateSuiteTransformer.getIntegrateSelectiveTestSuiteTransformer();
-				classfileBuffer = integrateSuiteTransformer
-						.transformBytecode(classfileBuffer);
-			}
-			if (isObservedTestCase(classNameWithDots)) {
-				try {
-					logger.info("Trying to transform test class "
-							+ classNameWithDots);
-					ObjectInspectorTransformer objectInspectorTransformer = new ObjectInspectorTransformer();
-					classfileBuffer = objectInspectorTransformer
+		if (className != null) {
+			try {
+				String classNameWithDots = className.replace('/', '.');
+				// logger.info(className + " is passed to transformer");
+				if (isSystemExitClass(classNameWithDots)) {
+					logger
+							.info("Trying to remove calls to system exit from class"
+									+ classNameWithDots);
+					classfileBuffer = systemExitTransformer
 							.transformBytecode(classfileBuffer);
-				} catch (Exception e) {
-					logger.warn("Exception Thrown" + e);
-					e.printStackTrace();
 				}
-				logger.info("Test class transformed " + classNameWithDots);
-			}
+				if (compareWithSuiteProperty(classNameWithDots)
+						|| classNameWithDots.endsWith("AllTests")) {
+					logger.info("Trying to integrate SelectiveTestSuite");
+					BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer
+							.getIntegrateSelectiveTestSuiteTransformer();
+					classfileBuffer = integrateSuiteTransformer
+							.transformBytecode(classfileBuffer);
+				}
+				if (isObservedTestCase(classNameWithDots)) {
+					try {
+						logger.info("Trying to transform test class "
+								+ classNameWithDots);
+						ObjectInspectorTransformer objectInspectorTransformer = new ObjectInspectorTransformer();
+						classfileBuffer = objectInspectorTransformer
+								.transformBytecode(classfileBuffer);
+					} catch (Exception e) {
+						logger.warn("Exception Thrown" + e);
+						e.printStackTrace();
+					}
+					logger.info("Test class transformed " + classNameWithDots);
+				}
 
-			if (mutationDecision.shouldBeHandled(classNameWithDots)) {
-				logger.info("Transforming: " + classNameWithDots);
-				byte[] transformedBytecode = null;
-				try {
-					transformedBytecode = mutationTransformer
-							.transformBytecode(classfileBuffer);
-				} catch (Exception e) {
-					logger.info("Exception thrown: " + e);
-					e.printStackTrace();
+				if (mutationDecision.shouldBeHandled(classNameWithDots)) {
+					logger.info("Transforming: " + classNameWithDots);
+					byte[] transformedBytecode = null;
+					try {
+						transformedBytecode = mutationTransformer
+								.transformBytecode(classfileBuffer);
+					} catch (Exception e) {
+						logger.info("Exception thrown: " + e);
+						e.printStackTrace();
+					}
+					logger.info("Class transformed: " + classNameWithDots);
+					return transformedBytecode;
 				}
-				logger.info("Class transformed: " + classNameWithDots);
-				return transformedBytecode;
+			} catch (Exception e) {
+				logger.fatal(e.getMessage());
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				StringWriter writer = new StringWriter();
+				e.printStackTrace(new PrintWriter(writer));
+				logger.fatal(writer.getBuffer().toString());
+				e.printStackTrace();
+				System.exit(0);
+				// throw new RuntimeException(e.getMessage());
 			}
-		} catch (Exception e) {
-			logger.fatal(e.getMessage());
-			e.printStackTrace();
-			System.exit(0);
-//			throw new RuntimeException(e.getMessage());
 		}
 		return classfileBuffer;
 	}
@@ -185,9 +196,9 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	 */
 	private boolean isObservedTestCase(String classNameWithDots) {
 		if (MutationProperties.OBSERVE_OBJECTS) {
-//			if (testCases.contains(classNameWithDots)) {
-//				return true;
-//			} else
+			// if (testCases.contains(classNameWithDots)) {
+			// return true;
+			// } else
 			if (classNameWithDots.endsWith("InspectorTest")) {
 				return true;
 			}

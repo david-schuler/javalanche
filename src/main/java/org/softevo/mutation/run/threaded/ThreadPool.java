@@ -14,6 +14,7 @@ import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.run.threaded.task.MutationTask;
 import org.softevo.mutation.runtime.RunResult;
 import org.softevo.mutation.util.Formater;
+import org.softevo.mutation.util.Util;
 
 /**
  * Class executes several instances of the mutation test tool in parallel using
@@ -229,7 +230,7 @@ public class ThreadPool {
 	private void handleProcesses() {
 		int processesFinished = getNumberOfFinishedProcesses();
 		int processesRunning = handleRunningProcess();
-		logger.info(processesFinished + " processes are finished and "
+		logger.info(" Out of " + processes.size() +  "  " +processesFinished + " processes are finished and "
 				+ processesRunning + " are running");
 		// if (processesRunning < NUMBER_OF_THREADS
 		// && NUMBER_OF_TASKS > processCounter) {
@@ -250,6 +251,7 @@ public class ThreadPool {
 	}
 
 	private int handleRunningProcess() {
+		logger.info("Time " + Util.getTimeString());
 		int processesRunning = 0;
 		for (ProcessWrapper ps : processes) {
 			if (ps.isRunning()) {

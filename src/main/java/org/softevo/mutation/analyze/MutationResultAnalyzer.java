@@ -11,6 +11,8 @@ import org.softevo.mutation.results.SingleTestResult;
 
 public class MutationResultAnalyzer implements MutationAnalyzer {
 
+	private static final boolean WRITE_FILES = false;
+
 	public String analyze(Iterable<Mutation> mutations) {
 		int killed = 0;
 		int survived = 0;
@@ -50,11 +52,12 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 		for (Mutation mutation : survivedList) {
 			survivedIds.add(mutation.getId());
 		}
-		XmlIo.toXML(killedList, "killed-mutations.xml");
-		XmlIo.toXML(survivedList, "survived-mutations.xml");
-		XmlIo.toXML(killedIds, "killed-ids.xml");
-		XmlIo.toXML(survivedIds, "survived-ids.xml");
-
+		if (WRITE_FILES) {
+			XmlIo.toXML(killedList, "killed-mutations.xml");
+			XmlIo.toXML(survivedList, "survived-mutations.xml");
+			XmlIo.toXML(killedIds, "killed-ids.xml");
+			XmlIo.toXML(survivedIds, "survived-ids.xml");
+		}
 		sb.append("Total mutations:  " + total);
 		sb.append('\n');
 		sb.append("Killed mutations: " + killed);
@@ -62,6 +65,9 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 		sb.append("Survived mutations: " + survived);
 		sb.append('\n');
 		sb.append("Mutation score: " + ((double) killed) / total);
+		sb.append('\n');
+		sb.append("Mutation score for mutations that were covered: "
+				+ ((double) killed / (total - notCovered)));
 		sb.append('\n');
 		sb.append("Mutations that were not covered: " + notCovered);
 		sb.append('\n');

@@ -23,7 +23,7 @@ public class MutationTaskCreator {
 	public static final String MUTATION_TASK_FILE_PREFIX = "mutation-task-";
 
 	private static final String MUTATION_TASK_FILE_FORMAT = MUTATION_TASK_FILE_PREFIX
-			+ "%02d.txt";
+			+ MutationProperties.PROJECT_PREFIX.replace('.', '_') + "-%02d.txt";
 
 	private static Logger logger = Logger.getLogger(MutationTaskCreator.class);
 
@@ -102,8 +102,7 @@ public class MutationTaskCreator {
 	}
 
 	private static File writeListToFile(List<Long> list, int id) {
-		String filename = String.format(MutationProperties.RESULT_DIR
-				+ MUTATION_TASK_FILE_FORMAT, id);
+		String filename = getFilename(id);
 		File resultFile = new File(filename);
 		StringBuilder sb = new StringBuilder();
 		for (Long l : list) {
@@ -112,6 +111,12 @@ public class MutationTaskCreator {
 		}
 		Io.writeFile(sb.toString(), resultFile);
 		return resultFile;
+	}
+
+	private static String getFilename(int id) {
+		String filename = String.format(MutationProperties.RESULT_DIR
+				+ MUTATION_TASK_FILE_FORMAT, id);
+		return filename;
 	}
 
 	public static void main(String[] args) {

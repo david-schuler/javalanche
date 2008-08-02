@@ -17,7 +17,7 @@ import org.softevo.mutation.results.persistence.QueryManager;
 
 /**
  *
- * Deletes the results from the database.
+ * Deletes the mutation test results from the database.
  *
  * @author David Schuler
  *
@@ -26,6 +26,10 @@ public class ResultDeleter {
 
 	private static Logger logger = Logger.getLogger(ResultDeleter.class);
 
+	/**
+	 * Deletes all mutation test results for classes with the specified
+	 * {@link MutationProperties.PROJECT_PREFIX}.
+	 */
 	public static void deleteAllWithPrefix() {
 		String prefix = MutationProperties.PROJECT_PREFIX;
 		String query = "FROM Mutation WHERE mutationResult IS NOT NULL AND className LIKE '"
@@ -63,6 +67,21 @@ public class ResultDeleter {
 		List<Long> ids = Io.getIDsFromFile(new File(filename));
 		List<Mutation> mutationsFromDbByID = QueryManager
 				.getMutationsFromDbByID(ids.toArray(new Long[0]));
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		for (Mutation m : mutationsFromDbByID) {
+			deleteMutationResult(session, m);
+		}
+		logger.info(String.format("Deleting %d mutation results",
+				mutationsFromDbByID.size()));
+		tx.commit();
+		session.close();
+	}
+
+	private static void deleteMutationsResultsForId(long id) {
+		logger.info("Trying to delete results for id: " + id);
+		List<Mutation> mutationsFromDbByID = QueryManager
+				.getMutationsFromDbByID(new Long[] { id });
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		for (Mutation m : mutationsFromDbByID) {
@@ -153,7 +172,7 @@ public class ResultDeleter {
 				} else if (args[0].toLowerCase().equals("files")) {
 					deleteFromFiles();
 				} else {
-					deleteMutationsResults(args[0]);
+					deleteMutationsResultsForId(Long.parseLong(args[0]));
 				}
 			} else {
 				System.out.print("Specify an option: a file or all ");

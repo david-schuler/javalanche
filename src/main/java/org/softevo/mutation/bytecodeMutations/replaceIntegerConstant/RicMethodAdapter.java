@@ -103,8 +103,6 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 	}
 
-	private int mutationForLine = 0;
-
 	static Logger logger = Logger.getLogger(RicMethodAdapter.class);
 
 	public RicMethodAdapter(MethodVisitor mv, String className,
@@ -198,9 +196,9 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	private void longConstant(final long longConstant) {
 		logger.info("long constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
-				mutationForLine,isClassInit);
+				getPossibilityForLine(),isClassInit);
+		addPossibilityForLine();
 		boolean insert = false;
-		mutationForLine++;
 		MutationCode unmutated = new MutationCode(null) {
 
 			@Override
@@ -254,8 +252,9 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	private void floatConstant(final float floatConstant) {
 		logger.info("long constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
-				mutationForLine, isClassInit);
-		mutationForLine++;
+getPossibilityForLine(), isClassInit);
+		addPossibilityForLine();
+
 		boolean insert = false;
 		MutationCode unmutated = new MutationCode(null) {
 
@@ -310,9 +309,9 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	private void doubleConstant(final double doubleConstant) {
 		logger.info("double constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
-				mutationForLine,isClassInit);
+				getPossibilityForLine(),isClassInit);
+		addPossibilityForLine();
 		boolean insert = false;
-		mutationForLine++;
 		MutationCode unmutated = new MutationCode(null) {
 
 			@Override
@@ -364,8 +363,8 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	private void intConstant(final int intConstant) {
 		logger.info("int constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
-				mutationForLine,isClassInit);
-		mutationForLine++;
+				getPossibilityForLine(),isClassInit);
+		addPossibilityForLine();
 		boolean insert = false;
 		MutationCode unmutated = new MutationCode(null) {
 
@@ -424,7 +423,6 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	@Override
 	public void visitLineNumber(int line, Label start) {
 		super.visitLineNumber(line, start);
-		mutationForLine = 0;
 	}
 
 	@Override

@@ -142,8 +142,8 @@ public class SingleTestResult {
 	public String toString() {
 		StringBuilder sb = new StringBuilder(String.format(
 				"Runs: %d  Failures: %d  Errors: %d LineTouched: %s", runs,
-				failures.size(), errors.size(), touched ? "yes" : "no "));
-		sb.append("date: " + date);
+				failures.size(), errors.size(), touched ? "yes" : "no"));
+		sb.append(" date: " + date + "\n");
 		if (failures.size() > 0) {
 			sb.append("Failures:\n");
 			for (TestMessage tm : failures) {

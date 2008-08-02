@@ -20,8 +20,8 @@ public class NegateJumpsMethodAdapter extends AbstractMutationAdapter {
 
 	private int possibilitiesForLine = 0;
 
-	private static Map<Integer, Integer> jumpReplacmentMap = JumpReplacements.getReplacementMap();
-
+	private static Map<Integer, Integer> jumpReplacmentMap = JumpReplacements
+			.getReplacementMap();
 
 	public NegateJumpsMethodAdapter(MethodVisitor mv, String className,
 			String methodName, Map<Integer, Integer> possibilities) {
@@ -31,6 +31,8 @@ public class NegateJumpsMethodAdapter extends AbstractMutationAdapter {
 	@Override
 	public void visitJumpInsn(int opcode, Label label) {
 		if (mutationCode) {
+			logger.warn("Mutation Code in Jump instruction for line "
+					+ getLineNumber());
 			super.visitJumpInsn(opcode, label);
 			return;
 		}
@@ -61,7 +63,8 @@ public class NegateJumpsMethodAdapter extends AbstractMutationAdapter {
 
 	private void insertMutationJump(final int opcode, final Label label) {
 		Mutation queryMutation = new Mutation(className, getLineNumber(),
-				possibilitiesForLine, Mutation.MutationType.NEGATE_JUMP,isClassInit);
+				possibilitiesForLine, Mutation.MutationType.NEGATE_JUMP,
+				isClassInit);
 		possibilitiesForLine++;
 		logger.info("Jump instruction in line: " + getLineNumber());
 		if (MutationManager.shouldApplyMutation(queryMutation)) {

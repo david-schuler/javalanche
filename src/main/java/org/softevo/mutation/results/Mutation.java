@@ -81,8 +81,10 @@ public class Mutation {
 	}
 
 	public String toShortString() {
-		return String.format("%d %s - %d (%d)- %s", id, className, lineNumber,
-				mutationForLine, mutationType.toString());
+		return  String.format("%d %s %s - %d (%d)- %s \n%s\n", id, className,
+					isClassInit() ? "in static part" : "not static", lineNumber,
+					mutationForLine, mutationType.toString(),
+					mutationResult == null ? "No Result" : "Got " + mutationResult.getRuns() + " TestResults");
 
 	}
 

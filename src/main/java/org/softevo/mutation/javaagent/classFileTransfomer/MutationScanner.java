@@ -77,32 +77,34 @@ public class MutationScanner implements ClassFileTransformer {
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
-		try {
-			String classNameWithDots = className.replace('/', '.');
-			logger.info(classNameWithDots);
-			if (md.shouldBeHandled(classNameWithDots)) {
-				classfileBuffer = mutationScannerTransformer
-						.transformBytecode(classfileBuffer);
-				logger.info("Possibilities found for class " + className + " "
-						+ mpc.size());
-				mpc.updateDB();
-				mpc.clear();
-			} else {
-				logger.info("Skipping class " + className);
-			}
-			if (classNameWithDots.endsWith("AllTests")
-					|| compareWithSuiteProperty(classNameWithDots)) {
-				logger.info("Trying to integrate ScanAndCoverageTestSuite");
-				BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer
-						.getIntegrateScanAndCoverageTestSuiteTransformer();
-				classfileBuffer = integrateSuiteTransformer
-						.transformBytecode(classfileBuffer);
-			}
+		if (className != null) {
+			try {
+				String classNameWithDots = className.replace('/', '.');
+				logger.info(classNameWithDots);
+				if (md.shouldBeHandled(classNameWithDots)) {
+					classfileBuffer = mutationScannerTransformer
+							.transformBytecode(classfileBuffer);
+					logger.info("Possibilities found for class " + className
+							+ " " + mpc.size());
+					mpc.updateDB();
+					mpc.clear();
+				} else {
+					logger.info("Skipping class " + className);
+				}
+				if (classNameWithDots.endsWith("AllTests")
+						|| compareWithSuiteProperty(classNameWithDots)) {
+					logger.info("Trying to integrate ScanAndCoverageTestSuite");
+					BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer
+							.getIntegrateScanAndCoverageTestSuiteTransformer();
+					classfileBuffer = integrateSuiteTransformer
+							.transformBytecode(classfileBuffer);
+				}
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.info(e.getMessage());
-			logger.info(e.getStackTrace());
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.info(e.getMessage());
+				logger.info(e.getStackTrace());
+			}
 		}
 		return classfileBuffer;
 	}
