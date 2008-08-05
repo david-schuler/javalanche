@@ -89,7 +89,7 @@ public class ThreadPool {
 		long actuallMutationsInDb = QueryManager
 				.getNumberOfMutationsWithResult()
 				- mutationResultsPre;
-		logger.info("Got " + actuallMutationsInDb + "  results\nRun for: "
+		logger.info("Got " + actuallMutationsInDb + "  results and ran for: "
 				+ Formater.formatMilliseconds(duration));
 		writeResults();
 	}
@@ -210,16 +210,19 @@ public class ThreadPool {
 	private void createProcess(MutationTask task) {
 		processCounter++;
 		String outputFile = String.format(MutationProperties.RESULT_DIR
-				+ "/process-output-%02d.txt", task.getID());
-
+				+ "/process-output-"
+				+ MutationProperties.PROJECT_PREFIX.replace('.', '_')
+				+ "_%02d.txt", task.getID());
 		File taskIdFile = task.getTaskFile();
 		String resultFile = String.format(MutationProperties.RESULT_DIR
-				+ "/process-result-%02d.xml", task.getID());
+				+ "/process-result-"
+				+ MutationProperties.PROJECT_PREFIX.replace('.', '_')
+				+ "%02d.xml", task.getID());
 		ProcessWrapper ps = new ProcessWrapper(SCRIPT_COMMAND, taskIdFile,
 				new File(MutationProperties.EXEC_DIR), new File(outputFile),
 				new File(resultFile), processCounter, freeInstances);
 		processes.add(ps);
-		logger.info("Process: " + ps.toString());
+		logger.info("Created process: " + ps.toString());
 		pool.submit(ps);
 	}
 
@@ -230,8 +233,9 @@ public class ThreadPool {
 	private void handleProcesses() {
 		int processesFinished = getNumberOfFinishedProcesses();
 		int processesRunning = handleRunningProcess();
-		logger.info(" Out of " + processes.size() +  "  " +processesFinished + " processes are finished and "
-				+ processesRunning + " are running");
+		logger.info(processesFinished + " out of " + processes.size()
+				+ " processes are finished and " + processesRunning
+				+ " are running");
 		// if (processesRunning < NUMBER_OF_THREADS
 		// && NUMBER_OF_TASKS > processCounter) {
 		// logger.info("Adding new processes");
@@ -258,7 +262,9 @@ public class ThreadPool {
 				processesRunning++;
 				long timeRunning = ps.getTimeRunnning();
 				logger
-						.info("Process [" + ps.getShortDescription() + "]is running for "
+						.info("Process ["
+								+ ps.getShortDescription()
+								+ "] is running for "
 								+ Formater.formatMilliseconds(timeRunning)
 								+ " out of "
 								+ Formater

@@ -25,6 +25,7 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 				throw new RuntimeException("Null fetched from db");
 			}
 			SingleTestResult mutationResult = mutation.getMutationResult();
+
 			if (mutationResult != null
 					&& (mutationResult.getNumberOfErrors() > 0 || mutationResult
 							.getNumberOfFailures() > 0)) {
@@ -59,6 +60,8 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 			XmlIo.toXML(survivedIds, "survived-ids.xml");
 		}
 		sb.append("Total mutations:  " + total);
+		sb.append('\n');
+		sb.append("Mutations with results: " + (total - notCovered));
 		sb.append('\n');
 		sb.append("Killed mutations: " + killed);
 		sb.append('\n');

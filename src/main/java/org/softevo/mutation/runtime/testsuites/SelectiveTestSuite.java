@@ -184,6 +184,11 @@ public class SelectiveTestSuite extends TestSuite {
 		int totalMutations = 0;
 		while (mutationSwitcher.hasNext()) {
 			totalMutations++;
+			if (totalMutations % 200 == 0) {
+				logger.info("Persisting results");
+				ResultReporter.persist();
+				// System.exit(0);
+			}
 			if (DEBUG) {
 				if (totalMutations > DEBUG_MUTATION_TO_EXECUTE) {
 					break;
@@ -210,6 +215,8 @@ public class SelectiveTestSuite extends TestSuite {
 				logger.warn("No tests for " + actualMutation);
 				continue;
 			}
+			logger.info("Applying " + totalMutations + "th mutation with id "
+					+ actualMutation.getId());
 			logger.info("Got " + testsForThisRun.size()
 					+ " tests for mutation " + actualMutation.getId());
 			totalTests += testsForThisRun.size();
@@ -265,13 +272,11 @@ public class SelectiveTestSuite extends TestSuite {
 	}
 
 	private void logResults() {
-		logger
-				.info(String.format(
-						"Results for Mutation %d runs: %d failures:%d errors:%d ",
-						actualMutation.getId(),
-						actualMutationTestResult.runCount(),
-						actualMutationTestResult.failureCount(),
-						actualMutationTestResult.errorCount()));
+		logger.info(String.format(
+				"Results for Mutation %d runs: %d failures:%d errors:%d ",
+				actualMutation.getId(), actualMutationTestResult.runCount(),
+				actualMutationTestResult.failureCount(),
+				actualMutationTestResult.errorCount()));
 	}
 
 	/**

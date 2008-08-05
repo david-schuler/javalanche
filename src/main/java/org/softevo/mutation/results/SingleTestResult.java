@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -58,9 +59,12 @@ public class SingleTestResult {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 
+//	 @Column(name="vInvariants", nullable=true)
+//	 @IndexColumn(name = "violated_id")
+
 	private int[] violatedInvariants;
 
-	private int  differentViolatedInvariants;
+	private int differentViolatedInvariants;
 
 	private int totalViolations;
 
@@ -79,14 +83,23 @@ public class SingleTestResult {
 	}
 
 	/**
-	 * @param violatedInvariants the violatedInvariants to set
+	 * @param violatedInvariants
+	 *            the violatedInvariants to set
 	 */
 	public void setViolatedInvariants(int[] violatedInvariants) {
-		this.violatedInvariants = violatedInvariants;
+		if (violatedInvariants.length > 30) {
+			System.out.println("SingleTestResult.setViolatedInvariants(): truncating violated invariants");
+			this.violatedInvariants = new int[30];
+			System.arraycopy(violatedInvariants, 0, this.violatedInvariants, 0,
+					30);
+		} else {
+			this.violatedInvariants = violatedInvariants;
+		}
 	}
 
 	/**
-	 * @param totalViolations the totalViolations to set
+	 * @param totalViolations
+	 *            the totalViolations to set
 	 */
 	public void setTotalViolations(int totalViolations) {
 		this.totalViolations = totalViolations;
@@ -274,7 +287,8 @@ public class SingleTestResult {
 	}
 
 	/**
-	 * @param differentViolatedInvariants the differentViolatedInvariants to set
+	 * @param differentViolatedInvariants
+	 *            the differentViolatedInvariants to set
 	 */
 	public void setDifferentViolatedInvariants(int differentViolatedInvariants) {
 		this.differentViolatedInvariants = differentViolatedInvariants;

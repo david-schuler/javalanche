@@ -553,9 +553,7 @@ public class QueryManager {
 		return idList;
 	}
 
-
-	public static List<Mutation> getMutationIdListFromDb(
-			int numberOfMutations) {
+	public static List<Mutation> getMutationIdListFromDb(int numberOfMutations) {
 		String prefix = MutationProperties.PROJECT_PREFIX;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -622,6 +620,8 @@ public class QueryManager {
 	 *            a map that contains the collected coverage data
 	 */
 	public static void saveCoverageResults(Map<Long, Set<String>> coverageData) {
+		logger.info("Start svaing coverage data.");
+		logger.info("Size of map: "  +  coverageData.size());
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
 		// Query nullQuery = session
@@ -642,18 +642,29 @@ public class QueryManager {
 				.createQuery("select count(*) FROM MutationCoverage");
 		List resultCount = mutationCoverageCountQuery.list();
 		long l = getResultFromCountQuery(resultCount);
-		if (l > 0 && coverageData.keySet().size() > 0) {
-			Query mutationCoverageQuery = session
-					.createQuery("from MutationCoverage WHERE mutationID IN (:mids)");
-			mutationCoverageQuery.setParameterList("mids", coverageData
-					.keySet());
-			logger.debug("getting coverage results from db"
-					+ mutationCoverageQuery.getQueryString());
-			logger.debug(coverageData.keySet());
-			List<MutationCoverage> dbResults = mutationCoverageQuery.list();
-			for (MutationCoverage mutationCoverage : dbResults) {
-				dbCoverageMap.put(mutationCoverage.getMutationID(),
-						mutationCoverage);
+		int setSize = coverageData.keySet().size();
+		if (l > 0 && setSize > 0) {
+			List<Set<Long>> sets;
+			logger.info("size of set: " + coverageData.keySet().size());
+			if (setSize > 5000) {
+				logger.info("splitting key set because it is to large");
+				//http://opensource.atlassian.com/projects/hibernate/browse/HHH-1985
+				sets = splitSet(coverageData.keySet(), 5000);
+			} else {
+				sets = new ArrayList<Set<Long>>();
+				sets.add(coverageData.keySet());
+			}
+			for (Set<Long> set : sets) {
+				Query mutationCoverageQuery = session
+						.createQuery("from MutationCoverage WHERE mutationID IN (:mids)");
+				mutationCoverageQuery.setParameterList("mids", set);
+				logger.debug("getting coverage results from db"
+						+ mutationCoverageQuery.getQueryString());
+				List<MutationCoverage> dbResults = mutationCoverageQuery.list();
+				for (MutationCoverage mutationCoverage : dbResults) {
+					dbCoverageMap.put(mutationCoverage.getMutationID(),
+							mutationCoverage);
+				}
 			}
 		}
 		for (Map.Entry<Long, Set<String>> entry : coverageData.entrySet()) {
@@ -686,6 +697,21 @@ public class QueryManager {
 		tx.commit();
 		session.close();
 		logger.debug("coverage data saved to db");
+	}
+
+	private static List<Set<Long>> splitSet(Set<Long> keySet, int splitSize) {
+		List<Set<Long>> list = new ArrayList<Set<Long>>();
+		int count = 0;
+		Set<Long> actualSet = null;
+		for (Long l : keySet) {
+			if (count % splitSize == 0) {
+				actualSet = new HashSet<Long>();
+				list.add(actualSet);
+			}
+			actualSet.add(l);
+			count++;
+		}
+		return list;
 	}
 
 	/**

@@ -169,7 +169,7 @@ public class MutationProperties {
 	public static final String MAX_TIME_FOR_SUB_PROCESS_KEY = "mutation.max.time.for.subprocess";
 
 	public static final long MAX_TIME_FOR_SUB_PROCESS = getPropertyOrDefault(
-			MAX_TIME_FOR_SUB_PROCESS_KEY, 30 * 60 * 1000);
+			MAX_TIME_FOR_SUB_PROCESS_KEY, 45 * 60 * 1000);
 
 	public static final String SCRIPT_COMMAND_KEY = "mutation.script.command";
 
@@ -188,7 +188,7 @@ public class MutationProperties {
 
 
 	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
-			TRACE_BYTECODE_KEY, true);
+			TRACE_BYTECODE_KEY, false);
 
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");

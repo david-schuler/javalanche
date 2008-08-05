@@ -15,10 +15,23 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+/**
+ * Class that provides different static methods to read from/write to files.
+ * @author David Schuler
+ *
+ */
 public class Io {
 
 	private static Logger logger = Logger.getLogger(Io.class);
 
+	/**
+	 * Writes the given content to a file.
+	 *
+	 * @param content
+	 *            the content to write to a file
+	 * @param file
+	 *            the file to write to
+	 */
 	public static void writeFile(String content, File file) {
 		try {
 			logger.info("Start writing: " + file.getAbsoluteFile());
@@ -72,6 +85,16 @@ public class Io {
 		return lines;
 	}
 
+	/**
+	 * Return the file contents in a byte array.
+	 *
+	 * @param file
+	 *            the file to read the content from
+	 * @return the file contents in a byte array
+	 *
+	 * @throws IOException
+	 *             if an file can not be read
+	 */
 	public static byte[] getBytesFromFile(File file) throws IOException {
 		InputStream is = new FileInputStream(file);
 		long length = file.length();
@@ -94,10 +117,18 @@ public class Io {
 		return bytes;
 	}
 
+	/**
+	 * Reads the lines from a {@link InputStream} and returns them in a list.
+	 *
+	 * @param inputStream
+	 *            the stream to read from
+	 * @return a list of lines
+	 */
 	public static List<String> getLinesFromFile(InputStream inputStream) {
 		List<String> lines = new ArrayList<String>();
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					inputStream));
 			while (br.ready()) {
 				String line = br.readLine();
 				lines.add(line);

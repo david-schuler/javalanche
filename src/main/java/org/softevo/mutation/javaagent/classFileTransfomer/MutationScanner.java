@@ -31,7 +31,8 @@ public class MutationScanner implements ClassFileTransformer {
 
 		public boolean shouldBeHandled(String classNameWithDots) {
 			if (classNameWithDots.startsWith("java")
-					|| classNameWithDots.startsWith("sun")) {
+					|| classNameWithDots.startsWith("sun")
+					|| classNameWithDots.startsWith("org.aspectj.org.eclipse")) {
 				return false;
 			}
 			if (classNameWithDots.toLowerCase().contains("test")) {

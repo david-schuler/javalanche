@@ -120,19 +120,9 @@ public class ResultReporter {
 		QueryManager.updateMutations(map);
 		logger.debug("Stored " + instances.size()
 				+ " mutation test results in db");
+		instances.clear();
 
-		// logger.info("Start storing 2 (should fail)" + results.size() + "
-		// mutaion test results in db" );
-		// Set<Entry<Mutation, SingleTestResult>> entrySet = results.entrySet();
-		// for (Entry<Mutation, SingleTestResult> entry : entrySet) {
-		// results.put(entry.getKey(), new SingleTestResult(null, null, null));
-		// }
-		// QueryManager.updateMutations(results);
-		// logger.info("Start storing (should fail)" + results.size() + "
-		// mutaion test results in db" );
-		// QueryManager.updateMutations(results);
 	}
-
 	public static synchronized void touch(long mutationID) {
 		// logger.info("Touc called " + mutationID + " - expected " +
 		// (actualMutation == null ? "null " : actualMutation.getId() + ""));
