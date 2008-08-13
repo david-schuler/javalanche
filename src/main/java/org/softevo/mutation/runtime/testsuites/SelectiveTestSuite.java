@@ -140,8 +140,8 @@ public class SelectiveTestSuite extends TestSuite {
 				if (actualListener != null) {
 					actualListener.addError(actualTest, new RuntimeException(
 							"JVM shut down because of mutation"));
-					actualResultReporter.report(actualMutationTestResult,
-							actualMutation, actualListener);
+//					TODO maybe test actualResultReporter.report(actualMutationTestResult,
+//							actualMutation, actualListener);
 				} else {
 					logger
 							.warn("An error that maybe caused the shutdown could not report.\nCaused by mutation: "

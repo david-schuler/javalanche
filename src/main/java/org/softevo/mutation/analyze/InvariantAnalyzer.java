@@ -1,6 +1,10 @@
 package org.softevo.mutation.analyze;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.softevo.mutation.results.Mutation;
@@ -8,33 +12,68 @@ import org.softevo.mutation.results.SingleTestResult;
 
 public class InvariantAnalyzer implements MutationAnalyzer {
 
+	protected static String formatPercent(double d) {
+		return null;
+	}
+
 	List<Mutation> notCaught = new ArrayList<Mutation>();
 
 	public String analyze(Iterable<Mutation> mutations) {
 		int violated = 0;
 		int violatedNotCaught = 0;
 		int total = 0;
+		int withResult = 0;
 		for (Mutation mutation : mutations) {
 			SingleTestResult mutationResult = mutation.getMutationResult();
-			if (mutationResult != null &&   mutationResult.getDifferentViolatedInvariants() > 1) {
+			if (mutationResult != null
+					&& mutationResult.getDifferentViolatedInvariants() > 1) {
 				violated++;
 				if (!mutation.isKilled()) {
 					violatedNotCaught++;
 					notCaught.add(mutation);
 				}
 			}
+			if (mutationResult != null) {
+				withResult++;
+			}
 			total++;
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append("Total Mutations: " + total);
+		// sb.append("Total Mutations: " + total);
+		// sb.append('\n');
+		sb.append(String.format(
+				"Mutations that violated invariants: %d (%s / %s)", violated,
+				AnalyzeUtil.formatPercent(violated, total), AnalyzeUtil
+						.formatPercent(violated, withResult)));
 		sb.append('\n');
-		sb.append("Mutations that violated invariants: " + violated);
+		sb
+				.append(String
+						.format(
+								"Mutations that violated invariants and were not caught: %d (%s / %s)",
+								violatedNotCaught, AnalyzeUtil.formatPercent(
+										violatedNotCaught, total), AnalyzeUtil
+										.formatPercent(violatedNotCaught,
+												violated)));
 		sb.append('\n');
-		sb.append("Mutations that violated invariants and were not caught: " + violatedNotCaught);
-		sb.append('\n');
-		sb.append("List of mutations that violated invariants and were not caught:\n" );
+		sb
+				.append("List of mutations that violated invariants and were not caught:\n");
+
+		Collections.sort(notCaught, new Comparator<Mutation>() {
+
+			public int compare(Mutation o1, Mutation o2) {
+				int i1 = o1.getMutationResult()
+						.getDifferentViolatedInvariants();
+				int i2 = o2.getMutationResult()
+						.getDifferentViolatedInvariants();
+				return i1 - i2;
+			}
+
+		});
 		for (Mutation mutation2 : notCaught) {
 			sb.append(mutation2.toShortString());
+			sb.append('\n');
+			sb.append("Violated invariants ids: " + Arrays.toString(mutation2.getMutationResult().getViolatedInvariants()));
+			sb.append('\n');
 		}
 		return sb.toString();
 	}

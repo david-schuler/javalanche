@@ -60,7 +60,7 @@ public class MutationProperties {
 
 	public enum RunMode {
 		SCAN("scan"), MUTATION_TEST("mutation"), TEST_TESTSUIT_FIRST("test1"), TEST_TESTSUITE_SECOND(
-				"test2"), MUTATION_TEST_NO_INVARIANT("mutationNoInvariant");
+				"test2"), MUTATION_TEST_NO_INVARIANT("mutation-no-invariant");
 
 		private String key;
 
@@ -188,7 +188,7 @@ public class MutationProperties {
 
 
 	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
-			TRACE_BYTECODE_KEY, false);
+			TRACE_BYTECODE_KEY, true);
 
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");

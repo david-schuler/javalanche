@@ -58,11 +58,14 @@ public class CoverageData {
 	public static void touch(long id) {
 		call++;
 		if (call % ((int) 1e6) == 0) {
-			logger.info("touch called " + call + "times");
-			logger.info("Test " + SingletonHolder.instance.testName.get()
+			logger.info("Touch called " + call + "times.  Test " + SingletonHolder.instance.testName.get()
 					+ " touched mutation " + id);
 			shouldSave = true;
 		}
+		// Only for debugging puprosses. Impacts performance
+		// logger.info("Test " + SingletonHolder.instance.testName.get()
+		// + " touched mutation " + id);
+
 		Set<String> coveredTests = SingletonHolder.instance.coverageData
 				.get(id);
 		if (coveredTests == null) {
@@ -131,7 +134,7 @@ public class CoverageData {
 			}
 		}
 		logger.debug("Inserting Coverage calls for:  " + id + " " + mutation);
-		mv.visitLdcInsn(mutation.getId());
+		mv.visitLdcInsn(id);
 		mv
 				.visitMethodInsn(
 						INVOKESTATIC,

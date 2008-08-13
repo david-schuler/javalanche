@@ -41,6 +41,7 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 			if (mutation.isClassInit()) {
 				classInit++;
 			}
+
 		}
 		int total = survived + killed;
 		StringBuilder sb = new StringBuilder();
@@ -61,18 +62,22 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 		}
 		sb.append("Total mutations:  " + total);
 		sb.append('\n');
-		sb.append("Mutations with results: " + (total - notCovered));
+		sb.append("Mutations with results: " + (total - notCovered) + "  ("
+				+ AnalyzeUtil.formatPercent((double) (total - notCovered) / total) + ")");
 		sb.append('\n');
 		sb.append("Killed mutations: " + killed);
 		sb.append('\n');
 		sb.append("Survived mutations: " + survived);
 		sb.append('\n');
-		sb.append("Mutation score: " + ((double) killed) / total);
+		sb
+				.append("Mutation score: "
+						+ AnalyzeUtil.formatPercent(((double) killed) / total));
 		sb.append('\n');
 		sb.append("Mutation score for mutations that were covered: "
-				+ ((double) killed / (total - notCovered)));
+				+ AnalyzeUtil.formatPercent((double)killed / (total - notCovered)));
 		sb.append('\n');
-		sb.append("Mutations that were not covered: " + notCovered);
+		sb.append("Mutations that were not covered: " + notCovered + "  ("
+				+ AnalyzeUtil.formatPercent((double) (notCovered) / total )+ ")");
 		sb.append('\n');
 		sb.append("Mutations that can not be killed: " + classInit);
 		sb.append('\n');

@@ -97,6 +97,37 @@ public class QueryManager {
 	}
 
 	/**
+	 * Get Mutation that corresponds to given mutation from the database.
+	 *
+	 *
+	 * @param mutation
+	 *            Mutation that is used to query.
+	 * @return The Mutation from the database or null if it is not contained.
+	 */
+	public static Mutation getMutationOrNull(Mutation mutation,
+			Session session, Transaction tx) {
+		Mutation m = null;
+		try {
+			if (mutation.getId() != null) {
+				m = (Mutation) session.get(Mutation.class, mutation.getId());
+			}
+			if (m == null) {
+				Query query = session
+						.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and m.mutationForLine=:mforl and m.mutationType=:type");
+				query.setParameter("name", mutation.getClassName());
+				query.setParameter("number", mutation.getLineNumber());
+				query.setParameter("type", mutation.getMutationType());
+				query.setParameter("mforl", mutation.getMutationForLine());
+				m = (Mutation) query.uniqueResult();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+		return m;
+	}
+
+	/**
 	 * Set the result for the mutation and update the mutation in the database.
 	 *
 	 * @param mutation
@@ -435,6 +466,28 @@ public class QueryManager {
 	}
 
 	/**
+	 * Query the database for mutation with the given id.
+	 *
+	 * @param id
+	 *            The id that is used to query.
+	 * @return The mutation with the given id.
+	 */
+	public static Mutation getMutationByID(Long id) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+
+		Query query = session
+				.createQuery("FROM Mutation m  WHERE m.id = (:ids)");
+		query.setParameter("ids", id);
+		List results = query.list();
+		Mutation m = (Mutation) results.get(0);
+//		Session.
+		tx.commit();
+		session.close();
+		return m;
+	}
+
+	/**
 	 * Generates a mutation of type not mutated in the database, if there is
 	 * none in the db. The generated mutation or the one from the db is
 	 * returned.
@@ -487,7 +540,7 @@ public class QueryManager {
 		Transaction tx = session.beginTransaction();
 		int counter = 0;
 		for (Mutation mutation : mutationsToSave) {
-			if (mutation.getId() != null) {
+			if (getMutationOrNull(mutation, session, tx) != null) {
 				logger.debug("Not saving mutation. Mutation already in db "
 						+ mutation);
 			} else {
@@ -621,7 +674,7 @@ public class QueryManager {
 	 */
 	public static void saveCoverageResults(Map<Long, Set<String>> coverageData) {
 		logger.info("Start svaing coverage data.");
-		logger.info("Size of map: "  +  coverageData.size());
+		logger.info("Size of map: " + coverageData.size());
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
 		// Query nullQuery = session
@@ -648,7 +701,7 @@ public class QueryManager {
 			logger.info("size of set: " + coverageData.keySet().size());
 			if (setSize > 5000) {
 				logger.info("splitting key set because it is to large");
-				//http://opensource.atlassian.com/projects/hibernate/browse/HHH-1985
+				// http://opensource.atlassian.com/projects/hibernate/browse/HHH-1985
 				sets = splitSet(coverageData.keySet(), 5000);
 			} else {
 				sets = new ArrayList<Set<Long>>();

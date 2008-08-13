@@ -45,8 +45,7 @@ public class QueryManagerTestClass {
 		session.save(testMutation);
 		tx.commit();
 		session.close();
-		// MutationPossibilityCollector
-		// .generateTestDataInDB(MutationProperties.SAMPLE_FILE);
+
 	}
 
 	@After

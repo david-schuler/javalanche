@@ -22,6 +22,7 @@ import org.softevo.mutation.runtime.testsuites.SelectiveTestSuite;
 
 public class ReplaceIntegerTest {
 
+	//-javaagent:./target/javaagent.jar -Dinvariant.mode=OFF -Dmutation.run.mode=mutation-no-invariant -Dmutation.coverage.information=false
 	static {
 		String classname = "org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants";
 		ByteCodeTestUtils.doSetup(classname,new RicCollectorTransformer(null));

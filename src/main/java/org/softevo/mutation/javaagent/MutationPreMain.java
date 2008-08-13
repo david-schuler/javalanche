@@ -1,6 +1,5 @@
  package org.softevo.mutation.javaagent;
 
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
@@ -14,6 +13,7 @@ import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;
 
+import de.unisb.cs.st.invariants.javaagent.DaikonInvariantTransformer;
 import de.unisb.cs.st.invariants.javaagent.InvariantTransformer;
 
 import static org.softevo.mutation.properties.MutationProperties.*;
@@ -44,7 +44,8 @@ public class MutationPreMain {
 		try {
 			if (RUN_MODE == MUTATION_TEST) {
 				System.out.println("Run mutation tests with invariant checks");
-				addClassFileTransformer(instrumentation, new InvariantTransformer());
+//				addClassFileTransformer(instrumentation, new InvariantTransformer());
+				addClassFileTransformer(instrumentation, new DaikonInvariantTransformer());
 				addClassFileTransformer(instrumentation,
 						new MutationFileTransformer());
 				return;

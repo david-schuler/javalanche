@@ -1,36 +1,45 @@
 package org.softevo.mutation.hibernate;
 
+import java.util.HashSet;
 import java.util.List;
+
+import junit.framework.TestResult;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.softevo.mutation.results.Mutation;
+import org.softevo.mutation.results.SingleTestResult;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
+import org.softevo.mutation.runtime.MutationTestListener;
 
 @SuppressWarnings("unchecked")
 // Because of lists returned by hibernate
 public class HibernateTest {
 
-	private Mutation testMutaion = new Mutation("testClass", 21, 0,
-			MutationType.RIC_PLUS_1,false);;
+	private static Mutation testMutaion = new Mutation("testClass", 21, 0,
+			MutationType.RIC_PLUS_1, false);
 
-	@Before
-	public void hibernateSave() {
+	@BeforeClass
+	public static void hibernateSave() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
+		TestResult tr= new TestResult();
+		testMutaion.setMutationResult(new SingleTestResult(tr,new MutationTestListener(), new HashSet<String>()));
 		session.save(testMutaion);
 		tx.commit();
 		session.close();
 	}
 
-	@After
-	public void hibernateDelete() {
+	@AfterClass
+	public static void hibernateDelete() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session
@@ -54,17 +63,12 @@ public class HibernateTest {
 		List results = query.list();
 		int count = 0;
 		for (Object o : results) {
-			if (o instanceof Mutation) {
-				count++;
-			} else {
-				throw new RuntimeException("Expected other Type. Was: "
-						+ o.getClass() + " Expected: " + Mutation.class);
-			}
+			Assert.assertTrue(o instanceof Mutation);
+			count++;
+
 		}
 		Assert.assertTrue("Expected at least one mutation for line"
 				+ testMutaion.getLineNumber(), count > 0);
-		Mutation m = new Mutation("testClass", 21, 0, MutationType.RIC_PLUS_1,false);
-		session.save(m);
 		tx.commit();
 		session.close();
 	}

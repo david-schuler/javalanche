@@ -151,12 +151,18 @@ public class SingleTestResult {
 		}
 	}
 
-	@Override
-	public String toString() {
+	public String toShortString() {
 		StringBuilder sb = new StringBuilder(String.format(
 				"Runs: %d  Failures: %d  Errors: %d LineTouched: %s", runs,
 				failures.size(), errors.size(), touched ? "yes" : "no"));
-		sb.append(" date: " + date + "\n");
+		sb.append(" invariant violations: "  + differentViolatedInvariants + " (" + totalViolations +")");
+		sb.append(" date: " + date );
+		return sb.toString();
+	}
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder(toShortString());
+		sb.append('\n');
 		if (failures.size() > 0) {
 			sb.append("Failures:\n");
 			for (TestMessage tm : failures) {
@@ -179,7 +185,6 @@ public class SingleTestResult {
 			}
 		}
 		return sb.toString();
-
 	}
 
 	/**
@@ -293,5 +298,7 @@ public class SingleTestResult {
 	public void setDifferentViolatedInvariants(int differentViolatedInvariants) {
 		this.differentViolatedInvariants = differentViolatedInvariants;
 	}
+
+
 
 }
