@@ -100,7 +100,8 @@ public class ResultReporter {
 			int[] violatedInvariants = instance.getViolatedInvariantsArray();
 			singleTestResult.setTotalViolations(totalViolatedInvariants);
 			singleTestResult.setViolatedInvariants(violatedInvariants);
-			singleTestResult.setDifferentViolatedInvariants(violatedInvariants.length);
+			singleTestResult
+					.setDifferentViolatedInvariants(violatedInvariants.length);
 			InvariantObserver.reset();
 		}
 		touchingTestCases.clear();
@@ -123,6 +124,7 @@ public class ResultReporter {
 		instances.clear();
 
 	}
+
 	public static synchronized void touch(long mutationID) {
 		// logger.info("Touc called " + mutationID + " - expected " +
 		// (actualMutation == null ? "null " : actualMutation.getId() + ""));
@@ -138,8 +140,10 @@ public class ResultReporter {
 			if (!rr.touched) {
 				logger.info("Touch called by mutated code in test: "
 						+ actualTestCase + " for mutation: " + mutationID
-						+ "  Thread " + Thread.currentThread() + "Trace  "
-						+ Util.getStackTraceString());
+						+ "  Thread " + Thread.currentThread() /*
+																 * + "Trace " +
+																 * Util.getStackTraceString()
+																 */);
 				rr.touched = true;
 			}
 		}

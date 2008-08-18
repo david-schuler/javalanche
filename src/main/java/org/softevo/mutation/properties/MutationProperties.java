@@ -186,7 +186,6 @@ public class MutationProperties {
 
 	public static final String TRACE_BYTECODE_KEY = "mutation.trace";
 
-
 	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
 			TRACE_BYTECODE_KEY, true);
 
@@ -262,4 +261,10 @@ public class MutationProperties {
 		return project_prefix;
 	}
 
+	public static void checkProperty(String key) {
+		String property = System.getProperty(key);
+		if(property==null){
+			throw new IllegalStateException("Property not specified. Key: " + key);
+		}
+	}
 }

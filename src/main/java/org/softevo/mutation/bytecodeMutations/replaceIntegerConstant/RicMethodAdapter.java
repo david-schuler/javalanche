@@ -364,6 +364,7 @@ getPossibilityForLine(), isClassInit);
 		logger.info("int constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
 				getPossibilityForLine(),isClassInit);
+		logger.info("querying mutations: " + cm.getZero() );
 		addPossibilityForLine();
 		boolean insert = false;
 		MutationCode unmutated = new MutationCode(null) {

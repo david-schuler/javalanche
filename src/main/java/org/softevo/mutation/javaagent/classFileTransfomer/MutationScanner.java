@@ -1,12 +1,16 @@
 package org.softevo.mutation.javaagent.classFileTransfomer;
 
+import java.io.PrintWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
 import org.apache.log4j.Logger;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.util.TraceClassVisitor;
 import org.softevo.mutation.bytecodeMutations.MutationScannerTransformer;
 import org.softevo.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
+import org.softevo.mutation.javaagent.MutationPreMain;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
@@ -47,21 +51,6 @@ public class MutationScanner implements ClassFileTransformer {
 			return false;
 		}
 	};
-
-	private static final String TEST_SUITE_PROPERTY = initTestSuiteProperty();
-
-	private static String initTestSuiteProperty() {
-		String testSuiteName = System
-				.getProperty(MutationProperties.TEST_SUITE_KEY);
-		if (testSuiteName == null) {
-			throw new RuntimeException(
-					"No test suite specified. This should be done with property "
-							+ MutationProperties.TEST_SUITE_KEY);
-		}
-		logger.info("Got testsuite name:  " + testSuiteName);
-		return testSuiteName;
-	}
-
 	static {
 		// DB must be loaded before transform method is entered. Otherwise
 		// program crashes.
@@ -73,6 +62,38 @@ public class MutationScanner implements ClassFileTransformer {
 			mpc1.addPossibility(someMutation);
 			mpc1.toDB();
 		}
+		MutationProperties.checkProperty(MutationProperties.TEST_SUITE_KEY);
+		logger.info("Name of test suite: " + MutationProperties.TEST_SUITE);
+	}
+
+	public MutationScanner() {
+		addShutDownHook();
+	}
+
+	private void addShutDownHook() {
+		Runtime runtime = Runtime.getRuntime();
+		final long mutationPossibilitiesPre = QueryManager
+				.getNumberOfMutationsWithPrefix(MutationProperties.PROJECT_PREFIX);
+
+		runtime.addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				String message1 = String.format(
+						"Got %d mutation possibilities before run",
+						mutationPossibilitiesPre);
+				final long mutationPossibilitiesPost = QueryManager
+						.getNumberOfMutationsWithPrefix(MutationProperties.PROJECT_PREFIX);
+				String message2 = String.format(
+						"Got %d mutation possibilities after run",
+						mutationPossibilitiesPost);
+				String message3 = String.format(
+						"Added %d mutation possibilities.",
+						mutationPossibilitiesPost - mutationPossibilitiesPre);
+				logger.info(message1);
+				logger.info(message2);
+				logger.info(message3);
+			}
+		});
 	}
 
 	public byte[] transform(ClassLoader loader, String className,
@@ -80,9 +101,15 @@ public class MutationScanner implements ClassFileTransformer {
 			byte[] classfileBuffer) throws IllegalClassFormatException {
 		if (className != null) {
 			try {
+
 				String classNameWithDots = className.replace('/', '.');
 				logger.info(classNameWithDots);
+
 				if (md.shouldBeHandled(classNameWithDots)) {
+//					TraceClassVisitor tr = new TraceClassVisitor(new PrintWriter(MutationPreMain.sysout));
+//					ClassReader cr = new ClassReader(classfileBuffer);
+//					cr.accept(tr,0);
+//					return classfileBuffer;
 					classfileBuffer = mutationScannerTransformer
 							.transformBytecode(classfileBuffer);
 					logger.info("Possibilities found for class " + className
@@ -118,5 +145,9 @@ public class MutationScanner implements ClassFileTransformer {
 			returnValue = true;
 		}
 		return returnValue;
+	}
+	
+	public static void main(String[] args) {
+		new MutationScanner();
 	}
 }

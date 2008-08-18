@@ -42,17 +42,13 @@ public class ArithmeticReplaceMethodAdapter extends AbstractMutationAdapter {
 	private static Map<Integer, Integer> replaceMap = ReplaceMap
 			.getReplaceMap();
 
-	/**
-	 * Counts the mutation possibilities for one line.
-	 */
-	private int possibilitiesForLine = 0;
 
 	private Logger logger = Logger
 			.getLogger(ArithmeticReplaceMethodAdapter.class);
 
 	public ArithmeticReplaceMethodAdapter(MethodVisitor mv, String className,
 			String methodName, Map<Integer, Integer> possibilities) {
-		super(mv, className, methodName,possibilities);
+		super(mv, className, methodName, possibilities);
 	}
 
 	@Override
@@ -67,14 +63,12 @@ public class ArithmeticReplaceMethodAdapter extends AbstractMutationAdapter {
 	@Override
 	public void visitLineNumber(int line, Label start) {
 		super.visitLineNumber(line, start);
-		possibilitiesForLine = 0;
 	}
 
 	private void mutate(int opcode) {
 		Mutation queryMutation = new Mutation(className, getLineNumber(),
-				possibilitiesForLine, Mutation.MutationType.ARITHMETIC_REPLACE,isClassInit);
-
-		possibilitiesForLine++;
+				getPossibilityForLine(), Mutation.MutationType.ARITHMETIC_REPLACE,isClassInit);
+		addPossibilityForLine();
 		logger.debug("Querying mutation " + queryMutation);
 		if (MutationManager.shouldApplyMutation(queryMutation)) {
 			Mutation mutationFromDB = QueryManager.getMutation(queryMutation);

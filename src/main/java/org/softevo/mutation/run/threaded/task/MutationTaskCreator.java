@@ -1,6 +1,7 @@
 package org.softevo.mutation.run.threaded.task;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +23,11 @@ public class MutationTaskCreator {
 	 */
 	public static final String MUTATION_TASK_FILE_PREFIX = "mutation-task-";
 
-	private static final String MUTATION_TASK_FILE_FORMAT = MUTATION_TASK_FILE_PREFIX
-			+ MutationProperties.PROJECT_PREFIX.replace('.', '_') + "-%02d.txt";
+	public static final String MUTATION_TASK_PROJECT_FILE_PREFIX = MUTATION_TASK_FILE_PREFIX
+			+ MutationProperties.PROJECT_PREFIX.replace('.', '_');
+
+	private static final String MUTATION_TASK_FILE_FORMAT = MUTATION_TASK_PROJECT_FILE_PREFIX
+			+ "-%02d.txt";
 
 	private static Logger logger = Logger.getLogger(MutationTaskCreator.class);
 
@@ -42,6 +46,7 @@ public class MutationTaskCreator {
 	private static final String MUTATION_NUMBER_OF_TASKS_KEY = "mutation.number.of.tasks";
 
 	public static void createMutationTasks() {
+		deleteTasks();
 		int numberOfTasks = DEFAULT_NUMBER_OF_TASKS;
 		int mutationsPerTask = DEFAULT_MUTATIONS_PER_TASK;
 		String numberOfTasksProperty = System
@@ -55,6 +60,30 @@ public class MutationTaskCreator {
 			mutationsPerTask = Integer.parseInt(mutationsPerTaskProperty);
 		}
 		createMutationTasks(numberOfTasks, mutationsPerTask);
+	}
+
+	private static void deleteTasks() {
+		File dir = new File(MutationProperties.RESULT_DIR);
+
+		File[] toDelete = dir.listFiles(new FilenameFilter() {
+
+			public boolean accept(File dir, String name) {
+				if (name.startsWith(MUTATION_TASK_PROJECT_FILE_PREFIX)) {
+					return true;
+				}
+				return false;
+			}
+
+		});
+		for(File d : toDelete){
+			boolean delete = d.delete();
+			if(delete){
+				logger.info("Deleted task: " + d);
+			}
+			else{
+				logger.info("Could not delete task: " + d);
+			}
+		}
 	}
 
 	/**
@@ -96,7 +125,7 @@ public class MutationTaskCreator {
 	private static List<Long> getMutations(String prefix, int numberOfIds) {
 		logger.info("Trying to fetch " + numberOfIds + " mutations");
 		List<Long> mutationIds = QueryManager.getMutationsIdListFromDb(
-				numberOfIds, prefix,numberOfIds);
+				numberOfIds, prefix, numberOfIds);
 		logger.info("Got " + mutationIds.size() + " mutations");
 		return mutationIds;
 	}
@@ -120,6 +149,7 @@ public class MutationTaskCreator {
 	}
 
 	public static void main(String[] args) {
+		MutationProperties.checkProperty(MutationProperties.PROJECT_PREFIX_KEY);
 		createMutationTasks();
 	}
 

@@ -160,9 +160,13 @@ public class MutationForRun {
 	public void reportAppliedMutations() {
 		List<Mutation> notApplied = new ArrayList<Mutation>();
 		int applied = 0;
+		boolean showMutations = mutations.size() < 5;
 		for (Mutation m : mutations) {
 			if (appliedMutations.contains(m)) {
 				applied++;
+				if(showMutations){
+				logger.info("Applied Mutation: " + QueryManager.mutationToShortString(m));
+				}
 			} else {
 				notApplied.add(m);
 			}

@@ -71,28 +71,28 @@ public class QueryManager {
 	 */
 	public static Mutation getMutationOrNull(Mutation mutation) {
 		Session session = HibernateUtil.openSession();
+		Mutation m = _getMutationOrNull(mutation, session);
+		session.close();
+		return m;
+	}
+
+	private static Mutation _getMutationOrNull(Mutation mutation,
+			Session session) {
 		Transaction tx = session.beginTransaction();
 		Mutation m = null;
-		try {
-			if (mutation.getId() != null) {
-				m = (Mutation) session.get(Mutation.class, mutation.getId());
-			}
-			if (m == null) {
-				Query query = session
-						.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and m.mutationForLine=:mforl and m.mutationType=:type");
-				query.setParameter("name", mutation.getClassName());
-				query.setParameter("number", mutation.getLineNumber());
-				query.setParameter("type", mutation.getMutationType());
-				query.setParameter("mforl", mutation.getMutationForLine());
-				m = (Mutation) query.uniqueResult();
-			}
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		} finally {
-			session.close();
+		if (mutation.getId() != null) {
+			m = (Mutation) session.get(Mutation.class, mutation.getId());
 		}
+		if (m == null) {
+			Query query = session
+					.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and m.mutationForLine=:mforl and m.mutationType=:type");
+			query.setParameter("name", mutation.getClassName());
+			query.setParameter("number", mutation.getLineNumber());
+			query.setParameter("type", mutation.getMutationType());
+			query.setParameter("mforl", mutation.getMutationForLine());
+			m = (Mutation) query.uniqueResult();
+		}
+		tx.commit();
 		return m;
 	}
 
@@ -481,7 +481,7 @@ public class QueryManager {
 		query.setParameter("ids", id);
 		List results = query.list();
 		Mutation m = (Mutation) results.get(0);
-//		Session.
+		// Session.
 		tx.commit();
 		session.close();
 		return m;
@@ -723,6 +723,7 @@ public class QueryManager {
 		for (Map.Entry<Long, Set<String>> entry : coverageData.entrySet()) {
 			List<TestName> testNames = new ArrayList<TestName>();
 			Long mutationID = entry.getKey();
+			int saves = 0;
 			logger.debug("save coverage results for mutation  " + mutationID);
 			for (String testCase : entry.getValue()) {
 				TestName testName = null;
@@ -734,6 +735,7 @@ public class QueryManager {
 				} else {
 					testName = new TestName(testCase);
 					session.save(testName);
+					saves++;
 					testNameMap.put(testCase, testName);
 				}
 				testNames.add(testName);
@@ -745,7 +747,15 @@ public class QueryManager {
 				MutationCoverage mutationCoverage = new MutationCoverage(
 						mutationID, testNames);
 				session.save(mutationCoverage);
+				saves++;
 			}
+			if (saves % 20 == 0) { // 20, same as the JDBC batch size
+				// flush a batch of inserts and release memory:
+				// see http://www.hibernate.org/hib_docs/reference/en/html/batch.html
+				session.flush();
+				session.clear();
+			}
+
 		}
 		tx.commit();
 		session.close();
@@ -867,4 +877,27 @@ public class QueryManager {
 		return tests;
 	}
 
+	public static String mutationToShortString(Mutation m) {
+		Session session = HibernateUtil.openSession();
+		Mutation mutationOrNull = _getMutationOrNull(m, session);
+		String result = null;
+		if (mutationOrNull != null) {
+			result = mutationOrNull.toShortString();
+		}
+		session.close();
+		return result;
+	}
+
+	public static long getNumberOfMutationsWithPrefix(String projectPrefix) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("SELECT count(*) FROM Mutation WHERE className LIKE '"
+						+ projectPrefix + "%'");
+		List results = query.list();
+		long l = getResultFromCountQuery(results);
+		tx.commit();
+		session.close();
+		return l;
+	}
 }

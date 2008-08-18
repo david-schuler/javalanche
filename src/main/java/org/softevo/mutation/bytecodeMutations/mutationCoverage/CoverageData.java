@@ -46,7 +46,7 @@ public class CoverageData {
 				+ " mutations");
 		QueryManager.saveCoverageResults(coverageData);
 		QueryManager.saveTestsWithNoCoverage(testsRun);
-		XmlIo.toXML(coverageData, "coverageData-" + saveCount + ".xml");
+//		XmlIo.toXML(coverageData, "coverageData-" + saveCount + ".xml");
 		saveCount++;
 		coverageData = new HashMap<Long, Set<String>>();
 	}
@@ -120,6 +120,7 @@ public class CoverageData {
 
 	public static void insertCoverageCalls(MethodVisitor mv, Mutation mutation) {
 		Label endLabel = new Label();
+		endLabel.info = new MutationMarker(false);
 		Label mutationStartLabel = new Label();
 		mutationStartLabel.info = new MutationMarker(true);
 		mv.visitLabel(mutationStartLabel);
