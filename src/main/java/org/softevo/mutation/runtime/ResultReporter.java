@@ -19,6 +19,8 @@ import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.util.Util;
 
+import sun.security.jca.GetInstance;
+
 import de.unisb.cs.st.invariants.runtime.InvariantObserver;
 
 /**
@@ -72,6 +74,13 @@ public class ResultReporter {
 		return r;
 	}
 
+	public static ResultReporter getOrCreateInstance(Mutation mutation){
+		if (instances.containsKey(mutation.getId())) {
+			return instances.get(mutation.getId());
+		} else {
+			return createInstance(mutation);
+		}
+	}
 	public synchronized void report(TestResult mutationTestResult,
 			Mutation mutation, MutationTestListener mutationTestListener) {
 		if (mutationTestResult == null || mutation == null || mutation == null) {

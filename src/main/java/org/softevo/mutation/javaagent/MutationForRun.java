@@ -32,7 +32,7 @@ public class MutationForRun {
 		private static MutationForRun INSTANCE = new MutationForRun();
 	}
 
-	private static final int DEFAULT_MUTATIONS_PER_RUN = 30;
+	// private static final int DEFAULT_MUTATIONS_PER_RUN = 30;
 
 	private List<Mutation> mutations;
 
@@ -41,8 +41,6 @@ public class MutationForRun {
 	public static MutationForRun getInstance() {
 		return SingletonHolder.INSTANCE;
 	}
-
-
 
 	private MutationForRun() {
 		mutations = getMutationsForRun();
@@ -84,17 +82,15 @@ public class MutationForRun {
 		} else {
 			logger.info("Property not found: " + MUTATION_FILE);
 		}
-//		if (mutationsToReturn.size() == 0) {
-//			mutationsToReturn =  QueryManager.getCoveredMutationListFromDb(DEFAULT_MUTATIONS_PER_RUN);
-//		}
+		// if (mutationsToReturn.size() == 0) {
+		// mutationsToReturn =
+		// QueryManager.getCoveredMutationListFromDb(DEFAULT_MUTATIONS_PER_RUN);
+		// }
 		filterMutationsWithResult(mutationsToReturn);
 		return mutationsToReturn;
 	}
 
-
-
-	private static void filterMutationsWithResult(
-			List<Mutation> mutations) {
+	private static void filterMutationsWithResult(List<Mutation> mutations) {
 		int preSize = mutations.size();
 		if (mutations != null) {
 			// make sure that we have not got any mutations that have already an
@@ -106,23 +102,27 @@ public class MutationForRun {
 				session.load(m, m.getId());
 				if (m.getMutationResult() != null) {
 					logger
-							.warn("Found mutation that already has a mutation result "
+							.debug("Found mutation that already has a mutation result "
 									+ m);
 					toRemove.add(m);
 				}
 			}
 
 			mutations.removeAll(toRemove);
-			if(preSize>0&& mutations.size()==0){
-				logger.info("All Mutations got results - exiting now");
-				System.out.println("ALL_RESULTS");
-				System.exit(0);
-			}
+
 			tx.commit();
 			session.close();
 		}
+		if (mutations == null || mutations.size() == 0) {
+			if (mutations == null || preSize == 0) {
+				logger.error("No mutaitons for this run - exiting now");
+			} else {
+				logger.info("All Mutations got results - exiting now");
+			}
+			System.out.println("ALL_RESULTS");
+			System.exit(0);
+		}
 	}
-
 
 	private static List<Mutation> getMutationsByFile(File file) {
 		List<Long> idList = Io.getIDsFromFile(file);
@@ -178,8 +178,9 @@ public class MutationForRun {
 		for (Mutation m : mutations) {
 			if (appliedMutations.contains(m)) {
 				applied++;
-				if(showMutations){
-				logger.info("Applied Mutation: " + QueryManager.mutationToShortString(m));
+				if (showMutations) {
+					logger.info("Applied Mutation: "
+							+ QueryManager.mutationToShortString(m));
 				}
 			} else {
 				notApplied.add(m);
@@ -190,7 +191,7 @@ public class MutationForRun {
 		if (applied < mutations.size() || notApplied.size() > 0) {
 			logger.error("Not all mutations where applied to bytecode");
 			for (Mutation mutation : notApplied) {
-				logger.warn("Mutation not applied " + mutation);
+				logger.warn("Mutation not applied " + mutation.getId());
 			}
 		}
 	}

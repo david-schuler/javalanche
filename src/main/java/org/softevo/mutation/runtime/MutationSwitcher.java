@@ -120,6 +120,7 @@ public class MutationSwitcher {
 			logger.info("Disabling mutation: "
 					+ actualMutation.getMutationVariable() + " Time needed "
 					+ mutationStartTime);
+			actualMutation = null;
 		}
 	}
 

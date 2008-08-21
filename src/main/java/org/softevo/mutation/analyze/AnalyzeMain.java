@@ -15,7 +15,19 @@ public class AnalyzeMain {
 
 	public static void main(String[] args) {
 		// analyzeMutations(new MutationResultAnalyzer());
-		analyzeMutations(new MutationAnalyzer[]{new MutationResultAnalyzer(),new InvariantAnalyzer()});
+		boolean didOutput = false;
+		if (args.length >= 1) {
+			String arg = args[0].toLowerCase();
+			if (arg.equals("exp")) {
+				didOutput = true;
+				analyzeMutations(new MutationAnalyzer[] { new ExperimentAnalyzer() });
+			}
+		}
+		if (!didOutput) {
+			analyzeMutations(new MutationAnalyzer[] {
+					new MutationResultAnalyzer(), new InvariantAnalyzer() });
+
+		}
 	}
 
 	private static void analyzeMutations(
@@ -24,6 +36,7 @@ public class AnalyzeMain {
 		if (prefix == null) {
 			throw new RuntimeException("no prefix set");
 		}
+
 		analyzeMutations(mutationResultAnalyzers, prefix);
 	}
 
@@ -33,14 +46,14 @@ public class AnalyzeMain {
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session
-				.createQuery("FROM Mutation WHERE className LIKE '"
-						+ prefix + "%'");
+				.createQuery("FROM Mutation WHERE className LIKE '" + prefix
+						+ "%'");
 		@SuppressWarnings("unchecked")
 		List<Mutation> mutations = query.list();
 		StringBuilder sb = new StringBuilder();
 		for (MutationAnalyzer mutationAnalyzer : mutationAnalyzers) {
 			String analyzeResult = mutationAnalyzer.analyze(mutations);
-			sb.append("Results from " + mutationAnalyzer.getClass() +  "\n");
+			sb.append("Results from " + mutationAnalyzer.getClass() + "\n");
 			sb.append(analyzeResult);
 		}
 		long l = getNumberOfMutationsWithoutResult(session, prefix);
@@ -53,9 +66,10 @@ public class AnalyzeMain {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static long getNumberOfMutationsWithoutResult(Session session,String prefix) {
+	private static long getNumberOfMutationsWithoutResult(Session session,
+			String prefix) {
 		String countQueryString = "SELECT count(*) FROM Mutation WHERE mutationResult = null AND className LIKE '"
-						+ prefix + "%'";
+				+ prefix + "%'";
 		Query countQuery = session.createQuery(countQueryString);
 		List countList = countQuery.list();
 		long l = QueryManager.getResultFromCountQuery(countList);

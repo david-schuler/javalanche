@@ -81,10 +81,11 @@ public class Mutation {
 	}
 
 	public String toShortString() {
-		return  String.format("%d %s %s - %d (%d)- %s \n%s ", id, className,
-					isClassInit() ? "in static part" : "not static", lineNumber,
-					mutationForLine, mutationType.toString(),
-					mutationResult == null ? "No Result" : mutationResult.toShortString());
+		return String.format("%d %s %s - %d (%d)- %s \n%s ", id, className,
+				isClassInit() ? "in static part" : "not static", lineNumber,
+				mutationForLine, mutationType.toString(),
+				mutationResult == null ? "No Result" : mutationResult
+						.toShortString());
 
 	}
 
@@ -275,8 +276,9 @@ public class Mutation {
 	}
 
 	public boolean isKilled() {
-		return mutationResult.getNumberOfErrors()
-				+ mutationResult.getNumberOfFailures() > 0;
+		return mutationResult != null
+				&& mutationResult.getNumberOfErrors()
+						+ mutationResult.getNumberOfFailures() > 0;
 	}
 
 }

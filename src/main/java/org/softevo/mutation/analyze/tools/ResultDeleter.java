@@ -14,6 +14,7 @@ import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
+import org.softevo.mutation.util.Formater;
 
 /**
  *
@@ -49,11 +50,28 @@ public class ResultDeleter {
 		Transaction tx = session.beginTransaction();
 		Query q = session.createQuery(queryString);
 		List<Mutation> mutations = q.list();
+		int deletes = 0, flushs = 0;
 		for (Mutation m : mutations) {
-			MutationTestResult singleTestResult = m.getMutationResult();
-			if (singleTestResult != null) {
+			MutationTestResult result = m.getMutationResult();
+			if (result != null) {
 				m.setMutationResult(null);
-				session.delete(singleTestResult);
+				session.delete(result);
+				deletes++;
+			}
+			if (deletes > 20) {
+				// 20, same as the JDBC batch size
+				// flush a batch of inserts and release memory:
+				// see
+				// http://www.hibernate.org/hib_docs/reference/en/html/batch.html
+				long startFlush = System.currentTimeMillis();
+				flushs++;
+				logger.info("Doing temporary flush " + flushs);
+				session.flush();
+//				session.clear();
+				long timeFlush = System.currentTimeMillis() - startFlush;
+				logger.info("Flush took: "
+						+ Formater.formatMilliseconds(timeFlush));
+				deletes = 0;
 			}
 		}
 		logger.info(String.format("Deleting %d mutation results", mutations

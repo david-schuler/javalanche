@@ -1,5 +1,6 @@
 package org.softevo.mutation.runtime.testsuites;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
+import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.runtime.MutationSwitcher;
 import org.softevo.mutation.runtime.MutationTestListener;
@@ -152,8 +154,41 @@ public class SelectiveTestSuite extends TestSuite {
 					}
 				} else {
 					logger
-							.warn("An error that maybe caused the shutdown could not report.\nCaused by mutation: "
+							.warn("An error that maybe caused the shutdown could not be reported.\nCaused by mutation: "
 									+ actualMutation);
+					if (actualListener == null) {
+						logger.warn("Listener is null - creating new one");
+						actualListener = new MutationTestListener();
+					}
+					actualListener = new MutationTestListener();
+
+					actualListener.addError(new Test() {
+
+						public void run(TestResult result) {
+							// TODO Auto-generated method stub
+
+						}
+
+						public int countTestCases() {
+							// TODO Auto-generated method stub
+							return 0;
+						}
+
+					}, new Exception("Caused JVM exit"));
+
+					logger.info("Error added");
+					try {
+						ResultReporter r = ResultReporter
+								.getOrCreateInstance(actualMutation);
+						if (actualMutationTestResult == null) {
+							actualMutationTestResult = new TestResult();
+						}
+						r.report(actualMutationTestResult, actualMutation,
+								actualListener);
+					} catch (Throwable t) {
+						logger.error("Exception caugth", t);
+						t.printStackTrace();
+					}
 				}
 				ResultReporter.persist();
 				logger.info("" + ResultReporter.summary(false));
@@ -223,7 +258,7 @@ public class SelectiveTestSuite extends TestSuite {
 				logger.warn("No tests for " + actualMutation);
 				continue;
 			}
-			if (MutationProperties.TEST_FILTER_FILE_NAME != null) {
+			if (MutationProperties.SHOULD_FILTER_TESTS) {
 				testsForThisRun = filterSet(testsForThisRun);
 			}
 			logger.info("Applying " + totalMutations + "th mutation with id "
@@ -266,9 +301,13 @@ public class SelectiveTestSuite extends TestSuite {
 
 	private Map<Integer, String> getFilterMap() {
 		if (testsForExp == null) {
-			testsForExp = XmlIo.get(MutationProperties.TEST_FILTER_FILE_NAME);
-			logger.info("Got experiment file - only using " + testsForExp.size()
-					+ " tests");
+			File filterMapFile = new File(
+					MutationProperties.TEST_FILTER_FILE_NAME);
+
+			testsForExp = XmlIo.get(filterMapFile);
+			logger.info("Got experiment file - only using "
+					+ testsForExp.size() + " tests");
+
 		}
 		return testsForExp;
 	}
@@ -387,10 +426,25 @@ public class SelectiveTestSuite extends TestSuite {
 			testResult.addError(test, e);
 		}
 		if (!future.isDone()) {
-			String message = "Could not kill thread: " + actualMutation;
-			logger.warn(message);
-			System.out.println(message);
-			System.exit(0);
+			String message = "Could not kill thread for mutation: "
+					+ actualMutation;
+			logger.info(message + " - Switching mutation of and wait");
+			mutationSwitcher.switchOff();
+			future.cancel(true);
+			try {
+				future.wait(5000);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			if (future.isDone()) {
+				logger
+						.info("Mutation thread finished after disabling mutation");
+			} else {
+				logger.warn(message);
+				System.out.println(message);
+				System.out.println("Exiting now");
+				System.exit(0);
+			}
 		}
 		long duration = System.currentTimeMillis() - start;
 		logger.debug("End timed test: " + test + " - took " + duration + " ms");

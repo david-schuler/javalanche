@@ -1,10 +1,13 @@
 package org.softevo.mutation.properties;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+
+import de.unisb.cs.st.invariants.util.XmlIo;
 
 public class MutationProperties {
 
@@ -76,8 +79,6 @@ public class MutationProperties {
 		}
 
 	}
-
-
 
 	private static final String RUN_MODE_KEY = "mutation.run.mode";
 
@@ -191,13 +192,26 @@ public class MutationProperties {
 	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
 			TRACE_BYTECODE_KEY, true);
 
-
 	public static final String TEST_FILTER_FILE_NAME_KEY = "mutation.test.filter.map";
-	public static final String TEST_FILTER_FILE_NAME= getProperty(TEST_FILTER_FILE_NAME_KEY);
+	public static final String TEST_FILTER_FILE_NAME = getProperty(TEST_FILTER_FILE_NAME_KEY);
+
+	public static final boolean SHOULD_FILTER_TESTS = shoudFilterTests();
 
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
 		return Integer.parseInt(result);
+	}
+
+	private static boolean shoudFilterTests() {
+		if (MutationProperties.TEST_FILTER_FILE_NAME != null) {
+			File filterMapFile = new File(
+					MutationProperties.TEST_FILTER_FILE_NAME);
+			if (filterMapFile.exists()) {
+				logger.info("Applying filters for test cases");
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static boolean getPropertyOrDefault(String key, boolean b) {
@@ -240,7 +254,7 @@ public class MutationProperties {
 		if (System.getProperty(key) != null) {
 			result = System.getProperty(key);
 		}
-		// no else if -  property may also be null
+		// no else if - property may also be null
 		if (result == null && PROPERTIES.containsKey(key)) {
 			result = PROPERTIES.getProperty(key);
 		}
@@ -269,8 +283,9 @@ public class MutationProperties {
 
 	public static void checkProperty(String key) {
 		String property = System.getProperty(key);
-		if(property==null){
-			throw new IllegalStateException("Property not specified. Key: " + key);
+		if (property == null) {
+			throw new IllegalStateException("Property not specified. Key: "
+					+ key);
 		}
 	}
 }
