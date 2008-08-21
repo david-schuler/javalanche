@@ -84,16 +84,25 @@ public class MutationForRun {
 		} else {
 			logger.info("Property not found: " + MUTATION_FILE);
 		}
-		if (mutationsToReturn.size() == 0) {
-			mutationsToReturn =  QueryManager.getCoveredMutationListFromDb(DEFAULT_MUTATIONS_PER_RUN);
-		}
-		if (mutationsToReturn != null) {
+//		if (mutationsToReturn.size() == 0) {
+//			mutationsToReturn =  QueryManager.getCoveredMutationListFromDb(DEFAULT_MUTATIONS_PER_RUN);
+//		}
+		filterMutationsWithResult(mutationsToReturn);
+		return mutationsToReturn;
+	}
+
+
+
+	private static void filterMutationsWithResult(
+			List<Mutation> mutations) {
+		int preSize = mutations.size();
+		if (mutations != null) {
 			// make sure that we have not got any mutations that have already an
 			// result
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			Transaction tx = session.beginTransaction();
 			List<Mutation> toRemove = new ArrayList<Mutation>();
-			for (Mutation m : mutationsToReturn) {
+			for (Mutation m : mutations) {
 				session.load(m, m.getId());
 				if (m.getMutationResult() != null) {
 					logger
@@ -102,11 +111,16 @@ public class MutationForRun {
 					toRemove.add(m);
 				}
 			}
-			mutationsToReturn.removeAll(toRemove);
+
+			mutations.removeAll(toRemove);
+			if(preSize>0&& mutations.size()==0){
+				logger.info("All Mutations got results - exiting now");
+				System.out.println("ALL_RESULTS");
+				System.exit(0);
+			}
 			tx.commit();
 			session.close();
 		}
-		return mutationsToReturn;
 	}
 
 

@@ -17,7 +17,7 @@ import org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.Jump
 import org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.JumpsTest;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.runtime.testsuites.SelectiveTestSuite;
@@ -84,7 +84,7 @@ public class NegateJumpsTest {
 		int nonNulls = 0;
 		for (Mutation m : mList) {
 			System.out.println(m);
-			SingleTestResult singleTestResult = m.getMutationResult();
+			MutationTestResult singleTestResult = m.getMutationResult();
 			if (singleTestResult != null
 					&& m.getMutationType() != MutationType.NO_MUTATION) {
 				nonNulls++;

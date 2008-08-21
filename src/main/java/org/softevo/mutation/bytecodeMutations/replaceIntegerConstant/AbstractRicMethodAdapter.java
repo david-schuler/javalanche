@@ -85,7 +85,7 @@ public abstract class AbstractRicMethodAdapter extends AbstractMutationAdapter {
 
 	protected abstract void biOrSiPush(int operand);
 
-	protected abstract void ldc(Object constant);
+	protected abstract void ldc(Number constant);
 
 	@Override
 	public void visitLdcInsn(Object constant) {
@@ -94,7 +94,7 @@ public abstract class AbstractRicMethodAdapter extends AbstractMutationAdapter {
 			return;
 		}
 		if (constant instanceof Number) {
-			ldc(constant);
+			ldc((Number) constant);
 			if (forwardCalls) {
 				super.visitLdcInsn(constant);
 			}

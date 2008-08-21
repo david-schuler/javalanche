@@ -20,9 +20,10 @@ import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.MutationCoverage;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.TestName;
 import org.softevo.mutation.results.Mutation.MutationType;
+import org.softevo.mutation.util.Formater;
 import org.softevo.mutation.util.Util;
 
 /**
@@ -136,7 +137,7 @@ public class QueryManager {
 	 *            The result used to update.
 	 */
 	public static void updateMutation(Mutation mutation,
-			SingleTestResult mutationTestResult) {
+			MutationTestResult mutationTestResult) {
 		mutation = getMutation(mutation);
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -147,13 +148,14 @@ public class QueryManager {
 		session.close();
 	}
 
-	public static void updateMutations(Map<Mutation, SingleTestResult> results) {
+	public static void updateMutations(Map<Mutation, MutationTestResult> results) {
 		logger.info("Storing results for " + results.size() + " mutations");
-		Set<Entry<Mutation, SingleTestResult>> entrySet = results.entrySet();
+		Set<Entry<Mutation, MutationTestResult>> entrySet = results.entrySet();
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
-		for (Entry<Mutation, SingleTestResult> entry : entrySet) {
-			SingleTestResult mutationTestResult = entry.getValue();
+		int saved = 1;
+		for (Entry<Mutation, MutationTestResult> entry : entrySet) {
+			MutationTestResult mutationTestResult = entry.getValue();
 			Mutation mutation = entry.getKey();
 			Mutation mutationFromDB = (Mutation) session.get(Mutation.class,
 					mutation.getId());
@@ -166,11 +168,19 @@ public class QueryManager {
 				session.setReadOnly(mutationFromDB, true);
 				session.close();
 				break;
-			} else {
+			} else if (mutationTestResult != null) {
 				session.save(mutationTestResult);
+				saved++;
 				logger.debug("Setting result for mutation "
 						+ mutationFromDB.getId());
 				mutationFromDB.setMutationResult(mutationTestResult);
+			}
+			if (saved % 20 == 0) { // 20, same as the JDBC batch size
+				// flush a batch of inserts and release memory:
+				// see
+				// http://www.hibernate.org/hib_docs/reference/en/html/batch.html
+				session.flush();
+				session.clear();
 			}
 		}
 		if (session.isOpen()) {
@@ -699,17 +709,21 @@ public class QueryManager {
 		if (l > 0 && setSize > 0) {
 			List<Set<Long>> sets;
 			logger.info("size of set: " + coverageData.keySet().size());
-			if (setSize > 5000) {
+			if (setSize > 500) {
 				logger.info("splitting key set because it is to large");
 				// http://opensource.atlassian.com/projects/hibernate/browse/HHH-1985
-				sets = splitSet(coverageData.keySet(), 5000);
+				sets = splitSet(coverageData.keySet(), 500);
 			} else {
 				sets = new ArrayList<Set<Long>>();
 				sets.add(coverageData.keySet());
 			}
 			for (Set<Long> set : sets) {
+				long start = System.currentTimeMillis();
+				logger.info("Start query");
 				Query mutationCoverageQuery = session
 						.createQuery("from MutationCoverage WHERE mutationID IN (:mids)");
+				long time = System.currentTimeMillis() - start;
+				logger.info("Query took: " + Formater.formatMilliseconds(time));
 				mutationCoverageQuery.setParameterList("mids", set);
 				logger.debug("getting coverage results from db"
 						+ mutationCoverageQuery.getQueryString());
@@ -720,11 +734,20 @@ public class QueryManager {
 				}
 			}
 		}
+		long start = System.currentTimeMillis();
+		logger.info("Start flush");
+		logger.info("Doing temporary flush. ");
+		session.flush();
+		session.clear();
+		long time = System.currentTimeMillis() - start;
+		logger.info("Flush took: " + Formater.formatMilliseconds(time));
+
+		int saves = 0, flushs =0;
 		for (Map.Entry<Long, Set<String>> entry : coverageData.entrySet()) {
 			List<TestName> testNames = new ArrayList<TestName>();
 			Long mutationID = entry.getKey();
-			int saves = 0;
 			logger.debug("save coverage results for mutation  " + mutationID);
+			saves++;
 			for (String testCase : entry.getValue()) {
 				TestName testName = null;
 				if (testCase == null) {
@@ -733,6 +756,7 @@ public class QueryManager {
 				if (testNameMap != null && testNameMap.containsKey(testCase)) {
 					testName = testNameMap.get(testCase);
 				} else {
+					logger.info("Saving test case: " + testCase + "    - " + saves);
 					testName = new TestName(testCase);
 					session.save(testName);
 					saves++;
@@ -747,15 +771,21 @@ public class QueryManager {
 				MutationCoverage mutationCoverage = new MutationCoverage(
 						mutationID, testNames);
 				session.save(mutationCoverage);
-				saves++;
 			}
-			if (saves % 20 == 0) { // 20, same as the JDBC batch size
+			if (saves >= 20 ) {
+				// 20, same as the JDBC batch size
 				// flush a batch of inserts and release memory:
-				// see http://www.hibernate.org/hib_docs/reference/en/html/batch.html
+				// see
+				// http://www.hibernate.org/hib_docs/reference/en/html/batch.html
+				long startFlush = System.currentTimeMillis();
+				flushs++;
+				logger.info("Doing temporary flush " +  flushs +" -  Saves" + saves);
 				session.flush();
 				session.clear();
+				long timeFlush = System.currentTimeMillis() - startFlush;
+				logger.info("Flush took: " + Formater.formatMilliseconds(timeFlush));
+				saves = 0;
 			}
-
 		}
 		tx.commit();
 		session.close();
@@ -883,6 +913,17 @@ public class QueryManager {
 		String result = null;
 		if (mutationOrNull != null) {
 			result = mutationOrNull.toShortString();
+		}
+		session.close();
+		return result;
+	}
+
+	public static String mutationToString(Mutation m) {
+		Session session = HibernateUtil.openSession();
+		Mutation mutationOrNull = _getMutationOrNull(m, session);
+		String result = null;
+		if (mutationOrNull != null) {
+			result = mutationOrNull.toString();
 		}
 		session.close();
 		return result;

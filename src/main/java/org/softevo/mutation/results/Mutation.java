@@ -43,7 +43,7 @@ public class Mutation {
 	private MutationType mutationType;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private SingleTestResult mutationResult;
+	private MutationTestResult mutationResult;
 
 	private boolean classInit;
 
@@ -141,7 +141,7 @@ public class Mutation {
 	/**
 	 * @return the mutationResult
 	 */
-	public SingleTestResult getMutationResult() {
+	public MutationTestResult getMutationResult() {
 		return mutationResult;
 	}
 
@@ -149,7 +149,7 @@ public class Mutation {
 	 * @param mutationTestResult
 	 *            the mutationResult to set
 	 */
-	public void setMutationResult(SingleTestResult mutationTestResult) {
+	public void setMutationResult(MutationTestResult mutationTestResult) {
 		this.mutationResult = mutationTestResult;
 	}
 

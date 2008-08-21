@@ -13,7 +13,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
@@ -112,7 +112,7 @@ public class StressTest {
 		Query q = session.createQuery(queryString);
 		List<Mutation> mutations = q.list();
 		for (Mutation m : mutations) {
-			SingleTestResult singleTestResult = m.getMutationResult();
+			MutationTestResult singleTestResult = m.getMutationResult();
 			if (singleTestResult != null) {
 				m.setMutationResult(null);
 				session.delete(singleTestResult);

@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 
 public class InvariantAnalyzer implements MutationAnalyzer {
 
@@ -16,25 +16,26 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 		return null;
 	}
 
-	List<Mutation> notCaught = new ArrayList<Mutation>();
 
 	public String analyze(Iterable<Mutation> mutations) {
-		int violated = 0;
-		int violatedNotCaught = 0;
 		int total = 0;
 		int withResult = 0;
+		int violated = 0;
+		int violatedNotCaught = 0;
+		List<Mutation> violatedNotCaughtList = new ArrayList<Mutation>();
 		for (Mutation mutation : mutations) {
-			SingleTestResult mutationResult = mutation.getMutationResult();
+			MutationTestResult mutationResult = mutation.getMutationResult();
 			if (mutationResult != null
 					&& mutationResult.getDifferentViolatedInvariants() > 1) {
 				violated++;
 				if (!mutation.isKilled()) {
 					violatedNotCaught++;
-					notCaught.add(mutation);
+					violatedNotCaughtList.add(mutation);
 				}
 			}
 			if (mutationResult != null) {
 				withResult++;
+
 			}
 			total++;
 		}
@@ -58,7 +59,8 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 		sb
 				.append("List of mutations that violated invariants and were not caught:\n");
 
-		Collections.sort(notCaught, new Comparator<Mutation>() {
+
+		Collections.sort(violatedNotCaughtList, new Comparator<Mutation>() {
 
 			public int compare(Mutation o1, Mutation o2) {
 				int i1 = o1.getMutationResult()
@@ -69,7 +71,7 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 			}
 
 		});
-		for (Mutation mutation2 : notCaught) {
+		for (Mutation mutation2 : violatedNotCaughtList) {
 			sb.append(mutation2.toShortString());
 			sb.append('\n');
 			sb.append("Violated invariants ids: " + Arrays.toString(mutation2.getMutationResult().getViolatedInvariants()));

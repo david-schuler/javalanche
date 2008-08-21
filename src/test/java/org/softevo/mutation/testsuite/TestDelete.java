@@ -14,7 +14,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Test;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.TestMessage;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
@@ -49,7 +49,7 @@ public class TestDelete {
 		TestResult testResult = new TestResult();
 		Set<String> set = new HashSet<String>();
 		set.addAll(Arrays.asList(new String[] { PASS_TEST }));
-		SingleTestResult singleTestResult = new SingleTestResult(testResult,
+		MutationTestResult singleTestResult = new MutationTestResult(testResult,
 				mutationTestListener, set);
 		m.setMutationResult(singleTestResult);
 		session.save(m);
@@ -102,7 +102,7 @@ public class TestDelete {
 		Transaction tx = session.beginTransaction();
 		Query q = session.createSQLQuery(
 				"SELECT * FROM SingleTestResult S WHERE id=:id").addEntity(
-				SingleTestResult.class);
+				MutationTestResult.class);
 		q.setLong("id", resultID);
 		int resultSize = q.list().size();
 		tx.commit();
@@ -122,7 +122,7 @@ public class TestDelete {
 		Transaction tx = session.beginTransaction();
 		Query q = session.createSQLQuery(
 				"SELECT * FROM SingleTestResult_Errors S WHERE singletestresult_id=:id").addEntity(
-				SingleTestResult.class);
+				MutationTestResult.class);
 		q.setLong("id", resultID);
 		int resultSize = q.list().size();
 		tx.commit();
@@ -136,7 +136,7 @@ public class TestDelete {
 		Transaction tx = session.beginTransaction();
 		Query q = session.createSQLQuery(
 				"	SELECT * FROM SingleTestResult_TestMessage S WHERE singletestresult_id=:id").addEntity(
-				SingleTestResult.class);
+				MutationTestResult.class);
 		q.setLong("id", resultID);
 		int resultSize = q.list().size();
 		tx.commit();
@@ -150,7 +150,7 @@ public class TestDelete {
 		Transaction tx = session.beginTransaction();
 		Query q = session.createSQLQuery(
 				"SELECT * FROM SingleTestResult_Passing S WHERE singletestresult_id=:id").addEntity(
-				SingleTestResult.class);
+				MutationTestResult.class);
 		q.setLong("id", resultID);
 		int resultSize = q.list().size();
 		tx.commit();

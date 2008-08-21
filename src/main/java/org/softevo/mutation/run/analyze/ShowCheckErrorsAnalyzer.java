@@ -3,7 +3,7 @@ package org.softevo.mutation.run.analyze;
 import java.util.List;
 
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.TestMessage;
 
 public class ShowCheckErrorsAnalyzer implements MutatedUnmutatedAnalyzer {
@@ -13,7 +13,7 @@ public class ShowCheckErrorsAnalyzer implements MutatedUnmutatedAnalyzer {
 	}
 
 	public void handleMutation(Mutation mutated, Mutation unMutated) {
-		SingleTestResult res = mutated.getMutationResult();
+		MutationTestResult res = mutated.getMutationResult();
 		if (res != null) {
 			if (res.getNumberOfErrors() != 0 || res.getNumberOfFailures() != 0) {
 				for (TestMessage tm : res.getErrors()) {

@@ -1,13 +1,14 @@
 package org.softevo.mutation.analyze;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 
 public class MutationResultAnalyzer implements MutationAnalyzer {
 
@@ -20,11 +21,12 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 		int notCovered = 0;
 		List<Mutation> killedList = new ArrayList<Mutation>();
 		List<Mutation> survivedList = new ArrayList<Mutation>();
+		List<Mutation> survivedTouchedList = new ArrayList<Mutation>();
 		for (Mutation mutation : mutations) {
 			if (mutation == null) {
 				throw new RuntimeException("Null fetched from db");
 			}
-			SingleTestResult mutationResult = mutation.getMutationResult();
+			MutationTestResult mutationResult = mutation.getMutationResult();
 
 			if (mutationResult != null
 					&& (mutationResult.getNumberOfErrors() > 0 || mutationResult
@@ -34,6 +36,9 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 			} else {
 				survived++;
 				survivedList.add(mutation);
+				if(mutationResult!= null){
+					survivedTouchedList.add(mutation);
+				}
 			}
 			if (mutationResult == null) {
 				notCovered++;
@@ -51,7 +56,7 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 		for (Mutation mutation : killedList) {
 			killedIds.add(mutation.getId());
 		}
-		for (Mutation mutation : survivedList) {
+		for (Mutation mutation : survivedTouchedList) {
 			survivedIds.add(mutation.getId());
 		}
 		if (WRITE_FILES) {
@@ -67,7 +72,10 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 		sb.append('\n');
 		sb.append("Killed mutations: " + killed);
 		sb.append('\n');
-		sb.append("Survived mutations: " + survived);
+		sb.append(String.format("Survived mutations: %d (%s) IDs:\n" , survived , AnalyzeUtil.formatPercent(survived,total)));
+		for (Long survivedId : survivedIds) {
+			sb.append(survivedId).append(", ");
+		}
 		sb.append('\n');
 		sb
 				.append("Mutation score: "

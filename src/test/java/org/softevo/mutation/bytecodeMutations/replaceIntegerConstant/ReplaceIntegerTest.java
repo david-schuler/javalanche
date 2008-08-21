@@ -16,7 +16,7 @@ import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants;
 import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstantsTest;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.runtime.testsuites.SelectiveTestSuite;
 
@@ -84,7 +84,7 @@ public class ReplaceIntegerTest {
 		List<Mutation> mList = query.list();
 		int nonNulls = 0;
 		for (Mutation m : mList) {
-			SingleTestResult singleTestResult = m.getMutationResult();
+			MutationTestResult singleTestResult = m.getMutationResult();
 			if (singleTestResult != null) {
 				nonNulls++;
 				if (m.getMutationType() != Mutation.MutationType.NO_MUTATION && m.getLineNumber() != 16 && m.getLineNumber() != 18) {

@@ -1,6 +1,7 @@
 package org.softevo.mutation.results;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -20,11 +21,12 @@ import javax.persistence.TemporalType;
 
 import junit.framework.TestResult;
 
+import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
 import org.softevo.mutation.runtime.MutationTestListener;
 
 @Entity
-public class SingleTestResult {
+public class MutationTestResult {
 
 	@Id
 	@GeneratedValue
@@ -45,13 +47,13 @@ public class SingleTestResult {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	// , fetch = FetchType.EAGER)
-	@JoinTable(name = "SingleTestResult_Errors", joinColumns = { @JoinColumn(name = "singleTestResult_id") }, inverseJoinColumns = @JoinColumn(name = "testMessage_id"))
+	@JoinTable(name = "MutationTestResult_Errors", joinColumns = { @JoinColumn(name = "mutationTestResult_id") }, inverseJoinColumns = @JoinColumn(name = "testMessage_id"))
 	@IndexColumn(name = "error_id")
 	private List<TestMessage> errors = new ArrayList<TestMessage>();
 
 	@OneToMany(cascade = CascadeType.ALL)
 	// , fetch = FetchType.EAGER)
-	@JoinTable(name = "SingleTestResult_Passing", joinColumns = { @JoinColumn(name = "singleTestResult_id") }, inverseJoinColumns = @JoinColumn(name = "testMessage_id"))
+	@JoinTable(name = "MutationTestResult_Passing", joinColumns = { @JoinColumn(name = "mutationTestResult_id") }, inverseJoinColumns = @JoinColumn(name = "testMessage_id"))
 	@IndexColumn(name = "passing_id")
 	private List<TestMessage> passing = new ArrayList<TestMessage>();
 
@@ -59,9 +61,13 @@ public class SingleTestResult {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 
-//	 @Column(name="vInvariants", nullable=true)
-//	 @IndexColumn(name = "violated_id")
+	// @Column(name="vInvariants", nullable=true)
+	// @IndexColumn(name = "violated_id")
 
+	@CollectionOfElements
+	@JoinTable(name = "ViolatedInvariants", joinColumns = { @JoinColumn(name = "result_id") })
+	@Column(name = "violatedInvariant", nullable = true)
+	@IndexColumn(name = "violated_index")
 	private int[] violatedInvariants;
 
 	private int differentViolatedInvariants;
@@ -87,14 +93,16 @@ public class SingleTestResult {
 	 *            the violatedInvariants to set
 	 */
 	public void setViolatedInvariants(int[] violatedInvariants) {
-		if (violatedInvariants.length > 30) {
-			System.out.println("SingleTestResult.setViolatedInvariants(): truncating violated invariants");
-			this.violatedInvariants = new int[30];
-			System.arraycopy(violatedInvariants, 0, this.violatedInvariants, 0,
-					30);
-		} else {
+//		int truncationSize = 100;
+//		if (violatedInvariants.length > truncationSize) {
+//			System.out
+//					.println("MutationTestResult.setViolatedInvariants(): truncating violated invariants");
+//			this.violatedInvariants = new int[truncationSize];
+//			System.arraycopy(violatedInvariants, 0, this.violatedInvariants, 0,
+//					truncationSize);
+//		} else {
 			this.violatedInvariants = violatedInvariants;
-		}
+//		}
 	}
 
 	/**
@@ -121,11 +129,10 @@ public class SingleTestResult {
 	}
 
 	@SuppressWarnings("unused")
-	// Needed by hibernate
-	private SingleTestResult() {
+	public MutationTestResult() {
 	}
 
-	public SingleTestResult(TestResult mutationTestResult,
+	public MutationTestResult(TestResult mutationTestResult,
 			MutationTestListener mutationTestListener,
 			Set<String> touchingTestCases) {
 		this.runs = mutationTestResult.runCount();
@@ -155,10 +162,13 @@ public class SingleTestResult {
 		StringBuilder sb = new StringBuilder(String.format(
 				"Runs: %d  Failures: %d  Errors: %d LineTouched: %s", runs,
 				failures.size(), errors.size(), touched ? "yes" : "no"));
-		sb.append(" invariant violations: "  + differentViolatedInvariants + " (" + totalViolations +")");
-		sb.append(" date: " + date );
+		sb.append(" invariant violations: " + differentViolatedInvariants
+				+ " (" + totalViolations + ") ids["
+				+ Arrays.toString(violatedInvariants) + "]");
+		sb.append(" date: " + date);
 		return sb.toString();
 	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(toShortString());
@@ -298,7 +308,5 @@ public class SingleTestResult {
 	public void setDifferentViolatedInvariants(int differentViolatedInvariants) {
 		this.differentViolatedInvariants = differentViolatedInvariants;
 	}
-
-
 
 }

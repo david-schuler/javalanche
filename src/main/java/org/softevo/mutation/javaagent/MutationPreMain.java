@@ -1,4 +1,4 @@
- package org.softevo.mutation.javaagent;
+package org.softevo.mutation.javaagent;
 
 import java.io.PrintStream;
 import java.lang.instrument.ClassFileTransformer;
@@ -25,7 +25,7 @@ public class MutationPreMain {
 		// DB must be loaded before transform method is entered. Otherwise
 		// program crashes.
 		Mutation someMutation = new Mutation("SomeMutationToAddToTheDb", 23,
-				23, MutationType.ARITHMETIC_REPLACE,false);
+				23, MutationType.ARITHMETIC_REPLACE, false);
 		Mutation mutationFromDb = QueryManager.getMutationOrNull(someMutation);
 		if (mutationFromDb == null) {
 			MutationPossibilityCollector mpc1 = new MutationPossibilityCollector();
@@ -44,13 +44,16 @@ public class MutationPreMain {
 		try {
 			if (RUN_MODE == MUTATION_TEST) {
 				System.out.println("Run mutation tests with invariant checks");
-//				addClassFileTransformer(instrumentation, new InvariantTransformer());
-				addClassFileTransformer(instrumentation, new DaikonInvariantTransformer());
+				// addClassFileTransformer(instrumentation, new
+				// InvariantTransformer());
+				addClassFileTransformer(instrumentation,
+						new DaikonInvariantTransformer());
 				addClassFileTransformer(instrumentation,
 						new MutationFileTransformer());
 				return;
 			} else if (RUN_MODE == MUTATION_TEST_NO_INVARIANT) {
-				System.out.println("Run mutation tests without invariant checks");
+				System.out
+						.println("Run mutation tests without invariant checks");
 				addClassFileTransformer(instrumentation,
 						new MutationFileTransformer());
 				return;
@@ -69,9 +72,13 @@ public class MutationPreMain {
 						new IntegrateCheckNamesSuiteTransformer());
 				return;
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			if (true) {
+				throw new RuntimeException("Instrumentation failed ", t);
+			}
+			System.out.println("Exiting now");
+			System.exit(5);
 		}
 	}
 

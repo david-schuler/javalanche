@@ -14,7 +14,7 @@ import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.util.Util;
@@ -48,7 +48,7 @@ public class ResultReporter {
 
 	private Set<String> touchingTestCases = new HashSet<String>();
 
-	private SingleTestResult singleTestResult;
+	private MutationTestResult singleTestResult;
 
 	private Mutation mutation;
 
@@ -81,7 +81,7 @@ public class ResultReporter {
 
 			+ mutationTestListener == null ? ", mutationTestListener" : "");
 		}
-		SingleTestResult mutationSingleTestResult = new SingleTestResult(
+		MutationTestResult mutationSingleTestResult = new MutationTestResult(
 				mutationTestResult, mutationTestListener, touchingTestCases);
 		if (!reportedMutations.contains(mutation)) {
 			reportedMutations.add(mutation);
@@ -112,7 +112,7 @@ public class ResultReporter {
 	public synchronized static void persist() {
 		logger.debug("Start storing " + instances.size()
 				+ " mutation test results in db");
-		Map<Mutation, SingleTestResult> map = new HashMap<Mutation, SingleTestResult>();
+		Map<Mutation, MutationTestResult> map = new HashMap<Mutation, MutationTestResult>();
 		Set<Entry<Long, ResultReporter>> entrySet = instances.entrySet();
 		for (Entry<Long, ResultReporter> entry : entrySet) {
 			ResultReporter rr = entry.getValue();
@@ -206,6 +206,10 @@ public class ResultReporter {
 	public void addUnmutated(Mutation m) {
 		assert m.getMutationType().equals(MutationType.NO_MUTATION);
 		unMutatedMutations.add(m);
+	}
+
+	public synchronized boolean isReported(Mutation m) {
+		return reportedMutations.contains(m);
 	}
 
 }

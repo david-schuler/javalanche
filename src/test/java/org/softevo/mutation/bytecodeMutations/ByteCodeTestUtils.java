@@ -17,7 +17,7 @@ import org.softevo.mutation.io.Io;
 import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
@@ -77,7 +77,7 @@ public class ByteCodeTestUtils {
 		q.setString("clname", className);
 		List<Mutation> mutations = q.list();
 		for (Mutation m : mutations) {
-			SingleTestResult singleTestResult = m.getMutationResult();
+			MutationTestResult singleTestResult = m.getMutationResult();
 			if (singleTestResult != null) {
 				logger.info("Trying to delete + " + singleTestResult);
 				m.setMutationResult(null);
@@ -177,7 +177,7 @@ public class ByteCodeTestUtils {
 		for (Mutation m : mList) {
 			System.out.println(m);
 			if (m.getMutationType() != MutationType.NO_MUTATION) {
-				SingleTestResult singleTestResult = m.getMutationResult();
+				MutationTestResult singleTestResult = m.getMutationResult();
 				if (singleTestResult != null) {
 					nonNulls++;
 					Assert.assertEquals("Mutation: " + m, 1, singleTestResult

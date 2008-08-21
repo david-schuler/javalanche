@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.runtime.MutationTestListener;
@@ -32,7 +32,7 @@ public class HibernateTest {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		TestResult tr= new TestResult();
-		testMutaion.setMutationResult(new SingleTestResult(tr,new MutationTestListener(), new HashSet<String>()));
+		testMutaion.setMutationResult(new MutationTestResult(tr,new MutationTestListener(), new HashSet<String>()));
 		session.save(testMutaion);
 		tx.commit();
 		session.close();

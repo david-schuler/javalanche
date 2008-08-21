@@ -36,13 +36,13 @@
 
 
 		<mapping class="org.softevo.mutation.results.Mutation"/>
-		<mapping class="org.softevo.mutation.results.SingleTestResult"/>
+		<mapping class="org.softevo.mutation.results.MutationTestResult"/>
 		<mapping class="org.softevo.mutation.results.TestMessage"/>
 		<mapping class="org.softevo.mutation.results.MutationCoverage"/>
 		<mapping class="org.softevo.mutation.results.TestName"/>
-		<mapping class="org.softevo.mutation.coverageResults.db.TestCoverageLineResult"/>
+		<!--mapping class="org.softevo.mutation.coverageResults.db.TestCoverageLineResult"/>
 		<mapping class="org.softevo.mutation.coverageResults.db.TestCoverageClassResult"/>
-		<mapping class="org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName"/>
+		<mapping class="org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName"/-->
 		<!--
 		<mapping class="org.softevo.mutation.results.Street"/>
 		-->

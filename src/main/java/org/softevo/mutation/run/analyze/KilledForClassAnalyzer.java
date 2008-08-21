@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 public class KilledForClassAnalyzer implements MutatedUnmutatedAnalyzer {
@@ -32,8 +32,8 @@ public class KilledForClassAnalyzer implements MutatedUnmutatedAnalyzer {
 			mutationData.put(key, mutationsClassData);
 		}
 
-		SingleTestResult mutatedResult = mutated.getMutationResult();
-		SingleTestResult unMutatedResult = unMutated.getMutationResult();
+		MutationTestResult mutatedResult = mutated.getMutationResult();
+		MutationTestResult unMutatedResult = unMutated.getMutationResult();
 
 		int unMutatedFailures = unMutatedResult.getNumberOfFailures();
 		int unMutatedErrors = unMutatedResult.getNumberOfErrors();

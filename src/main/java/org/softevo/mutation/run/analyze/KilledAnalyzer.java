@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 
 public class KilledAnalyzer implements MutatedUnmutatedAnalyzer {
 
@@ -20,8 +20,8 @@ public class KilledAnalyzer implements MutatedUnmutatedAnalyzer {
 	private int notKilled;
 
 	public void handleMutation(Mutation mutated, Mutation unMutated) {
-		SingleTestResult mutatedResult = mutated.getMutationResult();
-		SingleTestResult unMutatedResult = unMutated.getMutationResult();
+		MutationTestResult mutatedResult = mutated.getMutationResult();
+		MutationTestResult unMutatedResult = unMutated.getMutationResult();
 
 		int unMutatedFailures = unMutatedResult.getNumberOfFailures();
 		int unMutatedErrors = unMutatedResult.getNumberOfErrors();

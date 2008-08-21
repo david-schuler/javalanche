@@ -1,5 +1,6 @@
 package org.softevo.mutation.runtime.testsuites;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -22,6 +23,9 @@ import org.softevo.mutation.runtime.MutationSwitcher;
 import org.softevo.mutation.runtime.MutationTestListener;
 import org.softevo.mutation.runtime.ResultReporter;
 import org.softevo.mutation.util.Util;
+
+import de.unisb.cs.st.invariants.testsuite.TestSuiteUtil;
+import de.unisb.cs.st.invariants.util.XmlIo;
 
 /**
  * Subclass of JUnits {@link TestSuite} class. It is used to execute the tests
@@ -48,7 +52,7 @@ public class SelectiveTestSuite extends TestSuite {
 	/**
 	 * Timeout for one single test.
 	 */
-	private static final long DEFAULT_TIMEOUT_IN_SECONDS = 5;
+	private static final long DEFAULT_TIMEOUT_IN_SECONDS = 12;
 
 	/**
 	 * Execute the same tests with mutation disabled right after the mutation
@@ -101,6 +105,8 @@ public class SelectiveTestSuite extends TestSuite {
 
 	private ResultReporter actualResultReporter;
 
+	private Map<Integer, String> testsForExp;
+
 	static {
 		staticLogMessage();
 	}
@@ -140,8 +146,10 @@ public class SelectiveTestSuite extends TestSuite {
 				if (actualListener != null) {
 					actualListener.addError(actualTest, new RuntimeException(
 							"JVM shut down because of mutation"));
-//					TODO maybe test actualResultReporter.report(actualMutationTestResult,
-//							actualMutation, actualListener);
+					if (!actualResultReporter.isReported(actualMutation)) {
+						actualResultReporter.report(actualMutationTestResult,
+								actualMutation, actualListener);
+					}
 				} else {
 					logger
 							.warn("An error that maybe caused the shutdown could not report.\nCaused by mutation: "
@@ -184,7 +192,7 @@ public class SelectiveTestSuite extends TestSuite {
 		int totalMutations = 0;
 		while (mutationSwitcher.hasNext()) {
 			totalMutations++;
-			if (totalMutations % 200 == 0) {
+			if (totalMutations % 101 == 0) {
 				logger.info("Persisting results");
 				ResultReporter.persist();
 				// System.exit(0);
@@ -215,6 +223,9 @@ public class SelectiveTestSuite extends TestSuite {
 				logger.warn("No tests for " + actualMutation);
 				continue;
 			}
+			if (MutationProperties.TEST_FILTER_FILE_NAME != null) {
+				testsForThisRun = filterSet(testsForThisRun);
+			}
 			logger.info("Applying " + totalMutations + "th mutation with id "
 					+ actualMutation.getId());
 			logger.info("Got " + testsForThisRun.size()
@@ -240,6 +251,26 @@ public class SelectiveTestSuite extends TestSuite {
 				+ " tests for " + totalMutations + " mutations ");
 		logger.info("" + ResultReporter.summary(true));
 		MutationForRun.getInstance().reportAppliedMutations();
+	}
+
+	private Set<String> filterSet(Set<String> testsForThisRun) {
+		Set<String> fileteredSet = new HashSet<String>();
+		Map<Integer, String> testsForExp = getFilterMap();
+		for (String string : testsForThisRun) {
+			if (testsForExp.containsValue(string)) {
+				fileteredSet.add(string);
+			}
+		}
+		return fileteredSet;
+	}
+
+	private Map<Integer, String> getFilterMap() {
+		if (testsForExp == null) {
+			testsForExp = XmlIo.get(MutationProperties.TEST_FILTER_FILE_NAME);
+			logger.info("Got experiment file - only using " + testsForExp.size()
+					+ " tests");
+		}
+		return testsForExp;
 	}
 
 	/**
@@ -332,7 +363,7 @@ public class SelectiveTestSuite extends TestSuite {
 	private void runWithTimeout(final Test test, final TestResult testResult) {
 		ExecutorService service = Executors.newSingleThreadExecutor();
 		Callable<Object> callable = getCallable(test, testResult);
-		Future<Object> result = service.submit(callable);
+		Future<Object> future = service.submit(callable);
 		logger.debug("Start timed test: " + test);
 		long start = System.currentTimeMillis();
 		service.shutdown();
@@ -342,8 +373,8 @@ public class SelectiveTestSuite extends TestSuite {
 			if (!terminated) {
 				service.shutdownNow();
 			}
-			result.get(DEFAULT_TIMEOUT_IN_SECONDS, TimeUnit.MILLISECONDS);
-			result.cancel(true);
+			future.get(DEFAULT_TIMEOUT_IN_SECONDS, TimeUnit.MILLISECONDS);
+			future.cancel(true);
 		} catch (TimeoutException e) {
 			testResult.addError(test, new Exception(String.format(
 					"Test timed out after %d seconds",
@@ -354,6 +385,12 @@ public class SelectiveTestSuite extends TestSuite {
 		} catch (Exception e) {
 			e.printStackTrace();
 			testResult.addError(test, e);
+		}
+		if (!future.isDone()) {
+			String message = "Could not kill thread: " + actualMutation;
+			logger.warn(message);
+			System.out.println(message);
+			System.exit(0);
 		}
 		long duration = System.currentTimeMillis() - start;
 		logger.debug("End timed test: " + test + " - took " + duration + " ms");

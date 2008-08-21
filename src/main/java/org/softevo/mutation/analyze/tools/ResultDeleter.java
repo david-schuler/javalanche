@@ -11,7 +11,7 @@ import org.hibernate.Transaction;
 import org.softevo.mutation.io.Io;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
 
@@ -50,7 +50,7 @@ public class ResultDeleter {
 		Query q = session.createQuery(queryString);
 		List<Mutation> mutations = q.list();
 		for (Mutation m : mutations) {
-			SingleTestResult singleTestResult = m.getMutationResult();
+			MutationTestResult singleTestResult = m.getMutationResult();
 			if (singleTestResult != null) {
 				m.setMutationResult(null);
 				session.delete(singleTestResult);
@@ -102,7 +102,7 @@ public class ResultDeleter {
 		session.load(m, m.getId());
 		logger.info("Loading mutation with  following id: " + m.getId());
 
-		SingleTestResult singleTestResult = m.getMutationResult();
+		MutationTestResult singleTestResult = m.getMutationResult();
 		if (singleTestResult != null) {
 			m.setMutationResult(null);
 			session.delete(singleTestResult);
@@ -117,7 +117,7 @@ public class ResultDeleter {
 							.info("Loading unmutated mutation with following id: "
 									+ unMutated.getId());
 				// session.load(unMutated, unMutated.getId());
-				SingleTestResult unMutatedSingleTestResult = unMutated
+				MutationTestResult unMutatedSingleTestResult = unMutated
 						.getMutationResult();
 				if (unMutatedSingleTestResult != null) {
 					unMutated.setMutationResult(null);

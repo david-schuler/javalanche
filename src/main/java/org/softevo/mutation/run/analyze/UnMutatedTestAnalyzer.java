@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 
 import org.softevo.mutation.io.Io;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.SingleTestResult;
+import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.TestMessage;
 
 public class UnMutatedTestAnalyzer implements MutatedUnmutatedAnalyzer {
@@ -111,7 +111,7 @@ public class UnMutatedTestAnalyzer implements MutatedUnmutatedAnalyzer {
 	}
 
 	public void handleMutation(Mutation mutated, Mutation unMutated) {
-		SingleTestResult testResult = unMutated.getMutationResult();
+		MutationTestResult testResult = unMutated.getMutationResult();
 		for (TestMessage tm : testResult.getPassing()) {
 			UnMutatedTestAnalyzer.TestCaseOutcome outcome = getOutcome(tm);
 			outcome.addPassed();

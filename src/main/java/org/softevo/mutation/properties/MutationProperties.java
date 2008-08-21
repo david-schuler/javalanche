@@ -77,6 +77,8 @@ public class MutationProperties {
 
 	}
 
+
+
 	private static final String RUN_MODE_KEY = "mutation.run.mode";
 
 	public static final RunMode RUN_MODE = getRunMode();
@@ -189,6 +191,10 @@ public class MutationProperties {
 	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
 			TRACE_BYTECODE_KEY, true);
 
+
+	public static final String TEST_FILTER_FILE_NAME_KEY = "mutation.test.filter.map";
+	public static final String TEST_FILTER_FILE_NAME= getProperty(TEST_FILTER_FILE_NAME_KEY);
+
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
 		return Integer.parseInt(result);
@@ -234,7 +240,7 @@ public class MutationProperties {
 		if (System.getProperty(key) != null) {
 			result = System.getProperty(key);
 		}
-		// no else if property may also be null
+		// no else if -  property may also be null
 		if (result == null && PROPERTIES.containsKey(key)) {
 			result = PROPERTIES.getProperty(key);
 		}
