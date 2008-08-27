@@ -16,18 +16,16 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.apache.log4j.Logger;
+import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.runtime.MutationSwitcher;
 import org.softevo.mutation.runtime.MutationTestListener;
 import org.softevo.mutation.runtime.ResultReporter;
 import org.softevo.mutation.util.Util;
 
-import de.unisb.cs.st.invariants.testsuite.TestSuiteUtil;
-import de.unisb.cs.st.invariants.util.XmlIo;
 
 /**
  * Subclass of JUnits {@link TestSuite} class. It is used to execute the tests

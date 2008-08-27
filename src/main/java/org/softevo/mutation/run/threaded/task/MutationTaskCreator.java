@@ -75,12 +75,15 @@ public class MutationTaskCreator {
 			}
 
 		});
-		for(File d : toDelete){
+		if (toDelete == null) {
+			logger.info("Got no files to delete in directory" + dir);
+			return;
+		}
+		for (File d : toDelete) {
 			boolean delete = d.delete();
-			if(delete){
+			if (delete) {
 				logger.info("Deleted task: " + d);
-			}
-			else{
+			} else {
 				logger.info("Could not delete task: " + d);
 			}
 		}

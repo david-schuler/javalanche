@@ -2,7 +2,9 @@ package org.softevo.mutation.runtime.testsuites;
 
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
@@ -24,32 +26,45 @@ public class TestSuiteUtil {
 
 	public static Map<String, Test> getAllTests(TestSuite testSuite) {
 		Map<String, Test> resultMap = new HashMap<String, Test>();
-		return collectTests(testSuite, resultMap);
+		return collectTests(testSuite, resultMap, new HashSet<String>());
 	}
 
 	private static Map<String, Test> collectTests(TestSuite testSuite,
-			Map<String, Test> resultMap) {
+			Map<String, Test> resultMap, Set<String> lowerCaseSet) {
 		for (Enumeration<Test> e = testSuite.tests(); e.hasMoreElements();) {
 			Test test = e.nextElement();
 			if (test instanceof TestSuite) {
 				TestSuite suite = (TestSuite) test;
-				collectTests(suite, resultMap);
+				collectTests(suite, resultMap,lowerCaseSet);
 			} else if (test instanceof TestCase) {
 				TestCase testCase = (TestCase) test;
 				String fullTestName = ScanAndCoverageTestSuite
 						.getFullTestCaseName(testCase);
 				String nameForMap = checkName(fullTestName, resultMap);
-				resultMap.put(nameForMap, testCase);
+				insertTestName(resultMap, lowerCaseSet, test, nameForMap);
 			} else if (test instanceof Test) {
 				String testName = getNameForTest(test);
 				String keyForMap = checkName(testName, resultMap);
-				resultMap.put(keyForMap, test);
+				insertTestName(resultMap, lowerCaseSet, test, keyForMap);
 			} else {
 				throw new RuntimeException("Not handled type: "
 						+ test.getClass());
 			}
 		}
 		return resultMap;
+	}
+
+	private static void insertTestName(Map<String, Test> resultMap,
+			Set<String> lowerCaseSet, Test test, String keyForMap) {
+		String lower = keyForMap.toLowerCase();
+		if(lowerCaseSet.contains(lower)){
+			while(lowerCaseSet.contains(lower)){
+				keyForMap += "X";
+				lower = keyForMap.toLowerCase();
+			}
+		}
+		resultMap.put(keyForMap, test);
+		lowerCaseSet.add(lower);
 	}
 
 	private static String getNameForTest(Test test) {

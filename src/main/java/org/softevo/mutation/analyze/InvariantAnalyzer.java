@@ -26,7 +26,7 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 		for (Mutation mutation : mutations) {
 			MutationTestResult mutationResult = mutation.getMutationResult();
 			if (mutationResult != null
-					&& mutationResult.getDifferentViolatedInvariants() > 1) {
+					&& mutationResult.getDifferentViolatedInvariants() > 0) {
 				violated++;
 				if (!mutation.isKilled()) {
 					violatedNotCaught++;

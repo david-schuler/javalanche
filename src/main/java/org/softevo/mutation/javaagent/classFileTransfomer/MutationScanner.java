@@ -128,10 +128,12 @@ public class MutationScanner implements ClassFileTransformer {
 							.transformBytecode(classfileBuffer);
 				}
 
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.info(e.getMessage());
-				logger.info(e.getStackTrace());
+			} catch (Throwable t) {
+				t.printStackTrace();
+				logger.info(t.getMessage());
+				logger.info(t.getStackTrace());
+				System.out.println("Exception during instrumentation - exiting");
+				System.exit(1);
 			}
 		}
 		return classfileBuffer;
@@ -139,14 +141,13 @@ public class MutationScanner implements ClassFileTransformer {
 
 	public static boolean compareWithSuiteProperty(String classNameWithDots) {
 		boolean returnValue = false;
-		String testSuiteName = System
-				.getProperty(MutationProperties.TEST_SUITE_KEY);
+		String testSuiteName = 	MutationProperties.TEST_SUITE;
 		if (testSuiteName != null && classNameWithDots.contains(testSuiteName)) {
 			returnValue = true;
 		}
 		return returnValue;
 	}
-	
+
 	public static void main(String[] args) {
 		new MutationScanner();
 	}

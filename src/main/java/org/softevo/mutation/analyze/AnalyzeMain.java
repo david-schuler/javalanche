@@ -24,8 +24,9 @@ public class AnalyzeMain {
 			}
 		}
 		if (!didOutput) {
-			analyzeMutations(new MutationAnalyzer[] {
-					new MutationResultAnalyzer(), new InvariantAnalyzer() });
+			analyzeMutations(new MutationAnalyzer[] { new InvariantAnalyzer(),
+					new MutationResultAnalyzer(), new KilledAnalyzer(),
+					new AssertAnalyzer() });
 
 		}
 	}

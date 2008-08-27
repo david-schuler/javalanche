@@ -7,8 +7,6 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import de.unisb.cs.st.invariants.util.XmlIo;
-
 public class MutationProperties {
 
 	private static Logger logger = Logger.getLogger(MutationProperties.class);
@@ -28,7 +26,8 @@ public class MutationProperties {
 		}
 
 		if (properties != null) {
-			System.out.println(properties.keySet());
+			logger.debug("Got following properties from file. File: "
+					+ PROPERTIES_FILE + " Properties: " + properties.keySet());
 		}
 		if (properties == null) {
 			logger.warn("Could not read properties file:  " + PROPERTIES_FILE);
@@ -36,8 +35,7 @@ public class MutationProperties {
 		return properties;
 	}
 
-	public static final String OUTPUT_DIR = PROPERTIES
-			.getProperty("mutation.output.dir");
+	public static final String OUTPUT_DIR = getProperty("mutation.output.dir");
 
 	public static final String ASPECTJ_DIR = "/scratch/schuler/aspectJ/";
 
@@ -104,7 +102,7 @@ public class MutationProperties {
 	// return false;
 	// }
 
-	public static final String RESULT_DIR = OUTPUT_DIR + "result/";
+	public static final String RESULT_DIR = OUTPUT_DIR;
 
 	/**
 	 * Directory the serialized files are stored.
@@ -190,12 +188,16 @@ public class MutationProperties {
 	public static final String TRACE_BYTECODE_KEY = "mutation.trace";
 
 	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
-			TRACE_BYTECODE_KEY, true);
+			TRACE_BYTECODE_KEY, false);
 
 	public static final String TEST_FILTER_FILE_NAME_KEY = "mutation.test.filter.map";
 	public static final String TEST_FILTER_FILE_NAME = getProperty(TEST_FILTER_FILE_NAME_KEY);
 
 	public static final boolean SHOULD_FILTER_TESTS = shoudFilterTests();
+
+	public static final String EXPERIMENT_DATA_FILENAME_KEY = "experiment.data.filename";
+
+	public static final String EXPERIMENT_DATA_FILENAME = getProperty(EXPERIMENT_DATA_FILENAME_KEY);
 
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
@@ -258,6 +260,7 @@ public class MutationProperties {
 		if (result == null && PROPERTIES.containsKey(key)) {
 			result = PROPERTIES.getProperty(key);
 		}
+		logger.info(String.format("Got property: key=%s  ,  value=%s",key,result));
 		return result;
 	}
 
@@ -273,8 +276,8 @@ public class MutationProperties {
 	// }
 
 	private static String getPrefix() {
-		String project_prefix = System.getProperty(PROJECT_PREFIX_KEY);
-		if (project_prefix == null) {
+		String project_prefix = getProperty(PROJECT_PREFIX_KEY);
+		if (project_prefix == null || project_prefix.length() == 0) {
 			logger.warn("No project prefix found (Property: "
 					+ PROJECT_PREFIX_KEY + " not set)");
 		}
