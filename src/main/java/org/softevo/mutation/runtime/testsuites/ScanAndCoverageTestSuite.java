@@ -33,9 +33,10 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 	@Override
 	public void run(TestResult result) {
 		logger.debug("TestSuite started");
-		// TestResult firstTestResult = nezw TestResult();
-		// super.run(firstTestResult);
-		// logger.info("First test result " + firstTestResult.runCount());
+		 TestResult firstTestResult = new TestResult();
+		 super.run(firstTestResult);
+		 logger.info("First test result " + firstTestResult.runCount());
+
 		Map<String, Test> allTests = TestSuiteUtil.getAllTests(this);
 		// if (allTests.size() != firstTestResult.runCount()) {
 		// throw new RuntimeException("Found unequal number of tests"

@@ -26,7 +26,7 @@ public class AnalyzeMain {
 		if (!didOutput) {
 			analyzeMutations(new MutationAnalyzer[] { new InvariantAnalyzer(),
 					new MutationResultAnalyzer(), new KilledAnalyzer(),
-					new AssertAnalyzer() });
+					new AssertAnalyzer() ,/*new AspectJAnalyzer()*/});
 
 		}
 	}

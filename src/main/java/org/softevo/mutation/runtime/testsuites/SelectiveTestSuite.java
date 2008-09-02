@@ -434,6 +434,7 @@ public class SelectiveTestSuite extends TestSuite {
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}
+//			ResultReporter.touch(actualMutation.getId());
 			if (future.isDone()) {
 				logger
 						.info("Mutation thread finished after disabling mutation");
