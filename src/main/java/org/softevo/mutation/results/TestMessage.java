@@ -1,5 +1,7 @@
 package org.softevo.mutation.results;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,7 +17,7 @@ import org.apache.log4j.Logger;
  *
  */
 @Entity
-public class TestMessage {
+public class TestMessage  implements Serializable{
 
 	private static final int MAX_MESSAGE_LENGTH = 65000;
 

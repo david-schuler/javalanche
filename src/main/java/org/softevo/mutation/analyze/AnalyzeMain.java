@@ -20,7 +20,7 @@ public class AnalyzeMain {
 			String arg = args[0].toLowerCase();
 			if (arg.equals("exp")) {
 				didOutput = true;
-				analyzeMutations(new MutationAnalyzer[] { new ExperimentAnalyzer() });
+				analyzeMutations(new MutationAnalyzer[] { new ExperimentAnalyzer2() });
 			}
 		}
 		if (!didOutput) {

@@ -199,6 +199,10 @@ public class MutationProperties {
 
 	public static final String EXPERIMENT_DATA_FILENAME = getProperty(EXPERIMENT_DATA_FILENAME_KEY);
 
+	public static final String MULTIPLE_MAKEFILES_KEY = "mutation.multiple.makefile";
+	public static final boolean MULTIPLE_MAKEFILES = getPropertyOrDefault(
+			MULTIPLE_MAKEFILES_KEY, false);
+
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
 		return Integer.parseInt(result);
@@ -260,7 +264,8 @@ public class MutationProperties {
 		if (result == null && PROPERTIES.containsKey(key)) {
 			result = PROPERTIES.getProperty(key);
 		}
-		logger.info(String.format("Got property: key=%s  ,  value=%s",key,result));
+		logger.info(String.format("Got property: key=%s  ,  value=%s", key,
+				result));
 		return result;
 	}
 

@@ -1,5 +1,6 @@
 package org.softevo.mutation.results;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,7 +27,12 @@ import org.hibernate.annotations.IndexColumn;
 import org.softevo.mutation.runtime.MutationTestListener;
 
 @Entity
-public class MutationTestResult {
+public class MutationTestResult implements Serializable{
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue

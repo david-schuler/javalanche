@@ -107,7 +107,7 @@ public class ResultReporter {
 		}
 		InvariantObserver instance = InvariantObserver.getInstance();
 		if (instance != null) {
-			int totalViolatedInvariants = instance.getTotalViolatedInvariants();
+			int totalViolatedInvariants = instance.getTotalInvariantViolations();
 			int[] violatedInvariants = instance.getViolatedInvariantsArray();
 			singleTestResult.setTotalViolations(totalViolatedInvariants);
 			singleTestResult.setViolatedInvariants(violatedInvariants);

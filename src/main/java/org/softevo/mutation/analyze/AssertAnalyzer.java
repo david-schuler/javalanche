@@ -103,39 +103,65 @@ public class AssertAnalyzer implements MutationAnalyzer {
 		// nonInvariantNonError));
 
 		sb.append('\n');
-		sb.append("Top Percentages for all invariant violating mutations\n");
+		sb
+				.append("Top Percentages for all invariant violating mutations ranked by different violations\n");
 		for (int i = 5; i <= 100; i += 5) {
-			appendRankedValues(killedAndTouchedMutations,
-					invariantViolatingMutations, sb, i);
+			String percentValue = getPercentValue(killedAndTouchedMutations,
+					invariantViolatingMutations, i,
+					AnalyzeUtil.DIFFERENT_VIOLATIONS_COMPARATOR);
+			sb.append(percentValue).append('\n');
 		}
 
 		sb.append('\n');
 		sb
-				.append("Comparison: Top Percentages for all non invariant violating mutations\n");
+				.append("Top Percentages for all invariant violating mutations ranked by total violations\n");
 		for (int i = 5; i <= 100; i += 5) {
-			appendRankedValues(killedAndTouchedMutations,
-					nonInvariantViolatingMutations, sb, i);
+			String percentValue = getPercentValue(killedAndTouchedMutations,
+					invariantViolatingMutations, i,
+					AnalyzeUtil.TOTAL_VIOLATIONS_COMPARATOR);
+			sb.append(percentValue).append('\n');
 		}
+
+		// sb.append('\n');
+		// sb
+		// .append("Comparison: Top Percentages for all non invariant violating
+		// mutations\n");
+		// for (int i = 5; i <= 100; i += 5) {
+		// appendRankedValues(killedAndTouchedMutations,
+		// nonInvariantViolatingMutations, sb, i);
+		// }
 
 		sb.append('\n');
 		sb
-				.append("Top Percentages for invariant violating mutations that are not killed by errors\n");
+				.append("Top Percentages for invariant violating mutations that are not killed by errors ranked by different violations\n");
 		List<Mutation> invariantNonErrorMutations = getNonErrorMutations(
 				killedByError, invariantViolatingMutations);
 		for (int i = 5; i <= 100; i += 5) {
-			appendRankedValues(killedAndTouchedMutations,
-					invariantNonErrorMutations, sb, i);
+			String percentValue = getPercentValue(killedAndTouchedMutations,
+					invariantNonErrorMutations, i,
+					AnalyzeUtil.DIFFERENT_VIOLATIONS_COMPARATOR);
+			sb.append(percentValue).append('\n');
 		}
 
-		sb.append('\n');
 		sb
-				.append("Comparison: Top Percentages for non invariant violating mutations that are not killed by errors\n");
-		List<Mutation> nonInvariantNonErrorMutations = getNonErrorMutations(
-				killedByError, nonInvariantViolatingMutations);
+				.append("Top Percentages for invariant violating mutations that are not killed by errors ranked by total violations\n");
 		for (int i = 5; i <= 100; i += 5) {
-			appendRankedValues(killedAndTouchedMutations,
-					nonInvariantNonErrorMutations, sb, i);
+			String percentValue = getPercentValue(killedAndTouchedMutations,
+					invariantNonErrorMutations, i,
+					AnalyzeUtil.TOTAL_VIOLATIONS_COMPARATOR);
+			sb.append(percentValue).append('\n');
 		}
+
+		// sb.append('\n');
+		// sb
+		// .append("Comparison: Top Percentages for non invariant violating
+		// mutations that are not killed by errors\n");
+		// List<Mutation> nonInvariantNonErrorMutations = getNonErrorMutations(
+		// killedByError, nonInvariantViolatingMutations);
+		// for (int i = 5; i <= 100; i += 5) {
+		// appendRankedValues(killedAndTouchedMutations,
+		// nonInvariantNonErrorMutations, sb, i);
+		// }
 		return sb.toString();
 	}
 
@@ -214,28 +240,21 @@ public class AssertAnalyzer implements MutationAnalyzer {
 		return invariantNonErrorMutations;
 	}
 
-	private void appendRankedValues(List<Mutation> killedMutations,
-
-	List<Mutation> invariantViolatingMutations, StringBuilder sb, int percent) {
+	private String getPercentValue(List<Mutation> killedMutations,
+			List<Mutation> invariantViolatingMutations, int percent,
+			Comparator<Mutation> comparator) {
 		List<Mutation> sorted = new ArrayList<Mutation>(
 				invariantViolatingMutations);
-		Collections.sort(sorted, new Comparator<Mutation>() {
-
-			public int compare(Mutation o1, Mutation o2) {
-				MutationTestResult mutationResult1 = o1.getMutationResult();
-				MutationTestResult mutationResult2 = o2.getMutationResult();
-				return mutationResult1.getDifferentViolatedInvariants()
-						- mutationResult2.getDifferentViolatedInvariants();
-			}
-
-		});
+		Collections.sort(sorted, comparator);
 		Collections.reverse(sorted);
 		if (sorted.size() == 0) {
-			sb.append("Empty list given " + invariantViolatingMutations + "  "
-					+ percent);
-			return;
+			return "Empty list given " + invariantViolatingMutations + " for "
+					+ percent;
+
 		}
-		int percentListSize = (int) (((double) percent / 100.) * sorted.size());
+
+		int percentListSize = Math.max(1,
+				(int) (((double) percent / 100.) * sorted.size()));
 		logger.debug("Size " + sorted.size() + " Percent size "
 				+ percentListSize);
 		List<Mutation> percentList = sorted.subList(0, percentListSize);
@@ -258,48 +277,13 @@ public class AssertAnalyzer implements MutationAnalyzer {
 				percentList);
 		killedInvariantViolatingMutations.retainAll(killedMutations);
 		int killedInvariantViolating = killedInvariantViolatingMutations.size();
-		sb
-				.append(String
-						.format(
-								"Mutations that are killed out of top %d percent (%d mutations): %s",
-								percent, percentList.size(), AnalyzeUtil
-										.formatPercent(
-												killedInvariantViolating,
-												percentList.size())));
+		String percentString = AnalyzeUtil.formatPercent(
+				killedInvariantViolating, percentList.size());
+		String message = String
+				.format(
+						"Mutations that are killed out of top %d percent (%d mutations): %s",
+						percent, percentList.size(), percentString);
 
-		// List<Mutation> invariantAssertMutations = new ArrayList<Mutation>();
-		// invariantAssertMutations.addAll(invariantViolatingMutations);
-		// invariantAssertMutations.retainAll(killedExclusivelyByFailure);
-		//
-		// List<Mutation> invariantNonErrorMutations = new
-		// ArrayList<Mutation>();
-		// invariantNonErrorMutations.addAll(invariantViolatingMutations);
-		// invariantNonErrorMutations.removeAll(killedByError);
-		//
-		// int invariantAssert = invariantAssertMutations.size();
-		// int invariantNonError = invariantNonErrorMutations.size();
-		// sb.append(String.format(FORMAT,
-		// "Number of invariant violating mutations:",
-		// invariantViolatingMutations.size()));
-		//
-		// sb
-		// .append(String
-		// .format(
-		// FORMAT,
-		// "Number of invariant violating mutations that are killed exclusively
-		// by assertions:",
-		// invariantAssert));
-		//
-		// sb
-		// .append(String
-		// .format(
-		// FORMAT,
-		// "Number of invariant violating mutations that are not killed by
-		// errors:",
-		// invariantNonError));
-		// sb
-		// .append(AnalyzeUtil.formatPercent(invariantAssert,
-		// invariantNonError));
-		sb.append('\n');
+		return message;
 	}
 }
