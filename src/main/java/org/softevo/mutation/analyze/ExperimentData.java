@@ -36,9 +36,8 @@ class ExperimentData {
 				.append("Mutation ids of covered and survived mutations that violated no invariants: "
 						+ survivedNonViolatedCoveredIds);
 		sb.append('\n');
-		sb
-				.append("Mutation ids survived mutations that violated invariants: "
-						+ survivedViolatedIds);
+		sb.append("Mutation ids survived mutations that violated invariants: "
+				+ survivedViolatedIds);
 
 		sb.append('\n');
 		return sb.toString();
@@ -54,8 +53,8 @@ class ExperimentData {
 	private String compareToData(ExperimentData other) {
 		return compare(this, other);
 	}
-	static String compare(ExperimentData fullRun,
-			ExperimentData other) {
+
+	static String compare(ExperimentData fullRun, ExperimentData other) {
 		Set<Long> survivedViolatedIntersection = new HashSet<Long>();
 		survivedViolatedIntersection.addAll(fullRun.caughtIds);
 		survivedViolatedIntersection.retainAll(other.survivedViolatedIds);
@@ -65,8 +64,7 @@ class ExperimentData {
 						.format(
 								"%d out of %d mutation that violated invariants were caught.  %s\n",
 								survivedViolatedIntersection.size(),
-								other.survivedViolatedIds.size(),
-								AnalyzeUtil
+								other.survivedViolatedIds.size(), AnalyzeUtil
 										.formatPercent(
 												survivedViolatedIntersection
 														.size(),
@@ -81,35 +79,43 @@ class ExperimentData {
 				.append(String
 						.format(
 								"%d out of %d mutation that did not violat invariants and are covered were caught. %s\n",
-								survivedNonViolatedCoveredIntersection
-										.size(),
-								other.survivedNonViolatedCoveredIds
-										.size(),
-								AnalyzeUtil
-										.formatPercent(
-												survivedNonViolatedCoveredIntersection
-														.size(),
-												other.survivedNonViolatedCoveredIds
-														.size())));
+								survivedNonViolatedCoveredIntersection.size(),
+								other.survivedNonViolatedCoveredIds.size(),
+								AnalyzeUtil.formatPercent(
+										survivedNonViolatedCoveredIntersection
+												.size(),
+										other.survivedNonViolatedCoveredIds
+												.size())));
 		return sb.toString();
 	}
 
-
 	private static String compare(String fullFilename, String experimentFilename) {
-		ExperimentData full = (ExperimentData) XmlIo.fromXml(fullFilename);
-		ExperimentData exp = (ExperimentData) XmlIo.fromXml(experimentFilename);
-		return compare(full, exp);
+		Object full = XmlIo.fromXml(fullFilename);
+		Object exp = XmlIo.fromXml(experimentFilename);
+		if (full instanceof ExperimentData && exp instanceof ExperimentData) {
+			return compare((ExperimentData) full, (ExperimentData) exp);
+		} else if (full instanceof ExperimentData
+				&& exp instanceof ExperimentData2) {
+			return ExperimentData2.compare((ExperimentData) full,
+					(ExperimentData2) exp);
+		} else if (full instanceof ExperimentData2
+				&& exp instanceof ExperimentData2) {
+			return ExperimentData2.compare((ExperimentData2) full,
+					(ExperimentData2) exp);
+		}
+		String message = "Did not regocnize given files";
+		new RuntimeException(message);
+		return message;
 	}
 
 	public static void main(String[] args) {
-		if(args.length <2){
+		if (args.length < 2) {
 			System.out.println("Usage: <fullData> <experimentData>");
-		}
-		else{
-			System.out.println("Comparing - Full data:" + args[0] + "  Experiment Data: " + args[1]);
+		} else {
+			System.out.println("Comparing - Full data:" + args[0]
+					+ "  Experiment Data: " + args[1]);
 			System.out.println(compare(args[0], args[1]));
 		}
 	}
-
 
 }

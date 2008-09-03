@@ -13,6 +13,7 @@ public class AssertAnalyzer implements MutationAnalyzer {
 
 	private static Logger logger = Logger.getLogger(AssertAnalyzer.class);
 	private static final String FORMAT = "%-55s %10d\n";
+	private static final String FORMAT_NO_NEWLINE = "%-55s %10d";
 	private static final String FORMAT_STRING = "%-55s %s\n";
 
 	public String analyze(Iterable<Mutation> mutations) {
@@ -168,14 +169,14 @@ public class AssertAnalyzer implements MutationAnalyzer {
 	private void appendNonViolatingEvaluation(List<Mutation> killedByError,
 			List<Mutation> killedExclusivelyByFailure,
 			List<Mutation> nonInvariantViolatingMutations, StringBuilder sb) {
-		List<Mutation> nonInvariantAssertMutations = new ArrayList<Mutation>();
-		nonInvariantAssertMutations.addAll(nonInvariantViolatingMutations);
-		nonInvariantAssertMutations.retainAll(killedExclusivelyByFailure);
+		List<Mutation> nonInvariantAssertKilled = new ArrayList<Mutation>();
+		nonInvariantAssertKilled.addAll(nonInvariantViolatingMutations);
+		nonInvariantAssertKilled.retainAll(killedExclusivelyByFailure);
 
 		List<Mutation> nonInvariantNonErrorMutations = getNonErrorMutations(
 				killedByError, nonInvariantViolatingMutations);
 
-		int nonInvariantAssert = nonInvariantAssertMutations.size();
+		int nonInvariantAssert = nonInvariantAssertKilled.size();
 		int nonInvariantNonError = nonInvariantNonErrorMutations.size();
 		sb.append(String.format(FORMAT,
 				"Number of non invariant violating mutations:",
@@ -184,27 +185,41 @@ public class AssertAnalyzer implements MutationAnalyzer {
 		sb
 				.append(String
 						.format(
-								FORMAT,
+								FORMAT_NO_NEWLINE,
 								"Number of non invariant violating mutations that are killed exclusively by assertions:",
-								nonInvariantAssert));
+								nonInvariantAssert)
+						+ " - "
+						+ AnalyzeUtil.formatPercent(nonInvariantAssert,
+								nonInvariantViolatingMutations.size()));
+		sb.append('\n');
 		sb
 				.append(String
 						.format(
 								FORMAT,
 								"Number of non invariant violating mutations that are not killed by errors:",
-								nonInvariantNonError));
+								nonInvariantNonError)
+
+				);
+
+		sb
+				.append(String
+						.format(
+								FORMAT_STRING,
+								"Mutation score (non invariant violating mutations) for assert only",
+								AnalyzeUtil.formatPercent(nonInvariantAssert,
+										nonInvariantNonError)));
 	}
 
 	private void appendAssertEvaluation(List<Mutation> killedByError,
 			List<Mutation> killedExclusivelyByFailure,
 			List<Mutation> invariantViolatingMutations, StringBuilder sb) {
+
 		List<Mutation> invariantAssertMutations = new ArrayList<Mutation>();
 		invariantAssertMutations.addAll(invariantViolatingMutations);
 		invariantAssertMutations.retainAll(killedExclusivelyByFailure);
 
 		List<Mutation> invariantNonErrorMutations = getNonErrorMutations(
 				killedByError, invariantViolatingMutations);
-
 		int invariantAssert = invariantAssertMutations.size();
 		int invariantNonError = invariantNonErrorMutations.size();
 		sb.append(String.format(FORMAT,
@@ -223,12 +238,17 @@ public class AssertAnalyzer implements MutationAnalyzer {
 						.format(
 								FORMAT,
 								"Number of invariant violating mutations that are not killed by errors:",
-								invariantNonError));
-		// sb
-		// .append(String
-		// .format(
-		// FORMAT_STRING,AnalyzeUtil.formatPercent(invariantAssert,
-		// invariantNonError)));
+								invariantNonError)
+
+				);
+
+		sb
+				.append(String
+						.format(
+								FORMAT_STRING,
+								"Mutation score (invariant violating mutations) for assert only",
+								AnalyzeUtil.formatPercent(invariantAssert,
+										invariantNonError)));
 		sb.append('\n');
 	}
 
