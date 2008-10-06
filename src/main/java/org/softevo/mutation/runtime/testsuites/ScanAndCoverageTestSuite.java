@@ -13,7 +13,6 @@ import junit.framework.Test;
 
 import org.apache.log4j.Logger;
 import org.softevo.mutation.bytecodeMutations.mutationCoverage.CoverageData;
-import org.softevo.mutation.io.XmlIo;
 
 public class ScanAndCoverageTestSuite extends TestSuite {
 
@@ -32,10 +31,10 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 
 	@Override
 	public void run(TestResult result) {
-		logger.debug("TestSuite started");
-		 TestResult firstTestResult = new TestResult();
-		 super.run(firstTestResult);
-		 logger.info("First test result " + firstTestResult.runCount());
+		logger.info("TestSuite started");
+//		TestResult firstTestResult = new TestResult();
+//		super.run(firstTestResult);
+//		logger.info("First test result " + firstTestResult.runCount());
 
 		Map<String, Test> allTests = TestSuiteUtil.getAllTests(this);
 		// if (allTests.size() != firstTestResult.runCount()) {
@@ -64,14 +63,14 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 				} else {
 					throw e;
 				}
-			}finally{
+			} finally {
 				unsetTestName(testName);
 				testsRun.add(testName);
 			}
 			logger.info("Test Finished (" + testCount + ")" + testName);
 		}
 		CoverageData.endCoverage();
-		XmlIo.toXML(testsRun, "tests-runByScanAndCoveragetestSuite.xml");
+		// XmlIo.toXML(testsRun, "tests-runByScanAndCoveragetestSuite.xml");
 
 	}
 

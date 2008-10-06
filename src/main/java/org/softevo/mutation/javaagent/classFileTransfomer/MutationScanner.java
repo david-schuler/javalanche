@@ -67,7 +67,7 @@ public class MutationScanner implements ClassFileTransformer {
 	}
 
 	public MutationScanner() {
-		addShutDownHook();
+//		addShutDownHook();
 	}
 
 	private void addShutDownHook() {
@@ -103,7 +103,7 @@ public class MutationScanner implements ClassFileTransformer {
 			try {
 
 				String classNameWithDots = className.replace('/', '.');
-				logger.info(classNameWithDots);
+				logger.debug(classNameWithDots);
 
 				if (md.shouldBeHandled(classNameWithDots)) {
 //					TraceClassVisitor tr = new TraceClassVisitor(new PrintWriter(MutationPreMain.sysout));
@@ -117,7 +117,7 @@ public class MutationScanner implements ClassFileTransformer {
 					mpc.updateDB();
 					mpc.clear();
 				} else {
-					logger.info("Skipping class " + className);
+					logger.debug("Skipping class " + className);
 				}
 				if (classNameWithDots.endsWith("AllTests")
 						|| compareWithSuiteProperty(classNameWithDots)) {
