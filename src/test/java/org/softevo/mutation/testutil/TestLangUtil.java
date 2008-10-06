@@ -1,4 +1,4 @@
-package org.softevo.mutation;
+package org.softevo.mutation.testutil;
 
 import static org.junit.Assert.fail;
 
