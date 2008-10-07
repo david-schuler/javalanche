@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -318,14 +317,6 @@ public class QueryManager {
 //		return retList.toArray(new String[0]);
 //	}
 
-
-	private static void addAndCastResults(Set<Mutation> results,
-			List queryResults) {
-		for (Object o : queryResults) {
-			logger.log(Level.DEBUG, "Type" + o.getClass());
-			results.add((Mutation) o);
-		}
-	}
 
 	/**
 	 * Checks if there are mutations for given class in the database.

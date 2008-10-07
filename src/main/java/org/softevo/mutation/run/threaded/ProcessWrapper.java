@@ -52,10 +52,11 @@ public class ProcessWrapper extends Thread {
 
 	private int debugPort;
 
-	private int taskId;
+	 private int taskId;
 
 	// private String instanceDir;
 
+	@SuppressWarnings("unused")
 	private InstanceManager instances;
 
 	public ProcessWrapper(String command, File taskFile, File dir,
@@ -304,12 +305,23 @@ public class ProcessWrapper extends Thread {
 		end();
 	}
 
-	private void killProcess() {
-		KillProcess.killProcess(taskId);
-	}
 
 	public String getShortDescription() {
 		return "Process handling " + taskFile.getName();
+	}
+
+	/**
+	 * @return the taskId
+	 */
+	public int getTaskId() {
+		return taskId;
+	}
+
+	/**
+	 * @param taskId the taskId to set
+	 */
+	public void setTaskId(int taskId) {
+		this.taskId = taskId;
 	}
 
 }

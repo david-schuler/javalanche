@@ -3,7 +3,6 @@ package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -11,12 +10,7 @@ import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 
 public class PossibilitiesRicClassAdapter extends ClassAdapter {
 
-	private static Logger logger = Logger
-			.getLogger(PossibilitiesRicClassAdapter.class);
-
 	private PossibilitiesRicMethodAdapter actualAdapter;
-
-	private String lastMethodName;
 
 	private String className;
 
@@ -40,8 +34,6 @@ public class PossibilitiesRicClassAdapter extends ClassAdapter {
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String desc,
 			String signature, String[] exceptions) {
-		printResultOfLastMethod();
-		lastMethodName = name;
 		actualAdapter = new PossibilitiesRicMethodAdapter(super.visitMethod(
 				access, name, desc, signature, exceptions), className, name,
 				mutationPossibilityCollector, possibilities);
@@ -49,19 +41,8 @@ public class PossibilitiesRicClassAdapter extends ClassAdapter {
 
 	}
 
-	private void printResultOfLastMethod() {
-		if (actualAdapter != null) {
-//			logger.info(String
-//					.format("%d possibilitities found for method: %s in %s ",
-//							actualAdapter.getPossibilities(), lastMethodName,
-//							className)); TODO
-			actualAdapter = null;
-		}
-	}
-
 	@Override
 	public void visitEnd() {
-		printResultOfLastMethod();
 		super.visitEnd();
 	}
 

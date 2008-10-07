@@ -115,19 +115,6 @@ public class MutationMakeFileGenerator {
 		writeMakefile(add);
 	}
 
-	private static void writeAspectjMakefile(String add) {
-		String generateMakeFile = generateMakeFile(add);
-		try {
-			File file = new File("Makefile");
-			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-			bw.write(generateMakeFile);
-			bw.close();
-			logger.info(file.getAbsoluteFile() + " written");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	private static void writeMakefile(String add) {
 		String generateMakeFile = generateMakeFile(add);
 		try {

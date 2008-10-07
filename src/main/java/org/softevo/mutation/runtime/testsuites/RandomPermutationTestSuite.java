@@ -101,8 +101,8 @@ public class RandomPermutationTestSuite extends TestSuite {
 					.newFixedThreadPool(processes);
 			List<TestResult> resultsForThisTest = new ArrayList<TestResult>();
 
-			List<Future> futures = new ArrayList<Future>();
-			Map<Future, TestResult> resultForFuture = new HashMap<Future, TestResult>();
+			List<Future<Object>> futures = new ArrayList<Future<Object>>();
+			Map<Future<Object>, TestResult> resultForFuture = new HashMap<Future<Object>, TestResult>();
 			for (int i = 0; i < processes; i++) {
 				TestResult resultForTest = new TestResult();
 				Callable<Object> callable = TestSuiteUtil.getCallable(entry

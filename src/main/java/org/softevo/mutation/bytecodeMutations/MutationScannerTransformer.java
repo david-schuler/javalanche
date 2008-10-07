@@ -32,7 +32,6 @@ public class MutationScannerTransformer extends BytecodeTransformer {
 		if (MutationProperties.TRACE_BYTECODE) {
 			cc = new TraceClassVisitor(cc, new PrintWriter(MutationPreMain.sysout));
 		}
-//		return cc ; //FIXME
 		return new MutationsCollectorClassAdapter(cc, mpc);
 	}
 }

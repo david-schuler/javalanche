@@ -1,16 +1,12 @@
 package org.softevo.mutation.javaagent.classFileTransfomer;
 
-import java.io.PrintWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
 import org.apache.log4j.Logger;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.util.TraceClassVisitor;
 import org.softevo.mutation.bytecodeMutations.MutationScannerTransformer;
 import org.softevo.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
-import org.softevo.mutation.javaagent.MutationPreMain;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
@@ -67,7 +63,7 @@ public class MutationScanner implements ClassFileTransformer {
 	}
 
 	public MutationScanner() {
-//		addShutDownHook();
+		addShutDownHook();
 	}
 
 	private void addShutDownHook() {

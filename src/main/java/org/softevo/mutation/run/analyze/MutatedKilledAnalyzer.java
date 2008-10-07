@@ -1,7 +1,5 @@
 package org.softevo.mutation.run.analyze;
 
-import org.softevo.mutation.results.Mutation;
-
 import java.util.ArrayList;
 import java.util.List;
 

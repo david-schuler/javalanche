@@ -1,6 +1,5 @@
 package org.softevo.mutation.javaagent.classFileTransfomer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.instrument.ClassFileTransformer;
@@ -9,13 +8,11 @@ import java.security.ProtectionDomain;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.softevo.mutation.bytecodeMutations.MutationTransformer;
 import org.softevo.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import org.softevo.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
-import org.softevo.mutation.io.XmlIo;
 import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.objectInspector.asmAdapters.ObjectInspectorTransformer;
@@ -170,13 +167,13 @@ public class MutationFileTransformer implements ClassFileTransformer {
 					logger.info("Class transformed: " + classNameWithDots);
 					return transformedBytecode;
 				}
-			} catch (Exception e) {
-				logger.fatal(e.getMessage());
-				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			} catch (Throwable t) {
+				logger.fatal("Transformation of class " + className
+						+ " failed", t);
 				StringWriter writer = new StringWriter();
-				e.printStackTrace(new PrintWriter(writer));
+				t.printStackTrace(new PrintWriter(writer));
 				logger.fatal(writer.getBuffer().toString());
-				e.printStackTrace();
+				t.printStackTrace();
 				System.exit(0);
 				// throw new RuntimeException(e.getMessage());
 			}

@@ -73,11 +73,13 @@ public class SerializeIo {
 		return deserialize(new File(filename));
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> T get(File file) {
 		Object o = deserialize(file);
 		return (T) o;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> T get(String filename) {
 		Object o = deserialize(filename);
 		return (T) o;
@@ -89,5 +91,6 @@ public class SerializeIo {
 
 	public static void main(String[] args) {
 		DaikonClassInvariants dci = get("/scratch/schuler/subjects/jaxen-1.1.1/daikon-invariants.ser");
+		dci.statistics();
 	}
 }

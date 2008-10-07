@@ -17,9 +17,6 @@ import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;
-import org.softevo.mutation.util.Util;
-
-import sun.security.jca.GetInstance;
 
 import de.unisb.cs.st.invariants.runtime.InvariantObserver;
 

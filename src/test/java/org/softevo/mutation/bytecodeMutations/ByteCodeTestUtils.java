@@ -2,7 +2,6 @@ package org.softevo.mutation.bytecodeMutations;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -10,9 +9,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Assert;
-import org.softevo.mutation.coverageResults.db.TestCoverageClassResult;
-import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
-import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
 import org.softevo.mutation.io.Io;
 import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;

@@ -1,5 +1,8 @@
 package org.softevo.mutation.javaagent;
 
+import static org.softevo.mutation.properties.MutationProperties.*;
+import static org.softevo.mutation.properties.MutationProperties.RunMode.*;
+
 import java.io.PrintStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
@@ -14,10 +17,6 @@ import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 import de.unisb.cs.st.invariants.javaagent.DaikonInvariantTransformer;
-import de.unisb.cs.st.invariants.javaagent.InvariantTransformer;
-
-import static org.softevo.mutation.properties.MutationProperties.*;
-import static org.softevo.mutation.properties.MutationProperties.RunMode.*;
 
 public class MutationPreMain {
 

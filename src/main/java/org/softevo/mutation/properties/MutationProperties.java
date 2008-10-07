@@ -159,8 +159,7 @@ public class MutationProperties {
 
 	public static final String NOT_MUTATED = "notMutated";
 
-	public static final boolean OBSERVE_OBJECTS = false; // TODO read from
-	// property
+	public static final boolean OBSERVE_OBJECTS = false; // TODO read from property
 
 	public static final String NUMBER_OF_THREADS_KEY = "mutation.number.of.threads";
 

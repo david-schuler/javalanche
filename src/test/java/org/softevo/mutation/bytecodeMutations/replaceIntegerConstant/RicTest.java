@@ -1,6 +1,5 @@
 package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 
 import org.junit.Test;

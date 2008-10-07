@@ -80,21 +80,6 @@ public class ResultDeleter {
 		session.close();
 	}
 
-	private static void deleteMutationsResults(String filename) {
-		logger.info("Trying to delete ids from file: " + filename);
-		List<Long> ids = Io.getIDsFromFile(new File(filename));
-		List<Mutation> mutationsFromDbByID = QueryManager
-				.getMutationsFromDbByID(ids.toArray(new Long[0]));
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		for (Mutation m : mutationsFromDbByID) {
-			deleteMutationResult(session, m);
-		}
-		logger.info(String.format("Deleting %d mutation results",
-				mutationsFromDbByID.size()));
-		tx.commit();
-		session.close();
-	}
 
 	private static void deleteMutationsResultsForId(long id) {
 		logger.info("Trying to delete results for id: " + id);

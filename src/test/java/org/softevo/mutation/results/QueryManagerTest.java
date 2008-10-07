@@ -1,6 +1,5 @@
 package org.softevo.mutation.results;
 
-import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestResult;
@@ -50,7 +49,7 @@ public class QueryManagerTest {
 
 	@After
 	public void tearDown() {
-		new HibernateTest().hibernateDelete();
+		HibernateTest.hibernateDelete();
 	}
 
 	@Test

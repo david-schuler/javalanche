@@ -19,6 +19,11 @@ import org.apache.log4j.Logger;
 @Entity
 public class TestMessage  implements Serializable{
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private static final int MAX_MESSAGE_LENGTH = 65000;
 
 	private static Logger logger = Logger.getLogger(TestMessage.class);
