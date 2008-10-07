@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.softevo.mutation.results.Mutation;
 
-public class TestMutationManager {
+public class MutationManagerTest {
 
 	@Test
 	public void testGetClassesToMutate() {

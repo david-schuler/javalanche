@@ -20,7 +20,7 @@ import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.runtime.MutationTestListener;
 
-public class TestDelete {
+public class DeleteTest {
 
 	private static final String PASS_TEST = "passTest";
 

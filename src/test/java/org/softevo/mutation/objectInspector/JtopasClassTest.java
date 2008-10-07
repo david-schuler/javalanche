@@ -13,7 +13,7 @@ import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 import org.softevo.mutation.objectInspector.asmAdapters.ObjectInspectorClassAdapter;
 
-public class TestJtopasClass {
+public class JtopasClassTest {
 
 	private static final String TEST_CLASS_FILENAME = "TestTokenProperties.clazz";
 
@@ -33,7 +33,7 @@ public class TestJtopasClass {
 					CheckClassAdapter cc = new CheckClassAdapter(cw);
 					TraceClassVisitor tcv = new TraceClassVisitor(cc,
 							new PrintWriter(System.out));
-					ClassReader cr = new ClassReader(TestJtopasClass.class
+					ClassReader cr = new ClassReader(JtopasClassTest.class
 							.getClassLoader().getResourceAsStream(
 									TEST_CLASS_FILENAME));
 					cr.accept(new ObjectInspectorClassAdapter(tcv),

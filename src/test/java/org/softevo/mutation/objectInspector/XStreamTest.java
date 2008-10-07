@@ -9,7 +9,7 @@ import org.softevo.mutation.io.XmlIo;
 
 import com.thoughtworks.xstream.XStream;
 
-public class TestXStream {
+public class XStreamTest {
 
 	@Test
 	public void testXstream() {

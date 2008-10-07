@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.softevo.mutation.coverageResults.CoverageResult;
 
-public class TestXML {
+public class XmlTest {
 
 	private static final File FILE = new File("test-xml-testfile.xml");
 

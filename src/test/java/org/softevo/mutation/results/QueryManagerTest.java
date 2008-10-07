@@ -19,9 +19,9 @@ import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.runtime.MutationTestListener;
-import org.softevo.mutation.testutil.TestUtil;
+import org.softevo.mutation.testutil.UtilTest;
 
-public class QueryManagerTestClass {
+public class QueryManagerTest {
 
 	private static String className = "testClass";
 
@@ -34,7 +34,7 @@ public class QueryManagerTestClass {
 
 	@BeforeClass
 	public static void setUpClass(){
-		TestUtil.getMutationsForClazzOnClasspath(TestProperties.ADVICE_CLAZZ);
+		UtilTest.getMutationsForClazzOnClasspath(TestProperties.ADVICE_CLAZZ);
 	}
 
 

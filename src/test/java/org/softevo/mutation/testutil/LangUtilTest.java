@@ -17,9 +17,9 @@ import org.softevo.mutation.results.persistence.MutationManager;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
-public class TestLangUtil {
+public class LangUtilTest {
 
-	private static Logger logger = Logger.getLogger(TestLangUtil.class);
+	private static Logger logger = Logger.getLogger(LangUtilTest.class);
 
 	private static final String LANG_UTIL = "keyForLangUtil";
 
@@ -48,14 +48,14 @@ public class TestLangUtil {
 			System.out.println("Test Started");
 			MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 			BytecodeTransformer bt = new MutationScannerTransformer(mpc);
-			InputStream is = TestLangUtil.class
+			InputStream is = LangUtilTest.class
 					.getResourceAsStream(TestProperties.LANG_UTIL_CLAZZ);
 			bt.transformBytecode(new ClassReader(is));
 			mpc.toDB();
 			MutationManager.setApplyAllMutation(true);
 			logger.info("Mutations added");
 			BytecodeTransformer bct = new MutationTransformer();
-			InputStream is2 = TestLangUtil.class
+			InputStream is2 = LangUtilTest.class
 					.getResourceAsStream(TestProperties.LANG_UTIL_CLAZZ);
 			byte[] transformed;
 			transformed = bct.transformBytecode(new ClassReader(is2));

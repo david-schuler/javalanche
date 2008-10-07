@@ -12,7 +12,7 @@ import org.softevo.mutation.bytecodeMutations.integrateSuite.testClasses.AllTest
 import org.softevo.mutation.runtime.testsuites.SelectiveTestSuite;
 import org.softevo.mutation.runtime.testsuites.TestSuiteUtil;
 
-public class TestIntegrateSuite {
+public class IntegrateSuiteTest {
 
 	@Test
 	public void runTests() {
