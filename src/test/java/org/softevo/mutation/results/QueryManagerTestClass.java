@@ -86,37 +86,6 @@ public class QueryManagerTestClass {
 	}
 
 	@Test
-	public void testTestsForLine() {
-		String className = "org.aspectj.ajdt.internal.compiler.lookup.EclipseFactory";
-		int lineNumber = 218;
-		QueryManager.getTestCasesExternalData(className, lineNumber);
-	}
-
-	@Ignore("TODO Generate Coverage data for artificial coverage data instead of using aspectj data")
-	@Test
-	public void testGetTestCases() {
-		List<Mutation> mutationList = QueryManager
-				.getAllMutationsForClass(TestProperties.SAMPLE_FILE_CLASS_NAME);
-		int totalTests = 0;
-		for (Mutation mutation : mutationList) {
-			String[] testcases = QueryManager.getTestCasesExternalData(mutation);
-			if (testcases != null) {
-				totalTests += testcases.length;
-			}
-		}
-		Assert.assertTrue(totalTests > 20);
-	}
-
-	@Test
-	public void testGetAllMutationsForTestCases() {
-		QueryManager
-				.getAllMutationsForTestCases(Arrays
-						.asList(new String[] {
-								"org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.TestJump.testMethod4",
-								"org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.TestJump.testMethod3" }));
-	}
-
-	@Test
 	public void testhasMutationForClass() {
 		boolean hasClass = QueryManager
 				.hasMutationsforClass(TestProperties.SAMPLE_FILE_CLASS_NAME);
@@ -124,7 +93,7 @@ public class QueryManagerTestClass {
 				TestProperties.SAMPLE_FILE_CLASS_NAME), hasClass);
 	}
 
-	@Ignore("TODO Generate Coverage data for artificial coverage data instead of using aspectj data")
+	@Ignore("TODO Generate Coverage data for artificialialy instead of using aspectj data")
 	@Test
 	public void testIsCoveredMutation() {
 		List<Mutation> mutationList = QueryManager

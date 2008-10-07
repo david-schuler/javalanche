@@ -1,12 +1,10 @@
-	package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
+package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
 
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicTransformer;
 import org.softevo.mutation.properties.TestProperties;
 
 public class RicTest {
@@ -19,12 +17,13 @@ public class RicTest {
 
 	}
 
+
 	@Test(expected = NoClassDefFoundError.class)
 	public void testForOneClass() {
 		ClassReader classReader = null;
 		try {
-			classReader = new ClassReader(new BufferedInputStream(
-					new FileInputStream(TestProperties.SAMPLE_FILE)));
+			classReader = new ClassReader(RicTest.class.getClassLoader()
+					.getResourceAsStream(TestProperties.ADVICE_CLAZZ));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

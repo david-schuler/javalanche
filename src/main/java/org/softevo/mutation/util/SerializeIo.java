@@ -73,13 +73,14 @@ public class SerializeIo {
 		return deserialize(new File(filename));
 	}
 
-	public static <T> T get(File f) {
-		Object o = deserialize(f);
+	public static <T> T get(File file) {
+		Object o = deserialize(file);
 		return (T) o;
 	}
 
 	public static <T> T get(String filename) {
-		return get(new File(filename));
+		Object o = deserialize(filename);
+		return (T) o;
 	}
 
 	public static void serializeToFile(Object o, String filename) {

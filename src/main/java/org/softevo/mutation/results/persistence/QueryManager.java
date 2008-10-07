@@ -1,7 +1,6 @@
 package org.softevo.mutation.results.persistence;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,8 +14,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
-import org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.MutationCoverage;
@@ -269,100 +266,58 @@ public class QueryManager {
 		session.close();
 	}
 
-	public static String[] getTestCasesExternalData(Mutation mutation) {
-		return getTestCasesExternalData(mutation.getClassName(), mutation
-				.getLineNumber());
-	}
+//	public static String[] getTestCasesExternalData(Mutation mutation) {
+//		return getTestCasesExternalData(mutation.getClassName(), mutation
+//				.getLineNumber());
+//	}
 
-	/**
-	 * Gets all test cases from the database that cover the given line of the
-	 * class.
-	 *
-	 * @param className
-	 *            The name of the class to get the test cases for.
-	 * @param lineNumber
-	 *            The linenumber to get the test cases for.
-	 * @return An array that contains the names of the testcases that cover this
-	 *         line.
-	 */
-	public static String[] getTestCasesExternalData(String className,
-			int lineNumber) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		Query query = session
-				.createQuery("from TestCoverageClassResult as clazz join clazz.lineResults as lineres where clazz.className=:clname and lineres.lineNumber=:lnumber");
-		query.setString("clname", className);
-		query.setInteger("lnumber", lineNumber);
-		query.setFetchSize(10);
-		List l = query.list();
-		assert l.size() <= 1;
-		List<String> retList = null;
-		if (l.size() >= 1) {
-			Object[] array = (Object[]) l.get(0);
-			if (array.length >= 2) {
-				TestCoverageLineResult lineResult = (TestCoverageLineResult) array[1];
-				List<TestCoverageTestCaseName> testCaseNames = lineResult
-						.getTestCases();
-				retList = new ArrayList<String>();
-				for (TestCoverageTestCaseName name : testCaseNames) {
-					retList.add(name.getTestCaseName());
-				}
-			}
-		}
-		tx.commit();
-		session.close();
-		if (retList == null) {
-			logger.info("no testcases found for line " + lineNumber
-					+ " of class " + className);
-			return null;
-		}
-		logger.info("Found " + retList.size() + " testcases for line "
-				+ lineNumber + " of class " + className);
-		return retList.toArray(new String[0]);
-	}
+//	/**
+//	 * Gets all test cases from the database that cover the given line of the
+//	 * class.
+//	 *
+//	 * @param className
+//	 *            The name of the class to get the test cases for.
+//	 * @param lineNumber
+//	 *            The linenumber to get the test cases for.
+//	 * @return An array that contains the names of the testcases that cover this
+//	 *         line.
+//	 */
+//	public static String[] getTestCasesExternalData(String className,
+//			int lineNumber) {
+//		Session session = HibernateUtil.getSessionFactory().openSession();
+//		Transaction tx = session.beginTransaction();
+//		Query query = session
+//				.createQuery("from TestCoverageClassResult as clazz join clazz.lineResults as lineres where clazz.className=:clname and lineres.lineNumber=:lnumber");
+//		query.setString("clname", className);
+//		query.setInteger("lnumber", lineNumber);
+//		query.setFetchSize(10);
+//		List l = query.list();
+//		assert l.size() <= 1;
+//		List<String> retList = null;
+//		if (l.size() >= 1) {
+//			Object[] array = (Object[]) l.get(0);
+//			if (array.length >= 2) {
+//				TestCoverageLineResult lineResult = (TestCoverageLineResult) array[1];
+//				List<TestCoverageTestCaseName> testCaseNames = lineResult
+//						.getTestCases();
+//				retList = new ArrayList<String>();
+//				for (TestCoverageTestCaseName name : testCaseNames) {
+//					retList.add(name.getTestCaseName());
+//				}
+//			}
+//		}
+//		tx.commit();
+//		session.close();
+//		if (retList == null) {
+//			logger.info("no testcases found for line " + lineNumber
+//					+ " of class " + className);
+//			return null;
+//		}
+//		logger.info("Found " + retList.size() + " testcases for line "
+//				+ lineNumber + " of class " + className);
+//		return retList.toArray(new String[0]);
+//	}
 
-	/**
-	 * Return all mutations that are covers by a given set of test cases.
-	 *
-	 * @param tests
-	 *            A collection of test case names.
-	 * @return A collection of mutations that are covered by the given test
-	 *         cases.
-	 */
-	public static Collection<Mutation> getAllMutationsForTestCases(
-			Collection<String> tests) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		String sqlQueryString = "SELECT mutation.* FROM TESTCOVERAGETESTCASENAME AS tname,"
-				+ " TESTCOVERAGELINERESULT_TESTCOVERAGETESTCASENAME AS line_name,"
-				+ " TESTCOVERAGECLASSRESULT_TESTCOVERAGELINERESULT AS class_line,"
-				+ " TESTCOVERAGECLASSRESULT AS classResult, MUTATION AS mutation WHERE"
-				+ " tname.testcasename = :tcName AND line_name.testcases_id = tname.id"
-				+ " AND line_name.testcoveragelineresult_id = class_line.lineresults_id"
-				+ " AND class_line.testcoverageclassresult_id = classResult.id AND"
-				+ " classResult.classname = mutation.classname";
-		Query query = session.createSQLQuery(sqlQueryString).addEntity(
-				Mutation.class);
-		// String hibernateQuery = "SELECT DISTINCT m FROM Mutation AS m,
-		// TestCoverageClassResult AS tccr JOIN tccr.lineResults AS tclr WHERE
-		// tclr.testCases.testCaseName = :tcName AND tccr.className =
-		// m.className";
-		// Query query = session.createQuery(hibernateQuery);
-
-		Set<Mutation> results = new HashSet<Mutation>();
-		for (String testCaseName : tests) {
-			query.setString("tcName", testCaseName);
-			logger.info("TestCaseName: " + testCaseName);
-			List queryResults = query.list();
-			addAndCastResults(results, queryResults);
-		}
-		for (Object s : results) {
-			System.out.println(s);
-		}
-		tx.commit();
-		session.close();
-		return results;
-	}
 
 	private static void addAndCastResults(Set<Mutation> results,
 			List queryResults) {
@@ -752,14 +707,12 @@ public class QueryManager {
 				if (testCase == null) {
 					testCase = TEST_CASE_NO_INFO;
 				}
-				if (testCase!= null && testCase
-						.startsWith("org.apache.commons.lang.BooleanUtilsTest")) {
-					logger.info("DEBUG - Name of testcase: " + testCase);
-				}
 				TestName testName = null;
 				if (testCase.length() > 255) {
-					//TODO Hack because of db - testname is currently VARCHAR(255)
-					logger.warn("Ignoring results from test "  + testCase +  " , beacause name is to long for db");
+					// TODO Hack because of db - testname is currently
+					// VARCHAR(255)
+					logger.warn("Ignoring results from test " + testCase
+							+ " , beacause name is to long for db");
 					testCase = TEST_CASE_NO_INFO;
 				}
 				if (testNameMap != null && testNameMap.containsKey(testCase)) {
@@ -952,5 +905,33 @@ public class QueryManager {
 		tx.commit();
 		session.close();
 		return l;
+	}
+
+	public static List<Mutation> getMutationsForClass(String className) {
+		Session session = HibernateUtil.openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("from Mutation as m where m.className=:name");
+		query.setParameter("name", className);
+		List<Mutation> list = query.list();
+		tx.commit();
+		session.close();
+		return list;
+	}
+
+	public static TestName getTestName(String testCaseName) {
+		TestName result = null;
+		Session session = HibernateUtil.openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("from TestName as tm where tm.name=:name");
+		query.setParameter("name", testCaseName);
+		List<TestName> list = query.list();
+		if(list.size() >0){
+			result = list.get(0);
+		}
+		tx.commit();
+		session.close();
+		return result;
 	}
 }

@@ -34,14 +34,6 @@ public class MutationCoverage {
 		this.testNames = testNames;
 	}
 
-	public MutationCoverage(Long key, ArrayList<String> arrayList) {
-		this.mutationID = key;
-		testNames = new ArrayList<TestName>();
-		for (String name : arrayList) {
-			testNames.add(new TestName(name));
-		}
-	}
-
 	/**
 	 * @return the id
 	 */

@@ -17,7 +17,9 @@ import org.softevo.mutation.io.Io;
 import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 import org.softevo.mutation.results.Mutation;
+import org.softevo.mutation.results.MutationCoverage;
 import org.softevo.mutation.results.MutationTestResult;
+import org.softevo.mutation.results.TestName;
 import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
@@ -44,11 +46,17 @@ public class ByteCodeTestUtils {
 	}
 
 	public static void deleteCoverageData(String className) {
+
+		List<Mutation> mutationsForClass = QueryManager.getMutationsForClass(className);
+		List<Long> ids = new ArrayList<Long>();
+		for (Mutation mutation : mutationsForClass) {
+			ids.add(mutation.getId());
+		}
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session
-				.createQuery("from TestCoverageClassResult WHERE className=:clname");
-		query.setString("clname", className);
+				.createQuery("from MutationCoverage WHERE mutationId IN (:mutation_ids) ");
+		query.setParameterList("mutation_ids", ids);
 		List l = query.list();
 		for (Object o : l) {
 			session.delete(o);
@@ -118,23 +126,20 @@ public class ByteCodeTestUtils {
 
 	public static void generateCoverageData(String className,
 			String[] testCaseNames, int[] linenumbers) {
-		List<TestCoverageTestCaseName> names = new ArrayList<TestCoverageTestCaseName>();
-		for (String name : testCaseNames) {
-			names.add(TestCoverageTestCaseName
-					.getTestCoverageTestCaseName(name));
+		List<Mutation> mutations = QueryManager.getMutationsForClass(className);
+		List<TestName> testNames = new ArrayList<TestName>();
+		for (String testCaseName : testCaseNames) {
+			TestName tm = QueryManager.getTestName(testCaseName);
+			if (tm == null) {
+				tm = new TestName(testCaseName);
+				QueryManager.save(tm);
+			}
+			testNames.add(tm);
 		}
-		List<TestCoverageLineResult> lineResult = new ArrayList<TestCoverageLineResult>();
-		List<String> testCaseNamesList = Arrays.asList(testCaseNames);
-		for (int number : linenumbers) {
-			lineResult
-					.add(new TestCoverageLineResult(number, testCaseNamesList));
-		}
-		TestCoverageClassResult classResult = new TestCoverageClassResult(
-				className, lineResult);
-		logger.info(classResult);
-		try {
-			QueryManager.save(classResult);
-		} catch (org.hibernate.exception.ConstraintViolationException e) {
+		for (Mutation m : mutations) {
+			MutationCoverage mutationCoverage = new MutationCoverage(m.getId(),
+					testNames);
+			QueryManager.save(mutationCoverage);
 		}
 	}
 
@@ -230,6 +235,8 @@ public class ByteCodeTestUtils {
 		generateTestDataInDB(System.getProperty("user.dir")
 				+ "/target/classes/" + classname.replace('.', '/') + ".class",
 				collector);
+		System.setProperty("mutation.run.mode", "mutation-no-invariant");
+		System.setProperty("invariant.mode", "off");
 		redefineMutations(classname);
 	}
 }

@@ -48,18 +48,6 @@ public class MutationSwitcher {
 	}
 
 	/**
-	 * @return The test cases that cover the actual activated mutation.
-	 */
-	public Set<String> getTestsExternalData() {
-		String[] testCases = QueryManager
-				.getTestCasesExternalData(actualMutation);
-		if (testCases == null) {
-			return null;
-		}
-		return new HashSet<String>(Arrays.asList(testCases));
-	}
-
-	/**
 	 * Checks if there is a mutation to apply.
 	 *
 	 * @return True, if next() will return a mutation.
@@ -128,15 +116,6 @@ public class MutationSwitcher {
 	 * @return The test cases that cover the actual activated mutation.
 	 */
 	public Set<String> getTests() {
-		String[] testCases = null;
-		if (MutationProperties.USE_EXTERNAL_COVERAGE_DATA) {
-			testCases = QueryManager.getTestCasesExternalData(actualMutation);
-		} else {
-			return QueryManager.getTestsCollectedData(actualMutation);
-		}
-		if (testCases == null) {
-			return null;
-		}
-		return new HashSet<String>(Arrays.asList(testCases));
+		return QueryManager.getTestsCollectedData(actualMutation);
 	}
 }

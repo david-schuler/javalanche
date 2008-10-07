@@ -1,6 +1,6 @@
 package org.softevo.mutation.bytecodeMutations.arithmetic.testclasses;
 
-public class Arithmetic {
+public class Arithmetic { static{System.out.println("Arithmetic - test class loaded"  );}
 
 	public int method1(int i){
 		return i + i;

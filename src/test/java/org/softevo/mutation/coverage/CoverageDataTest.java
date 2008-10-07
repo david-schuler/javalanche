@@ -10,26 +10,44 @@ import java.util.Set;
 import static junit.framework.Assert.*;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.MutationCoverage;
 import org.softevo.mutation.results.TestName;
 import org.softevo.mutation.results.Mutation.MutationType;
+import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
 
 public class CoverageDataTest {
-
 
 	private static Logger logger = Logger.getLogger(CoverageDataTest.class);
 
 	private static final String TESTCLASS_NAME = "TESTCLASS";
 
+	@Before
+	@After
+	public void setup(){
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session.createQuery("delete FROM Mutation WHERE classname=:name");
+		query.setString("name", TESTCLASS_NAME);
+		query.executeUpdate();
+		tx.commit();
+		session.close();
+	}
+
+
 	// @Test
 	public void testSaveCoverageResult() {
 		Map<Long, Set<String>> coverageData = new HashMap<Long, Set<String>>();
-		List<String> testNames = getRandomTestNames(150);
+		List<String> testNames = getTestNames(150);
 		assertEquals(150, testNames.size());
-		List<Mutation> mutations = getIds(1000);
+		List<Mutation> mutations = getMutations(1000);
 		QueryManager.saveMutations(mutations);
 		int i = 1;
 		for (Mutation mutation : mutations) {
@@ -57,14 +75,14 @@ public class CoverageDataTest {
 	@Test
 	public void testSaveCoverageResultWithNull() {
 		Map<Long, Set<String>> coverageData = new HashMap<Long, Set<String>>();
-		List<String> testNames = getRandomTestNames(150);
+		List<String> testNames = getTestNames(150);
 		assertEquals(150, testNames.size());
 		testNames.add(null);
 		testNames.add(null);
 		testNames.add(null);
-		List<Mutation> mutations = getIds(200);
-
+		List<Mutation> mutations = getMutations(200);
 		QueryManager.saveMutations(mutations);
+
 		int i = 1;
 		for (Mutation mutation : mutations) {
 			Set<String> tests = new HashSet<String>(testNames.subList(0, Math
@@ -74,6 +92,10 @@ public class CoverageDataTest {
 		}
 		QueryManager.saveCoverageResults(coverageData);
 
+		System.out.println(mutations
+				.get(160));
+		System.out.println(mutations
+				.get(160).getId());
 		MutationCoverage mc160 = QueryManager.getMutationCoverageData(mutations
 				.get(160).getId());
 		MutationCoverage mc161 = QueryManager.getMutationCoverageData(mutations
@@ -105,22 +127,21 @@ public class CoverageDataTest {
 
 	}
 
-	private List<Mutation> getIds(int limit) {
+	private List<Mutation> getMutations(int limit) {
 		ArrayList<Mutation> result = new ArrayList<Mutation>();
-		for (long i = 0; i < limit; i++) {
-			Mutation m = new Mutation(TESTCLASS_NAME, 23, 0,
-					MutationType.NEGATE_JUMP,false);
+		for (int i = 0; i < limit; i++) {
+			Mutation m = new Mutation(TESTCLASS_NAME, 23, i,
+					MutationType.NEGATE_JUMP, false);
 			result.add(m);
 		}
 		return result;
 	}
 
-	private List<String> getRandomTestNames(int limit) {
-		String baseName = "ARTIFICIALY_GENERATED_TEST_";
+	private List<String> getTestNames(int limit) {
+		String baseName = "TESTNAME_";
 		List<String> names = new ArrayList<String>();
 		for (int i = 0; i < limit; i++) {
 			String name = String.format(baseName + "%2d", i);
-			System.out.println(name);
 			names.add(name);
 		}
 		return names;
@@ -129,7 +150,5 @@ public class CoverageDataTest {
 	public void deleteCoverage() {
 
 	}
-
-
 
 }

@@ -12,6 +12,8 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.softevo.mutation.io.Io;
+import org.softevo.mutation.properties.MutationProperties;
+import org.softevo.mutation.properties.MutationProperties.RunMode;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.results.persistence.QueryManager;
@@ -115,12 +117,14 @@ public class MutationForRun {
 		}
 		if (mutations == null || mutations.size() == 0) {
 			if (mutations == null || preSize == 0) {
-				logger.error("No mutaitons for this run - exiting now");
+				logger.error("No mutations for this run - exiting now");
 			} else {
-				logger.info("All Mutations got results - exiting now");
+				logger.info("All mutations got results - exiting now");
 			}
 			System.out.println("ALL_RESULTS");
-			System.exit(0);
+			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST) { // TODO INTRODUCE own testRunMode
+				System.exit(0);
+			}
 		}
 	}
 

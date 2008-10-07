@@ -20,7 +20,6 @@ import org.softevo.mutation.results.Mutation.MutationType;
 import org.softevo.mutation.results.persistence.HibernateUtil;
 import org.softevo.mutation.runtime.MutationTestListener;
 
-
 public class TestDelete {
 
 	private static final String PASS_TEST = "passTest";
@@ -30,7 +29,8 @@ public class TestDelete {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		Mutation m = new Mutation("Test", 99, 0, MutationType.NO_MUTATION,false);
+		Mutation m = new Mutation("Test", 99, 0, MutationType.NO_MUTATION,
+				false);
 		MutationTestListener mutationTestListener = new MutationTestListener();
 		TestMessage passingTestMessage = new TestMessage(PASS_TEST,
 				"test passed");
@@ -49,28 +49,27 @@ public class TestDelete {
 		TestResult testResult = new TestResult();
 		Set<String> set = new HashSet<String>();
 		set.addAll(Arrays.asList(new String[] { PASS_TEST }));
-		MutationTestResult singleTestResult = new MutationTestResult(testResult,
-				mutationTestListener, set);
-		m.setMutationResult(singleTestResult);
+		MutationTestResult mutationTestResult = new MutationTestResult(
+				testResult, mutationTestListener, set);
+		m.setMutationResult(mutationTestResult);
 		session.save(m);
 		tx.commit();
 		session.close();
 
-		System.out.printf("Single Test Result id: %d \n", singleTestResult
+		System.out.printf("Single Test Result id: %d \n", mutationTestResult
 				.getId());
-		Long resultID = singleTestResult.getId();
+		Long resultID = mutationTestResult.getId();
 
 		List<Long> testMessageIDs = new ArrayList<Long>();
-		for (TestMessage testMessage : singleTestResult.getPassing()) {
+		for (TestMessage testMessage : mutationTestResult.getPassing()) {
 			testMessageIDs.add(testMessage.getId());
 		}
-		for (TestMessage testMessage : singleTestResult.getErrors()) {
+		for (TestMessage testMessage : mutationTestResult.getErrors()) {
 			testMessageIDs.add(testMessage.getId());
 		}
-		for (TestMessage testMessage : singleTestResult.getFailures()) {
+		for (TestMessage testMessage : mutationTestResult.getFailures()) {
 			testMessageIDs.add(testMessage.getId());
 		}
-
 
 		deleteMutation(m);
 
@@ -80,18 +79,17 @@ public class TestDelete {
 	}
 
 	private void checkForTestMessageIds(List<Long> testMessageIDs) {
-		for(Long id:testMessageIDs){
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		Query q = session.createSQLQuery(
-				"SELECT * FROM TestMessage T WHERE id=:id").addEntity(
-				TestMessage.class);
-		q.setLong("id", id);
-		int resultSize = q.list().size();
-		tx.commit();
-		session.close();
-		Assert.assertEquals("Expecting TestMessage to be deleted", 0,
-				resultSize);
+		for (Long id : testMessageIDs) {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			Transaction tx = session.beginTransaction();
+			Query q = session
+					.createQuery("FROM TestMessage T WHERE id=:id");
+			q.setLong("id", id);
+			int resultSize = q.list().size();
+			tx.commit();
+			session.close();
+			Assert.assertEquals("Expecting TestMessage to be deleted", 0,
+					resultSize);
 
 		}
 
@@ -100,10 +98,9 @@ public class TestDelete {
 	private void checkForResultID(Long resultID) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		Query q = session.createSQLQuery(
-				"SELECT * FROM SingleTestResult S WHERE id=:id").addEntity(
-				MutationTestResult.class);
-		q.setLong("id", resultID);
+		Query q = session.createQuery(
+				"FROM MutationTestResult as mtr where id=:r_id");
+		q.setLong("r_id", resultID);
 		int resultSize = q.list().size();
 		tx.commit();
 		session.close();
@@ -114,49 +111,48 @@ public class TestDelete {
 		checkLinkTablesFailing(resultID);
 		checkLinkTablesErrors(resultID);
 
-
 	}
 
 	private void checkLinkTablesErrors(Long resultID) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		Query q = session.createSQLQuery(
-				"SELECT * FROM SingleTestResult_Errors S WHERE singletestresult_id=:id").addEntity(
-				MutationTestResult.class);
+		Query q = session
+				.createSQLQuery(
+						"SELECT * FROM MutationTestResult_Errors S WHERE MutationTestResult_id=:id")
+				.addEntity(MutationTestResult.class);
 		q.setLong("id", resultID);
 		int resultSize = q.list().size();
 		tx.commit();
 		session.close();
-		Assert.assertEquals("Expecting result to be deleted", 0,
-				resultSize);
+		Assert.assertEquals("Expecting result to be deleted", 0, resultSize);
 	}
 
 	private void checkLinkTablesFailing(Long resultID) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		Query q = session.createSQLQuery(
-				"	SELECT * FROM SingleTestResult_TestMessage S WHERE singletestresult_id=:id").addEntity(
-				MutationTestResult.class);
+		Query q = session
+				.createSQLQuery(
+						"	SELECT * FROM MutationTestResult_TestMessage S WHERE MutationTestResult_id=:id")
+				.addEntity(MutationTestResult.class);
 		q.setLong("id", resultID);
 		int resultSize = q.list().size();
 		tx.commit();
 		session.close();
-		Assert.assertEquals("Expecting result to be deleted", 0,
-				resultSize);
+		Assert.assertEquals("Expecting result to be deleted", 0, resultSize);
 	}
 
 	private void checkLinkTablesPassing(Long resultID) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		Query q = session.createSQLQuery(
-				"SELECT * FROM SingleTestResult_Passing S WHERE singletestresult_id=:id").addEntity(
-				MutationTestResult.class);
+		Query q = session
+				.createSQLQuery(
+						"SELECT * FROM MutationTestResult_Passing S WHERE MutationTestResult_id=:id")
+				.addEntity(MutationTestResult.class);
 		q.setLong("id", resultID);
 		int resultSize = q.list().size();
 		tx.commit();
 		session.close();
-		Assert.assertEquals("Expecting result to be deleted", 0,
-				resultSize);
+		Assert.assertEquals("Expecting result to be deleted", 0, resultSize);
 	}
 
 	private void deleteMutation(Mutation m) {

@@ -94,8 +94,10 @@ public class XmlIo {
 		return fromXml(new File(fileName));
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> T get(String filename) {
-		return get(new File(filename));
+		Object o = fromXml(filename);
+		return (T) o;
 	}
 
 	@SuppressWarnings("unchecked")

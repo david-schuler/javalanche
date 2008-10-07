@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
@@ -50,8 +51,9 @@ public class TestJtopasClass {
 
 	}
 
-	// @Test //To run this test JTopas has to be on the classpath
-	public void testJTopasClass() {
+	@Ignore
+	//To run this test JTopas has to be on the classpath
+	public void xtestJTopasClass() {
 		TestingClassLoader tcl;
 		try {
 			tcl = new TestingClassLoader();

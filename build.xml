@@ -70,6 +70,85 @@
 		</hibernatetool>
 		<echo message="ddl build" />
 	</target>
+	
+	
+	<property name="classes.dest.dir" value="target/ant/classes"/>
+	<property name="test.reports.dir" value="target/ant/test-reports"/>
+	<property name="test.dest.dir" value="target/ant/test-classes"/>
+	
+	
+	<path id="build.classpath">
+		<fileset dir="target/mutationTest-1.0-SNAPSHOT-dist.dir/lib/">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement location="../adabu2-check-invariants/target/classes/"/>
+	</path>
+	
+	<path id="test.classpath">
+		<path refid="build.classpath"/>
+		<pathelement location="${classes.dest.dir}"/>
+		<pathelement location="${test.dest.dir}"/>
+		<pathelement location="target/classes"/>
+		<pathelement location="target/test-classes"/>
+	</path>
+	
+	
+	<target name="clean">
+		<delete dir="target/ant"/>
+	</target>	
+	
 
+	<target name="compile">
+		<mkdir dir="${classes.dest.dir}"/>
+		<javac destdir="${classes.dest.dir}"  debug="true"
+		 source="1.5"
+         target="1.5">
+			<src>
+				<pathelement location="src/main/java"></pathelement>
+			</src>
+			<classpath refid="build.classpath"></classpath>
+		</javac>
+	</target>	
+	
 
+	<target name="compile-test" depends="compile" >
+		<mkdir dir="${test.dest.dir}"></mkdir>
+		<javac destdir="${test.dest.dir}"  debug="true"
+		 source="1.5"
+         target="1.5"
+		 >
+			<src>
+				<pathelement location="src/test/java"/>
+			</src>
+			
+			<classpath>
+				<path refid="build.classpath"/>
+				<pathelement location="${classes.dest.dir}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	
+	
+	<target name="test" depends="compile-test" description="- run the test suite">
+		<mkdir dir="${test.reports.dir}"/>
+		<junit dir="./" failureproperty="test.failure"  haltonerror="true" haltonfailure="true" printsummary="true" fork="true" forkmode="perTest">
+			<jvmarg value="-javaagent:/Users/schuler/workspace/mutationTest/target/javaagent.jar"/>
+			<jvmarg value="-Dmutation.run.mode=mutation-no-invariant"/>
+			<jvmarg value="-D=invariant.mode=off"/>
+			<!--formatter type="xml"/-->
+			<!--formatter type="plain" usefile="false"/-->
+			
+			<classpath>
+				<path refid="test.classpath"/>
+			</classpath>
+			<batchtest todir="${test.reports.dir}">
+				<fileset dir="src/test/java">
+					<include name="**/Test*.java"/>
+					<include name="**/*Test.java"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	
 </project>
