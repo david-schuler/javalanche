@@ -21,6 +21,11 @@ import org.softevo.mutation.run.threaded.task.MutationTaskCreator;
  */
 public class MutationMakeFileGenerator {
 
+	/**
+	 * Represents one task in the makefile.
+	 * @author David Schuler
+	 *
+	 */
 	private static class MakefileTask {
 		String targetName;
 
