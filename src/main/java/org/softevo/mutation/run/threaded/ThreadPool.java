@@ -14,7 +14,7 @@ import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.run.threaded.task.MutationTask;
 import org.softevo.mutation.runtime.RunResult;
 import de.st.cs.unisb.ds.util.Formater;
-import org.softevo.mutation.util.Util;
+import de.st.cs.unisb.ds.util.Util;
 
 /**
  * Class executes several instances of the mutation test tool in parallel using

@@ -20,7 +20,7 @@ import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.TestName;
 import org.softevo.mutation.results.Mutation.MutationType;
 import de.st.cs.unisb.ds.util.Formater;
-import org.softevo.mutation.util.Util;
+import de.st.cs.unisb.ds.util.Util;
 
 /**
  * Class that provides static method that execute queries.

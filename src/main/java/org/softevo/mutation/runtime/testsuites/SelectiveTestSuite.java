@@ -24,7 +24,7 @@ import org.softevo.mutation.results.persistence.QueryManager;
 import org.softevo.mutation.runtime.MutationSwitcher;
 import org.softevo.mutation.runtime.MutationTestListener;
 import org.softevo.mutation.runtime.ResultReporter;
-import org.softevo.mutation.util.Util;
+import de.st.cs.unisb.ds.util.Util;
 
 
 /**

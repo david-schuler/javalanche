@@ -7,11 +7,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+
+import de.st.cs.unisb.ds.util.io.SerializeIo;
 import de.st.cs.unisb.ds.util.io.XmlIo;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.MutationTestResult;
-import org.softevo.mutation.util.SerializeIo;
 
 public class ExperimentAnalyzer2 implements MutationAnalyzer {
 
