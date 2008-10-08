@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 
 import org.junit.Assert;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
@@ -25,7 +26,8 @@ public class JtopasClassTest {
 		}
 
 		@SuppressWarnings("unchecked")
-		public Class<?> loadClass(final String name) throws ClassNotFoundException {
+		public Class<?> loadClass(final String name)
+				throws ClassNotFoundException {
 			if (name.equals(TEST_CLASS_CLASSNAME)) {
 				try {
 					ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES
@@ -52,7 +54,7 @@ public class JtopasClassTest {
 	}
 
 	@Ignore
-	//To run this test JTopas has to be on the classpath
+	// To run this test JTopas has to be on the classpath
 	public void xtestJTopasClass() {
 		TestingClassLoader tcl;
 		try {
@@ -79,5 +81,9 @@ public class JtopasClassTest {
 			e.printStackTrace();
 		}
 
+	}
+
+	@Test
+	public void preventJunitError() {
 	}
 }

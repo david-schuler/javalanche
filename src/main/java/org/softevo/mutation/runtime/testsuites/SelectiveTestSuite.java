@@ -16,7 +16,7 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.io.XmlIo;
+import de.st.cs.unisb.ds.util.io.XmlIo;
 import org.softevo.mutation.javaagent.MutationForRun;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.results.Mutation;

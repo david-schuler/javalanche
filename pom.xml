@@ -1,6 +1,5 @@
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.softevo.mutation</groupId>
 	<artifactId>mutationTest</artifactId>
@@ -41,8 +40,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-				  	<!--<forkMode>pertest</forkMode>-->
-					<argLine>-javaagent:${user.home}/workspace2/mutationTest/target/javaagent.jar</argLine>
+				  	<forkMode>pertest</forkMode>
+					<argLine>-javaagent:${user.home}/workspace/mutationTest/target/javaagent.jar -Dmutation.run.mode=mutation-no-invariant -D=invariant.mode=off</argLine>
 					<useSystemClassLoader>true</useSystemClassLoader>
 					<excludes>
 						<exclude>**/TestProperties.java</exclude>
@@ -225,11 +224,11 @@
 			<groupId>org.codehaus.mojo</groupId>
 			<artifactId>jxr-maven-plugin</artifactId>
 		</plugin-->
-		   <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-	</plugins>
-		
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+		</plugins>
+	
 	</reporting>
 	
 	<dependencies>
@@ -327,6 +326,24 @@
 			<groupId>de.unisb</groupId>
 			<artifactId>bytecodeTransformer</artifactId>
 			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>de.unisb.cs.st.invariants</groupId>
+			<artifactId>invariants</artifactId>
+			<version>0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.unisb.cs.st.invariants</groupId>
+			<artifactId>invariants</artifactId>
+			<version>0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.st.cs.unisb.ds</groupId>
+			<artifactId>ds-util</artifactId>
+			<version>0.1</version>
 		</dependency>
 	</dependencies>
 </project>

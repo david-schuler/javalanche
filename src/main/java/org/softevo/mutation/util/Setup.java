@@ -5,6 +5,13 @@ import java.io.File;
 import org.apache.log4j.Logger;
 import org.softevo.mutation.properties.MutationProperties;
 
+/**
+ * Class that generates some directories that are needed by the mutation testing
+ * framework. Should be executed once for installing the software.
+ *
+ * @author David Schuler
+ *
+ */
 public class Setup {
 	private static Logger logger = Logger.getLogger(Setup.class);
 

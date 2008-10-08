@@ -19,7 +19,7 @@ import org.softevo.mutation.results.MutationCoverage;
 import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.TestName;
 import org.softevo.mutation.results.Mutation.MutationType;
-import org.softevo.mutation.util.Formater;
+import de.st.cs.unisb.ds.util.Formater;
 import org.softevo.mutation.util.Util;
 
 /**

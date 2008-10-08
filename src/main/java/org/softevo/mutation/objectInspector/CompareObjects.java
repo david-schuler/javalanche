@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.io.XmlIo;
+import de.st.cs.unisb.ds.util.io.XmlIo;
 import org.softevo.mutation.properties.MutationProperties;
 
 public class CompareObjects {

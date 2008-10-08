@@ -34,7 +34,7 @@ public class RemoveSystemExitMethodNode extends MethodAdapter {
 	@Override
 	public void visitEnd() {
 		MethodNode mn = (MethodNode) mv;
-		InsnList insns = mn.instructions;
+		InsnList insns= mn.instructions;
 		Iterator i = insns.iterator();
 		AbstractInsnNode prev = null;
 		InsnList newInstrucionList = new InsnList();
@@ -81,6 +81,7 @@ public class RemoveSystemExitMethodNode extends MethodAdapter {
 			prev = i1;
 		}
 		mn.instructions = newInstrucionList;
+
 		// logger.error("new Imstruction List:" + newInstrucionList.size() + " "
 		// + insns.size() + " " + mn.instructions.size());
 		mn.accept(next);

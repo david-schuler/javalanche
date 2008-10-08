@@ -10,6 +10,15 @@ import org.apache.log4j.Logger;
 import org.softevo.mutation.properties.MutationProperties;
 import org.softevo.mutation.run.threaded.task.MutationTaskCreator;
 
+/**
+ * Class that generates Makefiles to execute the mutation testing framework. A
+ * makefile consists of several target each executing a mutation task. If
+ * multifile mode is activated 6 different makefiles are produced where the
+ * mutation tasks are distributed over all makefiles.
+ *
+ * @author David Schuler
+ *
+ */
 public class MutationMakeFileGenerator {
 
 	private static class MakefileTask {

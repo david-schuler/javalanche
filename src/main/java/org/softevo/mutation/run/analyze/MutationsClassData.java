@@ -3,7 +3,7 @@ package org.softevo.mutation.run.analyze;
 import java.io.File;
 import java.util.Map;
 
-import org.softevo.mutation.io.XmlIo;
+import de.st.cs.unisb.ds.util.io.XmlIo;
 
 public class MutationsClassData {
 

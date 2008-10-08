@@ -11,7 +11,9 @@ import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
-public class UtilTest {
+public class TestUtil {
+
+
 
 	public static void getMutationsForClazzOnClasspath(String fileName) {
 		InputStream is = MissedMutationTest.class.getClassLoader()

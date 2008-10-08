@@ -5,7 +5,7 @@ import java.util.*;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.softevo.mutation.io.XmlIo;
+import de.st.cs.unisb.ds.util.io.XmlIo;
 import org.softevo.mutation.objectInspector.VariableInfo;
 import org.softevo.mutation.properties.MutationProperties;
 

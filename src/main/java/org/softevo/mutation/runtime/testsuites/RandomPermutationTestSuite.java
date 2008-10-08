@@ -22,7 +22,7 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.io.XmlIo;
+import de.st.cs.unisb.ds.util.io.XmlIo;
 
 /**
  * Executes the tests in a random order multiple times. In order to see if they

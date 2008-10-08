@@ -3,10 +3,21 @@ package org.softevo.mutation.util;
 import java.util.Arrays;
 import java.util.Calendar;
 
+/**
+ * Class that contains several helper methods.
+ * 
+ * @author David Schuler
+ * 
+ */
 public class Util {
 
 	private static final Calendar instance = Calendar.getInstance();;
 
+	/**
+	 * Return a string wit the current stack trace (this method is excluded).
+	 * 
+	 * @return A string wit the current stack trace.
+	 */
 	public static String getStackTraceString() {
 		Thread currentThread = Thread.currentThread();
 		StackTraceElement[] sts = currentThread.getStackTrace();
@@ -22,28 +33,8 @@ public class Util {
 		int hours = instance.get(Calendar.HOUR_OF_DAY);
 		int minutes = instance.get(Calendar.MINUTE);
 		int seconds = instance.get(Calendar.SECOND);
-		String time = String
-				.format("%02d:%02d:%02d", hours, minutes, seconds);
+		String time = String.format("%02d:%02d:%02d", hours, minutes, seconds);
 		return time;
-	}
 
-	private static void m1() {
-		m2();
-	}
-
-	private static void m2() {
-		m3();
-	}
-
-	private static void m3() {
-		m4();
-	}
-
-	private static void m4() {
-		System.out.println(getStackTraceString());
-	}
-
-	public static void main(String[] args) {
-		m1();
 	}
 }

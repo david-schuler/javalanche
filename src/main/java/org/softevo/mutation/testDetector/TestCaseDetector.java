@@ -9,8 +9,8 @@ import java.util.Set;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.softevo.mutation.io.DirectoryFileSource;
-import org.softevo.mutation.io.XmlIo;
+import de.st.cs.unisb.ds.util.io.DirectoryFileSource;
+import de.st.cs.unisb.ds.util.io.XmlIo;
 import org.softevo.mutation.properties.MutationProperties;
 
 public class TestCaseDetector {

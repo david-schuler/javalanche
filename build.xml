@@ -146,6 +146,8 @@
 				<fileset dir="src/test/java">
 					<include name="**/Test*.java"/>
 					<include name="**/*Test.java"/>
+					<exclude name="**/JtopasClassTest.java"/>
+					
 				</fileset>
 			</batchtest>
 		</junit>

@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.softevo.mutation.io.XmlIo;
+import de.st.cs.unisb.ds.util.io.XmlIo;
 import org.softevo.mutation.results.Mutation;
 import org.softevo.mutation.results.MutationTestResult;
 import org.softevo.mutation.results.persistence.QueryManager;

@@ -1,4 +1,4 @@
-package org.softevo.mutation.util;
+package org.softevo.mutation.io;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -12,13 +12,26 @@ import java.io.ObjectOutputStream;
 
 import org.apache.log4j.Logger;
 
-
+/**
+ * Class to write and read (serialize and deserialize) objects to/from files.
+ *
+ * @author David Schuler
+ *
+ */
 public class SerializeIo {
 
 	private static Logger logger = Logger.getLogger(SerializeIo.class);
 
+	/**
+	 * Serializes an object to given file.
+	 *
+	 * @param o
+	 *            the object to serialize
+	 * @param file
+	 *            the file to serialize to
+	 */
 	public static void serializeToFile(Object o, File file) {
-		logger.info(" -- Start serializing to file: " + file.getAbsolutePath());
+		logger.info("Start serializing to file: " + file.getAbsolutePath());
 		boolean serialized = false;
 		try {
 			ObjectOutput out = new ObjectOutputStream(
@@ -39,9 +52,27 @@ public class SerializeIo {
 				logger.warn("Object not serialized");
 			}
 		}
-
 	}
 
+	/**
+	 * Serializes an object to given file.
+	 *
+	 * @param o
+	 *            the object to serialize
+	 * @param filename
+	 *            the name of the file to serialize to
+	 */
+	public static void serializeToFile(Object o, String filename) {
+		serializeToFile(o, new File(filename));
+	}
+
+	/**
+	 * Reads an object from a file.
+	 *
+	 * @param file
+	 *            the file to read from
+	 * @return the read object
+	 */
 	public static Object deserialize(File file) {
 		Object o = null;
 		long time = System.currentTimeMillis();
@@ -68,24 +99,43 @@ public class SerializeIo {
 		return o;
 	}
 
+	/**
+	 * Reads an object from a file.
+	 *
+	 * @param filename
+	 *            the name of the file to read from
+	 * @return the read object
+	 */
 	public static Object deserialize(String filename) {
 		return deserialize(new File(filename));
 	}
 
+	/**
+	 * Reads an object from a file and casts the object to the parameterized
+	 * type.
+	 *
+	 * @param file
+	 *            the file to read from
+	 * @return the read object
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T get(File file) {
 		Object o = deserialize(file);
 		return (T) o;
 	}
 
+	/**
+	 * Reads an object from a file and casts the object to the parameterized
+	 * type.
+	 *
+	 * @param filename
+	 *            the name of the file to read from
+	 * @return the read object
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T get(String filename) {
 		Object o = deserialize(filename);
 		return (T) o;
-	}
-
-	public static void serializeToFile(Object o, String filename) {
-		serializeToFile(o, new File(filename));
 	}
 
 }

@@ -1,6 +1,6 @@
 package org.softevo.mutation.objectInspector;
 
-import org.softevo.mutation.io.XmlIo;
+import de.st.cs.unisb.ds.util.io.XmlIo;
 
 public class VariableInfoAndObject extends VariableInfo {
 
