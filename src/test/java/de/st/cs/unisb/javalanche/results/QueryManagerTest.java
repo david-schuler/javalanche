@@ -1,4 +1,4 @@
-package org.softevo.mutation.results;
+package de.st.cs.unisb.javalanche.results;
 
 import java.util.List;
 
@@ -12,13 +12,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.softevo.mutation.hibernate.HibernateTest;
-import org.softevo.mutation.properties.TestProperties;
-import org.softevo.mutation.results.Mutation.MutationType;
-import org.softevo.mutation.results.persistence.HibernateUtil;
-import org.softevo.mutation.results.persistence.QueryManager;
-import org.softevo.mutation.runtime.MutationTestListener;
-import org.softevo.mutation.testutil.TestUtil;
+import de.st.cs.unisb.javalanche.hibernate.HibernateTest;
+import de.st.cs.unisb.javalanche.properties.TestProperties;
+import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
+import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.runtime.MutationTestListener;
+import de.st.cs.unisb.javalanche.testutil.TestUtil;
 
 public class QueryManagerTest {
 

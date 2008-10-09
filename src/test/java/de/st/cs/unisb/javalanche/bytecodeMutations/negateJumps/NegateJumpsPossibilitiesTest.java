@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.negateJumps;
+package de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,8 +8,8 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
-import org.softevo.mutation.properties.TestProperties;
+import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
+import de.st.cs.unisb.javalanche.properties.TestProperties;
 
 public class NegateJumpsPossibilitiesTest {
 

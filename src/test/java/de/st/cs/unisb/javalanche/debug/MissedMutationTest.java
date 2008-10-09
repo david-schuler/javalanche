@@ -1,4 +1,4 @@
-package org.softevo.mutation.debug;
+package de.st.cs.unisb.javalanche.debug;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,9 +7,9 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
-import org.softevo.mutation.bytecodeMutations.MutationScannerTransformer;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
-import org.softevo.mutation.properties.TestProperties;
+import de.st.cs.unisb.javalanche.bytecodeMutations.MutationScannerTransformer;
+import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
+import de.st.cs.unisb.javalanche.properties.TestProperties;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 

@@ -1,4 +1,4 @@
-package org.softevo.mutation.objectInspector;
+package de.st.cs.unisb.javalanche.objectInspector;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,8 +12,8 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
-import org.softevo.mutation.objectInspector.asmAdapters.ObjectInspectorClassAdapter;
-import org.softevo.mutation.objectInspector.testClasses.ObjectsForMethod;
+import de.st.cs.unisb.javalanche.objectInspector.asmAdapters.ObjectInspectorClassAdapter;
+import de.st.cs.unisb.javalanche.objectInspector.testClasses.ObjectsForMethod;
 
 public class ObjectInspectorTest {
 

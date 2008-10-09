@@ -1,13 +1,13 @@
-package org.softevo.mutation.testutil;
+package de.st.cs.unisb.javalanche.testutil;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 
 import org.objectweb.asm.ClassReader;
-import org.softevo.mutation.bytecodeMutations.MutationScannerTransformer;
-import org.softevo.mutation.debug.MissedMutationTest;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
+import de.st.cs.unisb.javalanche.bytecodeMutations.MutationScannerTransformer;
+import de.st.cs.unisb.javalanche.debug.MissedMutationTest;
+import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 

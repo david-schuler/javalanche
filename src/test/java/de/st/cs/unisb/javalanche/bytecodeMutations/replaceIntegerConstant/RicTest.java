@@ -1,10 +1,10 @@
-package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
+package de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant;
 
 import java.io.IOException;
 
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
-import org.softevo.mutation.properties.TestProperties;
+import de.st.cs.unisb.javalanche.properties.TestProperties;
 
 public class RicTest {
 

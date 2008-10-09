@@ -1,4 +1,4 @@
-package org.softevo.mutation.hibernate;
+package de.st.cs.unisb.javalanche.hibernate;
 
 import java.util.HashSet;
 import java.util.List;
@@ -12,11 +12,11 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationTestResult;
-import org.softevo.mutation.results.Mutation.MutationType;
-import org.softevo.mutation.results.persistence.HibernateUtil;
-import org.softevo.mutation.runtime.MutationTestListener;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.MutationTestResult;
+import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
+import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
+import de.st.cs.unisb.javalanche.runtime.MutationTestListener;
 
 @SuppressWarnings("unchecked")
 // Because of lists returned by hibernate

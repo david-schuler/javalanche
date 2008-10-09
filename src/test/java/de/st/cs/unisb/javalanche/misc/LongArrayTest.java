@@ -1,12 +1,12 @@
-package org.softevo.mutation.misc;
+package de.st.cs.unisb.javalanche.misc;
 
 import java.util.Random;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Test;
-import org.softevo.mutation.results.MutationTestResult;
-import org.softevo.mutation.results.persistence.HibernateUtil;
+import de.st.cs.unisb.javalanche.results.MutationTestResult;
+import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
 
 public class LongArrayTest {
 

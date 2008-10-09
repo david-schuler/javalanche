@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.sysexit;
+package de.st.cs.unisb.javalanche.bytecodeMutations.sysexit;
 
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
@@ -6,17 +6,17 @@ import junit.framework.TestSuite;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
-import org.softevo.mutation.bytecodeMutations.negateJumps.NegateJumpsCollectorTransformer;
-import org.softevo.mutation.bytecodeMutations.sysexit.testclasses.SysExit;
-import org.softevo.mutation.bytecodeMutations.sysexit.testclasses.SysExitTest;
-import org.softevo.mutation.runtime.testsuites.SelectiveTestSuite;
+import de.st.cs.unisb.javalanche.bytecodeMutations.ByteCodeTestUtils;
+import de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps.NegateJumpsCollectorTransformer;
+import de.st.cs.unisb.javalanche.bytecodeMutations.sysexit.testclasses.SysExit;
+import de.st.cs.unisb.javalanche.bytecodeMutations.sysexit.testclasses.SysExitTest;
+import de.st.cs.unisb.javalanche.runtime.testsuites.SelectiveTestSuite;
 
 public class RemoveSystemExitTest {
 
 
 	static {
-		String classname = "org.softevo.mutation.bytecodeMutations.sysexit.testclasses.SysExit";
+		String classname = "de.st.cs.unisb.javalanche.bytecodeMutations.sysexit.testclasses.SysExit";
 		ByteCodeTestUtils.deleteMutations(classname);
 		ByteCodeTestUtils.generateTestDataInDB(System.getProperty("user.dir")
 				+ "/target/classes/" + classname.replace('.', '/')

@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
+package de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant;
 
 import java.util.List;
 
@@ -12,19 +12,19 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstantsTest;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationTestResult;
-import org.softevo.mutation.results.persistence.HibernateUtil;
-import org.softevo.mutation.runtime.testsuites.SelectiveTestSuite;
+import de.st.cs.unisb.javalanche.bytecodeMutations.ByteCodeTestUtils;
+import de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants;
+import de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstantsTest;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.MutationTestResult;
+import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
+import de.st.cs.unisb.javalanche.runtime.testsuites.SelectiveTestSuite;
 
 public class ReplaceIntegerTest {
 
 	//-javaagent:./target/javaagent.jar -Dinvariant.mode=OFF -Dmutation.run.mode=mutation-no-invariant -Dmutation.coverage.information=false
 	static {
-		String classname = "org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants";
+		String classname = "de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants";
 		ByteCodeTestUtils.doSetup(classname,new RicCollectorTransformer(null));
 	}
 

@@ -1,4 +1,4 @@
-package org.softevo.mutation.testutil;
+package de.st.cs.unisb.javalanche.testutil;
 
 import static org.junit.Assert.fail;
 
@@ -9,11 +9,11 @@ import org.apache.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
-import org.softevo.mutation.bytecodeMutations.MutationScannerTransformer;
-import org.softevo.mutation.bytecodeMutations.MutationTransformer;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
-import org.softevo.mutation.properties.TestProperties;
-import org.softevo.mutation.results.persistence.MutationManager;
+import de.st.cs.unisb.javalanche.bytecodeMutations.MutationScannerTransformer;
+import de.st.cs.unisb.javalanche.bytecodeMutations.MutationTransformer;
+import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
+import de.st.cs.unisb.javalanche.properties.TestProperties;
+import de.st.cs.unisb.javalanche.results.persistence.MutationManager;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 

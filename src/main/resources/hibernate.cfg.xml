@@ -35,16 +35,16 @@
 -->
 
 
-		<mapping class="org.softevo.mutation.results.Mutation"/>
-		<mapping class="org.softevo.mutation.results.MutationTestResult"/>
-		<mapping class="org.softevo.mutation.results.TestMessage"/>
-		<mapping class="org.softevo.mutation.results.MutationCoverage"/>
-		<mapping class="org.softevo.mutation.results.TestName"/>
-		<!--mapping class="org.softevo.mutation.coverageResults.db.TestCoverageLineResult"/>
-		<mapping class="org.softevo.mutation.coverageResults.db.TestCoverageClassResult"/>
-		<mapping class="org.softevo.mutation.coverageResults.db.TestCoverageTestCaseName"/-->
+		<mapping class="de.st.cs.unisb.javalanche.results.Mutation"/>
+		<mapping class="de.st.cs.unisb.javalanche.results.MutationTestResult"/>
+		<mapping class="de.st.cs.unisb.javalanche.results.TestMessage"/>
+		<mapping class="de.st.cs.unisb.javalanche.results.MutationCoverage"/>
+		<mapping class="de.st.cs.unisb.javalanche.results.TestName"/>
+		<!--mapping class="de.st.cs.unisb.javalanche.coverageResults.db.TestCoverageLineResult"/>
+		<mapping class="de.st.cs.unisb.javalanche.coverageResults.db.TestCoverageClassResult"/>
+		<mapping class="de.st.cs.unisb.javalanche.coverageResults.db.TestCoverageTestCaseName"/-->
 		<!--
-		<mapping class="org.softevo.mutation.results.Street"/>
+		<mapping class="de.st.cs.unisb.javalanche.results.Street"/>
 		-->
 
     </session-factory>

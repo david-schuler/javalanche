@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.integrateSuite;
+package de.st.cs.unisb.javalanche.bytecodeMutations.integrateSuite;
 
 import static org.junit.Assert.assertTrue;
 
@@ -8,9 +8,9 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.junit.Test;
-import org.softevo.mutation.bytecodeMutations.integrateSuite.testClasses.AllTests;
-import org.softevo.mutation.runtime.testsuites.SelectiveTestSuite;
-import org.softevo.mutation.runtime.testsuites.TestSuiteUtil;
+import de.st.cs.unisb.javalanche.bytecodeMutations.integrateSuite.testClasses.AllTests;
+import de.st.cs.unisb.javalanche.runtime.testsuites.SelectiveTestSuite;
+import de.st.cs.unisb.javalanche.runtime.testsuites.TestSuiteUtil;
 
 public class IntegrateSuiteTest {
 

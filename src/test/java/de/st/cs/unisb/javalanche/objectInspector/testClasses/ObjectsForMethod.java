@@ -1,4 +1,4 @@
-package org.softevo.mutation.objectInspector.testClasses;
+package de.st.cs.unisb.javalanche.objectInspector.testClasses;
 
 import java.util.Arrays;
 import java.util.Date;

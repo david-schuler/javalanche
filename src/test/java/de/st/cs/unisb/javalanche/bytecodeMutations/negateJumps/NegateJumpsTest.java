@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.negateJumps;
+package de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps;
 
 import java.util.List;
 
@@ -12,20 +12,20 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.softevo.mutation.bytecodeMutations.ByteCodeTestUtils;
-import org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.Jumps;
-import org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.JumpsTest;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationTestResult;
-import org.softevo.mutation.results.Mutation.MutationType;
-import org.softevo.mutation.results.persistence.HibernateUtil;
-import org.softevo.mutation.runtime.testsuites.SelectiveTestSuite;
+import de.st.cs.unisb.javalanche.bytecodeMutations.ByteCodeTestUtils;
+import de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps.testclasses.jumps.Jumps;
+import de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps.testclasses.jumps.JumpsTest;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.MutationTestResult;
+import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
+import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
+import de.st.cs.unisb.javalanche.runtime.testsuites.SelectiveTestSuite;
 
 public class NegateJumpsTest {
 
 	static {
-		String classname = "org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps.Jumps";
+		String classname = "de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps.testclasses.jumps.Jumps";
 		ByteCodeTestUtils.doSetup(classname,
 				new NegateJumpsCollectorTransformer(null));
 

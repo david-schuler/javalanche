@@ -1,4 +1,4 @@
-package org.softevo.mutation.properties;
+package de.st.cs.unisb.javalanche.properties;
 
 public class TestProperties {
 
