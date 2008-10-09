@@ -11,6 +11,7 @@ public class ObjectsForMethod {
 	@SuppressWarnings("unused")
 	public static int method1() {
 		String string1 = "string1";
+
 		int i = 4;
 		List<String> listOfStrings = Arrays.asList(new String[] { "1", "2",
 				"A", "B" });

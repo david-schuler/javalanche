@@ -15,7 +15,7 @@ public class CompareObjects {
 		Variables vars = new Variables(
 				(Map<String, List<VariableInfo>>) XmlIo
 						.fromXml(MutationProperties.RESULT_OBJECTS_DIR
-								+ "org_softevo_mutation_objectInspector_testClasses_ObjectsForMethod-variableNames.xml"));
+								+ "de_st_cs_unisb_objectInspector_testClasses_ObjectsForMethod-variableNames.xml"));
 		MethodVariables methodVariables1 = vars.getMethodVariables("method1");
 		MethodVariables methodVariables2 = vars.getMethodVariables("method2");
 		for (VariableInfoAndObject vi1 : methodVariables1.getVariables()) {

@@ -68,7 +68,7 @@ public class BytecodeTasks {
 		}
 		mv.visitLdcInsn(mutation.getId());
 		mv.visitMethodInsn(Opcodes.INVOKESTATIC,
-				"org/softevo/mutation/runtime/ResultReporter", "touch",
+				"de/st/cs/unisb/javalanche/runtime/ResultReporter", "touch",
 				"(J)V");
 	}
 

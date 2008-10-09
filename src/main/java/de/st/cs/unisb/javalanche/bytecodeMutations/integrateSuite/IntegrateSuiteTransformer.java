@@ -60,33 +60,33 @@ public class IntegrateSuiteTransformer extends BytecodeTransformer {
 	}
 
 	public static BytecodeTransformer getIntegrateSelectiveTestSuiteTransformer() {
-		String targetClass = "org/softevo/mutation/runtime/testsuites/SelectiveTestSuite";
+		String targetClass = "de/st/unisb/javalanche/runtime/testsuites/SelectiveTestSuite";
 		String integrationMethod = "toSelectiveTestSuite";
-		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lorg/softevo/mutation/runtime/testsuites/SelectiveTestSuite;";
+		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lde/st/unisb/javalanche/runtime/testsuites/SelectiveTestSuite;";
 		return new IntegrateSuiteTransformer(targetClass, integrationMethod,
 				integrationMethodSignature);
 	}
 
 	public static BytecodeTransformer getIntegrateRandomPermutationTestSuiteTransformer() {
-		String targetClass = "org/softevo/mutation/runtime/testsuites/RandomPermutationTestSuite";
+		String targetClass = "de/st/unisb/javalanche/runtime/testsuites/RandomPermutationTestSuite";
 		String integrationMethod = "toRandomPermutationTestSuite";
-		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lorg/softevo/mutation/runtime/testsuites/RandomPermutationTestSuite;";
+		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lde/st/unisb/javalanche/runtime/testsuites/RandomPermutationTestSuite;";
 		return new IntegrateSuiteTransformer(targetClass, integrationMethod,
 				integrationMethodSignature);
 	}
 
 	public static BytecodeTransformer getIntegrateScanAndCoverageTestSuiteTransformer() {
-		String targetClass = "org/softevo/mutation/runtime/testsuites/ScanAndCoverageTestSuite";
+		String targetClass = "de/st/unisb/javalanche/runtime/testsuites/ScanAndCoverageTestSuite";
 		String integrationMethod = "toScanAndCoverageTestSuite";
-		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lorg/softevo/mutation/runtime/testsuites/ScanAndCoverageTestSuite;";
+		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lde/st/unisb/javalanche/runtime/testsuites/ScanAndCoverageTestSuite;";
 		return new IntegrateSuiteTransformer(targetClass, integrationMethod,
 				integrationMethodSignature);
 	}
 
 	public static BytecodeTransformer getIntegrateCheckNamesTransformer() {
-		String targetClass = "org/softevo/mutation/runtime/testsuites/CheckNamesTestSuite";
+		String targetClass = "de/st/unisb/javalanche/runtime/testsuites/CheckNamesTestSuite";
 		String integrationMethod = "toCheckNamesTestSuite";
-		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lorg/softevo/mutation/runtime/testsuites/CheckNamesTestSuite;";
+		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lde/st/unisb/javalanche/runtime/testsuites/CheckNamesTestSuite;";
 		return new IntegrateSuiteTransformer(targetClass, integrationMethod,
 				integrationMethodSignature);
 	}

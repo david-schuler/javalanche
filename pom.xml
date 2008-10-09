@@ -100,7 +100,7 @@
 							<classpathPrefix>lib</classpathPrefix>
 						</manifest>
 						<manifestEntries>
-							<Premain-Class>org.softevo.mutation.javaagent.MutationPreMain</Premain-Class>
+							<Premain-Class>de.st.cs.unisb.javalanche.javaagent.MutationPreMain</Premain-Class>
 						</manifestEntries>
 					</archive>
 					<alias>VALUE</alias>

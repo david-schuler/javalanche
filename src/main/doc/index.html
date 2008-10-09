@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
     <head>
-        <title>Mutation Test</title>
+        <title>Javalanche</title>
         <meta name="description" content="" />
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
         <meta name="keywords" content="mutation test java"/>
@@ -11,12 +11,12 @@
     <body>
         <div id="main">
             <div id="header">
-                <h1>Mutation Test</h1>
+                <h1>Javalanche</h1>
             </div>
             <div id="menu">
                 <ul>
                     <li class="selected"><a href="./index.html">Install</a></li>
-                    <li><a href="./index.html#run">Run the tool</a></li>
+                    <li><a href="./index.html#run">Run Javalanche</a></li>
                    <!-- <li><a href="./index.html#info">Further Information</a></li> -->
                 </ul>
             </div>
@@ -150,12 +150,12 @@
                     Typically you do not want to execute all possible mutations
                     in one run. Therfore files are created that specify which mutations
                     to execute.<br/>
-                    This is done with the class <code>org.softevo.mutation.run.threaded.task.MutationTaskCreator</code>.
+                    This is done with the class <code>de.st.cs.unisb.javalanche.run.threaded.task.MutationTaskCreator</code>.
                     An ant target that creates the several task files looks like this:
                     
                     <div class="antblock">
 &lt;target&nbsp;name=&quot;createTasks&quot;&nbsp;&nbsp;&nbsp;description=&quot;create&nbsp;task&nbsp;files&nbsp;to&nbsp;execute&nbsp;the&nbsp;mutations&quot;&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;classname=&quot;org.softevo.mutation.run.threaded.task.MutationTaskCreator&quot;&nbsp;maxmemory=&quot;1024m&quot;&nbsp;fork=&quot;true&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;classname=&quot;de.st.cs.unisb.javalanche.run.threaded.task.MutationTaskCreator&quot;&nbsp;maxmemory=&quot;1024m&quot;&nbsp;fork=&quot;true&quot;&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.package.prefix&quot;&nbsp;value=&quot;de.susebox&quot;&nbsp;/&gt;<br/>
 <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.coverage.information&quot;&nbsp;value=&quot;false&quot;&nbsp;/&gt;<br/>-->
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.number.of.tasks&quot;&nbsp;value=&quot;8&quot;&nbsp;/&gt;<br/>
@@ -232,11 +232,11 @@
                     
                     <h3>Execute Mutiple Tasks</h3>
                     Multiple tasks can be executed in parallel on different 
-	                JVMs. This can be done via the class <code>org.softevo.mutation.run.threaded.ThreadPool</code>.
+	                JVMs. This can be done via the class <code>de.st.cs.unisb.javalanche.run.threaded.ThreadPool</code>.
     				The following ant target calls this class:            
                     <div class="antblock">
 &lt;target&nbsp;name=&quot;run-threaded-mutations&quot;&nbsp;description=&quot;run&nbsp;mutation&nbsp;tests&nbsp;multithreaded&nbsp;on&nbsp;jtopas&quot;&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;classname=&quot;org.softevo.mutation.run.threaded.ThreadPool&quot;&nbsp;maxmemory=&quot;1024m&quot;&nbsp;fork=&quot;true&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;classname=&quot;de.st.cs.unisb.javalanche.run.threaded.ThreadPool&quot;&nbsp;maxmemory=&quot;1024m&quot;&nbsp;fork=&quot;true&quot;&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.script.command&quot;&nbsp;value=&quot;${basedir}/run-mutations.sh&quot;/&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.number.of.threads&quot;&nbsp;value=&quot;2&quot;&nbsp;/&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
@@ -267,13 +267,13 @@
                     <h3>Analyze Results</h3>
                     
                     The results of the mutation testing can be analyzed with the
-                    class <code>org.softevo.mutation.run.CompareWithUnmutated</code>.
+                    class <code>de.st.cs.unisb.javalanche.run.CompareWithUnmutated</code>.
                     An ant task that executes this class looks like this:<br/>
                     
                     <div class="antblock">
 &lt;target&nbsp;name=&quot;analyzeResults&quot;&nbsp;description=&quot;Analyzes&nbsp;the&nbsp;mutationt&nbsp;testing&nbsp;results.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compare&nbsp;mutated&nbsp;runs&nbsp;with&nbsp;the&nbsp;unmutated&nbsp;runs&quot;&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;classname=&quot;org.softevo.mutation.analyze.AnalyzeMain&quot;&nbsp;maxmemory=&quot;1024m&quot;&nbsp;fork=&quot;true&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;classname=&quot;de.st.cs.unisb.javalanche.analyze.AnalyzeMain&quot;&nbsp;maxmemory=&quot;1024m&quot;&nbsp;fork=&quot;true&quot;&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dmutation.package.prefix=de.susebox&quot;&nbsp;/&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;mutation.classpath&quot;&nbsp;/&gt;<br/>

@@ -26,12 +26,19 @@ import de.st.cs.unisb.javalanche.runtime.MutationTestListener;
 import de.st.cs.unisb.javalanche.runtime.ResultReporter;
 import de.st.cs.unisb.ds.util.Util;
 
-
 /**
  * Subclass of JUnits {@link TestSuite} class. It is used to execute the tests
  * for the mutated program. It repeatedly executes the test-cases for every
  * mutation, but only executes the tests that cover the mutation.
  *
+ * @author David Schuler
+ *
+ */
+/**
+ * @author David Schuler
+ *
+ */
+/**
  * @author David Schuler
  *
  */
@@ -107,6 +114,11 @@ public class SelectiveTestSuite extends TestSuite {
 
 	private Map<Integer, String> testsForExp;
 
+	/**
+	 * set true when the run method gets executed
+	 */
+	private boolean wasExecuted;
+
 	static {
 		staticLogMessage();
 	}
@@ -132,6 +144,10 @@ public class SelectiveTestSuite extends TestSuite {
 
 			public void run() {
 				logger.info("Shutdown hook activated");
+				if (!wasExecuted) {
+					logger.info("Testsuite was not executed");
+					return;
+				}
 				logger.info("ActualListener: " + actualListener
 						+ "\nresultReporter: " + actualResultReporter);
 				if (SLEEP) {
@@ -213,7 +229,7 @@ public class SelectiveTestSuite extends TestSuite {
 	 */
 	@Override
 	public void run(TestResult result) {
-
+		wasExecuted = true;
 		String stackTraceString = Util.getStackTraceString();
 		logger.info("SelectiveTestSuite.run entered. Version: "
 				+ serialVersionUID + "\nStacktrace:\n" + stackTraceString);
@@ -434,7 +450,7 @@ public class SelectiveTestSuite extends TestSuite {
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}
-//			ResultReporter.touch(actualMutation.getId());
+			// ResultReporter.touch(actualMutation.getId());
 			if (future.isDone()) {
 				logger
 						.info("Mutation thread finished after disabling mutation");

@@ -18,9 +18,9 @@ import de.st.cs.unisb.javalanche.objectInspector.testClasses.ObjectsForMethod;
 public class ObjectInspectorTest {
 
 	// private static final String CLASSNAME =
-	// "./target/test-classes/org/softevo/mutation/objectInspector/testClasses/ObjectsForMethod.class";
+	// "./target/test-classes/de/st/cs/unisb/javalanche/objectInspector/testClasses/ObjectsForMethod.class";
 
-	private static final String RCLASSNAME = "org/softevo/mutation/objectInspector/testClasses/ObjectsForMethod"
+	private static final String RCLASSNAME = "de/st/cs/unisb/javalanche/objectInspector/testClasses/ObjectsForMethod"
 			.replace('/', '.');
 
 	private static class TestingClassLoader extends ClassLoader {
@@ -98,7 +98,10 @@ public class ObjectInspectorTest {
 			Assert.assertEquals(new Integer(1), o);
 			o = m3.invoke(null, new Object[0]);
 		} catch (InvocationTargetException e) {
-			throw (Exception) e.getTargetException();
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+			e.getCause().printStackTrace();
+//			throw (Exception) e.getTargetException();
 		}
 	}
 }

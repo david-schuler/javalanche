@@ -64,44 +64,60 @@ public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 	}
 
 	private void serializeVariable(int opcode, int var) {
-		String methodToCall = "toXMLPrimitive";
-		if (opcode == ASTORE) {
-			super.visitVarInsn(ALOAD, var);
-			insertFileNameStatements(var, getCountVorVar(var));
-			super.visitMethodInsn(INVOKESTATIC,
-					"org/softevo/mutation/io/XmlIo", "toXML",
-					"(Ljava/lang/Object;Ljava/lang/String;)V");
-
-		} else if (opcode == ISTORE) {
-			super.visitVarInsn(ILOAD, var);
-			insertFileNameStatements(var, getCountVorVar(var));
-			super.visitMethodInsn(INVOKESTATIC,
-					"org/softevo/mutation/io/XmlIo", methodToCall,
-					"(ILjava/lang/String;)V");
-
-		} else if (opcode == FSTORE) {
-			super.visitVarInsn(FLOAD, var);
-			insertFileNameStatements(var, getCountVorVar(var));
-			super.visitMethodInsn(INVOKESTATIC,
-					"org/softevo/mutation/io/XmlIo", methodToCall,
-					"(FLjava/lang/String;)V");
-
-		} else if (opcode == LLOAD) {
-			super.visitVarInsn(LLOAD, var);
-			insertFileNameStatements(var, getCountVorVar(var));
-			super.visitMethodInsn(INVOKESTATIC,
-					"org/softevo/mutation/io/XmlIo", methodToCall,
-					"(LLjava/lang/String;)V");
-
-		} else if (opcode == DLOAD) {
-			super.visitVarInsn(DLOAD, var);
-			insertFileNameStatements(var, getCountVorVar(var));
-			super.visitMethodInsn(INVOKESTATIC,
-					"org/softevo/mutation/io/XmlIo", methodToCall,
-					"(DLjava/lang/String;)V");
-
-		}
-
+//	 TODO introduce  a method that serializes these objects
+//		String methodToCall = "toXMLPrimitive";
+//		if (opcode == ASTORE) {
+//			super.visitVarInsn(ALOAD, var);
+//			insertFileNameStatements(var, getCountVorVar(var));
+//			super.visitMethodInsn(INVOKESTATIC,
+//					"de/st/cs/unisb/ds/util/io/XmlIo", "toXML",
+//					"(Ljava/lang/Object;Ljava/lang/String;)V");
+//
+//		} else if (opcode == ISTORE) {
+//			super.visitVarInsn(ILOAD, var);
+//			insertFileNameStatements(var, getCountVorVar(var));
+//			super.visitMethodInsn(INVOKESTATIC,
+//					"de/st/cs/unisb/ds/util/io/XmlIo", methodToCall,
+//					"(ILjava/lang/String;)V");
+//
+//		} else if (opcode == FSTORE) {
+//			super.visitVarInsn(FLOAD, var);
+//			insertFileNameStatements(var, getCountVorVar(var));
+//			super.visitMethodInsn(INVOKESTATIC,
+//					"de/st/cs/unisb/ds/util/io/XmlIo", methodToCall,
+//					"(FLjava/lang/String;)V");
+//
+//		} else if (opcode == LLOAD) {
+//			super.visitVarInsn(LLOAD, var);
+//			insertFileNameStatements(var, getCountVorVar(var));
+//			super.visitMethodInsn(INVOKESTATIC,
+//					"de/st/cs/unisb/ds/util/io/XmlIo", methodToCall,
+//					"(LLjava/lang/String;)V");
+//
+//		} else if (opcode == DLOAD) {
+//			super.visitVarInsn(DLOAD, var);
+//			insertFileNameStatements(var, getCountVorVar(var));
+//			super.visitMethodInsn(INVOKESTATIC,
+//					"de/st/cs/unisb/ds/util/io/XmlIo", methodToCall,
+//					"(DLjava/lang/String;)V");
+//
+//		}
+		//
+//		public static void toXMLPrimitive(int i, String fileName) {
+//			toXML(i, fileName);
+//		}
+	//
+//		public static void toXMLPrimitive(float f, String fileName) {
+//			toXML(f, fileName);
+//		}
+	//
+//		public static void toXMLPrimitive(long l, String fileName) {
+//			toXML(l, fileName);
+//		}
+	//
+//		public static void toXMLPrimitive(double d, String fileName) {
+//			toXML(d, fileName);
+//		}
 	}
 
 	private int getCountVorVar(int var) {
@@ -135,7 +151,7 @@ public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 		// mv.visitVarInsn(entry.getValue(), entry.getKey());
 		// insertFileNameStatements(entry.getKey());
 		// mv.visitMethodInsn(INVOKESTATIC,
-		// "org/softevo/mutation/io/XmlIo", "toXML",
+		// "de/st/cs/unisb/ds/util/io/XmlIo", "toXML",
 		// "(Ljava/lang/Object;Ljava/lang/String;)V");
 		//
 		// // mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out",
@@ -150,14 +166,14 @@ public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 		// mv.visitVarInsn(entry.getValue(), entry.getKey());
 		// insertFileNameStatements(entry.getKey());
 		// mv.visitMethodInsn(INVOKESTATIC,
-		// "org/softevo/mutation/io/XmlIo", methodToCall,
+		// "de/st/cs/unisb/ds/util/io/XmlIo", methodToCall,
 		// "(ILjava/lang/String;)V");
 		//
 		// } else if (entry.getValue() == FLOAD) {
 		// mv.visitVarInsn(entry.getValue(), entry.getKey());
 		// insertFileNameStatements(entry.getKey());
 		// mv.visitMethodInsn(INVOKESTATIC,
-		// "org/softevo/mutation/io/XmlIo", methodToCall,
+		// "de/st/cs/unisb/ds/util/io/XmlIo", methodToCall,
 		// "(FLjava/lang/String;)V");
 		//
 		// }
@@ -166,14 +182,14 @@ public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 		// mv.visitVarInsn(entry.getValue(), entry.getKey());
 		// insertFileNameStatements(entry.getKey());
 		// mv.visitMethodInsn(INVOKESTATIC,
-		// "org/softevo/mutation/io/XmlIo", methodToCall,
+		// "de/st/cs/unisb/ds/util/io/XmlIo", methodToCall,
 		// "(LLjava/lang/String;)V");
 		//
 		// } else if (entry.getValue() == DLOAD) {
 		// mv.visitVarInsn(entry.getValue(), entry.getKey());
 		// insertFileNameStatements(entry.getKey());
 		// mv.visitMethodInsn(INVOKESTATIC,
-		// "org/softevo/mutation/io/XmlIo", methodToCall,
+		// "de/st/cs/unisb/ds/util/io/XmlIo", methodToCall,
 		// "(DLjava/lang/String;)V");
 		//
 		// }
@@ -189,7 +205,7 @@ public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 		mv
 				.visitMethodInsn(
 						INVOKESTATIC,
-						"org/softevo/mutation/objectInspector/asmAdapters/ObjectInspectorMethodAdapter",
+						"de/st/cs/unisb/javalanche/objectInspector/asmAdapters/ObjectInspectorMethodAdapter",
 						"getFileNameForIndex",
 						"(IILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
 	}
@@ -228,5 +244,7 @@ public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 	public String getMethodName() {
 		return methodName;
 	}
+
+
 
 }
