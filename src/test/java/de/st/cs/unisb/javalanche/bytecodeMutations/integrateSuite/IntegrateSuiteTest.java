@@ -20,6 +20,7 @@ public class IntegrateSuiteTest {
 		Map<String, junit.framework.Test> map = TestSuiteUtil.getAllTests(suite);
 		suite.run(new TestResult());
 		TestSuite selectiveTestSuite = SelectiveTestSuite.toSelectiveTestSuite(suite);
+		assertTrue(selectiveTestSuite!=null);
 //		assertTrue(selectiveTestSuite instanceof SelectiveTestSuite);
 		assertTrue(map.size() >= suite.testCount());
 	}

@@ -15,7 +15,7 @@ public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 
 	private Map<Integer, Integer> localVariables = new HashMap<Integer, Integer>();
 
-	private Map<Integer, Integer> countForVar = new HashMap<Integer, Integer>();
+//	private Map<Integer, Integer> countForVar = new HashMap<Integer, Integer>();
 
 	private List<VariableInfo> variableInfo = new ArrayList<VariableInfo>();
 
@@ -119,16 +119,16 @@ public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 //			toXML(d, fileName);
 //		}
 	}
-
-	private int getCountVorVar(int var) {
-		int count = 0;
-		if (countForVar.containsKey(var)) {
-			count = countForVar.get(var) + 1;
-			countForVar.put(var, count);
-		}
-		countForVar.put(var, count);
-		return count;
-	}
+//
+//	private int getCountVorVar(int var) {
+//		int count = 0;
+//		if (countForVar.containsKey(var)) {
+//			count = countForVar.get(var) + 1;
+//			countForVar.put(var, count);
+//		}
+//		countForVar.put(var, count);
+//		return count;
+//	}
 
 	// @Override
 	protected void onMethodEnter() {
@@ -197,18 +197,18 @@ public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 		// }
 	}
 
-	private void insertFileNameStatements(int n, int count) {
-		mv.visitIntInsn(SIPUSH, n);
-		mv.visitIntInsn(SIPUSH, count);
-		mv.visitLdcInsn(className);
-		mv.visitLdcInsn(methodName);
-		mv
-				.visitMethodInsn(
-						INVOKESTATIC,
-						"de/st/cs/unisb/javalanche/objectInspector/asmAdapters/ObjectInspectorMethodAdapter",
-						"getFileNameForIndex",
-						"(IILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
-	}
+//	private void insertFileNameStatements(int n, int count) {
+//		mv.visitIntInsn(SIPUSH, n);
+//		mv.visitIntInsn(SIPUSH, count);
+//		mv.visitLdcInsn(className);
+//		mv.visitLdcInsn(methodName);
+//		mv
+//				.visitMethodInsn(
+//						INVOKESTATIC,
+//						"de/st/cs/unisb/javalanche/objectInspector/asmAdapters/ObjectInspectorMethodAdapter",
+//						"getFileNameForIndex",
+//						"(IILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
+//	}
 
 	public static String getFileNameForIndex(int index, int count,
 			String className, String methodName) {
