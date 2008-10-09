@@ -37,7 +37,7 @@ public class MutationProperties {
 
 	public static final String OUTPUT_DIR = getProperty("mutation.output.dir");
 
-	public static final String ASPECTJ_DIR = "/scratch/schuler/aspectJ/";
+//	public static final String ASPECTJ_DIR = "/scratch/schuler/aspectJ/";
 
 	public static final String CLOVER_REPORT_DIR = OUTPUT_DIR + "clover_html/";
 
@@ -268,16 +268,6 @@ public class MutationProperties {
 		return result;
 	}
 
-	// private static boolean getCoverage() {
-	// String coverageInformation = System
-	// .getProperty(COVERAGE_INFORMATION_KEY);
-	// boolean result = false;
-	// if (coverageInformation != null
-	// && coverageInformation.toLowerCase().equals("true")) {
-	// result = true;
-	// }
-	// return result;
-	// }
 
 	private static String getPrefix() {
 		String project_prefix = getProperty(PROJECT_PREFIX_KEY);

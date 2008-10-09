@@ -14,8 +14,6 @@ import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import de.st.cs.unisb.ds.util.io.DirectoryFileSource;
 import de.st.cs.unisb.ds.util.io.Io;
-import org.softevo.mutation.properties.MutationProperties;
-
 
 public class SystemExitFinder {
 
@@ -94,11 +92,16 @@ public class SystemExitFinder {
 	}
 
 	public static void main(String[] args) {
-		List<String> classesWithSystemExit = new ArrayList<String>();
-		try {
-			Collection<File> classList = DirectoryFileSource.getFilesByExtension(new File(
-					MutationProperties.ASPECTJ_DIR), ".class");
-			for (File classFile: classList) {
+		if (args.length < 0) {
+			System.out
+					.println("Specify a directory that should be scanned for System.out calls");
+
+		} else {
+			List<String> classesWithSystemExit = new ArrayList<String>();
+			try {
+				Collection<File> classList = DirectoryFileSource
+						.getFilesByExtension(new File(args[0]), ".class");
+				for (File classFile : classList) {
 					byte[] classBytes = Io.getBytesFromFile(classFile);
 					ClassReader cr = new ClassReader(classBytes);
 					ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -109,14 +112,14 @@ public class SystemExitFinder {
 						classesWithSystemExit.add(systemExitFinderClassAdapter
 								.getClassName());
 					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Classes With calls to system exit:");
+			for (String string : classesWithSystemExit) {
+				System.out.println(string);
+			}
 		}
-		System.out.println("Classes With calls to system exit:");
-		for (String string : classesWithSystemExit) {
-			System.out.println(string);
-		}
-
 	}
 }
