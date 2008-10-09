@@ -1,4 +1,4 @@
-package org.softevo.mutation.results;
+package de.st.cs.unisb.javalanche.results;
 
 import java.util.ArrayList;
 import java.util.List;

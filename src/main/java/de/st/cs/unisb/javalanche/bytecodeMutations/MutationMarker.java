@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations;
+package de.st.cs.unisb.javalanche.bytecodeMutations;
 
 /**
  * Class used to mark mutated statements in the bytecode

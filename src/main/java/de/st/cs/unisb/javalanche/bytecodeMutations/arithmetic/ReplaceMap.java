@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.arithmetic;
+package de.st.cs.unisb.javalanche.bytecodeMutations.arithmetic;
 
 import java.util.HashMap;
 import java.util.Map;

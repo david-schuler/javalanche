@@ -1,10 +1,10 @@
-package org.softevo.mutation.analyze.tools;
+package de.st.cs.unisb.javalanche.analyze.tools;
 
 import java.util.Set;
 
 
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 public class ShowTestsForMutation {
 

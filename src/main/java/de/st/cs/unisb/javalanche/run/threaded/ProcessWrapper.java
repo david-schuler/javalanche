@@ -1,4 +1,4 @@
-package org.softevo.mutation.run.threaded;
+package de.st.cs.unisb.javalanche.run.threaded;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,8 +10,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import de.st.cs.unisb.ds.util.io.XmlIo;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.runtime.RunResult;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.runtime.RunResult;
 
 /**
  *

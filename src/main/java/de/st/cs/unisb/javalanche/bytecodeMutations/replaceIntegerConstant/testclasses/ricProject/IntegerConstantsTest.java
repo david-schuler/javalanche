@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject;
+package de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject;
 
 import junit.framework.TestCase;
 

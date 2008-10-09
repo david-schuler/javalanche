@@ -1,4 +1,4 @@
-package org.softevo.mutation.coverageResults.db;
+package de.st.cs.unisb.javalanche.coverageResults.db;
 
 import java.util.List;
 

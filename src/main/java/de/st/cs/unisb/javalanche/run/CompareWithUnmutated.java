@@ -1,4 +1,4 @@
-package org.softevo.mutation.run;
+package de.st.cs.unisb.javalanche.run;
 
 import java.util.List;
 
@@ -6,15 +6,15 @@ import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.persistence.HibernateUtil;
-import org.softevo.mutation.run.analyze.KilledAnalyzer;
-import org.softevo.mutation.run.analyze.KilledForClassAnalyzer;
-import org.softevo.mutation.run.analyze.MutatedUnmutatedAnalyzer;
-import org.softevo.mutation.run.analyze.ShowCheckErrorsAnalyzer;
-import org.softevo.mutation.run.analyze.TestsAnalyzer;
-import org.softevo.mutation.run.analyze.UnMutatedTestAnalyzer;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
+import de.st.cs.unisb.javalanche.run.analyze.KilledAnalyzer;
+import de.st.cs.unisb.javalanche.run.analyze.KilledForClassAnalyzer;
+import de.st.cs.unisb.javalanche.run.analyze.MutatedUnmutatedAnalyzer;
+import de.st.cs.unisb.javalanche.run.analyze.ShowCheckErrorsAnalyzer;
+import de.st.cs.unisb.javalanche.run.analyze.TestsAnalyzer;
+import de.st.cs.unisb.javalanche.run.analyze.UnMutatedTestAnalyzer;
 
 public class CompareWithUnmutated {
 

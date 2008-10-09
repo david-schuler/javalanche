@@ -1,15 +1,15 @@
-package org.softevo.mutation.analyze;
+package de.st.cs.unisb.javalanche.analyze;
 
-import static org.softevo.mutation.properties.MutationProperties.*;
+import static de.st.cs.unisb.javalanche.properties.MutationProperties.*;
 
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.persistence.HibernateUtil;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 public class AnalyzeMain {
 

@@ -1,4 +1,4 @@
-package org.softevo.mutation.testDetector;
+package de.st.cs.unisb.javalanche.testDetector;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,7 +11,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import de.st.cs.unisb.ds.util.io.DirectoryFileSource;
 import de.st.cs.unisb.ds.util.io.XmlIo;
-import org.softevo.mutation.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
 
 public class TestCaseDetector {
 

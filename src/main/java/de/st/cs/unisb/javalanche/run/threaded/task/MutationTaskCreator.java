@@ -1,4 +1,4 @@
-package org.softevo.mutation.run.threaded.task;
+package de.st.cs.unisb.javalanche.run.threaded.task;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import de.st.cs.unisb.ds.util.io.Io;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 /**
  * Creates Mutation tasks that can later be executed on multiple JVMs

@@ -1,4 +1,4 @@
-package org.softevo.mutation.objectInspector;
+package de.st.cs.unisb.javalanche.objectInspector;
 
 import de.st.cs.unisb.ds.util.io.XmlIo;
 

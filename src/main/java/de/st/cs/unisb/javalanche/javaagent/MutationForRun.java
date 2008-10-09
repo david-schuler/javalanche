@@ -1,4 +1,4 @@
-package org.softevo.mutation.javaagent;
+package de.st.cs.unisb.javalanche.javaagent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,11 +12,11 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import de.st.cs.unisb.ds.util.io.Io;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.properties.MutationProperties.RunMode;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.persistence.HibernateUtil;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.properties.MutationProperties.RunMode;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 public class MutationForRun {
 

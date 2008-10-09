@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.integrateSuite.testClasses;
+package de.st.cs.unisb.javalanche.bytecodeMutations.integrateSuite.testClasses;
 
 import junit.framework.TestCase;
 

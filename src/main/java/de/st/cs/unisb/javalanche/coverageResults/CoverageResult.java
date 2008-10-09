@@ -1,4 +1,4 @@
-package org.softevo.mutation.coverageResults;
+package de.st.cs.unisb.javalanche.coverageResults;
 
 import java.util.ArrayList;
 import java.util.Collections;

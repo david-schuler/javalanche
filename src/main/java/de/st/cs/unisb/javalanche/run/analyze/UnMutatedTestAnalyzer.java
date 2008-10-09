@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.softevo.mutation.run.analyze;
+package de.st.cs.unisb.javalanche.run.analyze;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.st.cs.unisb.ds.util.io.Io;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationTestResult;
-import org.softevo.mutation.results.TestMessage;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.MutationTestResult;
+import de.st.cs.unisb.javalanche.results.TestMessage;
 
 public class UnMutatedTestAnalyzer implements MutatedUnmutatedAnalyzer {
 

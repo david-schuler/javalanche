@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.softevo.mutation.analyze;
+package de.st.cs.unisb.javalanche.analyze;
 
 import java.io.File;
 import java.util.HashSet;

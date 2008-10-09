@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.negateJumps;
+package de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
+import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
 
 public class NegateJumpsPossibilitiesClassAdapter extends ClassAdapter {
 

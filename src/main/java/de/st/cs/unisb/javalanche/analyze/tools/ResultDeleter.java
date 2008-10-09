@@ -1,4 +1,4 @@
-package org.softevo.mutation.analyze.tools;
+package de.st.cs.unisb.javalanche.analyze.tools;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -9,11 +9,11 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationTestResult;
-import org.softevo.mutation.results.persistence.HibernateUtil;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.MutationTestResult;
+import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 import de.st.cs.unisb.ds.util.Formater;
 
 import de.st.cs.unisb.ds.util.io.Io;

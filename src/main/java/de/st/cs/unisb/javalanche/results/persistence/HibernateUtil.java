@@ -1,4 +1,4 @@
-package org.softevo.mutation.results.persistence;
+package de.st.cs.unisb.javalanche.results.persistence;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

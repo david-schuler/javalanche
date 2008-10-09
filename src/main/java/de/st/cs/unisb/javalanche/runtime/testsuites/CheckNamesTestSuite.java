@@ -1,4 +1,4 @@
-package org.softevo.mutation.runtime.testsuites;
+package de.st.cs.unisb.javalanche.runtime.testsuites;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +14,9 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.TestName;
-import org.softevo.mutation.results.persistence.HibernateUtil;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.results.TestName;
+import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
 
 public class CheckNamesTestSuite extends TestSuite {
 

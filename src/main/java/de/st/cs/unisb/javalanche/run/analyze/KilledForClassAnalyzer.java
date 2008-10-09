@@ -1,13 +1,13 @@
-package org.softevo.mutation.run.analyze;
+package de.st.cs.unisb.javalanche.run.analyze;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.st.cs.unisb.ds.util.io.XmlIo;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationTestResult;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.MutationTestResult;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 public class KilledForClassAnalyzer implements MutatedUnmutatedAnalyzer {
 

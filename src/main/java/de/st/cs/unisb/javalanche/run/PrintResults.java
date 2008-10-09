@@ -1,4 +1,4 @@
-package org.softevo.mutation.run;
+package de.st.cs.unisb.javalanche.run;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,9 +11,9 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.TestMessage;
-import org.softevo.mutation.results.persistence.HibernateUtil;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.TestMessage;
+import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
 
 public class PrintResults {
 

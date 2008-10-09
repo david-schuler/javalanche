@@ -1,4 +1,4 @@
-package org.softevo.mutation.analyze;
+package de.st.cs.unisb.javalanche.analyze;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.st.cs.unisb.ds.util.io.XmlIo;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationTestResult;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.MutationTestResult;
 
 public class MutationResultAnalyzer implements MutationAnalyzer {
 

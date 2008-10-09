@@ -1,4 +1,4 @@
-package org.softevo.mutation.objectInspector.asmAdapters;
+package de.st.cs.unisb.javalanche.objectInspector.asmAdapters;
 
 import java.util.*;
 
@@ -6,8 +6,8 @@ import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import de.st.cs.unisb.ds.util.io.XmlIo;
-import org.softevo.mutation.objectInspector.VariableInfo;
-import org.softevo.mutation.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.objectInspector.VariableInfo;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
 
 public class ObjectInspectorClassAdapter extends ClassAdapter {
 

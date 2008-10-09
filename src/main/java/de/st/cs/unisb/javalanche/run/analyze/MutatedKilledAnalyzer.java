@@ -1,10 +1,10 @@
-package org.softevo.mutation.run.analyze;
+package de.st.cs.unisb.javalanche.run.analyze;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationTestResult;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.MutationTestResult;
 
 public class MutatedKilledAnalyzer implements MutatedAnalyzer {
 

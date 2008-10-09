@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.removeSystemExit;
+package de.st.cs.unisb.javalanche.bytecodeMutations.removeSystemExit;
 
 import java.util.Iterator;
 
@@ -15,7 +15,7 @@ import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
-import org.softevo.mutation.bytecodeMutations.MutationMarker;
+import de.st.cs.unisb.javalanche.bytecodeMutations.MutationMarker;
 
 public class RemoveSystemExitMethodNode extends MethodAdapter {
 	private static Logger logger = Logger

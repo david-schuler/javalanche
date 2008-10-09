@@ -1,4 +1,4 @@
-package org.softevo.mutation.runtime.testsuites;
+package de.st.cs.unisb.javalanche.runtime.testsuites;
 
 import java.io.File;
 import java.util.HashSet;
@@ -17,13 +17,13 @@ import junit.framework.TestSuite;
 
 import org.apache.log4j.Logger;
 import de.st.cs.unisb.ds.util.io.XmlIo;
-import org.softevo.mutation.javaagent.MutationForRun;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.persistence.QueryManager;
-import org.softevo.mutation.runtime.MutationSwitcher;
-import org.softevo.mutation.runtime.MutationTestListener;
-import org.softevo.mutation.runtime.ResultReporter;
+import de.st.cs.unisb.javalanche.javaagent.MutationForRun;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.runtime.MutationSwitcher;
+import de.st.cs.unisb.javalanche.runtime.MutationTestListener;
+import de.st.cs.unisb.javalanche.runtime.ResultReporter;
 import de.st.cs.unisb.ds.util.Util;
 
 

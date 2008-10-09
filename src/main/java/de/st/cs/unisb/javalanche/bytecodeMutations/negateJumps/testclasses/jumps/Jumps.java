@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.negateJumps.testclasses.jumps;
+package de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps.testclasses.jumps;
 
 public class Jumps {
 

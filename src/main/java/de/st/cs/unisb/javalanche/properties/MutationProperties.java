@@ -1,4 +1,4 @@
-package org.softevo.mutation.properties;
+package de.st.cs.unisb.javalanche.properties;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +53,7 @@ public class MutationProperties {
 	public static final String MUTATION_RESULT_FILE = OUTPUT_DIR
 			+ "/mutation-results.txt";
 
-	public static final String[] TEST_CLASSES_TO_INSTRUMENT = { "org.softevo.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps" };
+	public static final String[] TEST_CLASSES_TO_INSTRUMENT = { "de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps" };
 
 	/*
 	 * Different run modes.

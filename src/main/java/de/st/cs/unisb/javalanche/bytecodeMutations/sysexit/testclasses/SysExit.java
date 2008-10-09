@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.sysexit.testclasses;
+package de.st.cs.unisb.javalanche.bytecodeMutations.sysexit.testclasses;
 
 public class SysExit {
 

@@ -1,14 +1,14 @@
-package org.softevo.mutation.mutationPossibilities;
+package de.st.cs.unisb.javalanche.mutationPossibilities;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicCollectorTransformer;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.Mutation.MutationType;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant.RicCollectorTransformer;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
 

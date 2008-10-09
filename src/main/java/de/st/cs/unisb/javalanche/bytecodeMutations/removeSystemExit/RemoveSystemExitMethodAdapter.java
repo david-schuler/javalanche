@@ -1,11 +1,11 @@
-package org.softevo.mutation.bytecodeMutations.removeSystemExit;
+package de.st.cs.unisb.javalanche.bytecodeMutations.removeSystemExit;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.softevo.mutation.bytecodeMutations.MutationMarker;
+import de.st.cs.unisb.javalanche.bytecodeMutations.MutationMarker;
 
 public class RemoveSystemExitMethodAdapter extends MethodAdapter {
 

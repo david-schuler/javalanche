@@ -1,14 +1,14 @@
-package org.softevo.mutation.runtime;
+package de.st.cs.unisb.javalanche.runtime;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.javaagent.MutationForRun;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.javaagent.MutationForRun;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 /**
  * Class handles the activation and deactivation of the mutations during

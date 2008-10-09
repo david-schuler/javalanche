@@ -1,11 +1,11 @@
-package org.softevo.mutation.objectInspector;
+package de.st.cs.unisb.javalanche.objectInspector;
 
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import de.st.cs.unisb.ds.util.io.XmlIo;
-import org.softevo.mutation.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
 
 public class CompareObjects {
 	private static Logger logger = Logger.getLogger(CompareObjects.class);

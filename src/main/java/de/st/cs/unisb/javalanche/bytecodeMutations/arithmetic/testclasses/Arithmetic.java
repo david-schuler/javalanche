@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.arithmetic.testclasses;
+package de.st.cs.unisb.javalanche.bytecodeMutations.arithmetic.testclasses;
 
 public class Arithmetic { static{System.out.println("Arithmetic - test class loaded"  );}
 

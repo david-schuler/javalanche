@@ -1,4 +1,4 @@
-package org.softevo.mutation.runtime.testsuites;
+package de.st.cs.unisb.javalanche.runtime.testsuites;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
 import junit.framework.Test;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.bytecodeMutations.mutationCoverage.CoverageData;
+import de.st.cs.unisb.javalanche.bytecodeMutations.mutationCoverage.CoverageData;
 
 public class ScanAndCoverageTestSuite extends TestSuite {
 

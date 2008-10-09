@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.mutationCoverage;
+package de.st.cs.unisb.javalanche.bytecodeMutations.mutationCoverage;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -11,9 +11,9 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.softevo.mutation.bytecodeMutations.MutationMarker;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.bytecodeMutations.MutationMarker;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 public class CoverageData {
 

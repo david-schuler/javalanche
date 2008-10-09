@@ -1,10 +1,10 @@
-package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
+package de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant;
 
 import java.util.Map;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.softevo.mutation.bytecodeMutations.AbstractMutationAdapter;
+import de.st.cs.unisb.javalanche.bytecodeMutations.AbstractMutationAdapter;
 
 public abstract class AbstractRicMethodAdapter extends AbstractMutationAdapter {
 

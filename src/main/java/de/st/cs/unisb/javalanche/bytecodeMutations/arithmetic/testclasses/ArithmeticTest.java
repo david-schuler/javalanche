@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.arithmetic.testclasses;
+package de.st.cs.unisb.javalanche.bytecodeMutations.arithmetic.testclasses;
 
 import junit.framework.TestCase;
 

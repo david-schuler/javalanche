@@ -1,11 +1,11 @@
-package org.softevo.mutation.run.threaded.task;
+package de.st.cs.unisb.javalanche.run.threaded.task;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.softevo.mutation.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
 
 public class MutationTask {
 

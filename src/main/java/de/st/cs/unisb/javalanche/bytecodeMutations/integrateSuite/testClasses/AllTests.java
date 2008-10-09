@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.integrateSuite.testClasses;
+package de.st.cs.unisb.javalanche.bytecodeMutations.integrateSuite.testClasses;
 
 
 import org.junit.Test;
@@ -15,7 +15,7 @@ public class AllTests extends TestCase {
     public void testDoNothing(){
     	System.err.println("do nothing");
     	// to get rid of message
-    	//junit.framework.AssertionFailedError: No tests found in org.softevo.mutation.bytecodeMutations.integrateSuite.testClasses.AllTests
+    	//junit.framework.AssertionFailedError: No tests found in de.st.cs.unisb.javalanche.bytecodeMutations.integrateSuite.testClasses.AllTests
 
 
     }

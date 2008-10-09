@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.softevo.mutation.analyze;
+package de.st.cs.unisb.javalanche.analyze;
 
 import java.io.File;
 import java.io.Serializable;
@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import de.st.cs.unisb.ds.util.io.XmlIo;
-import org.softevo.mutation.results.Mutation;
+import de.st.cs.unisb.javalanche.results.Mutation;
 
 public class ExperimentData2 implements Serializable {
 

@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
+package de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant;
 
 import java.io.PrintWriter;
 
@@ -6,8 +6,8 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
-import org.softevo.mutation.bytecodeMutations.CollectorByteCodeTransformer;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
+import de.st.cs.unisb.javalanche.bytecodeMutations.CollectorByteCodeTransformer;
+import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
 
 public class RicCollectorTransformer extends CollectorByteCodeTransformer {
 

@@ -1,9 +1,9 @@
-package org.softevo.mutation.results.persistence;
+package de.st.cs.unisb.javalanche.results.persistence;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.softevo.mutation.javaagent.MutationForRun;
-import org.softevo.mutation.results.Mutation;
+import de.st.cs.unisb.javalanche.javaagent.MutationForRun;
+import de.st.cs.unisb.javalanche.results.Mutation;
 
 /**
  * Decides if a mutation should be applied in bytecode when the class is loaded.

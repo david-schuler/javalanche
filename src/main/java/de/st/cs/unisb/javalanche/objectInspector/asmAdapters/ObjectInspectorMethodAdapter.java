@@ -1,4 +1,4 @@
-package org.softevo.mutation.objectInspector.asmAdapters;
+package de.st.cs.unisb.javalanche.objectInspector.asmAdapters;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,8 +8,8 @@ import java.util.Map;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.AdviceAdapter;
-import org.softevo.mutation.objectInspector.VariableInfo;
-import org.softevo.mutation.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.objectInspector.VariableInfo;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
 
 public class ObjectInspectorMethodAdapter extends AdviceAdapter {
 

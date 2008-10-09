@@ -1,4 +1,4 @@
-package org.softevo.mutation.runtime;
+package de.st.cs.unisb.javalanche.runtime;
 
 import java.io.File;
 import java.util.HashMap;
@@ -11,12 +11,12 @@ import junit.framework.TestResult;
 
 import org.apache.log4j.Logger;
 import de.st.cs.unisb.ds.util.io.XmlIo;
-import org.softevo.mutation.javaagent.MutationForRun;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationTestResult;
-import org.softevo.mutation.results.Mutation.MutationType;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.javaagent.MutationForRun;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.MutationTestResult;
+import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 import de.unisb.cs.st.invariants.runtime.InvariantObserver;
 

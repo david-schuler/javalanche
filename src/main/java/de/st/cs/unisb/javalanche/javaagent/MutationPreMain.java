@@ -1,20 +1,20 @@
-package org.softevo.mutation.javaagent;
+package de.st.cs.unisb.javalanche.javaagent;
 
-import static org.softevo.mutation.properties.MutationProperties.*;
-import static org.softevo.mutation.properties.MutationProperties.RunMode.*;
+import static de.st.cs.unisb.javalanche.properties.MutationProperties.*;
+import static de.st.cs.unisb.javalanche.properties.MutationProperties.RunMode.*;
 
 import java.io.PrintStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 
-import org.softevo.mutation.javaagent.classFileTransfomer.IntegrateCheckNamesSuiteTransformer;
-import org.softevo.mutation.javaagent.classFileTransfomer.IntegrateRandomPermutationTransformer;
-import org.softevo.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
-import org.softevo.mutation.javaagent.classFileTransfomer.MutationScanner;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.Mutation.MutationType;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.javaagent.classFileTransfomer.IntegrateCheckNamesSuiteTransformer;
+import de.st.cs.unisb.javalanche.javaagent.classFileTransfomer.IntegrateRandomPermutationTransformer;
+import de.st.cs.unisb.javalanche.javaagent.classFileTransfomer.MutationFileTransformer;
+import de.st.cs.unisb.javalanche.javaagent.classFileTransfomer.MutationScanner;
+import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 import de.unisb.cs.st.invariants.javaagent.DaikonInvariantTransformer;
 

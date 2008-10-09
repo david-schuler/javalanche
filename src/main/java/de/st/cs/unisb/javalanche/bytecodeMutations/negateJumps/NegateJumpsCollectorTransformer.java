@@ -1,11 +1,11 @@
-package org.softevo.mutation.bytecodeMutations.negateJumps;
+package de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps;
 
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
-import org.softevo.mutation.bytecodeMutations.CollectorByteCodeTransformer;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
+import de.st.cs.unisb.javalanche.bytecodeMutations.CollectorByteCodeTransformer;
+import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
 
 
 public class NegateJumpsCollectorTransformer extends CollectorByteCodeTransformer{

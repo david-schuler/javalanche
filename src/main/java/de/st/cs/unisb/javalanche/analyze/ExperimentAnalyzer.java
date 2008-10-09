@@ -1,13 +1,13 @@
-package org.softevo.mutation.analyze;
+package de.st.cs.unisb.javalanche.analyze;
 
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationTestResult;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.MutationTestResult;
 
 import de.st.cs.unisb.ds.util.io.XmlIo;
 
@@ -18,7 +18,7 @@ public class ExperimentAnalyzer implements MutationAnalyzer {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.softevo.mutation.analyze.MutationAnalyzer#analyze(java.lang.Iterable)
+	 * @see de.st.cs.unisb.javalanche.analyze.MutationAnalyzer#analyze(java.lang.Iterable)
 	 */
 	public String analyze(Iterable<Mutation> mutations) {
 		if (MutationProperties.EXPERIMENT_DATA_FILENAME == null

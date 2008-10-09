@@ -1,4 +1,4 @@
-package org.softevo.mutation.run.analyze;
+package de.st.cs.unisb.javalanche.run.analyze;
 
 import java.io.File;
 import java.util.Map;

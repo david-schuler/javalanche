@@ -1,16 +1,16 @@
-package org.softevo.mutation.bytecodeMutations.arithmetic;
+package de.st.cs.unisb.javalanche.bytecodeMutations.arithmetic;
 
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.softevo.mutation.bytecodeMutations.AbstractMutationAdapter;
-import org.softevo.mutation.bytecodeMutations.BytecodeTasks;
-import org.softevo.mutation.bytecodeMutations.MutationCode;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.persistence.MutationManager;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.bytecodeMutations.AbstractMutationAdapter;
+import de.st.cs.unisb.javalanche.bytecodeMutations.BytecodeTasks;
+import de.st.cs.unisb.javalanche.bytecodeMutations.MutationCode;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.persistence.MutationManager;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 /**
  * Method Adapter that replaces arithmetic operations. The details for the

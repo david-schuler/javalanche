@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.integrateSuite;
+package de.st.cs.unisb.javalanche.bytecodeMutations.integrateSuite;
 
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;

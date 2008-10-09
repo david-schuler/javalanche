@@ -1,4 +1,4 @@
-package org.softevo.mutation.run;
+package de.st.cs.unisb.javalanche.run;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

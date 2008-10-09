@@ -1,4 +1,4 @@
-package org.softevo.mutation.run.threaded;
+package de.st.cs.unisb.javalanche.run.threaded;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,10 +9,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import de.st.cs.unisb.ds.util.io.XmlIo;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.persistence.QueryManager;
-import org.softevo.mutation.run.threaded.task.MutationTask;
-import org.softevo.mutation.runtime.RunResult;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.run.threaded.task.MutationTask;
+import de.st.cs.unisb.javalanche.runtime.RunResult;
 import de.st.cs.unisb.ds.util.Formater;
 import de.st.cs.unisb.ds.util.Util;
 

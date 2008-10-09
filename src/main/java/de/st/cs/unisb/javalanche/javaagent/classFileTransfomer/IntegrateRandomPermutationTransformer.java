@@ -1,12 +1,12 @@
-package org.softevo.mutation.javaagent.classFileTransfomer;
+package de.st.cs.unisb.javalanche.javaagent.classFileTransfomer;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
-import org.softevo.mutation.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 

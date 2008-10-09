@@ -1,4 +1,4 @@
-package org.softevo.mutation.coverageResults;
+package de.st.cs.unisb.javalanche.coverageResults;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.softevo.mutation.coverageResults.db.TestCoverageClassResult;
-import org.softevo.mutation.coverageResults.db.TestCoverageLineResult;
+import de.st.cs.unisb.javalanche.coverageResults.db.TestCoverageClassResult;
+import de.st.cs.unisb.javalanche.coverageResults.db.TestCoverageLineResult;
 import de.st.cs.unisb.ds.util.io.XmlIo;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 public class TestSuiteCoverageResult {
 

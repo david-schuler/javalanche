@@ -1,4 +1,4 @@
-package org.softevo.mutation.objectInspector.asmAdapters;
+package de.st.cs.unisb.javalanche.objectInspector.asmAdapters;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassVisitor;

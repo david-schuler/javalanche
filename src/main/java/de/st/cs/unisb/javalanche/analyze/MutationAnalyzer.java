@@ -1,6 +1,6 @@
-package org.softevo.mutation.analyze;
+package de.st.cs.unisb.javalanche.analyze;
 
-import org.softevo.mutation.results.Mutation;
+import de.st.cs.unisb.javalanche.results.Mutation;
 
 public interface MutationAnalyzer {
 

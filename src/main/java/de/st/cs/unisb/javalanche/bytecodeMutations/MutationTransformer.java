@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations;
+package de.st.cs.unisb.javalanche.bytecodeMutations;
 
 import java.io.PrintWriter;
 
@@ -7,8 +7,8 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
-import org.softevo.mutation.javaagent.MutationPreMain;
-import org.softevo.mutation.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.javaagent.MutationPreMain;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 

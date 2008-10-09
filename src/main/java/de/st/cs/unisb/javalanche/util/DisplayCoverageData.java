@@ -1,11 +1,11 @@
-package org.softevo.mutation.util;
+package de.st.cs.unisb.javalanche.util;
 
 import java.util.List;
 
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationCoverage;
-import org.softevo.mutation.results.TestName;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.MutationCoverage;
+import de.st.cs.unisb.javalanche.results.TestName;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 public class DisplayCoverageData {
 

@@ -1,4 +1,4 @@
-package org.softevo.mutation.mutationPossibilities;
+package de.st.cs.unisb.javalanche.mutationPossibilities;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import de.st.cs.unisb.ds.util.io.XmlIo;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.Mutation;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.results.Mutation;
 
 public class Mutations implements Iterable<Mutation> {
 

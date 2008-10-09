@@ -1,6 +1,6 @@
-package org.softevo.mutation.javaagent.classFileTransfomer;
+package de.st.cs.unisb.javalanche.javaagent.classFileTransfomer;
 
-import static org.softevo.mutation.properties.MutationProperties.*;
+import static de.st.cs.unisb.javalanche.properties.MutationProperties.*;
 
 public class ClassFileTransformerUtil {
 

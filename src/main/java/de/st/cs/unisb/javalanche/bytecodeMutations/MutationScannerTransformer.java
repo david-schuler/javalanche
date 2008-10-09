@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations;
+package de.st.cs.unisb.javalanche.bytecodeMutations;
 
 import java.io.PrintWriter;
 
@@ -10,9 +10,9 @@ import org.objectweb.asm.util.TraceClassVisitor;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
-import org.softevo.mutation.javaagent.MutationPreMain;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
-import org.softevo.mutation.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.javaagent.MutationPreMain;
+import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
 
 public class MutationScannerTransformer extends BytecodeTransformer {
 

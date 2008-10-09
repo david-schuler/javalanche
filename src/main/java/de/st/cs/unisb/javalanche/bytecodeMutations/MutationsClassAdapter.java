@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations;
+package de.st.cs.unisb.javalanche.bytecodeMutations;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,10 +7,10 @@ import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckMethodAdapter;
-import org.softevo.mutation.bytecodeMutations.arithmetic.ArithmeticReplaceMethodAdapter;
-import org.softevo.mutation.bytecodeMutations.negateJumps.NegateJumpsMethodAdapter;
-import org.softevo.mutation.bytecodeMutations.replaceIntegerConstant.RicMethodAdapter;
-import org.softevo.mutation.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.bytecodeMutations.arithmetic.ArithmeticReplaceMethodAdapter;
+import de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps.NegateJumpsMethodAdapter;
+import de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant.RicMethodAdapter;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
 
 public class MutationsClassAdapter extends ClassAdapter {
 

@@ -1,11 +1,11 @@
-package org.softevo.mutation.runtime;
+package de.st.cs.unisb.javalanche.runtime;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.Mutation.MutationType;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
 
 /**
  * Class that holds the result for one run of the program. Needed when run in

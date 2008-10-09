@@ -1,4 +1,4 @@
-package org.softevo.mutation.results.persistence;
+package de.st.cs.unisb.javalanche.results.persistence;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,12 +13,12 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.MutationCoverage;
-import org.softevo.mutation.results.MutationTestResult;
-import org.softevo.mutation.results.TestName;
-import org.softevo.mutation.results.Mutation.MutationType;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.MutationCoverage;
+import de.st.cs.unisb.javalanche.results.MutationTestResult;
+import de.st.cs.unisb.javalanche.results.TestName;
+import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
 import de.st.cs.unisb.ds.util.Formater;
 import de.st.cs.unisb.ds.util.Util;
 

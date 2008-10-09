@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.softevo.mutation.objectInspector;
+package de.st.cs.unisb.javalanche.objectInspector;
 
 public class VariableInfo {
 	protected final String name;

@@ -1,4 +1,4 @@
-package org.softevo.mutation.javaagent.classFileTransfomer;
+package de.st.cs.unisb.javalanche.javaagent.classFileTransfomer;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -10,16 +10,16 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.bytecodeMutations.MutationTransformer;
-import org.softevo.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
-import org.softevo.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
-import org.softevo.mutation.javaagent.MutationForRun;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
-import org.softevo.mutation.objectInspector.asmAdapters.ObjectInspectorTransformer;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.results.Mutation;
-import org.softevo.mutation.results.Mutation.MutationType;
-import org.softevo.mutation.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.bytecodeMutations.MutationTransformer;
+import de.st.cs.unisb.javalanche.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
+import de.st.cs.unisb.javalanche.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
+import de.st.cs.unisb.javalanche.javaagent.MutationForRun;
+import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
+import de.st.cs.unisb.javalanche.objectInspector.asmAdapters.ObjectInspectorTransformer;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.results.Mutation;
+import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
+import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
@@ -79,7 +79,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			"org.aspectj.testing.util.LinkCheck",
 			"org.aspectj.testing.server.TestServer",
 			"org.aspectj.testing.drivers.Harness",
-			"org.softevo.mutation.bytecodeMutations.sysexit.testclasses.SysExit", };
+			"de.st.cs.unisb.javalanche.bytecodeMutations.sysexit.testclasses.SysExit", };
 
 	private static List<String> systemExitClassList = Arrays
 			.asList(systemExitClasses);

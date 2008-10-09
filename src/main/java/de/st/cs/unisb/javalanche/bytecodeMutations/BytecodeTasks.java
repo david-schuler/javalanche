@@ -1,9 +1,9 @@
-package org.softevo.mutation.bytecodeMutations;
+package de.st.cs.unisb.javalanche.bytecodeMutations;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.softevo.mutation.results.Mutation;
+import de.st.cs.unisb.javalanche.results.Mutation;
 
 /**
  * Class that provides static methods for common bytecode modifications.

@@ -1,4 +1,4 @@
-package org.softevo.mutation.util;
+package de.st.cs.unisb.javalanche.util;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -7,8 +7,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.properties.MutationProperties;
-import org.softevo.mutation.run.threaded.task.MutationTaskCreator;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.run.threaded.task.MutationTaskCreator;
 
 /**
  * Class that generates Makefiles to execute the mutation testing framework. A

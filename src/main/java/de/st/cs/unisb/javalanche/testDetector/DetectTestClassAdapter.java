@@ -1,4 +1,4 @@
-package org.softevo.mutation.testDetector;
+package de.st.cs.unisb.javalanche.testDetector;
 
 import java.util.Arrays;
 import java.util.HashSet;

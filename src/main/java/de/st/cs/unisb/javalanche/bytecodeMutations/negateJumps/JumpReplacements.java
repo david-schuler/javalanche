@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.negateJumps;
+package de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps;
 
 import java.util.Collections;
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.softevo.mutation.objectInspector;
+package de.st.cs.unisb.javalanche.objectInspector;
 
 import java.util.Collections;
 import java.util.List;

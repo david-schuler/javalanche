@@ -1,9 +1,9 @@
-package org.softevo.mutation.util;
+package de.st.cs.unisb.javalanche.util;
 
 import java.io.File;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
 
 /**
  * Class that generates some directories that are needed by the mutation testing

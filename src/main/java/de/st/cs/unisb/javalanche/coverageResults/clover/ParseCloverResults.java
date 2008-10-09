@@ -1,4 +1,4 @@
-package org.softevo.mutation.coverageResults.clover;
+package de.st.cs.unisb.javalanche.coverageResults.clover;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,11 +18,11 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.softevo.mutation.coverageResults.CoverageResult;
-import org.softevo.mutation.coverageResults.TestSuiteCoverageResult;
+import de.st.cs.unisb.javalanche.coverageResults.CoverageResult;
+import de.st.cs.unisb.javalanche.coverageResults.TestSuiteCoverageResult;
 import de.st.cs.unisb.ds.util.io.DirectoryFileSource;
 import de.st.cs.unisb.ds.util.io.XmlIo;
-import org.softevo.mutation.properties.MutationProperties;
+import de.st.cs.unisb.javalanche.properties.MutationProperties;
 import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

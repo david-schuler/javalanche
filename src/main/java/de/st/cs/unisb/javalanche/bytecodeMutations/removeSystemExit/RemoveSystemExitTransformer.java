@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.removeSystemExit;
+package de.st.cs.unisb.javalanche.bytecodeMutations.removeSystemExit;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassAdapter;

@@ -1,7 +1,7 @@
-package org.softevo.mutation.bytecodeMutations;
+package de.st.cs.unisb.javalanche.bytecodeMutations;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
+import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
 
 public abstract class CollectorByteCodeTransformer extends BytecodeTransformer {
 

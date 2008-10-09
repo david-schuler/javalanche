@@ -1,13 +1,13 @@
-package org.softevo.mutation.bytecodeMutations.negateJumps;
+package de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps;
 
 import java.util.Map;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.softevo.mutation.bytecodeMutations.AbstractMutationAdapter;
-import org.softevo.mutation.bytecodeMutations.mutationCoverage.CoverageData;
-import org.softevo.mutation.mutationPossibilities.MutationPossibilityCollector;
-import org.softevo.mutation.results.Mutation;
+import de.st.cs.unisb.javalanche.bytecodeMutations.AbstractMutationAdapter;
+import de.st.cs.unisb.javalanche.bytecodeMutations.mutationCoverage.CoverageData;
+import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
+import de.st.cs.unisb.javalanche.results.Mutation;
 
 public class NegateJumpsPossibilitiesMethodAdapter extends
 		AbstractMutationAdapter {

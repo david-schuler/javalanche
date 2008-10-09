@@ -1,4 +1,4 @@
-package org.softevo.mutation.bytecodeMutations.replaceIntegerConstant;
+package de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant;
 
 import java.io.File;
 import java.io.FileWriter;

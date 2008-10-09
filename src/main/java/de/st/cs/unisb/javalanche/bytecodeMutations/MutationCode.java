@@ -1,7 +1,7 @@
-package org.softevo.mutation.bytecodeMutations;
+package de.st.cs.unisb.javalanche.bytecodeMutations;
 
 import org.objectweb.asm.MethodVisitor;
-import org.softevo.mutation.results.Mutation;
+import de.st.cs.unisb.javalanche.results.Mutation;
 
 public abstract class MutationCode {
 

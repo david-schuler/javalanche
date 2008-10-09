@@ -1,4 +1,4 @@
-package org.softevo.mutation.runtime;
+package de.st.cs.unisb.javalanche.runtime;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +11,7 @@ import junit.framework.Test;
 import junit.framework.TestListener;
 
 import org.apache.log4j.Logger;
-import org.softevo.mutation.results.TestMessage;
+import de.st.cs.unisb.javalanche.results.TestMessage;
 
 /**
  * {@link TestListener} used for the tests executed during mutation testing .It

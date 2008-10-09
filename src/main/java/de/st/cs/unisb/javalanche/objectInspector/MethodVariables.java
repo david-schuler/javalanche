@@ -1,4 +1,4 @@
-package org.softevo.mutation.objectInspector;
+package de.st.cs.unisb.javalanche.objectInspector;
 
 import java.util.ArrayList;
 import java.util.HashMap;

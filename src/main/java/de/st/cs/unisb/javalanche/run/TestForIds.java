@@ -1,6 +1,6 @@
-package org.softevo.mutation.run;
+package de.st.cs.unisb.javalanche.run;
 
-import org.softevo.mutation.javaagent.MutationForRun;
+import de.st.cs.unisb.javalanche.javaagent.MutationForRun;
 
 public class TestForIds {
 	public static void main(String[] args) {

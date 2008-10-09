@@ -1,4 +1,4 @@
-package org.softevo.mutation.results;
+package de.st.cs.unisb.javalanche.results;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import junit.framework.TestResult;
 
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
-import org.softevo.mutation.runtime.MutationTestListener;
+import de.st.cs.unisb.javalanche.runtime.MutationTestListener;
 
 @Entity
 public class MutationTestResult implements Serializable{
