@@ -23,6 +23,7 @@ public class MutationMakeFileGenerator {
 
 	/**
 	 * Represents one task in the makefile.
+	 *
 	 * @author David Schuler
 	 *
 	 */
@@ -48,9 +49,9 @@ public class MutationMakeFileGenerator {
 	// -Dmutation.result.file=result-${2}.xml | tee
 	// output-runMutationDaikon-${2}.txt &
 
-	private static final String COMMAND = "-/scratch5/schuler/subjects/runMutationFile.sh  %s %d \"%s\"";
+	// -/scratch5/schuler/subjects/runMutationFile.sh
 
-	private static String generateMakeFile(String add) {
+	private static String generateMakeFile(String scriptCommand, String add) {
 		File[] files = getTaskFiles(new File(MutationProperties.RESULT_DIR));
 		logger.info("Creating targets for " + files.length + " tasks");
 
@@ -64,10 +65,11 @@ public class MutationMakeFileGenerator {
 			logger.info("Targets for one Makefile" + taskSize);
 		}
 		int filecount = 0;
-		for (File f : files) {
+		for (File taskFile : files) {
 			filecount++;
-			int number = getTaskNumber(f);
-			MakefileTask mt = createTask(number, f, add);
+			int number = getTaskNumber(taskFile);
+
+			MakefileTask mt = createTask(scriptCommand, taskFile, number, add);
 			allTarget.append(" " + mt.targetName);
 			sb.append(mt.targetName + ":\n");
 			sb.append("\t" + mt.command + "\n");
@@ -91,10 +93,11 @@ public class MutationMakeFileGenerator {
 		return allTarget.toString() + "\n" + sb.toString();
 	}
 
-	private static MakefileTask createTask(int number, File f, String add) {
+	private static MakefileTask createTask(String scriptCommand, File taskFile,
+			int number, String add) {
 		String targetName = "result-" + number + ".xml";
-		String mutationCommand = String.format(COMMAND, f.toString(), number,
-				add);
+		String mutationCommand = String.format("%s %s %d \"%s\"",
+				scriptCommand, taskFile.toString(), number, add);
 		return new MakefileTask(targetName, mutationCommand);
 	}
 
@@ -130,7 +133,13 @@ public class MutationMakeFileGenerator {
 	}
 
 	private static void writeMakefile(String add) {
-		String generateMakeFile = generateMakeFile(add);
+		String string = "mutation.comand";
+		String scriptCommand = System.getProperty(string);
+		if (scriptCommand == null) {
+			throw new RuntimeException("No command given. Expecting property "
+					+ string + "to be set");
+		}
+		String generateMakeFile = generateMakeFile(scriptCommand, add);
 		try {
 			File file = new File("Makefile");
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));

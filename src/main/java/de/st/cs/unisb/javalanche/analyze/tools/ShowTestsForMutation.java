@@ -2,10 +2,15 @@ package de.st.cs.unisb.javalanche.analyze.tools;
 
 import java.util.Set;
 
-
 import de.st.cs.unisb.javalanche.results.Mutation;
 import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
+/**
+ * Displays all unittests that cover a specified mutation.
+ *
+ * @author David Schuler
+ *
+ */
 public class ShowTestsForMutation {
 
 	public static void main(String[] args) {
@@ -14,7 +19,6 @@ public class ShowTestsForMutation {
 			Mutation mutation = QueryManager.getMutationByID(l);
 			Set<String> testsCollectedData = QueryManager
 					.getTestsCollectedData(mutation);
-//			System.out.println(" Tests for " + mutation);
 			for (String string : testsCollectedData) {
 				System.out.println(string);
 			}

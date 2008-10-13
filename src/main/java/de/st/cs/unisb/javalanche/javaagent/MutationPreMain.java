@@ -16,7 +16,7 @@ import de.st.cs.unisb.javalanche.results.Mutation;
 import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
 import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
-import de.unisb.cs.st.invariants.javaagent.DaikonInvariantTransformer;
+import de.unisb.cs.st.invariants.javaagent.InvariantTransformer;
 
 public class MutationPreMain {
 
@@ -42,20 +42,22 @@ public class MutationPreMain {
 			Instrumentation instrumentation) {
 		try {
 			if (RUN_MODE == MUTATION_TEST) {
+				System.out
+						.println("Run mutation tests (without invariant checks)");
+				addClassFileTransformer(instrumentation,
+						new MutationFileTransformer());
+				return;
+
+			} else if (RUN_MODE == MUTATION_TEST_INVARIANT) {
 				System.out.println("Run mutation tests with invariant checks");
 				// addClassFileTransformer(instrumentation, new
 				// InvariantTransformer());
 				addClassFileTransformer(instrumentation,
-						new DaikonInvariantTransformer());
+						new InvariantTransformer());
 				addClassFileTransformer(instrumentation,
 						new MutationFileTransformer());
 				return;
-			} else if (RUN_MODE == MUTATION_TEST_NO_INVARIANT) {
-				System.out
-						.println("Run mutation tests without invariant checks");
-				addClassFileTransformer(instrumentation,
-						new MutationFileTransformer());
-				return;
+
 			} else if (RUN_MODE == SCAN) {
 				System.out.println("Scanning for mutations");
 				addClassFileTransformer(instrumentation, new MutationScanner());

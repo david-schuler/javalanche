@@ -1,5 +1,6 @@
 package de.st.cs.unisb.javalanche.results.persistence;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import de.st.cs.unisb.javalanche.properties.MutationProperties;
@@ -246,7 +248,7 @@ public class QueryManager {
 			assert mutationInDb.equalsWithoutId(mutation) : "Expected mutations to be equal: "
 					+ mutation + "   " + mutationInDb;
 		} else {
-			logger.info("Saving mutation: " + mutation);
+			logger.debug("Saving mutation: " + mutation);
 			save(mutation);
 		}
 	}
@@ -265,58 +267,60 @@ public class QueryManager {
 		session.close();
 	}
 
-//	public static String[] getTestCasesExternalData(Mutation mutation) {
-//		return getTestCasesExternalData(mutation.getClassName(), mutation
-//				.getLineNumber());
-//	}
+	// public static String[] getTestCasesExternalData(Mutation mutation) {
+	// return getTestCasesExternalData(mutation.getClassName(), mutation
+	// .getLineNumber());
+	// }
 
-//	/**
-//	 * Gets all test cases from the database that cover the given line of the
-//	 * class.
-//	 *
-//	 * @param className
-//	 *            The name of the class to get the test cases for.
-//	 * @param lineNumber
-//	 *            The linenumber to get the test cases for.
-//	 * @return An array that contains the names of the testcases that cover this
-//	 *         line.
-//	 */
-//	public static String[] getTestCasesExternalData(String className,
-//			int lineNumber) {
-//		Session session = HibernateUtil.getSessionFactory().openSession();
-//		Transaction tx = session.beginTransaction();
-//		Query query = session
-//				.createQuery("from TestCoverageClassResult as clazz join clazz.lineResults as lineres where clazz.className=:clname and lineres.lineNumber=:lnumber");
-//		query.setString("clname", className);
-//		query.setInteger("lnumber", lineNumber);
-//		query.setFetchSize(10);
-//		List l = query.list();
-//		assert l.size() <= 1;
-//		List<String> retList = null;
-//		if (l.size() >= 1) {
-//			Object[] array = (Object[]) l.get(0);
-//			if (array.length >= 2) {
-//				TestCoverageLineResult lineResult = (TestCoverageLineResult) array[1];
-//				List<TestCoverageTestCaseName> testCaseNames = lineResult
-//						.getTestCases();
-//				retList = new ArrayList<String>();
-//				for (TestCoverageTestCaseName name : testCaseNames) {
-//					retList.add(name.getTestCaseName());
-//				}
-//			}
-//		}
-//		tx.commit();
-//		session.close();
-//		if (retList == null) {
-//			logger.info("no testcases found for line " + lineNumber
-//					+ " of class " + className);
-//			return null;
-//		}
-//		logger.info("Found " + retList.size() + " testcases for line "
-//				+ lineNumber + " of class " + className);
-//		return retList.toArray(new String[0]);
-//	}
-
+	// /**
+	// * Gets all test cases from the database that cover the given line of the
+	// * class.
+	// *
+	// * @param className
+	// * The name of the class to get the test cases for.
+	// * @param lineNumber
+	// * The linenumber to get the test cases for.
+	// * @return An array that contains the names of the testcases that cover
+	// this
+	// * line.
+	// */
+	// public static String[] getTestCasesExternalData(String className,
+	// int lineNumber) {
+	// Session session = HibernateUtil.getSessionFactory().openSession();
+	// Transaction tx = session.beginTransaction();
+	// Query query = session
+	// .createQuery("from TestCoverageClassResult as clazz join
+	// clazz.lineResults as lineres where clazz.className=:clname and
+	// lineres.lineNumber=:lnumber");
+	// query.setString("clname", className);
+	// query.setInteger("lnumber", lineNumber);
+	// query.setFetchSize(10);
+	// List l = query.list();
+	// assert l.size() <= 1;
+	// List<String> retList = null;
+	// if (l.size() >= 1) {
+	// Object[] array = (Object[]) l.get(0);
+	// if (array.length >= 2) {
+	// TestCoverageLineResult lineResult = (TestCoverageLineResult) array[1];
+	// List<TestCoverageTestCaseName> testCaseNames = lineResult
+	// .getTestCases();
+	// retList = new ArrayList<String>();
+	// for (TestCoverageTestCaseName name : testCaseNames) {
+	// retList.add(name.getTestCaseName());
+	// }
+	// }
+	// }
+	// tx.commit();
+	// session.close();
+	// if (retList == null) {
+	// logger.info("no testcases found for line " + lineNumber
+	// + " of class " + className);
+	// return null;
+	// }
+	// logger.info("Found " + retList.size() + " testcases for line "
+	// + lineNumber + " of class " + className);
+	// return retList.toArray(new String[0]);
+	// }
 
 	/**
 	 * Checks if there are mutations for given class in the database.
@@ -340,10 +344,18 @@ public class QueryManager {
 
 	public static long getResultFromCountQuery(List results) {
 		Long l = null;
-		if (results.size() > 0 && results.get(0) instanceof Long) {
-			l = (Long) results.get(0);
+		if (results.size() > 0) {
+			Object firstElement = results.get(0);
+			if (firstElement instanceof Long) {
+				l = (Long) firstElement;
+			} else if (firstElement instanceof BigInteger) {
+				l = ((BigInteger) firstElement).longValue();
+			} else {
+				throw new RuntimeException("Expected a long result. Got:  "
+						+ firstElement.getClass());
+			}
 		} else {
-			throw new RuntimeException("Expected a Long result");
+			throw new RuntimeException("Got an empty list.");
 		}
 		return l.longValue();
 	}
@@ -532,34 +544,22 @@ public class QueryManager {
 	}
 
 	/**
-	 * Return a list of mutations ids that are covered by tests.
+	 * Return the number of covered mutations with the set project prefix.
 	 *
-	 * @param numberOfMutations
-	 *            max number of mutations
-	 * @return a list of mutations ids that are covered by tests
+	 * @return the number of covered mutations with the set project prefix.
 	 */
-	public static List<Mutation> getCoveredMutationListFromDb(
-			int numberOfMutations) {
+	public static long getNumberOfCoveredMutations() {
 		String prefix = MutationProperties.PROJECT_PREFIX;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		String queryString = "SELECT m.* FROM Mutation m JOIN TestCoverageClassResult tccr ON m.classname = tccr.classname JOIN TestCoverageClassResult_TestCoverageLineResult AS class_line ON class_line.testcoverageclassresult_id = tccr.id JOIN TestCoverageLineResult AS tclr ON tclr.id = class_line.lineresults_id 	WHERE m.mutationresult_id IS NULL AND m.linenumber = tclr.linenumber AND m.mutationType != 0 AND m.className LIKE '"
-				+ prefix + "%' ";
-		if (!MutationProperties.COVERAGE_INFFORMATION) {
-			queryString = "SELECT m.* FROM Mutation m WHERE m.mutationresult_id IS NULL  AND m.mutationType != 0 AND m.className LIKE '"
-					+ prefix + "%' ";
-		}
-		Query query = session.createSQLQuery(queryString).addEntity(
-				Mutation.class);
-		query.setMaxResults(numberOfMutations);
-		List results = query.list();
-		List<Mutation> idList = new ArrayList<Mutation>();
-		for (Object mutation : results) {
-			idList.add((Mutation) mutation);
-		}
+		String queryString = "SELECT count(DISTINCT mutationID) FROM MutationCoverage mc JOIN Mutation m ON mc.mutationID = m.id WHERE m.className LIKE '"
+				+ prefix + "%'";
+		SQLQuery sqlQuery = session.createSQLQuery(queryString);
+		List results = sqlQuery.list();
+		long resultFromCountQuery = getResultFromCountQuery(results);
 		tx.commit();
 		session.close();
-		return idList;
+		return resultFromCountQuery;
 	}
 
 	public static List<Mutation> getMutationIdListFromDb(int numberOfMutations) {
@@ -918,11 +918,25 @@ public class QueryManager {
 				.createQuery("from TestName as tm where tm.name=:name");
 		query.setParameter("name", testCaseName);
 		List<TestName> list = query.list();
-		if(list.size() >0){
+		if (list.size() > 0) {
 			result = list.get(0);
 		}
 		tx.commit();
 		session.close();
 		return result;
+	}
+
+	public static long getNumberOfTestsForProject() {
+		String prefix = MutationProperties.PROJECT_PREFIX;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		String queryString = "SELECT count(DISTINCT name) FROM TestName WHERE name LIKE '"
+				+ prefix + "%'";
+		SQLQuery sqlQuery = session.createSQLQuery(queryString);
+		List results = sqlQuery.list();
+		long resultFromCountQuery = getResultFromCountQuery(results);
+		tx.commit();
+		session.close();
+		return resultFromCountQuery;
 	}
 }

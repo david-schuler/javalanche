@@ -19,6 +19,10 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 	private static final boolean IGNORE_EXCEPTIONS = true;
 	static Logger logger = Logger.getLogger(ScanAndCoverageTestSuite.class);
 
+	static {
+		logger.info(ScanAndCoverageTestSuite.class + "  is loaded ");
+	}
+
 	public ScanAndCoverageTestSuite(String name) {
 		super(name);
 	}
@@ -32,9 +36,9 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 	@Override
 	public void run(TestResult result) {
 		logger.info("TestSuite started");
-//		TestResult firstTestResult = new TestResult();
-//		super.run(firstTestResult);
-//		logger.info("First test result " + firstTestResult.runCount());
+		// TestResult firstTestResult = new TestResult();
+		// super.run(firstTestResult);
+		// logger.info("First test result " + firstTestResult.runCount());
 
 		Map<String, Test> allTests = TestSuiteUtil.getAllTests(this);
 		// if (allTests.size() != firstTestResult.runCount()) {

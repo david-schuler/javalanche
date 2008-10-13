@@ -12,6 +12,7 @@ import de.st.cs.unisb.javalanche.properties.MutationProperties;
 import de.st.cs.unisb.javalanche.results.Mutation;
 import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
 import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
+import de.st.cs.unisb.javalanche.util.AsmUtil;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
@@ -85,9 +86,15 @@ public class MutationScanner implements ClassFileTransformer {
 				String message3 = String.format(
 						"Added %d mutation possibilities.",
 						mutationPossibilitiesPost - mutationPossibilitiesPre);
+				long numberOfTests  = QueryManager.getNumberOfTestsForProject();
+				long coveredMutations = QueryManager.getNumberOfCoveredMutations();
+				String testMessage =  String.format("Executed %d tests", numberOfTests);
+				String coveredMessage =  String.format("%d mutations are covered by tests which is  %f percent", coveredMutations, (((double) coveredMutations)/mutationPossibilitiesPost) * 100.);
 				logger.info(message1);
 				logger.info(message2);
 				logger.info(message3);
+				logger.info(testMessage);
+				logger.info(coveredMessage);
 			}
 		});
 	}
@@ -102,14 +109,16 @@ public class MutationScanner implements ClassFileTransformer {
 				logger.debug(classNameWithDots);
 
 				if (md.shouldBeHandled(classNameWithDots)) {
-//					TraceClassVisitor tr = new TraceClassVisitor(new PrintWriter(MutationPreMain.sysout));
-//					ClassReader cr = new ClassReader(classfileBuffer);
-//					cr.accept(tr,0);
-//					return classfileBuffer;
+					// TraceClassVisitor tr = new TraceClassVisitor(new
+					// PrintWriter(MutationPreMain.sysout));
+					// ClassReader cr = new ClassReader(classfileBuffer);
+					// cr.accept(tr,0);
+					// return classfileBuffer;
 					classfileBuffer = mutationScannerTransformer
 							.transformBytecode(classfileBuffer);
-					logger.info("Possibilities found for class " + className
-							+ " " + mpc.size());
+					logger.info(mpc.size()
+							+ " mutation possibilities found for class "
+							+ className);
 					mpc.updateDB();
 					mpc.clear();
 				} else {
@@ -122,13 +131,15 @@ public class MutationScanner implements ClassFileTransformer {
 							.getIntegrateScanAndCoverageTestSuiteTransformer();
 					classfileBuffer = integrateSuiteTransformer
 							.transformBytecode(classfileBuffer);
+					logger.info(AsmUtil.classToString(classfileBuffer));
 				}
 
 			} catch (Throwable t) {
 				t.printStackTrace();
 				logger.info(t.getMessage());
 				logger.info(t.getStackTrace());
-				System.out.println("Exception during instrumentation - exiting");
+				System.out
+						.println("Exception during instrumentation - exiting");
 				System.exit(1);
 			}
 		}
@@ -137,7 +148,7 @@ public class MutationScanner implements ClassFileTransformer {
 
 	public static boolean compareWithSuiteProperty(String classNameWithDots) {
 		boolean returnValue = false;
-		String testSuiteName = 	MutationProperties.TEST_SUITE;
+		String testSuiteName = MutationProperties.TEST_SUITE;
 		if (testSuiteName != null && classNameWithDots.contains(testSuiteName)) {
 			returnValue = true;
 		}

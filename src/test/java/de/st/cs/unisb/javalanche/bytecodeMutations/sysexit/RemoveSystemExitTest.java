@@ -42,6 +42,8 @@ public class RemoveSystemExitTest {
 
 	@Before
 	public void setup() {
+		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
+		ByteCodeTestUtils.deleteCoverageData(TEST_CLASS_NAME);
 		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
 				linenumbers);
 	}

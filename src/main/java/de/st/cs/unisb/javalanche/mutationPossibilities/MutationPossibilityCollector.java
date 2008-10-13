@@ -71,9 +71,9 @@ public class MutationPossibilityCollector {
 
 	public void updateDB() {
 		int mutations = possibilities.size();
-		logger.info("Collected " + mutations + " mutation possibilities.");
+		logger.debug("Collected " + mutations + " mutation possibilities.");
 		if (mutations > 0) {
-			logger.info("Trying to save mutations.");
+			logger.debug("Trying to save mutations.");
 			QueryManager.saveMutations(possibilities);
 			logger.info(mutations + " mutations saved");
 		}

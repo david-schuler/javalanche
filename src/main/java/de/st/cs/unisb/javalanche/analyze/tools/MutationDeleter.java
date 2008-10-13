@@ -9,7 +9,8 @@ import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
 
 /**
  *
- * Deletes the mutations from the database.
+ * Class with a main method that deletes all mutation with a specified prefix
+ * from the database.
  *
  * @author David Schuler
  *
@@ -24,10 +25,17 @@ public class MutationDeleter {
 	 */
 	public static void deleteAllWithPrefix() {
 		String prefix = MutationProperties.PROJECT_PREFIX;
-		String query = "DELETE FROM Mutation WHERE className LIKE '" + prefix + "%'";
+		String query = "DELETE FROM Mutation WHERE className LIKE '" + prefix
+				+ "%'";
 		deleteMutationResultsFromQuery(query);
 	}
 
+	/**
+	 * Deletes all mutations that match the given query.
+	 *
+	 * @param queryString
+	 *            query that is used to delete the mutations.
+	 */
 	@SuppressWarnings("unchecked")
 	private static void deleteMutationResultsFromQuery(String queryString) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -39,6 +47,12 @@ public class MutationDeleter {
 		session.close();
 	}
 
+	/**
+	 * Deletes all mutation with a specified prefix from the database.
+	 *
+	 * @param args
+	 *            ignored
+	 */
 	public static void main(String[] args) {
 		MutationProperties.checkProperty(MutationProperties.PROJECT_PREFIX_KEY);
 		deleteAllWithPrefix();

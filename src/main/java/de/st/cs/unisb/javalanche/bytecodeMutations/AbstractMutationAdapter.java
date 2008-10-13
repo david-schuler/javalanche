@@ -55,7 +55,7 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 		super.visitLabel(label);
 		if (label.info instanceof MutationMarker) {
 			MutationMarker marker = (MutationMarker) label.info;
-			logger.info("Found mutation marker: "
+			logger.debug("Found mutation marker: "
 					+ (marker.isStart() ? "start" : "end") + " in line "
 					+ getLineNumber() + "  " + this);
 			mutationCode = marker.isStart();

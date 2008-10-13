@@ -1,7 +1,5 @@
 package de.st.cs.unisb.javalanche.analyze.tools;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -9,17 +7,13 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import de.st.cs.unisb.ds.util.Formater;
 import de.st.cs.unisb.javalanche.properties.MutationProperties;
 import de.st.cs.unisb.javalanche.results.Mutation;
 import de.st.cs.unisb.javalanche.results.MutationTestResult;
 import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
-import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
-import de.st.cs.unisb.ds.util.Formater;
-
-import de.st.cs.unisb.ds.util.io.Io;
 
 /**
- *
  * Deletes the mutation test results from the database.
  *
  * @author David Schuler
@@ -40,17 +34,26 @@ public class ResultDeleter {
 		deleteMutationResultsFromQuery(query);
 	}
 
+	/**
+	 * Deletes all mutation test results from the database.
+	 */
 	@SuppressWarnings("unchecked")
-	public static void deleteAllMutationResult() {
+	private static void deleteAllMutationResult() {
 		String query = "from Mutation where mutationResult IS NOT NULL";
 		deleteMutationResultsFromQuery(query);
 	}
 
+	/**
+	 * Deletes results for all mutations that are returned by the given qeury.
+	 *
+	 * @param query
+	 *            Query to get the mutations that are
+	 */
 	@SuppressWarnings("unchecked")
-	private static void deleteMutationResultsFromQuery(String queryString) {
+	private static void deleteMutationResultsFromQuery(String query) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		Query q = session.createQuery(queryString);
+		Query q = session.createQuery(query);
 		List<Mutation> mutations = q.list();
 		int deletes = 0, flushs = 0;
 		for (Mutation m : mutations) {
@@ -69,7 +72,6 @@ public class ResultDeleter {
 				flushs++;
 				logger.info("Doing temporary flush " + flushs);
 				session.flush();
-//				session.clear();
 				long timeFlush = System.currentTimeMillis() - startFlush;
 				logger.info("Flush took: "
 						+ Formater.formatMilliseconds(timeFlush));
@@ -82,87 +84,25 @@ public class ResultDeleter {
 		session.close();
 	}
 
-
+	/**
+	 * Delet mutation result for mutation with given id.
+	 *
+	 * @param id
+	 *            the id of the mutation to delete
+	 */
 	private static void deleteMutationsResultsForId(long id) {
-		logger.info("Trying to delete results for id: " + id);
-		List<Mutation> mutationsFromDbByID = QueryManager
-				.getMutationsFromDbByID(new Long[] { id });
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		for (Mutation m : mutationsFromDbByID) {
-			deleteMutationResult(session, m);
-		}
-		logger.info(String.format("Deleting %d mutation results",
-				mutationsFromDbByID.size()));
-		tx.commit();
-		session.close();
+		String query = "from mutation where id=" + id;
+		deleteMutationResultsFromQuery(query);
 	}
 
-	private static void deleteMutationResult(Session session, Mutation m) {
-		deleteMutationResult(session, m, true);
-	}
-
-	private static void deleteMutationResult(Session session, Mutation m,
-			boolean deleteUnmutated) {
-		session.load(m, m.getId());
-		logger.info("Loading mutation with  following id: " + m.getId());
-
-		MutationTestResult singleTestResult = m.getMutationResult();
-		if (singleTestResult != null) {
-			m.setMutationResult(null);
-			session.delete(singleTestResult);
-		}
-		if (deleteUnmutated) {
-			if (QueryManager.hasUnmutated(m)) {
-				Mutation unMutated = QueryManager.generateUnmutated(m);
-				unMutated = (Mutation) session.get(Mutation.class, unMutated
-						.getId());
-				if (unMutated != null)
-					logger
-							.info("Loading unmutated mutation with following id: "
-									+ unMutated.getId());
-				// session.load(unMutated, unMutated.getId());
-				MutationTestResult unMutatedSingleTestResult = unMutated
-						.getMutationResult();
-				if (unMutatedSingleTestResult != null) {
-					unMutated.setMutationResult(null);
-					session.delete(unMutatedSingleTestResult);
-				}
-			}
-		}
-	}
-
-	private static void deleteFromFiles() {
-		File dir = new File(MutationProperties.RESULT_DIR);
-		File[] files = dir.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				if (name.startsWith("mutation-task")) {
-					return true;
-				}
-				return false;
-			}
-		});
-		for (File file : files) {
-			deleteResults(file);
-		}
-	}
-
-	private static void deleteResults(File file) {
-		System.out.println("\nDeleting results from file: " + file.toString());
-		List<Long> idList = Io.getIDsFromFile(file);
-		List<Mutation> mutations = QueryManager.getMutationsFromDbByID(idList
-				.toArray(new Long[0]));
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		for (Mutation m : mutations) {
-			deleteMutationResult(session, m);
-		}
-		logger.info(String.format("Deleting %d mutation results", mutations
-				.size()));
-		tx.commit();
-		session.close();
-	}
-
+	/**
+	 * Deletes mutation resutlts from the database. If a project prefix is
+	 * specified, all results of mutations for this project are deleted. If an
+	 * id is given as argument the result of the mutation with the given id is
+	 * deleted.
+	 *
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		if (MutationProperties.PROJECT_PREFIX != null) {
 			deleteAllWithPrefix();
@@ -174,8 +114,6 @@ public class ResultDeleter {
 					} else {
 						deleteAllMutationResult();
 					}
-				} else if (args[0].toLowerCase().equals("files")) {
-					deleteFromFiles();
 				} else {
 					deleteMutationsResultsForId(Long.parseLong(args[0]));
 				}

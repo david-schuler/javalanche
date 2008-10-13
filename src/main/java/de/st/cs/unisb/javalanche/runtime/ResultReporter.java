@@ -102,15 +102,19 @@ public class ResultReporter {
 		if (touched) {
 			touchedMutations.add(mutation);
 		}
-		InvariantObserver instance = InvariantObserver.getInstance();
-		if (instance != null) {
-			int totalViolatedInvariants = instance.getTotalInvariantViolations();
-			int[] violatedInvariants = instance.getViolatedInvariantsArray();
-			singleTestResult.setTotalViolations(totalViolatedInvariants);
-			singleTestResult.setViolatedInvariants(violatedInvariants);
-			singleTestResult
-					.setDifferentViolatedInvariants(violatedInvariants.length);
-			InvariantObserver.reset();
+		if (MutationProperties.RUN_MODE == MutationProperties.RunMode.MUTATION_TEST_INVARIANT) {
+			InvariantObserver instance = InvariantObserver.getInstance();
+			if (instance != null) {
+				int totalViolatedInvariants = instance
+						.getTotalInvariantViolations();
+				int[] violatedInvariants = instance
+						.getViolatedInvariantsArray();
+				singleTestResult.setTotalViolations(totalViolatedInvariants);
+				singleTestResult.setViolatedInvariants(violatedInvariants);
+				singleTestResult
+						.setDifferentViolatedInvariants(violatedInvariants.length);
+				InvariantObserver.reset();
+			}
 		}
 		touchingTestCases.clear();
 		actualMutation = null;

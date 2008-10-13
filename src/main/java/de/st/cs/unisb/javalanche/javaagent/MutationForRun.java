@@ -122,7 +122,9 @@ public class MutationForRun {
 				logger.info("All mutations got results - exiting now");
 			}
 			System.out.println("ALL_RESULTS");
-			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST) { // TODO INTRODUCE own testRunMode
+			System.out.println("All mutations have results - They have already been aplied and executed");
+
+			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT) { // TODO INTRODUCE own testRunMode
 				System.exit(0);
 			}
 		}
