@@ -1,4 +1,4 @@
-package de.st.cs.unisb.javalanche.bytecodeMutations;
+package de.unisb.cs.st.javalanche.mutation.bytecodeMutations;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,17 +9,17 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Assert;
-import de.st.cs.unisb.javalanche.javaagent.MutationForRun;
-import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
-import de.st.cs.unisb.javalanche.results.Mutation;
-import de.st.cs.unisb.javalanche.results.MutationCoverage;
-import de.st.cs.unisb.javalanche.results.MutationTestResult;
-import de.st.cs.unisb.javalanche.results.TestName;
-import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
-import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
-import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
+import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationCoverage;
+import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
+import de.unisb.cs.st.javalanche.mutation.results.TestName;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
-import de.st.cs.unisb.ds.util.io.Io;
+import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
 
 /**

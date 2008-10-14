@@ -1,4 +1,4 @@
-package de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps;
+package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps;
 
 import java.util.List;
 
@@ -12,20 +12,20 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import de.st.cs.unisb.javalanche.bytecodeMutations.ByteCodeTestUtils;
-import de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps.testclasses.jumps.Jumps;
-import de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps.testclasses.jumps.JumpsTest;
-import de.st.cs.unisb.javalanche.properties.MutationProperties;
-import de.st.cs.unisb.javalanche.results.Mutation;
-import de.st.cs.unisb.javalanche.results.MutationTestResult;
-import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
-import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
-import de.st.cs.unisb.javalanche.runtime.testsuites.SelectiveTestSuite;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.testclasses.jumps.Jumps;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.testclasses.jumps.JumpsTest;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
+import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.SelectiveTestSuite;
 
 public class NegateJumpsTest {
 
 	static {
-		String classname = "de.st.cs.unisb.javalanche.bytecodeMutations.negateJumps.testclasses.jumps.Jumps";
+		String classname = "de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.testclasses.jumps.Jumps";
 		ByteCodeTestUtils.doSetup(classname,
 				new NegateJumpsCollectorTransformer(null));
 

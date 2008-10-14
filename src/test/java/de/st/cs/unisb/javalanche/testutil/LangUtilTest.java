@@ -1,4 +1,4 @@
-package de.st.cs.unisb.javalanche.testutil;
+package de.unisb.cs.st.javalanche.mutation.testutil;
 
 import static org.junit.Assert.fail;
 
@@ -9,11 +9,11 @@ import org.apache.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
-import de.st.cs.unisb.javalanche.bytecodeMutations.MutationScannerTransformer;
-import de.st.cs.unisb.javalanche.bytecodeMutations.MutationTransformer;
-import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
-import de.st.cs.unisb.javalanche.properties.TestProperties;
-import de.st.cs.unisb.javalanche.results.persistence.MutationManager;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationScannerTransformer;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationTransformer;
+import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
+import de.unisb.cs.st.javalanche.mutation.properties.TestProperties;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 

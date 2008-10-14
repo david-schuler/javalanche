@@ -1,4 +1,4 @@
-package de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant;
+package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant;
 
 import java.util.List;
 
@@ -12,19 +12,19 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import de.st.cs.unisb.javalanche.bytecodeMutations.ByteCodeTestUtils;
-import de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants;
-import de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstantsTest;
-import de.st.cs.unisb.javalanche.results.Mutation;
-import de.st.cs.unisb.javalanche.results.MutationTestResult;
-import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
-import de.st.cs.unisb.javalanche.runtime.testsuites.SelectiveTestSuite;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstantsTest;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
+import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.SelectiveTestSuite;
 
 public class ReplaceIntegerTest {
 
 	//-javaagent:./target/javaagent.jar -Dinvariant.mode=OFF -Dmutation.run.mode=mutation-no-invariant -Dmutation.coverage.information=false
 	static {
-		String classname = "de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants";
+		String classname = "de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.testclasses.ricProject.IntegerConstants";
 		ByteCodeTestUtils.doSetup(classname,new RicCollectorTransformer(null));
 	}
 

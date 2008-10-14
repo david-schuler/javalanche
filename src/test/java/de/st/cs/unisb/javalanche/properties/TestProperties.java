@@ -1,4 +1,4 @@
-package de.st.cs.unisb.javalanche.properties;
+package de.unisb.cs.st.javalanche.mutation.properties;
 
 public class TestProperties {
 

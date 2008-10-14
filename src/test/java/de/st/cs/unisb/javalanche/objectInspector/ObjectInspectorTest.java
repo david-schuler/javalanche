@@ -1,4 +1,4 @@
-package de.st.cs.unisb.javalanche.objectInspector;
+package de.unisb.cs.st.javalanche.mutation.objectInspector;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,15 +12,15 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
-import de.st.cs.unisb.javalanche.objectInspector.asmAdapters.ObjectInspectorClassAdapter;
-import de.st.cs.unisb.javalanche.objectInspector.testClasses.ObjectsForMethod;
+import de.unisb.cs.st.javalanche.mutation.objectInspector.asmAdapters.ObjectInspectorClassAdapter;
+import de.unisb.cs.st.javalanche.mutation.objectInspector.testClasses.ObjectsForMethod;
 
 public class ObjectInspectorTest {
 
 	// private static final String CLASSNAME =
-	// "./target/test-classes/de/st/cs/unisb/javalanche/objectInspector/testClasses/ObjectsForMethod.class";
+	// "./target/test-classes/de.unisb.cs.st.javalanche.mutation/objectInspector/testClasses/ObjectsForMethod.class";
 
-	private static final String RCLASSNAME = "de/st/cs/unisb/javalanche/objectInspector/testClasses/ObjectsForMethod"
+	private static final String RCLASSNAME = "de.unisb.cs.st.javalanche.mutation/objectInspector/testClasses/ObjectsForMethod"
 			.replace('/', '.');
 
 	private static class TestingClassLoader extends ClassLoader {

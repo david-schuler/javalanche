@@ -1,4 +1,4 @@
-package de.st.cs.unisb.javalanche.results;
+package de.unisb.cs.st.javalanche.mutation.results;
 
 import java.util.List;
 
@@ -12,13 +12,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import de.st.cs.unisb.javalanche.hibernate.HibernateTest;
-import de.st.cs.unisb.javalanche.properties.TestProperties;
-import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
-import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
-import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
-import de.st.cs.unisb.javalanche.runtime.MutationTestListener;
-import de.st.cs.unisb.javalanche.testutil.TestUtil;
+import de.unisb.cs.st.javalanche.mutation.hibernate.HibernateTest;
+import de.unisb.cs.st.javalanche.mutation.properties.TestProperties;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.runtime.MutationTestListener;
+import de.unisb.cs.st.javalanche.mutation.testutil.TestUtil;
 
 public class QueryManagerTest {
 

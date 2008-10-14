@@ -1,4 +1,4 @@
-package de.st.cs.unisb.javalanche.objectInspector.testClasses;
+package de.unisb.cs.st.javalanche.mutation.objectInspector.testClasses;
 
 import java.util.Arrays;
 import java.util.Date;

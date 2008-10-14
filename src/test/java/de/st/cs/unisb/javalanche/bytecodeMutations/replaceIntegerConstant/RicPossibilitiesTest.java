@@ -1,4 +1,4 @@
-package de.st.cs.unisb.javalanche.bytecodeMutations.replaceIntegerConstant;
+package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,8 +8,8 @@ import static junit.framework.Assert.*;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
-import de.st.cs.unisb.javalanche.properties.TestProperties;
+import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
+import de.unisb.cs.st.javalanche.mutation.properties.TestProperties;
 
 public class RicPossibilitiesTest {
 

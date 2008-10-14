@@ -1,12 +1,12 @@
-package de.st.cs.unisb.javalanche;
+package de.unisb.cs.st.javalanche.mutation;
 
 import java.util.Random;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Test;
-import de.st.cs.unisb.javalanche.results.MutationTestResult;
-import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
+import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 
 public class LongArrayTest {
 

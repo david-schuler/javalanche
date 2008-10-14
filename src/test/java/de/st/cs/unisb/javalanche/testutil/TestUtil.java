@@ -1,13 +1,13 @@
-package de.st.cs.unisb.javalanche.testutil;
+package de.unisb.cs.st.javalanche.mutation.testutil;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 
 import org.objectweb.asm.ClassReader;
-import de.st.cs.unisb.javalanche.bytecodeMutations.MutationScannerTransformer;
-import de.st.cs.unisb.javalanche.debug.MissedMutationTest;
-import de.st.cs.unisb.javalanche.mutationPossibilities.MutationPossibilityCollector;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationScannerTransformer;
+import de.unisb.cs.st.javalanche.mutation.debug.MissedMutationTest;
+import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 

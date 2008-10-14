@@ -1,4 +1,4 @@
-package de.st.cs.unisb.javalanche.testsuite;
+package de.unisb.cs.st.javalanche.mutation.testsuite;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,12 +13,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Test;
-import de.st.cs.unisb.javalanche.results.Mutation;
-import de.st.cs.unisb.javalanche.results.MutationTestResult;
-import de.st.cs.unisb.javalanche.results.TestMessage;
-import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
-import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
-import de.st.cs.unisb.javalanche.runtime.MutationTestListener;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
+import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
+import de.unisb.cs.st.javalanche.mutation.runtime.MutationTestListener;
 
 public class DeleteTest {
 

@@ -1,4 +1,4 @@
-package de.st.cs.unisb.javalanche.bytecodeMutations.arithmetic;
+package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic;
 
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
@@ -6,15 +6,15 @@ import junit.framework.TestSuite;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import de.st.cs.unisb.javalanche.bytecodeMutations.ByteCodeTestUtils;
-import de.st.cs.unisb.javalanche.bytecodeMutations.arithmetic.testclasses.Arithmetic;
-import de.st.cs.unisb.javalanche.bytecodeMutations.arithmetic.testclasses.ArithmeticTest;
-import de.st.cs.unisb.javalanche.runtime.testsuites.SelectiveTestSuite;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.testclasses.Arithmetic;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.testclasses.ArithmeticTest;
+import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.SelectiveTestSuite;
 
 public class ArithmeticReplaceTest {
 
 	static {
-		String classname = "de.st.cs.unisb.javalanche.bytecodeMutations.arithmetic.testclasses.Arithmetic";
+		String classname = "de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.testclasses.Arithmetic";
 		ByteCodeTestUtils.doSetup(classname, new ArithmeticReplaceCollectorTransformer(null));
 	}
 
@@ -24,7 +24,7 @@ public class ArithmeticReplaceTest {
 	private static final String TEST_CLASS_NAME = TEST_CLASS.getName();
 
 	// private static final String TEST_CLASS_NAME =
-	// "de.st.cs.unisb.javalanche.bytecodeMutations.arithmetic.testclasses.Arithmetic";
+	// "de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.testclasses.Arithmetic";
 
 	private static final String UNITTEST_CLASS_TYPE = ArithmeticTest.class
 			.getName();

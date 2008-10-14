@@ -1,4 +1,4 @@
-package de.st.cs.unisb.javalanche.objectInspector;
+package de.unisb.cs.st.javalanche.mutation.objectInspector;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,7 +12,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
-import de.st.cs.unisb.javalanche.objectInspector.asmAdapters.ObjectInspectorClassAdapter;
+import de.unisb.cs.st.javalanche.mutation.objectInspector.asmAdapters.ObjectInspectorClassAdapter;
 
 public class JtopasClassTest {
 

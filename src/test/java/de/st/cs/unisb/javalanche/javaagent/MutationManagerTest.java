@@ -1,8 +1,8 @@
-package de.st.cs.unisb.javalanche.javaagent;
+package de.unisb.cs.st.javalanche.mutation.javaagent;
 
 import org.junit.Assert;
 import org.junit.Test;
-import de.st.cs.unisb.javalanche.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
 public class MutationManagerTest {
 

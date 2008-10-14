@@ -1,4 +1,4 @@
-package de.st.cs.unisb.javalanche.coverage;
+package de.unisb.cs.st.javalanche.mutation.coverage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,12 +16,12 @@ import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import de.st.cs.unisb.javalanche.results.Mutation;
-import de.st.cs.unisb.javalanche.results.MutationCoverage;
-import de.st.cs.unisb.javalanche.results.TestName;
-import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
-import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
-import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationCoverage;
+import de.unisb.cs.st.javalanche.mutation.results.TestName;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 public class CoverageDataTest {
 

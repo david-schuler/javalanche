@@ -1,4 +1,4 @@
-package de.st.cs.unisb.javalanche.hibernate.stress;
+package de.unisb.cs.st.javalanche.mutation.hibernate.stress;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -12,11 +12,11 @@ import org.hibernate.Transaction;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import de.st.cs.unisb.javalanche.results.Mutation;
-import de.st.cs.unisb.javalanche.results.MutationTestResult;
-import de.st.cs.unisb.javalanche.results.Mutation.MutationType;
-import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
-import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 @SuppressWarnings("unchecked")
 public class StressTest {
