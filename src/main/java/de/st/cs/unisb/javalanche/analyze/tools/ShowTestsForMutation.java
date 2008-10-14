@@ -6,7 +6,7 @@ import de.st.cs.unisb.javalanche.results.Mutation;
 import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
 /**
- * Displays all unittests that cover a specified mutation.
+ * Displays all unit tests that cover a specified mutation.
  *
  * @author David Schuler
  *

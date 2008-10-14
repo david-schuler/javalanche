@@ -7,6 +7,13 @@ import de.st.cs.unisb.javalanche.results.MutationCoverage;
 import de.st.cs.unisb.javalanche.results.TestName;
 import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
+/**
+ * Displays the coverage data for a number of mutation. The Coverage information
+ * for a mutation are the tests that execute the mutation
+ *
+ * @author David Schuler
+ *
+ */
 public class DisplayCoverageData {
 
 	public static void main(String[] args) {

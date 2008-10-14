@@ -11,6 +11,12 @@ import de.st.cs.unisb.javalanche.results.Mutation;
 import de.st.cs.unisb.javalanche.results.persistence.HibernateUtil;
 import de.st.cs.unisb.javalanche.results.persistence.QueryManager;
 
+/**
+ * Analyzes the mutation results for a project.
+ *
+ * @author David Schuler
+ *
+ */
 public class AnalyzeMain {
 
 	public static void main(String[] args) {
@@ -26,11 +32,18 @@ public class AnalyzeMain {
 		if (!didOutput) {
 			analyzeMutations(new MutationAnalyzer[] { new InvariantAnalyzer(),
 					new MutationResultAnalyzer(), new KilledAnalyzer(),
-					new AssertAnalyzer() ,/*new AspectJAnalyzer()*/});
+					new AssertAnalyzer(),/* new AspectJAnalyzer() */});
 
 		}
 	}
 
+	/**
+	 *
+	 * Analyzes the mutation results for a project
+	 *
+	 * @param mutationResultAnalyzers
+	 *            the mutationAnalyzers to use
+	 */
 	private static void analyzeMutations(
 			MutationAnalyzer[] mutationResultAnalyzers) {
 		String prefix = PROJECT_PREFIX;
@@ -41,6 +54,16 @@ public class AnalyzeMain {
 		analyzeMutations(mutationResultAnalyzers, prefix);
 	}
 
+	/**
+	 *
+	 * Analyzes the mutation results for a project.
+	 *
+	 * @param mutationResultAnalyzers
+	 *            the mutationAnalyzers to use
+
+	 * @param mutationAnalyzers
+	 * @param prefix the prefix for the mutations to analyze
+	 */
 	@SuppressWarnings("unchecked")
 	private static void analyzeMutations(MutationAnalyzer[] mutationAnalyzers,
 			String prefix) {
@@ -66,6 +89,15 @@ public class AnalyzeMain {
 		session.close();
 	}
 
+	/**
+	 * Returns the number of mutations without a result.
+	 *
+	 * @param session
+	 *            the hibernate session to use
+	 * @param prefix
+	 *            the prefix for the classes
+	 * @return the number of mutations without a result
+	 */
 	@SuppressWarnings("unchecked")
 	private static long getNumberOfMutationsWithoutResult(Session session,
 			String prefix) {

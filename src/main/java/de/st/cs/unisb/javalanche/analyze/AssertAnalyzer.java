@@ -16,6 +16,11 @@ public class AssertAnalyzer implements MutationAnalyzer {
 	private static final String FORMAT_NO_NEWLINE = "%-55s %10d";
 	private static final String FORMAT_STRING = "%-55s %s\n";
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.st.cs.unisb.javalanche.analyze.MutationAnalyzer#analyze(java.lang.Iterable)
+	 */
 	public String analyze(Iterable<Mutation> mutations) {
 		List<Mutation> killedByError = new ArrayList<Mutation>();
 		List<Mutation> killedByFailure = new ArrayList<Mutation>();
