@@ -6,6 +6,7 @@
 	<classpathentry excluding="**/*.java" kind="src" output="target/test-classes" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="M2_REPO/de/unisb/cs/st/adabu2-core/0.4-SNAPSHOT/adabu2-core-0.4-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/asm/asm-commons/2.2.1/asm-commons-2.2.1.jar" sourcepath="M2_REPO/asm/asm-commons/2.2.1/asm-commons-2.2.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/hsqldb/hsqldb/1.8.0.1/hsqldb-1.8.0.1.jar" sourcepath="M2_REPO/hsqldb/hsqldb/1.8.0.1/hsqldb-1.8.0.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar" sourcepath="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/persistence/persistence-api/1.0/persistence-api-1.0.jar" sourcepath="M2_REPO/javax/persistence/persistence-api/1.0/persistence-api-1.0-sources.jar"/>
