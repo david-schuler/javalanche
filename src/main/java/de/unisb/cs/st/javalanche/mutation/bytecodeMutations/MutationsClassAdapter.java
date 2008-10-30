@@ -9,6 +9,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.ArithmeticReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.RemoveMethodCallsMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.RicMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 
@@ -21,6 +22,8 @@ public class MutationsClassAdapter extends ClassAdapter {
 	private Map<Integer, Integer> arithmeticPossibilities = new HashMap<Integer, Integer>();
 
 	private Map<Integer, Integer> negatePossibilities = new HashMap<Integer, Integer>();
+
+	private Map<Integer, Integer> removeCallsPossibilities = new HashMap<Integer, Integer>();
 
 	private static final boolean DEBUG = MutationProperties.DEBUG;
 
@@ -46,6 +49,8 @@ public class MutationsClassAdapter extends ClassAdapter {
 		mv = new NegateJumpsMethodAdapter(mv, className, name,
 				negatePossibilities);
 		mv = new ArithmeticReplaceMethodAdapter(mv, className, name,
+				arithmeticPossibilities);
+		mv = new RemoveMethodCallsMethodAdapter(mv, className, name,
 				arithmeticPossibilities);
 		return mv;
 	}

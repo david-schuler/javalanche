@@ -38,7 +38,7 @@ public class Mutation implements Serializable{
 	static int mutionIdGenerator = 0;
 
 	public enum MutationType {
-		NO_MUTATION, RIC_PLUS_1, RIC_MINUS_1, RIC_ZERO, NEGATE_JUMP, ARITHMETIC_REPLACE
+		NO_MUTATION, RIC_PLUS_1, RIC_MINUS_1, RIC_ZERO, NEGATE_JUMP, ARITHMETIC_REPLACE, REMOVE_CALL
 	};
 
 	private String className;

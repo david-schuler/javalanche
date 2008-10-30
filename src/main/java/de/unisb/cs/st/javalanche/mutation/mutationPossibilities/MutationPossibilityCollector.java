@@ -2,6 +2,7 @@ package de.unisb.cs.st.javalanche.mutation.mutationPossibilities;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -81,5 +82,9 @@ public class MutationPossibilityCollector {
 
 	public void clear() {
 		possibilities.clear();
+	}
+
+	public List<Mutation> getPossibilities() {
+		return Collections.unmodifiableList(possibilities);
 	}
 }

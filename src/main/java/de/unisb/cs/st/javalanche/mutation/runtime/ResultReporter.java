@@ -18,7 +18,7 @@ import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
-import de.unisb.cs.st.invariants.runtime.InvariantObserver;
+import de.unisb.cs.st.javalanche.invariants.runtime.InvariantObserver;;
 
 /**
  *

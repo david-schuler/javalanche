@@ -40,6 +40,8 @@
 		<mapping class="de.unisb.cs.st.javalanche.mutation.results.TestMessage"/>
 		<mapping class="de.unisb.cs.st.javalanche.mutation.results.MutationCoverage"/>
 		<mapping class="de.unisb.cs.st.javalanche.mutation.results.TestName"/>
+		<mapping class="de.unisb.cs.st.javalanche.mutation.results.Invariant"/>
+
 		<!--mapping class="de.unisb.cs.st.javalanche.mutation.coverageResults.db.TestCoverageLineResult"/>
 		<mapping class="de.unisb.cs.st.javalanche.mutation.coverageResults.db.TestCoverageClassResult"/>
 		<mapping class="de.unisb.cs.st.javalanche.mutation.coverageResults.db.TestCoverageTestCaseName"/-->

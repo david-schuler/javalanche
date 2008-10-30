@@ -18,7 +18,7 @@ public class IntegrateSuiteTest {
 	public void runTests() {
 		TestSuite suite = AllTests.suite();
 		Map<String, junit.framework.Test> map = TestSuiteUtil.getAllTests(suite);
-		suite.run(new TestResult());
+//		suite.run(new TestResult());
 		TestSuite selectiveTestSuite = SelectiveTestSuite.toSelectiveTestSuite(suite);
 		assertTrue(selectiveTestSuite!=null);
 //		assertTrue(selectiveTestSuite instanceof SelectiveTestSuite);

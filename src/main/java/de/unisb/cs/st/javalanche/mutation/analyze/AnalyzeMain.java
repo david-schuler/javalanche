@@ -29,10 +29,13 @@ public class AnalyzeMain {
 				analyzeMutations(new MutationAnalyzer[] { new ExperimentAnalyzer2() });
 			}
 		}
+
 		if (!didOutput) {
-			analyzeMutations(new MutationAnalyzer[] { new InvariantAnalyzer(),
-					new MutationResultAnalyzer(), new KilledAnalyzer(),
-					new AssertAnalyzer(),/* new AspectJAnalyzer() */});
+			analyzeMutations(new MutationAnalyzer[] { new Invariant2Analyzer() });
+			// analyzeMutations(new MutationAnalyzer[] { new
+			// InvariantAnalyzer(),
+			// new MutationResultAnalyzer(), new KilledAnalyzer(),
+			// new AssertAnalyzer(),/* new AspectJAnalyzer() */});
 
 		}
 	}
@@ -60,9 +63,10 @@ public class AnalyzeMain {
 	 *
 	 * @param mutationResultAnalyzers
 	 *            the mutationAnalyzers to use
-
+	 *
 	 * @param mutationAnalyzers
-	 * @param prefix the prefix for the mutations to analyze
+	 * @param prefix
+	 *            the prefix for the mutations to analyze
 	 */
 	@SuppressWarnings("unchecked")
 	private static void analyzeMutations(MutationAnalyzer[] mutationAnalyzers,

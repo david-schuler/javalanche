@@ -336,13 +336,7 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>de.unisb.cs.st.invariants</groupId>
-			<artifactId>invariants</artifactId>
-			<version>0.1</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>de.unisb.cs.st.invariants</groupId>
+			<groupId>de.unisb.cs.st.javalanche.invariants</groupId>
 			<artifactId>invariants</artifactId>
 			<version>0.1</version>
 		</dependency>

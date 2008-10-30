@@ -699,13 +699,6 @@ public class QueryManager {
 					testCase = TEST_CASE_NO_INFO;
 				}
 				TestName testName = null;
-				if (testCase.length() > 255) {
-					// TODO Hack because of db - testname is currently
-					// VARCHAR(255)
-					logger.warn("Ignoring results from test " + testCase
-							+ " , beacause name is to long for db");
-					testCase = TEST_CASE_NO_INFO;
-				}
 				if (testNameMap != null && testNameMap.containsKey(testCase)) {
 					testName = testNameMap.get(testCase);
 				} else {

@@ -9,6 +9,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.PossibilitiesArithmeticReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsPossibilitiesMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.MyAdviceAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.RemoveCallsPossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.PossibilitiesRicMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 
@@ -25,6 +27,8 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 	private Map<Integer, Integer> arithmeticPossibilities = new HashMap<Integer, Integer>();
 
 	private Map<Integer, Integer> negatePossibilities = new HashMap<Integer, Integer>();
+
+	private Map<Integer, Integer> removeCallsPossibilities = new HashMap<Integer, Integer>();
 
 	public MutationsCollectorClassAdapter(ClassVisitor cv,
 			MutationPossibilityCollector mpc) {
@@ -53,6 +57,8 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 				mpc, negatePossibilities);
 		mv = new PossibilitiesArithmeticReplaceMethodAdapter(mv, className,
 				name, mpc, arithmeticPossibilities);
+//		mv = new RemoveCallsPossibilitiesMethodAdapter(new MyAdviceAdapter(mv,access,name,desc), className, name,
+//				mpc, removeCallsPossibilities);
 		return mv;
 	}
 }

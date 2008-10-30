@@ -8,11 +8,35 @@ import junit.framework.TestCase;
 public class SysExitTest extends TestCase {
 
 	@Test
-	public void testDoNothing(){}
+	public void testDoNothing() {
+	}
 
 	@Ignore("Not to execute during normal tests")
 	@Test
-	public void tmethod1() {
+	public void testMethod1() {
+		SysExit sExit = new SysExit();
+		try {
+			sExit.method1();
+			fail();
+		} catch (RuntimeException e) {
+		}
+
+		try {
+			sExit.method2();
+			fail();
+		} catch (RuntimeException e) {
+		}
+		try {
+			sExit.systemExit("aa");
+			fail();
+		} catch (RuntimeException e) {
+		}
+
+	}
+
+	@Ignore("Not to execute during normal tests")
+	@Test
+	public void testMethod2() {
 		SysExit sExit = new SysExit();
 		try {
 			sExit.method1();

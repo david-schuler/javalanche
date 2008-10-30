@@ -1,9 +1,13 @@
 package de.unisb.cs.st.javalanche.mutation.results;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 @Entity
 public class TestName {
@@ -12,8 +16,11 @@ public class TestName {
 	@GeneratedValue
 	private Long id;
 
-	@Column(unique = true)
+	@Column(length = 1000)
 	private String name;
+
+	@ManyToMany
+	private List<Invariant> invariants = new ArrayList<Invariant>();
 
 	public TestName() {
 	}

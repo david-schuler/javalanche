@@ -32,6 +32,7 @@
 					<exclude name="**/commons-logging-1.1.jar" />
 					<include name="**/*.jar" />
 				</fileset>
+				
 			</classpath>
 			<annotationconfiguration configurationfile="src/main/resources/hibernate.cfg.xml" />
 			<hbm2ddl drop="true" create="true" export="true" outputfilename="${proj.shortname}-ddl.sql" delimiter=";" format="true" />

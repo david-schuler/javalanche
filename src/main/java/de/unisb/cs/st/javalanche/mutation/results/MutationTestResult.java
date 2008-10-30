@@ -24,10 +24,11 @@ import junit.framework.TestResult;
 
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
+
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationTestListener;
 
 @Entity
-public class MutationTestResult implements Serializable{
+public class MutationTestResult implements Serializable {
 
 	/**
 	 *
@@ -62,6 +63,12 @@ public class MutationTestResult implements Serializable{
 	@JoinTable(name = "MutationTestResult_Passing", joinColumns = { @JoinColumn(name = "mutationTestResult_id") }, inverseJoinColumns = @JoinColumn(name = "testMessage_id"))
 	@IndexColumn(name = "passing_id")
 	private List<TestMessage> passing = new ArrayList<TestMessage>();
+
+	@OneToMany(cascade = CascadeType.ALL)
+	// , fetch = FetchType.EAGER)
+	@JoinTable(name = "MutationTestResult_ViolatedInvariants", joinColumns = { @JoinColumn(name = "mutationTestResult_id") }, inverseJoinColumns = @JoinColumn(name = "invariant_id"))
+	@IndexColumn(name = "mapping_id")
+	private List<Invariant> invariants = new ArrayList<Invariant>();
 
 	// Temporal(TemporalType.TIME)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -99,16 +106,17 @@ public class MutationTestResult implements Serializable{
 	 *            the violatedInvariants to set
 	 */
 	public void setViolatedInvariants(int[] violatedInvariants) {
-//		int truncationSize = 100;
-//		if (violatedInvariants.length > truncationSize) {
-//			System.out
-//					.println("MutationTestResult.setViolatedInvariants(): truncating violated invariants");
-//			this.violatedInvariants = new int[truncationSize];
-//			System.arraycopy(violatedInvariants, 0, this.violatedInvariants, 0,
-//					truncationSize);
-//		} else {
-			this.violatedInvariants = violatedInvariants;
-//		}
+		// int truncationSize = 100;
+		// if (violatedInvariants.length > truncationSize) {
+		// System.out
+		// .println("MutationTestResult.setViolatedInvariants(): truncating
+		// violated invariants");
+		// this.violatedInvariants = new int[truncationSize];
+		// System.arraycopy(violatedInvariants, 0, this.violatedInvariants, 0,
+		// truncationSize);
+		// } else {
+		this.violatedInvariants = violatedInvariants;
+		// }
 	}
 
 	/**
@@ -313,6 +321,27 @@ public class MutationTestResult implements Serializable{
 	 */
 	public void setDifferentViolatedInvariants(int differentViolatedInvariants) {
 		this.differentViolatedInvariants = differentViolatedInvariants;
+	}
+
+	public void addInvariant(Invariant invariant) {
+		if (invariants == null) {
+			invariants = new ArrayList<Invariant>();
+		}
+		invariants.add(invariant);
+	}
+
+	/**
+	 * @return the invariants
+	 */
+	public List<Invariant> getInvariants() {
+		return invariants;
+	}
+
+	/**
+	 * @param invariants the invariants to set
+	 */
+	public void setInvariants(List<Invariant> invariants) {
+		this.invariants = invariants;
 	}
 
 }

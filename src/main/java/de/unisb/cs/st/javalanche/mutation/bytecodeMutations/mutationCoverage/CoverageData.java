@@ -138,7 +138,7 @@ public class CoverageData {
 		mv
 				.visitMethodInsn(
 						INVOKESTATIC,
-						"de.unisb.cs.st.javalanche.mutation/bytecodeMutations/mutationCoverage/CoverageData",
+						"de/unisb/cs/st/javalanche/mutation/bytecodeMutations/mutationCoverage/CoverageData",
 						"touch", "(J)V");
 		mv.visitLabel(endLabel);
 	}

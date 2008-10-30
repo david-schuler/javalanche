@@ -108,9 +108,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	public RicMethodAdapter(MethodVisitor mv, String className,
 			String methodName,Map<Integer, Integer> possibilities) {
 		super(mv, className.replace('/', '.'), methodName, possibilities);
-		logger.info("MethodName:" + methodName);
-
-
+		logger.debug("MethodName:" + methodName);
 	}
 
 	@Override
@@ -194,7 +192,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	}
 
 	private void longConstant(final long longConstant) {
-		logger.info("long constant for line: " + getLineNumber());
+		logger.debug("long constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
 				getPossibilityForLine(),isClassInit);
 		addPossibilityForLine();
@@ -240,17 +238,17 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 			});
 		}
 		if (insert) {
-			logger.info("Applying mutations for line: " + getLineNumber());
+			logger.debug("Applying mutations for line: " + getLineNumber());
 			BytecodeTasks.insertIfElse(mv, unmutated, mutationCode
 					.toArray(new MutationCode[0]));
 		} else {
-			logger.info("Applying no mutation for line: " + getLineNumber());
+			logger.debug("Applying no mutation for line: " + getLineNumber());
 			super.visitLdcInsn(new Long(longConstant));
 		}
 	}
 
 	private void floatConstant(final float floatConstant) {
-		logger.info("long constant for line: " + getLineNumber());
+		logger.debug("float constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
 getPossibilityForLine(), isClassInit);
 		addPossibilityForLine();
@@ -297,17 +295,17 @@ getPossibilityForLine(), isClassInit);
 			});
 		}
 		if (insert) {
-			logger.info("Applying mutations for line: " + getLineNumber());
+			logger.debug("Applying mutations for line: " + getLineNumber());
 			BytecodeTasks.insertIfElse(mv, unmutated, mutationCode
 					.toArray(new MutationCode[0]));
 		} else {
-			logger.info("Applying no mutation for line: " + getLineNumber());
+			logger.debug("Applying no mutation for line: " + getLineNumber());
 			super.visitLdcInsn(new Float(floatConstant));
 		}
 	}
 
 	private void doubleConstant(final double doubleConstant) {
-		logger.info("double constant for line: " + getLineNumber());
+		logger.debug("double constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
 				getPossibilityForLine(),isClassInit);
 		addPossibilityForLine();
@@ -351,17 +349,17 @@ getPossibilityForLine(), isClassInit);
 			});
 		}
 		if (insert) {
-			logger.info("Applying mutations for line: " + getLineNumber());
+			logger.debug("Applying mutations for line: " + getLineNumber());
 			BytecodeTasks.insertIfElse(mv, unmutated, mutationCode
 					.toArray(new MutationCode[0]));
 		} else {
-			logger.info("Applying no mutation for line: " + getLineNumber());
+			logger.debug("Applying no mutation for line: " + getLineNumber());
 			super.visitLdcInsn(new Double(doubleConstant));
 		}
 	}
 
 	private void intConstant(final int intConstant) {
-		logger.info("int constant for line: " + getLineNumber());
+		logger.debug("int constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
 				getPossibilityForLine(),isClassInit);
 		addPossibilityForLine();
@@ -407,11 +405,11 @@ getPossibilityForLine(), isClassInit);
 			});
 		}
 		if (insert) {
-			logger.info("Applying mutations for line: " + getLineNumber());
+			logger.debug("Applying mutations for line: " + getLineNumber());
 			BytecodeTasks.insertIfElse(mv, unmutated, mutationCode
 					.toArray(new MutationCode[0]));
 		} else {
-			logger.info("Applying no mutation for line: " + getLineNumber());
+			logger.debug("Applying no mutation for line: " + getLineNumber());
 			super.visitLdcInsn(new Integer(intConstant));
 		}
 	}
