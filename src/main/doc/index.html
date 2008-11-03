@@ -1,7 +1,8 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
     <head>
-        <title>Javalanche</title>
+        <title>Javalanche-Invariant Checker</title>
         <meta name="description" content="" />
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
         <meta name="keywords" content="mutation test java"/>
@@ -11,12 +12,16 @@
     <body>
         <div id="main">
             <div id="header">
-                <h1>Javalanche</h1>
+                <h1>Javalanche-Invariant Checker</h1>
             </div>
             <div id="menu">
                 <ul>
-                    <li class="selected"><a href="./index.html">Install</a></li>
-                    <li><a href="./index.html#run">Run Javalanche</a></li>
+                    <li class="selected">
+                        <a href="./index.html">Install</a>
+                    </li>
+                    <li>
+                        <a href="./index.html#run">Run Javalanche</a>
+                    </li>
                    <!-- <li><a href="./index.html#info">Further Information</a></li> -->
                 </ul>
             </div>
@@ -25,291 +30,354 @@
                     <h2>Install</h2>
                     
                     <h3>Requirements</h3>
-                    To run the mutation testing tool, you need the following software on your system:<br/>
+                    To run the invariant checker tool, you need the following software on your system:<br/>
                     <ul>
-                        <li> a Java 1.5 Runtime Environment</li>
+                        <li> a Java 1.6 Runtime Environment</li>
+                        <li>
+                            <a href="http://www.st.cs.uni-sb.de/models/adabu2/"> adabu2</a>
+                        </li>
                         <li> the <a href="http://ant.apache.org/">ant</a> build tool</li>
-                        <li> a <a href="http://www.mysql.com/">MySQL</a> Database </li>
                     </ul>
                     <h3>Install</h3>
-                    Install Javalanche and a MySQL database.
-                    
-                    To compile Javalanche and produce files that are later
-                    needed by the buildfiles run the maven assembly command:
+                    The invariant checker can be compiled using maven:
                     <div class="antblock">
-                        mvn assembly:assembly
+                        mvn compile
                     </div>
-                    Note that the tests will only pass if the database is correctly
-                    installed, which is yet not the case.<br/>
-                    After executing maven, configure hibernate in <code>src/main/resources/hibernate.cfg.xml</code> 
-                    and export the databaseschema with the <code>schemaexport</code> ant task.  
-                    <div class="antblock">
-                        ant schemaexport
-                    </div>
-                    Now everything should be ready to run the mutation testing tool on a program.
                 </div>
                 <div class="article" id="run">
                     <h2>Run the tool</h2>
-                    <h3>Adjust the Properties File</h3>
-                    Adjust the property file <code>src/main/resources/mutation.incl.properties</code>, this file will later be included
-                    in a build file to do the mutation testing.<br/>
-                                        
-                    Following properties have to be adjusted (see comments for further documentation):
+                    <h3>Preparation</h3>
+                    The recommended way to compute the invariant checkers
+                    for a project is using ant.
+                    In order to use ant following additions have to be made to a
+                    projects build file.
                     
-                    
-                    <div class="antblock">
-                    #output directory for the results of the tool<br/>
-                    mutation.output.dir=/scratch/schuler/mutation-test-config/<br/>
-                    #base dir of the mutation testing tool<br/>
-                    mutation.base.dir=/Users/schuler/workspace2/mutationTest/<br/>
-                    </div>                  
-                    
-                    
-                    <h3>Scan for Mutation Possibilities</h3>                    
-                    The first step is to scan for possible mutations in the program under study. Therefore, the programs test suite has to be executed,
-                    and the tool scans for all possible mutations.<br/>
-                    For example, an ant task that executes a junit test suite has to be modified in the following way.
-                    <br/><br/>Original:
-                    <div class="antblock">          
-&lt;target&nbsp;name=&quot;junit&quot;&nbsp;depends=&quot;jar&quot;&gt;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&lt;junit&nbsp;dir=&quot;${basedir}&quot;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fork=&quot;true&quot;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forkmode=&quot;once&quot;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;maxmemory=&quot;1536m&quot;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;includeAntRuntime=&quot;true&quot;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printsummary=&quot;yes&quot;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;showoutput=&quot;true&quot;&gt;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;test.classpath&quot;/&gt;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;formatter&nbsp;type=&quot;xml&quot;/&gt;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;batchtest&nbsp;todir=&quot;outputs&quot;&gt;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${test.bin}&quot;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;includes=&quot;**/SuseboxTestSuite.class&quot;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;excludes=&quot;**/TestTokenizerSpeed$TagInfo*&quot;/&gt;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/batchtest&gt;
-<br/>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/junit&gt;
-<br/>&lt;/target&gt;
-                    </div>
-                    Modified (changed lines are bold):
-                    <div class="antblock">
-<b>&lt;target&nbsp;name=&quot;scan&quot;&nbsp;depends=&quot;jar&quot;&gt;<br/></b>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;junit&nbsp;dir=&quot;${basedir}&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fork=&quot;true&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forkmode=&quot;once&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;maxmemory=&quot;1536m&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;includeAntRuntime=&quot;true&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printsummary=&quot;yes&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;showoutput=&quot;true&quot;&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;test.classpath&quot;/&gt;<br/>
-<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;mutation.classpath&quot;&nbsp;/&gt;<br/>
-</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
-<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-javaagent:${mutation.javaagent}&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dmutation.run.mode=scan&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dmutation.package.prefix=de.susebox&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dmutation.test.suite=SuseboxTestSuite&quot;/&gt;<br/>
-</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;formatter&nbsp;type=&quot;xml&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;batchtest&nbsp;todir=&quot;outputs&quot;&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${test.bin}&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;includes=&quot;**/SuseboxTestSuite.class&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;excludes=&quot;**/TestTokenizerSpeed$TagInfo*&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/batchtest&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;/junit&gt;<br/>
-&lt;/target&gt;<br/>
-                    </div>
-                    
-                    <table>
-                        <tr><th>Argument</th><th>Description</th></tr>
-                        <tr><td>-javaagent:${mutation.javaagent} </td>
-                        <td> The location of the javaagent that transforms the class files. Specified in the property file <code>mutation.incl.properties</code>. </td></tr>
-                        <tr><td>mutation.run.mode=scan</td><td> Tells the javaagent that it should scan for mutations. </td></tr>
-                    
-                        <tr><td>mutation.package.prefix</td>
-                            <td>The prefix of the classes for which mutations 
-                            should be included in the task files.
-                            Only classes with a fully qualified name 
-                            (package + class name) that start with this prefix
-                            are scaned for mutations.</td>
-                        <tr><td>mutation.test.suite</td>
-                        <td>Name of the projects main test suite. For mutation testsing there has to be one TestSuite that contains all tests.</td></tr>
-                            
-                    </table>
-                    
-                    
-                    In order to use the properties, the <code>mutation.incl.properties</code> file has
-                    to be included in the build file (<code>build.xml</code>):
-                    
-                    <div class="antblock">
-                    &lt;property file=&quot;/path/to/mutation.incl.properties&quot; /&gt;
-                    </div>
-                    Furthermore, the mutation testing tool is added to the classpath with the <code>mutation.classpath</code> refid.
-                    Therfore, this entry has to be added to the build file:
-                    <div class="antblock">
-&lt;path&nbsp;id=&quot;mutation.classpath&quot;&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;pathelement&nbsp;location=&quot;${mutation.classes.dir}&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${mutation.jars.dir}&quot;&nbsp;includes=&quot;*.jar&quot;/&gt;&nbsp;<br/>
-&lt;/path&gt;                    
-                    </div>
-                    
-                    
-                    
-                    <h3>Create task files</h3>
-                    Typically you do not want to execute all possible mutations
-                    in one run. Therfore files are created that specify which mutations
-                    to execute.<br/>
-                    This is done with the class <code>de.st.cs.unisb.javalanche.run.threaded.task.MutationTaskCreator</code>.
-                    An ant target that creates the several task files looks like this:
-                    
-                    <div class="antblock">
-&lt;target&nbsp;name=&quot;createTasks&quot;&nbsp;&nbsp;&nbsp;description=&quot;create&nbsp;task&nbsp;files&nbsp;to&nbsp;execute&nbsp;the&nbsp;mutations&quot;&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;classname=&quot;de.st.cs.unisb.javalanche.run.threaded.task.MutationTaskCreator&quot;&nbsp;maxmemory=&quot;1024m&quot;&nbsp;fork=&quot;true&quot;&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.package.prefix&quot;&nbsp;value=&quot;${package.prefix}&quot;&nbsp;/&gt;<br/>
-<!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.coverage.information&quot;&nbsp;value=&quot;false&quot;&nbsp;/&gt;<br/>-->
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.number.of.tasks&quot;&nbsp;value=&quot;10&quot;&nbsp;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.mutations.per.task&quot;&nbsp;value=&quot;400&quot;&nbsp;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;location=&quot;target/classes&quot;&nbsp;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;mutation.classpath&quot;&nbsp;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;/java&gt;<br/>
-&lt;/target&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          <br/>
-                    </div>
-                    
-                    <table>
-                        <tr><th>Argument</th><th>Description</th></tr>
-                        <tr><td>mutation.package.prefix</td>
-                            <td>The prefix of the classes that should be mutated. 
-                                Only classes with a fully qualified name 
-                                (package + class name) that start with this 
-                                prefix are included for the tasks.</td></tr>
-                        <!--tr><td>mutation.coverage.information</td><td> Tells if coverage information is available in the database. </td></tr-->
-                        <tr><td>mutation.number.of.tasks </td><td> Number of tasks to be created. </td></tr>
-                        <tr><td>mutation.mutations.per.task </td><td> Number of mutations per task.</td></tr>
-                            
-                    </table>
-                    
-                    <h3>Execute one task</h3>
-                    A task can be executed with the following modified ant task:
-                    
-                    
-                    <div class="antblock">
-&lt;target&nbsp;name=&quot;runMutations&quot;&nbsp;depends=&quot;jar&quot;&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;junit&nbsp;dir=&quot;${basedir}&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fork=&quot;true&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forkmode=&quot;once&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;maxmemory=&quot;1536m&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;includeAntRuntime=&quot;true&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printsummary=&quot;yes&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;showoutput=&quot;true&quot;&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;test.classpath&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;mutation.classpath&quot;&nbsp;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
-<b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-javaagent:${mutation.javaagent}&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dmutation.run.mode=mutation&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dmutation.package.prefix=de.susebox&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dmutation.test.suite=SuseboxTestSuite&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.file&quot;&nbsp;value=&quot;${mutation.file}&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.result.file&quot;&nbsp;value=&quot;${mutation.result.file}&quot;/&gt;<br/>
-</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;formatter&nbsp;type=&quot;xml&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;batchtest&nbsp;todir=&quot;outputs&quot;&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${test.bin}&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;includes=&quot;**/SuseboxTestSuite.class&quot;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;excludes=&quot;**/TestTokenizerSpeed$TagInfo*&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/batchtest&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;/junit&gt;<br/>
-&lt;/target&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    
-                    </div>
-                    And the following command executes the mutations
-                    
-                    <div class="antblock">
-                    ant \<br/>
-                    -Dmutation.file=/scratch/schuler/mutation-output/mutation-task-01.txt \<br/>
-                    -Dmutation.result.file=/scratch/schuler/mutation-output/result-mutation-task-01.xml \<br/>
-                    runMutations
-                    </div>
-                    
-                    
-                    <h3>Execute Mutiple Tasks</h3>
-                    It is possible to run multiple mutation testing tasks in parallel with
-                    the <a href="http://www.gnu.org/software/make/" >make</a> tool.
+<div class="antblock">
+    <property file="javalanche.properties" />
+    <import file="${javalanche.invariant.build.file}"/>
+<div class="antblock">                  
+    These statements include a properties file an import a build file that contains
+    the tasks to calculate invariants.
     
-                    A Makefile to execute can be generated with the following
-                    task.
-                    <div class="antblock">
-&lt;target&nbsp;name=&quot;generateMutationMakefile&quot;&nbsp;description=&quot;*&nbsp;create a Makefile for the mutation tasks&quot;&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;dir=&quot;${basedir}&quot;&nbsp;fork=&quot;true&quot;&nbsp;classname=&quot;de.st.cs.unisb.javalanche.util.MutationMakeFileGenerator&quot;&gt;<br/>
+    Following properties have to be set in the included properties file:
+    <ul>
+
+        <li><code>javalanche.jars.dir</code> A folder with the jars needed to run Javalanche</li>
+        <li><code>javalanche.projects.location</code> This is optional. A path that points to the root of the projects included in Javalanche. This can be usefull if you are working witht the source of javalanche. </li>
+        <li><code>javalanche.invariant.build.file</code>Location of the build file to include.</li>
+    </ul>
+
+    An example properties file lokks like this:
+<div class="antblock">
+javalanche.projects.location=/scratch2/schuler/projects/
+javalanche.jars.dir=/scratch2/schuler/jars/
+    
+javalanche.invariant.build.file=/scratch2/schuler/projects/adabu2-check-invariants/src/main/resources/invariant-build.xml
+</div>  
+    
+    Furthermore a modified test task has to be added to the build file.
+  If the projects original test task lookes like this:
+<div class="antblock">              
+&lt;target&nbsp;name=&quot;test&quot;&nbsp;description=&quot;-&nbsp;run&nbsp;the&nbsp;projects&nbsp;tests&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;junit&nbsp;&nbsp;printsummary=&quot;on&quot;&nbsp;fork=&quot;true&quot;&nbsp;forkmode=&quot;once&quot;&nbsp;showoutput=&quot;true&quot;&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;mutation.classpath&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;test.classpath&quot;&nbsp;/&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.package.prefix&quot;&nbsp;value=&quot;${package.prefix}&quot;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;mutation.comand&quot;&nbsp;value=&quot;${basedir}/runMutations.sh&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;batchtest&nbsp;&nbsp;todir=&quot;${test.results}&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${test.classes}&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;include&nbsp;name=&quot;**/ProjectTestSuit.class&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/fileset&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/batchtest&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;formatter&nbsp;type=&quot;plain&quot;&nbsp;usefile=&quot;true&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/junit&gt;<br/>
+&lt;/target&gt;<br/>
+The task that is added has to look like this (Added or changed lines are bold):
+
+
+<div class="antblock">   
+<b>&lt;target&nbsp;name=&quot;test-javalanche&quot;&nbsp;description=&quot;-&nbsp;modified&nbsp;test&nbsp;task&nbsp;that&nbsp;is&nbsp;called&nbsp;by&nbsp;javalanche&quot;&gt;</b><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;junit&nbsp;&nbsp;printsummary=&quot;on&quot;&nbsp;fork=&quot;true&quot;&nbsp;forkmode=&quot;once&quot;&nbsp;showoutput=&quot;true&quot;&gt;<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;javalanche.classpath.add&quot;&nbsp;/&gt;</b><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;test.classpath&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;line=&quot;${javalanche.arg.line}&quot;&nbsp;/&gt;</b><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;batchtest&nbsp;&nbsp;todir=&quot;${test.results}&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${test.classes}&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;include&nbsp;name=&quot;**/ProjectTestSuit.class&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/fileset&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/batchtest&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;formatter&nbsp;type=&quot;plain&quot;&nbsp;usefile=&quot;true&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/junit&gt;<br/>
+&lt;/target&gt;
+</div>
+    
+                    <h3>Run Adabu Tracer</h3>
+                    First the execution of a test suite has to be traced in order
+                    to determine invariants for the program. <br/>
+                    
+                    An ant task that executes a junit test suite has to be modified in the following way.
+                    <br/>Original:
+                    <div class="antblock">          
+<br/>
+&lt;target&nbsp;name=&quot;test&quot;&nbsp;description=&quot;-&nbsp;run&nbsp;test&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;junit&nbsp;dir=&quot;./&quot;&nbsp;printSummary=&quot;yes&quot;&nbsp;fork=&quot;true&quot;&nbsp;forkmode=&quot;once&quot;&nbsp;showoutput=&quot;true&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;formatter&nbsp;type=&quot;plain&quot;&nbsp;usefile=&quot;true&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&nbsp;refid=&quot;test.classpath&quot;&nbsp;/&gt;<br/>
+                        <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;batchtest&nbsp;todir=&quot;${testreportdir}&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${test.src}&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;include&nbsp;name=&quot;**/JaxenTestSuite.java&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/fileset&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/batchtest&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/junit&gt;<br/>
+&lt;/target&gt;<br/>
+                        <br/>
+                    </div>
+  Modified (changed and added lines are in bold):
+<div class="antblock">
+&lt;target&nbsp;name=&quot;testTrace&quot;&nbsp;description=&quot;-&nbsp;trace&nbsp;tests&nbsp;with&nbsp;addabu2&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;mkdir&nbsp;dir=&quot;${invariant.dir}&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;junit&nbsp;dir=&quot;./&quot;&nbsp;printSummary=&quot;yes&quot;&nbsp;fork=&quot;true&quot;&nbsp;forkmode=&quot;once&quot;&nbsp;showoutput=&quot;true&quot;&nbsp;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>jvm=&quot;/path/to/jre6/bin/java&quot;&gt;</b>
+                        <br/>
+                        <br/>
+                        <b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Xmx1024m&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Xbootclasspath/a:${adabu.boot.jars}&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-javaagent:${adabu.javaagent}&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dadabu2.resultfilename=${adabu2.resultfilename}&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dadabu2.skiparrayreads=true&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dinvariant.multifile=true&quot;/&gt;<br/>
+                        </b>
+                        <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;formatter&nbsp;type=&quot;plain&quot;&nbsp;usefile=&quot;true&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&nbsp;refid=&quot;test.classpath&quot;&nbsp;/&gt;<br/>
+                        <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;batchtest&nbsp;todir=&quot;${testreportdir}&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${test.src}&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;include&nbsp;name=&quot;**/JaxenTestSuite.java&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/fileset&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/batchtest&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/junit&gt;<br/>
+&lt;/target&gt;
+</div>  
+                    The additional arguments enable the tracing of the tests.
+                    More details on running Adabu2 can be found on on the projects <a href"http://www.st.cs.uni-sb.de/models/adabu2/howto.html"="">website</a>.
+
+                    <table>
+                        <tr><th>Argument</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>-Xmx1024m</td>
+                            <td>Set maximum Java heap size.</td>
+                        </tr>
+                        <tr>
+                            <td>-Xbootclasspath/a:${adabu.boot.jars}</td>
+                            <td>Appends the jars needed by Adabu2 to the bootclasspath.</td>
+                        </tr>
+                        <tr>
+                            <td>-javaagent:${adabu.javaagent}</td>
+                            <td>Use Adabu2 as javaagent.</td>
+                        </tr>
+                        <tr>
+                            <td>-Dadabu2.resultfilename=${adabu2.resultfilename}</td>
+                            <td>The name of the result file(s). If the property <code>invariant.multifile</code> is set, a trace file for every test is produced.</td>
+                        </tr>
+                        <tr>
+                            <td>-Dadabu2.skiparrayreads=true</td>
+                            <td>Do not trace array reads - makes the tracing faster.</td>
+                        </tr>
+                        <tr>
+                            <td>-Dinvariant.multifile=true</td>
+                            <td>Create a trace file for every test.</td>
+                        </tr>
+                    </table>
+                    
+                    
+                    In this example the properties have the following values:
+                    <div class="antblock">
+&lt;property&nbsp;name=&quot;adabu.location&quot;&nbsp;value=&quot;/Users/schuler/workspace&quot;&nbsp;/&gt;<br/>
+&lt;property&nbsp;name=&quot;jars.dir&quot;&nbsp;value=&quot;/scratch/schuler/jars&quot;&nbsp;/&gt;<br/>
+&lt;property&nbsp;name=&quot;adabu.boot.jars&quot;&nbsp;value=&quot;${adabu.location}/adabu2-all/adabu2-core/target/classes/:${adabu.location}/adabu2-all/adabu2-cli/target/classes/:${adabu.location}/adabu2-all/adabu2-tracer/target/classes/:${adabu.location}/adabu-util/target/classes/:${adabu.location}/adabu2-all/adabu2-hoare/target/classes/:${jars.dir}/asm-3.1.jar:${jars.dir}/asm-commons-3.1.jar:${jars.dir}/asm-tree-3.1.jar:${jars.dir}/asm-util-3.1.jar:${jars.dir}/commons-collections-3.2.1.jar:${jars.dir}/commons-io-1.4.jar:${jars.dir}/log4j-1.2.14.jar&quot;/&gt;<br/>
+&lt;property&nbsp;name=&quot;adabu.javaagent&quot;&nbsp;value=&quot;${jars.dir}/adabu2-core-0.3.jar&quot;&nbsp;/&gt;<br/>
+&lt;property&nbsp;name=&quot;prefix&quot;&nbsp;value=&quot;jaxen&quot;&nbsp;/&gt;<br/>
+&lt;property&nbsp;name=&quot;invariant.dir&quot;&nbsp;value=&quot;invariant-files&quot;&nbsp;/&gt;<br/>
+&lt;property&nbsp;name=&quot;adabu2.resultfilename&quot;&nbsp;value=&quot;${invariant.dir}/${prefix}-trace.out&quot;&nbsp;/&gt;<br/>
+                    </div>
+                    
+                    <h3>Create Daikon Input Files</h3>
+The traces generated by Aadabu2 have to be transformed in order 
+to be procceced by daikon. This is done with the class
+<code>DaikonTraceFileGenerator</code>
+                    <br/>, which takes two arguments (prefix, and
+resultfilename) that where also used in the previous step.<br/>
+The class produces one <code>dtrace</code> file for every adabu2 trace file.
+For example an ant task that runs this class looks as follows:
+                    <div class="antblock">
+&lt;target&nbsp;name=&quot;createDaikonFiles&quot;&nbsp;description=&quot;*&nbsp;create&nbsp;daikon&nbsp;dtrace&nbsp;files&nbsp;from&nbsp;adabu2&nbsp;trace&nbsp;files&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;echo&gt;&nbsp;Processing&nbsp;files&nbsp;with&nbsp;pattern&nbsp;&nbsp;${adabu2.resultfilename}&nbsp;&lt;/echo&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;echo&gt;&nbsp;Using&nbsp;prefix&nbsp;${prefix}&nbsp;&lt;/echo&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;dir=&quot;${basedir}&quot;&nbsp;fork=&quot;true&quot;&nbsp;maxmemory=&quot;2048m&quot;&nbsp;classname=&quot;de.unisb.cs.st.adabu2.hoare.cli.DaikonTraceFileGenerator&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;assertions&nbsp;enableSystemAssertions=&quot;true&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;enable/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/assertions&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;invariant.path&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;arg&nbsp;value=&quot;${prefix}&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;arg&nbsp;value=&quot;${adabu2.resultfilename}&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/java&gt;<br/>
+&lt;/target&gt;<br/>
+                    </div>
+
+                    
+                    <h3>Run Daikon</h3>
+In order to determine invariants, daikon has to process the <code>dtrace</code>  files produced
+in the previous step. Therfore daikon has to be run on every <code>dtrace</code> file.
+<br/>
+This can be done in the following way. 
+The class <code>DaikonMakeFileGenerator</code> generate a makefile that executes 
+a given script on each dtrace file in a given directory, and gives the <code>dtrace</code>
+as first argument and the name of the result file as second argument.
+An ant invocation of this class looks like this:
+
+                    <div class="antblock">
+&lt;target&nbsp;name=&quot;generateDaikonMakefile&quot;&nbsp;description=&quot;*&nbsp;generate&nbsp;a&nbsp;Makefile&nbsp;that&nbsp;processes&nbsp;all&nbsp;dtrace&nbsp;files&nbsp;with&nbsp;daikon&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;dir=&quot;${basedir}&quot;&nbsp;fork=&quot;true&quot;&nbsp;classname=&quot;de.unisb.cs.st.invariants.util.DaikonMakeFileGenerator&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;trace.dir&quot;&nbsp;value=&quot;${invariant.dir}&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;sysproperty&nbsp;key=&quot;daikon.command&quot;&nbsp;value=&quot;${basedir}/runDaikon.sh&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;invariant.path&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&lt;/java&gt;<br/>
 &lt;/target&gt;
-					</div>
-					This task produces a makefile with a target for each task file.<br/>
-                    The arguments for this task are:
-                    <table>
-                        <tr><th>Argument</th><th>Description</th></tr>
-                        <tr><td>mutation.package.prefix</td>
-                            <td>The prefix of the classes that should be mutated. 
-                                Only classes with a fully qualified name 
-                                (package + class name) that start with this 
-                                prefix are included for the tasks.</td></tr>
-                        <tr><td>mutation.comand</td><td> A script that is called in each target. The script is called with th name of the task file as first argument, the number of the task as second, and the arguments given to the class as third.</td></tr>
-                          
-                    </table>
-                    A script, for example, can look as follows:
-                    <div class="antblock">
-                    nice -10 ant -f /path/to/build.xml runMutations -Dmutation.file=${1} -Dmutation.result.file=result-${2}.xml 2>&1 | tee  output-runMutations-${2}.txt 
                     </div>
-                    To execute multiple tasks in parallel the Makefile can be started with:
-					<div class="antblock">
-						make -j5
-					</div>                    
-                   <h3>Analyze Results</h3>
-                    
-                    The results of the mutation testing can be analyzed with the
-                    class <code>de.st.cs.unisb.javalanche.analyze.AnalyzeMain</code>.
-					This fetches all mutations with given prefix from the databse, and
-					hands them over to several implementations of the 
-					<code>de.st.cs.unisb.javalanche.analyze.MutationAnalyzer</code>
-					interface.<br/>
-                    An ant task that executes this class looks like this:<br/>
-                    
+                    <table>
+                        <tr>
+                            <th>Argument</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>trace.dir</td>
+                            <td>The directory with the trace files.</td>
+                        </tr>
+                        <tr>
+                            <td>daikon.command</td>
+                            <td>The command (script) to start daikon.</td>
+                        </tr>
+                    </table>           
+                    A script that runs daikon can look like this.
                     <div class="antblock">
-&lt;target&nbsp;name=&quot;analyzeResults&quot;&nbsp;description=&quot;Analyzes&nbsp;the&nbsp;mutationt&nbsp;testing&nbsp;results.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compare&nbsp;mutated&nbsp;runs&nbsp;with&nbsp;the&nbsp;unmutated&nbsp;runs&quot;&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;classname=&quot;de.st.cs.unisb.javalanche.analyze.AnalyzeMain&quot;&nbsp;maxmemory=&quot;1024m&quot;&nbsp;fork=&quot;true&quot;&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dmutation.package.prefix=${package.prefix}&quot;&nbsp;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;mutation.classpath&quot;&nbsp;/&gt;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
+! /bin/sh<br/>
+nice -10 java -Xmx2048m -cp /path/to/daikon.jar daikon.Daikon --no_text_output -o ${2} ${1} 
+                    </div>
+                    
+                    To execute multiple tasks in parallel the Makefile can be started with the -j switch:
+                    <div class="antblock">
+                        make -j5
+                    </div>
+                    <h3>Create Invariant Checkers</h3>
+The dynamic invariants that were detected by daikon, can be transformed into invariant
+checkers. These invariant checkers can later be used to check for invariant violations 
+at runtime. This is done with the <code>DaikonInvariantReader</code>.
+                   
+<div class="antblock">
+&lt;target&nbsp;name=&quot;createInvariantCheckers&quot;&nbsp;description=&quot;*&nbsp;create&nbsp;invariant&nbsp;checkers&nbsp;for&nbsp;all&nbsp;invariant&nbsp;files&nbsp;(.inv&nbsp;or&nbsp;.inv.gz)&nbsp;in&nbsp;a&nbsp;directory&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;java&nbsp;classname=&quot;de.unisb.cs.st.javalanche.invariants.cli.DaikonInvariantReader&quot;&nbsp;maxmemory=&quot;2048m&quot;&nbsp;fork=&quot;true&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dinvariant.dir=${invariant.dir}&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dinvariant.checker.file=${invariant.checker.file}&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&nbsp;refid=&quot;invariant.path&quot;&nbsp;/&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&lt;/java&gt;<br/>
 &lt;/target&gt;
-                    
-                    </div>
+</div>
                     
                     <table>
-                        <tr><th>Argument</th><th>Description</th></tr>
-                        <tr><td>-Dmutation.package.prefix</td><td> The prefix of the classes that should be analyzed. 
-                        Only classes with a fully qualified name (package + class name) that start with this prefix are analyzed.</td></tr>
-                      
+                        <tr>
+                            <th>Argument</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>-Dmutation.package.prefix</td>
+                            <td> The prefix of the classes that should be analyzed. 
+                        Only classes with a fully qualified name (package + class name) that start with this prefix are analyzed.</td>
+                        </tr>
+                    
                     </table>
-                    </div>
-         
+
+                <h3>Field Visibilities</h3>
+In order to apply the invariant checkers, the project has to be scanned once for 
+all fields and their visibility (private, public, ...).
+This is done with the original test suite and a javaagent.
+To scan for field visibilities the orginial test task has to be modified in
+the following way:
+<div class="antblock">
+
+&lt;target&nbsp;name=&quot;fieldVisibilities&quot;&nbsp;description=&quot;*&nbsp;run&nbsp;test&nbsp;with&nbsp;invariant&nbsp;checkers&nbsp;enabled.&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;junit&nbsp;dir=&quot;./&quot;&nbsp;printSummary=&quot;yes&quot;&nbsp;fork=&quot;true&quot;&nbsp;forkmode=&quot;once&quot;&nbsp;showoutput=&quot;true&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;formatter&nbsp;type=&quot;plain&quot;&nbsp;usefile=&quot;true&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;invariant.path&quot;/&gt;<br/></b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;test.classpath&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
+<br/>
+<b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-javaagent:/path/to/invariantJavaagent.jar&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dinvariant.mode=FIELD_VIS&quot;/&gt;<br/>
+</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;batchtest&nbsp;todir=&quot;${testreportdir}&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${test.src}&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;include&nbsp;name=&quot;**/JaxenTestSuite.java&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/fileset&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/batchtest&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/junit&gt;<br/>
+&lt;/target&gt;<br/>
+</div>
+            <h3>Check Invariants</h3>         
+For performance reasons we trace every test case seperatly, and calculate
+invariants for it, because daikon cannot handle the execution of the whole
+test suite for large projects.
+Thus, the learned invariants are not guaranteed to hold for all runs and have 
+to be checked on the whole test suite.<br/>
+This can be done the following way:
+<div class="antblock">
+&lt;target&nbsp;name=&quot;checkInvariants&quot;&nbsp;description=&quot;*&nbsp;run&nbsp;test&nbsp;suite&nbsp;and&nbsp;check&nbsp;the&nbsp;validity&nbsp;of&nbsp;the&nbsp;invariants<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(a&nbsp;invariant&nbsp;should&nbsp;hold&nbsp;for&nbsp;all&nbsp;test&nbsp;cases)&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;junit&nbsp;dir=&quot;./&quot;&nbsp;printSummary=&quot;yes&quot;&nbsp;fork=&quot;true&quot;&nbsp;forkmode=&quot;once&quot;&nbsp;showoutput=&quot;true&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;formatter&nbsp;type=&quot;plain&quot;&nbsp;usefile=&quot;true&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;invariant.path&quot;/&gt;<br/></b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;test.classpath&quot;&nbsp;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+<b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-javaagent:${adabu.location}/adabu2-check-invariants/invariantJavaagent.jar&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dinvariant.mode=CHECK_INVARIANT&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;value=&quot;-Dinvariant.checker.file=${invariant.checker.file}&quot;/&gt;<br/>
+</b>
+&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;batchtest&nbsp;todir=&quot;${testreportdir}&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${test.src}&quot;&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;include&nbsp;name=&quot;**/JaxenTestSuite.java&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/fileset&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/batchtest&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/junit&gt;<br/>
+&lt;/target&gt;<br/>
+<br/>
+</div>
+This step has to be carried several times until no invariants are violated anymore.
+If this is the case a message of the following form is printed:
+<div class="antblock">
+No invariant violations:<br/>
+RUN_SUCCESSFULL
+</div>
+The invariant checker file prefixed with <code>CHECKED</code> then contains 
+only checkers for the dynamic invariants that hold for the whole test suite. 
+</div>
+                </div> 
             </div>
             <div id="footer">
                 <p>
