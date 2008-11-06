@@ -629,7 +629,7 @@ public class QueryManager {
 	 *            a map that contains the collected coverage data
 	 */
 	public static void saveCoverageResults(Map<Long, Set<String>> coverageData) {
-		logger.info("Start svaing coverage data.");
+		logger.info("Start saving coverage data.");
 		logger.info("Size of map: " + coverageData.size());
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
@@ -665,11 +665,11 @@ public class QueryManager {
 			}
 			for (Set<Long> set : sets) {
 				long start = System.currentTimeMillis();
-				logger.info("Start query");
+				logger.debug("Start query");
 				Query mutationCoverageQuery = session
 						.createQuery("from MutationCoverage WHERE mutationID IN (:mids)");
 				long time = System.currentTimeMillis() - start;
-				logger.info("Query took: " + Formater.formatMilliseconds(time));
+				logger.debug("Query took: " + Formater.formatMilliseconds(time));
 				mutationCoverageQuery.setParameterList("mids", set);
 				logger.debug("getting coverage results from db"
 						+ mutationCoverageQuery.getQueryString());
@@ -681,12 +681,12 @@ public class QueryManager {
 			}
 		}
 		long start = System.currentTimeMillis();
-		logger.info("Start flush");
-		logger.info("Doing temporary flush. ");
+		logger.debug("Start flush");
+		logger.debug("Temporary flush. ");
 		session.flush();
 		session.clear();
 		long time = System.currentTimeMillis() - start;
-		logger.info("Flush took: " + Formater.formatMilliseconds(time));
+		logger.debug("Flush took: " + Formater.formatMilliseconds(time));
 
 		int saves = 0, flushs = 0;
 		for (Map.Entry<Long, Set<String>> entry : coverageData.entrySet()) {
@@ -726,12 +726,12 @@ public class QueryManager {
 				// http://www.hibernate.org/hib_docs/reference/en/html/batch.html
 				long startFlush = System.currentTimeMillis();
 				flushs++;
-				logger.info("Doing temporary flush " + flushs + " -  Saves"
+				logger.debug("Temporary flush " + flushs + " -  Saves"
 						+ saves);
 				session.flush();
 				session.clear();
 				long timeFlush = System.currentTimeMillis() - startFlush;
-				logger.info("Flush took: "
+				logger.debug("Flush took: "
 						+ Formater.formatMilliseconds(timeFlush));
 				saves = 0;
 			}

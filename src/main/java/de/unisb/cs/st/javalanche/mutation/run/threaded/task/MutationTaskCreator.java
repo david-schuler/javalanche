@@ -45,6 +45,8 @@ public class MutationTaskCreator {
 
 	private static final String MUTATION_NUMBER_OF_TASKS_KEY = "mutation.number.of.tasks";
 
+	private static final String TASK_DIR = getTaskDir();
+
 	public static void createMutationTasks() {
 		deleteTasks();
 		int numberOfTasks = DEFAULT_NUMBER_OF_TASKS;
@@ -62,8 +64,16 @@ public class MutationTaskCreator {
 		createMutationTasks(numberOfTasks, mutationsPerTask);
 	}
 
+	private static String getTaskDir() {
+		String property = System.getProperty("javalanche.mutation.output.dir");
+		if (property == null) {
+			property = MutationProperties.OUTPUT_DIR;
+		}
+		return property;
+	}
+
 	private static void deleteTasks() {
-		File dir = new File(MutationProperties.RESULT_DIR);
+		File dir = new File(TASK_DIR);
 
 		File[] toDelete = dir.listFiles(new FilenameFilter() {
 
@@ -134,8 +144,8 @@ public class MutationTaskCreator {
 	}
 
 	private static File writeListToFile(List<Long> list, int id) {
-		String filename = getFilename(id);
-		File resultFile = new File(filename);
+		String filename = String.format(MUTATION_TASK_FILE_FORMAT, id);
+		File resultFile = new File(MutationProperties.RESULT_DIR, filename);
 		StringBuilder sb = new StringBuilder();
 		for (Long l : list) {
 			sb.append(l);
@@ -145,11 +155,6 @@ public class MutationTaskCreator {
 		return resultFile;
 	}
 
-	private static String getFilename(int id) {
-		String filename = String.format(MutationProperties.RESULT_DIR
-				+ MUTATION_TASK_FILE_FORMAT, id);
-		return filename;
-	}
 
 	public static void main(String[] args) {
 		MutationProperties.checkProperty(MutationProperties.PROJECT_PREFIX_KEY);

@@ -86,10 +86,16 @@ public class MutationScanner implements ClassFileTransformer {
 				String message3 = String.format(
 						"Added %d mutation possibilities.",
 						mutationPossibilitiesPost - mutationPossibilitiesPre);
-				long numberOfTests  = QueryManager.getNumberOfTestsForProject();
-				long coveredMutations = QueryManager.getNumberOfCoveredMutations();
-				String testMessage =  String.format("Executed %d tests", numberOfTests);
-				String coveredMessage =  String.format("%d mutations are covered by tests which is  %f percent", coveredMutations, (((double) coveredMutations)/mutationPossibilitiesPost) * 100.);
+				long numberOfTests = QueryManager.getNumberOfTestsForProject();
+				long coveredMutations = QueryManager
+						.getNumberOfCoveredMutations();
+				String testMessage = String.format("Executed %d tests",
+						numberOfTests);
+				String coveredMessage = String
+						.format(
+								"%d mutations are covered by tests which is  %f percent",
+								coveredMutations,
+								(((double) coveredMutations) / mutationPossibilitiesPost) * 100.);
 				logger.info(message1);
 				logger.info(message2);
 				logger.info(message3);
@@ -131,7 +137,7 @@ public class MutationScanner implements ClassFileTransformer {
 							.getIntegrateScanAndCoverageTestSuiteTransformer();
 					classfileBuffer = integrateSuiteTransformer
 							.transformBytecode(classfileBuffer);
-					logger.info(AsmUtil.classToString(classfileBuffer));
+					// logger.debug(AsmUtil.classToString(classfileBuffer));
 				}
 
 			} catch (Throwable t) {

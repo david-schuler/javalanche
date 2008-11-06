@@ -38,6 +38,7 @@ public class MutationDeleter {
 	 */
 	@SuppressWarnings("unchecked")
 	private static void deleteMutationResultsFromQuery(String queryString) {
+		logger.info("Deleting with this query: " + queryString);
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		Query q = session.createQuery(queryString);

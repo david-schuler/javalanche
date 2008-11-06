@@ -35,7 +35,7 @@ public class MutationProperties {
 		return properties;
 	}
 
-	public static final String OUTPUT_DIR = getProperty("mutation.output.dir");
+	public static final String OUTPUT_DIR = getProperty("javalanche.mutation.output.dir");
 
 //	public static final String ASPECTJ_DIR = "/scratch/schuler/aspectJ/";
 
@@ -187,7 +187,7 @@ public class MutationProperties {
 	public static final String TRACE_BYTECODE_KEY = "mutation.trace";
 
 	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
-			TRACE_BYTECODE_KEY, true);
+			TRACE_BYTECODE_KEY, false);
 
 	public static final String TEST_FILTER_FILE_NAME_KEY = "mutation.test.filter.map";
 	public static final String TEST_FILTER_FILE_NAME = getProperty(TEST_FILTER_FILE_NAME_KEY);

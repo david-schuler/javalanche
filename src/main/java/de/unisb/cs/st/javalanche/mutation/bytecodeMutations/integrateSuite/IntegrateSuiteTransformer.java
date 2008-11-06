@@ -1,6 +1,5 @@
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite;
 
-
 import java.io.PrintWriter;
 
 import org.objectweb.asm.ClassAdapter;
@@ -10,6 +9,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class IntegrateSuiteTransformer extends BytecodeTransformer {
@@ -60,7 +60,9 @@ public class IntegrateSuiteTransformer extends BytecodeTransformer {
 	@Override
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
 		ClassVisitor cc = new CheckClassAdapter(cw);
-		cc = new TraceClassVisitor(cc, new PrintWriter(System.out));
+		if (MutationProperties.TRACE_BYTECODE) {
+			cc = new TraceClassVisitor(cc, new PrintWriter(System.out));
+		}
 		return new IntegrateSuiteClassAdapter(cc, targetClass,
 				integrationMethod, integrationMethodSignature);
 	}

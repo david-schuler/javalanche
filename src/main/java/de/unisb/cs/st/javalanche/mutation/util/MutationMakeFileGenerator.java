@@ -7,6 +7,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+
+import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator;
 
@@ -111,6 +113,9 @@ public class MutationMakeFileGenerator {
 	}
 
 	private static File[] getTaskFiles(File dir) {
+		logger.info("Searching for files in directory" + dir);
+		logger.info("Seraching for files starting with: "
+				+ (MutationTaskCreator.MUTATION_TASK_PROJECT_FILE_PREFIX));
 		File[] listFiles = dir.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				if (name
@@ -133,22 +138,23 @@ public class MutationMakeFileGenerator {
 	}
 
 	private static void writeMakefile(String add) {
-		String string = "mutation.comand";
-		String scriptCommand = System.getProperty(string);
+		String property = "mutation.comand";
+		String scriptCommand = System.getProperty(property);
 		if (scriptCommand == null) {
 			throw new RuntimeException("No command given. Expecting property "
-					+ string + "to be set");
+					+ property + "to be set");
 		}
 		String generateMakeFile = generateMakeFile(scriptCommand, add);
-		try {
-			File file = new File("Makefile");
-			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-			bw.write(generateMakeFile);
-			bw.close();
-			logger.info(file.getAbsoluteFile() + " written");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Io.writeFile(generateMakeFile, new File("Makefile"));
+		// try {
+		// File file = new File("Makefile");
+		// BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+		// bw.write(generateMakeFile);
+		// bw.close();
+		// logger.info(file.getAbsoluteFile() + " written");
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
 	}
 
 }
