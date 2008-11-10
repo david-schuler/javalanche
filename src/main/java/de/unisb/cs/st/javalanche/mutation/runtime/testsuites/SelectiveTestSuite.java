@@ -263,9 +263,9 @@ public class SelectiveTestSuite extends TestSuite {
 				throw new RuntimeException(
 						"Mutation classes are missing on the class path ", e);
 			}
-			if (result.shouldStop())
-				break;
-			Set<String> testsForThisRun = MutationProperties.COVERAGE_INFFORMATION ? mutationSwitcher
+			// if (result.shouldStop())
+			// break;
+			Set<String> testsForThisRun = MutationProperties.COVERAGE_INFORMATION ? mutationSwitcher
 					.getTests()
 					: allTests.keySet();
 			if (testsForThisRun == null) {

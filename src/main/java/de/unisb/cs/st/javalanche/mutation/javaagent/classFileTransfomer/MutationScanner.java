@@ -12,8 +12,6 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
-
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class MutationScanner implements ClassFileTransformer {
@@ -71,7 +69,7 @@ public class MutationScanner implements ClassFileTransformer {
 		Runtime runtime = Runtime.getRuntime();
 		final long mutationPossibilitiesPre = QueryManager
 				.getNumberOfMutationsWithPrefix(MutationProperties.PROJECT_PREFIX);
-
+		final long numberOfTestsPre = QueryManager.getNumberOfTests();
 		runtime.addShutdownHook(new Thread() {
 			@Override
 			public void run() {
@@ -87,10 +85,14 @@ public class MutationScanner implements ClassFileTransformer {
 						"Added %d mutation possibilities.",
 						mutationPossibilitiesPost - mutationPossibilitiesPre);
 				long numberOfTests = QueryManager.getNumberOfTestsForProject();
+				long addedTests = QueryManager.getNumberOfTests()
+						- numberOfTestsPre;
+				String testMessage = String.format(
+						"Added %d tests. Tests with prefix %s : %d",
+						addedTests, MutationProperties.PROJECT_PREFIX,
+						numberOfTests);
 				long coveredMutations = QueryManager
 						.getNumberOfCoveredMutations();
-				String testMessage = String.format("Executed %d tests",
-						numberOfTests);
 				String coveredMessage = String
 						.format(
 								"%d mutations are covered by tests which is  %f percent",

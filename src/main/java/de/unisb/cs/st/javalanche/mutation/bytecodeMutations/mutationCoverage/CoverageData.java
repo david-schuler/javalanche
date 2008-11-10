@@ -15,18 +15,36 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationMarker;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
+/**
+ * Class to compute coverage data for mutations.
+ *
+ * When this class is used by a testdriver the method following methods have to
+ * be called:
+ * <ul>
+ * <li>setTestName() at the beginning of every test. </li>
+ * <li>{@link unsetTestName()} at the end of every test. </li>
+ * <li>endCoverage() when the test suite has finished. </li>
+ * </ul>
+ *
+ * @author David Schuler
+ *
+ */
 public class CoverageData {
 
 	private static final boolean SAVE_INTERVALLS = false;
 
 	private static Logger logger = Logger.getLogger(CoverageData.class);
 
-	public ThreadLocal<String> testName = new ThreadLocal<String>();
+	// public ThreadLocal<String> testName = new ThreadLocal<String>();
+	public String testName;
 
 	private static class SingletonHolder {
 		private final static CoverageData instance = new CoverageData();
 	}
 
+	/**
+	 * Stores the coverage information. Maps a mutationId to an Set of tests.
+	 */
 	private Map<Long, Set<String>> coverageData = new HashMap<Long, Set<String>>();
 
 	private Set<String> testsRun = new HashSet<String>();
@@ -45,7 +63,7 @@ public class CoverageData {
 				+ " mutations");
 		QueryManager.saveCoverageResults(coverageData);
 		QueryManager.saveTestsWithNoCoverage(testsRun);
-//		XmlIo.toXML(coverageData, "coverageData-" + saveCount + ".xml");
+		// XmlIo.toXML(coverageData, "coverageData-" + saveCount + ".xml");
 		saveCount++;
 		coverageData = new HashMap<Long, Set<String>>();
 	}
@@ -57,7 +75,9 @@ public class CoverageData {
 	public static void touch(long id) {
 		call++;
 		if (call % ((int) 1e6) == 0) {
-			logger.info("Touch called " + call + "times.  Test " + SingletonHolder.instance.testName.get()
+			logger.info("Touch called " + call + "times.  Test "
+					+ SingletonHolder.instance.getTestName()
+
 					+ " touched mutation " + id);
 			shouldSave = true;
 		}
@@ -71,7 +91,12 @@ public class CoverageData {
 			coveredTests = new HashSet<String>();
 			SingletonHolder.instance.coverageData.put(id, coveredTests);
 		}
-		coveredTests.add(SingletonHolder.instance.testName.get());
+		coveredTests.add(SingletonHolder.instance.getTestName());
+	}
+
+	private String getTestName() {
+		// testName.get()
+		return testName;
 	}
 
 	public static void setTestName(String testName) {
@@ -80,11 +105,11 @@ public class CoverageData {
 		CoverageData instance = SingletonHolder.instance;
 		instance.testsRun.add(testName);
 
-		if (instance.testName.get() == null) {
-			instance.testName.set(testName);
+		if (instance.getTestName()== null) {
+			instance._setTestName(testName);
 		} else {
 			logger.info("Trying to overwrite testname");
-			logger.info("Old testname: " + instance.testName.get());
+			logger.info("Old testname: " + instance.getTestName());
 			logger.info("New testname: " + testName);
 			Thread currentThread = Thread.currentThread();
 			StackTraceElement[] sts = currentThread.getStackTrace();
@@ -96,11 +121,11 @@ public class CoverageData {
 	public static void unsetTestName(String testName) {
 		logger.info("Unsetting testname " + testName);
 		CoverageData instance = SingletonHolder.instance;
-		String oldTestName = instance.testName.get();
+		String oldTestName = instance.getTestName();
 		if (oldTestName == null) {
 			logger.warn("Test name was  set to null expected " + testName);
 		} else if (oldTestName.equals(testName)) {
-			instance.testName.set(null);
+			instance._setTestName(null);
 		} else {
 			logger.warn("Unset testname got different names");
 			logger.warn("Tried to unset: " + testName);
@@ -111,6 +136,11 @@ public class CoverageData {
 			logger.warn("Stacktrace:\n" + stackTraceString);
 		}
 
+	}
+
+	private void _setTestName(String testName) {
+		//testName.set(testName)
+		this.testName = testName;
 	}
 
 	public static void main(String[] args) {

@@ -145,7 +145,7 @@ public class MutationProperties {
 	/**
 	 * True if coverage information is available in the db.
 	 */
-	public static final boolean COVERAGE_INFFORMATION = getPropertyOrDefault(
+	public static final boolean COVERAGE_INFORMATION = getPropertyOrDefault(
 			COVERAGE_INFORMATION_KEY, true);
 
 	/**

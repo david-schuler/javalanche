@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+
 @Entity
 public class TestName {
 
@@ -22,12 +24,19 @@ public class TestName {
 	@ManyToMany
 	private List<Invariant> invariants = new ArrayList<Invariant>();
 
+	private String project;
+
 	public TestName() {
 	}
 
 	public TestName(String name) {
+		this(name, MutationProperties.PROJECT_PREFIX);
+	}
+
+	private TestName(String name, String project) {
 		super();
 		this.name = name;
+		this.project = project;
 	}
 
 	/**
@@ -58,6 +67,21 @@ public class TestName {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return the project
+	 */
+	public String getProject() {
+		return project;
+	}
+
+	/**
+	 * @param project
+	 *            the project to set
+	 */
+	public void setProject(String project) {
+		this.project = project;
 	}
 
 }

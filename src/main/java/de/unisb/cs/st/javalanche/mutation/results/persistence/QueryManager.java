@@ -600,7 +600,7 @@ public class QueryManager {
 				+ " AND m.mutationResult_id IS NULL "
 				+ " AND m.mutationType != 0" + " AND m.className LIKE '"
 				+ prefix + "%' ORDER BY  m.id ";
-		if (!MutationProperties.COVERAGE_INFFORMATION) {
+		if (!MutationProperties.COVERAGE_INFORMATION) {
 			queryString = "SELECT m.id FROM Mutation m "
 					+ "WHERE  m.mutationresult_id IS NULL "
 					+ "AND NOT m.classInit " + "AND m.mutationType != 0 "
@@ -925,6 +925,18 @@ public class QueryManager {
 		Transaction tx = session.beginTransaction();
 		String queryString = "SELECT count(DISTINCT name) FROM TestName WHERE name LIKE '"
 				+ prefix + "%'";
+		SQLQuery sqlQuery = session.createSQLQuery(queryString);
+		List results = sqlQuery.list();
+		long resultFromCountQuery = getResultFromCountQuery(results);
+		tx.commit();
+		session.close();
+		return resultFromCountQuery;
+	}
+
+	public static long getNumberOfTests() {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		String queryString = "SELECT count(DISTINCT name) FROM TestName";
 		SQLQuery sqlQuery = session.createSQLQuery(queryString);
 		List results = sqlQuery.list();
 		long resultFromCountQuery = getResultFromCountQuery(results);

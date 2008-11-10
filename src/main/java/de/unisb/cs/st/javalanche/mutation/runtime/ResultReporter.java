@@ -1,6 +1,7 @@
 package de.unisb.cs.st.javalanche.mutation.runtime;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,7 +19,8 @@ import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
-import de.unisb.cs.st.javalanche.invariants.runtime.InvariantObserver;;
+import de.unisb.cs.st.javalanche.invariants.runtime.InvariantObserver;
+
 
 /**
  *
@@ -31,6 +33,9 @@ public class ResultReporter {
 
 	private static Logger logger = Logger.getLogger(ResultReporter.class);
 
+	/**
+	 * The mutation that is currently active.
+	 */
 	private static Mutation actualMutation;
 
 	private static Set<Mutation> reportedMutations = new HashSet<Mutation>();
@@ -121,6 +126,43 @@ public class ResultReporter {
 		actualTestCase = null;
 	}
 
+	public synchronized void report(Mutation mutation,
+			MutationTestResult mutationTestResult) {
+		if (mutationTestResult == null || mutation == null) {
+			throw new IllegalArgumentException("Argument was null: "
+					+ mutationTestResult == null ? "mutationTestResult" : ""
+					+ mutation == null ? ", mutation" : "");
+		}
+		singleTestResult = mutationTestResult;
+		if (!reportedMutations.contains(mutation)) {
+			reportedMutations.add(mutation);
+		} else {
+			String message = "Mutation " + mutation + " already reported ";
+			logger.info(message);
+			throw new RuntimeException(message);
+		}
+		if (touched) {
+			touchedMutations.add(mutation);
+		}
+		if (MutationProperties.RUN_MODE == MutationProperties.RunMode.MUTATION_TEST_INVARIANT) {
+			InvariantObserver instance = InvariantObserver.getInstance();
+			if (instance != null) {
+				int totalViolatedInvariants = instance
+						.getTotalInvariantViolations();
+				int[] violatedInvariants = instance
+						.getViolatedInvariantsArray();
+				singleTestResult.setTotalViolations(totalViolatedInvariants);
+				singleTestResult.setViolatedInvariants(violatedInvariants);
+				singleTestResult
+						.setDifferentViolatedInvariants(violatedInvariants.length);
+				InvariantObserver.reset();
+			}
+		}
+		touchingTestCases.clear();
+		actualMutation = null;
+		actualTestCase = null;
+	}
+
 	public synchronized static void persist() {
 		logger.debug("Start storing " + instances.size()
 				+ " mutation test results in db");
@@ -138,7 +180,6 @@ public class ResultReporter {
 	}
 
 	public static synchronized void touch(long mutationID) {
-		// logger.info("Touc called " + mutationID + " - expected " +
 		// (actualMutation == null ? "null " : actualMutation.getId() + ""));
 		long expectedID = actualExpectedID;
 		if (mutationID != expectedID) {
@@ -159,6 +200,7 @@ public class ResultReporter {
 				rr.touched = true;
 			}
 		}
+//		System.exit(0);
 	}
 
 	/**
@@ -222,6 +264,13 @@ public class ResultReporter {
 
 	public synchronized boolean isReported(Mutation m) {
 		return reportedMutations.contains(m);
+	}
+
+	/**
+	 * @return the touchingTestCases
+	 */
+	public Collection<String> getTouchingTestCases() {
+		return touchingTestCases;
 	}
 
 }
