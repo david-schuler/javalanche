@@ -26,17 +26,20 @@ public class TestName {
 
 	private String project;
 
+	private long duration;
+
 	public TestName() {
 	}
 
 	public TestName(String name) {
-		this(name, MutationProperties.PROJECT_PREFIX);
+		this(name, MutationProperties.PROJECT_PREFIX, 0);
 	}
 
-	private TestName(String name, String project) {
+	public  TestName(String name, String project, long duration) {
 		super();
 		this.name = name;
 		this.project = project;
+		this.duration = duration;
 	}
 
 	/**
@@ -82,6 +85,21 @@ public class TestName {
 	 */
 	public void setProject(String project) {
 		this.project = project;
+	}
+
+	/**
+	 * @return the duration
+	 */
+	public long getDuration() {
+		return duration;
+	}
+
+	/**
+	 * @param duration
+	 *            the duration to set
+	 */
+	public void setDuration(long duration) {
+		this.duration = duration;
 	}
 
 }

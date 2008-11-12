@@ -1,5 +1,7 @@
 package de.unisb.cs.st.javalanche.mutation.results;
 
+import static org.junit.Assert.*;
+
 import java.util.List;
 
 import junit.framework.TestResult;
@@ -29,13 +31,12 @@ public class QueryManagerTest {
 	private static MutationType testMutationType = MutationType.RIC_MINUS_1;
 
 	private static Mutation testMutation = new Mutation(className,
-			testLineNumber, 0, testMutationType,false);
+			testLineNumber, 0, testMutationType, false);
 
 	@BeforeClass
-	public static void setUpClass(){
+	public static void setUpClass() {
 		TestUtil.getMutationsForClazzOnClasspath(TestProperties.ADVICE_CLAZZ);
 	}
-
 
 	@Before
 	public void setUp() {
@@ -55,7 +56,7 @@ public class QueryManagerTest {
 	@Test
 	public void testQueryByValues() {
 		Mutation queryMutation = new Mutation(className, testLineNumber, 0,
-				testMutationType,false);
+				testMutationType, false);
 		Mutation resultMutation = QueryManager.getMutation(queryMutation);
 		Assert.assertTrue(resultMutation != null);
 		Assert.assertTrue(resultMutation.getId() != null);
@@ -103,6 +104,23 @@ public class QueryManagerTest {
 				coverCount++;
 			}
 		}
-		Assert.assertTrue(coverCount > 20);
+		assertTrue(coverCount > 20);
+	}
+
+	@Test
+	public void testSaveTestMessage() {
+		long pre = QueryManager
+				.getResultFromCountQuery("SELECT COUNT(*) FROM TestName");
+		TestName tm = new TestName("Test", "test.test", 100);
+		QueryManager.save(tm);
+		long post = QueryManager
+				.getResultFromCountQuery("SELECT COUNT(*) FROM TestName");
+		System.out.print(pre + "   " + post);
+		QueryManager.delete(tm);
+		assertTrue(post > pre);
+		long postDelete = QueryManager
+				.getResultFromCountQuery("SELECT COUNT(*) FROM TestName");
+		assertEquals(pre, postDelete);
+
 	}
 }

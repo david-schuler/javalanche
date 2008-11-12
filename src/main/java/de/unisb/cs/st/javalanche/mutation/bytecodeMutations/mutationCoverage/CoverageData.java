@@ -73,6 +73,7 @@ public class CoverageData {
 	private static boolean shouldSave;
 
 	public static void touch(long id) {
+		
 		call++;
 		if (call % ((int) 1e6) == 0) {
 			logger.info("Touch called " + call + "times.  Test "

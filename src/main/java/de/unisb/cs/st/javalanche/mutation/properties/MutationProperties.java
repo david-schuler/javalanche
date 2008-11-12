@@ -7,6 +7,8 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+import de.unisb.cs.st.javalanche.mutation.util.MutationUtil;
+
 public class MutationProperties {
 
 	private static Logger logger = Logger.getLogger(MutationProperties.class);
@@ -14,6 +16,11 @@ public class MutationProperties {
 	public static final String PROPERTIES_FILE = "mutation.incl.properties";
 
 	public static final Properties PROPERTIES = getProperties();
+
+	static {
+		logger.info("Loaded log4j configuration from "
+				+ MutationUtil.getLog4jPropertiesLocation());
+	}
 
 	private static Properties getProperties() {
 		Properties properties = new Properties();
@@ -37,7 +44,7 @@ public class MutationProperties {
 
 	public static final String OUTPUT_DIR = getProperty("javalanche.mutation.output.dir");
 
-//	public static final String ASPECTJ_DIR = "/scratch/schuler/aspectJ/";
+	// public static final String ASPECTJ_DIR = "/scratch/schuler/aspectJ/";
 
 	public static final String CLOVER_REPORT_DIR = OUTPUT_DIR + "clover_html/";
 
@@ -159,7 +166,8 @@ public class MutationProperties {
 
 	public static final String NOT_MUTATED = "notMutated";
 
-	public static final boolean OBSERVE_OBJECTS = false; // TODO read from property
+	public static final boolean OBSERVE_OBJECTS = false; // TODO read from
+	// property
 
 	public static final String NUMBER_OF_THREADS_KEY = "mutation.number.of.threads";
 
@@ -199,8 +207,14 @@ public class MutationProperties {
 	public static final String EXPERIMENT_DATA_FILENAME = getProperty(EXPERIMENT_DATA_FILENAME_KEY);
 
 	public static final String MULTIPLE_MAKEFILES_KEY = "mutation.multiple.makefile";
+
 	public static final boolean MULTIPLE_MAKEFILES = getPropertyOrDefault(
 			MULTIPLE_MAKEFILES_KEY, false);
+
+	public static final String STOP_AFTER_FIRST_FAIL_KEY = "mutation.stop.after.first.fail";
+
+	public static final boolean STOP_AFTER_FIRST_FAIL = getPropertyOrDefault(
+			MULTIPLE_MAKEFILES_KEY, true);
 
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
@@ -267,7 +281,6 @@ public class MutationProperties {
 				result));
 		return result;
 	}
-
 
 	private static String getPrefix() {
 		String project_prefix = getProperty(PROJECT_PREFIX_KEY);

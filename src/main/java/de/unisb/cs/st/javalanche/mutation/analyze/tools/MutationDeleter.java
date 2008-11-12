@@ -27,7 +27,11 @@ public class MutationDeleter {
 		String prefix = MutationProperties.PROJECT_PREFIX;
 		String query = "DELETE FROM Mutation WHERE className LIKE '" + prefix
 				+ "%'";
-		deleteMutationResultsFromQuery(query);
+		deleteFromQuery(query);
+		String deleteTestsQuery = "DELETE FROM TestName WHERE project ='"
+				+ prefix + "'";
+		deleteFromQuery(deleteTestsQuery);
+
 	}
 
 	/**
@@ -37,13 +41,13 @@ public class MutationDeleter {
 	 *            query that is used to delete the mutations.
 	 */
 	@SuppressWarnings("unchecked")
-	private static void deleteMutationResultsFromQuery(String queryString) {
+	private static void deleteFromQuery(String queryString) {
 		logger.info("Deleting with this query: " + queryString);
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		Query q = session.createQuery(queryString);
 		int deleted = q.executeUpdate();
-		logger.info(String.format("Deleted %d mutations", deleted));
+		logger.info(String.format("Deleted %d entries", deleted));
 		tx.commit();
 		session.close();
 	}

@@ -1,4 +1,4 @@
-package de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer;
+package de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision;
 
 /**
  * Interface provides a method that decides whether a class should be

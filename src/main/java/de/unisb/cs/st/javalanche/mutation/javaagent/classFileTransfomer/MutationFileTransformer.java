@@ -14,6 +14,8 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecisionFactory;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.objectInspector.asmAdapters.ObjectInspectorTransformer;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
@@ -50,7 +52,6 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	}
 
-	private static String testName = ".testclasses";
 
 	private static MutationTransformer mutationTransformer = new MutationTransformer();
 
@@ -95,22 +96,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 		// logger.info(testCases);
 	}
 
-	private static MutationDecision mutationDecision = new MutationDecision() {
-
-		public boolean shouldBeHandled(String classNameWithDots) {
-			if (classesToMutate.contains(classNameWithDots)) {
-				return true;
-			}
-			if (classNameWithDots.contains(testName)
-					&& !classNameWithDots.endsWith("Test")) {
-				// Hack for unittesting
-				return true;
-			}
-			return false;
-		}
-
-	};
-
+	private static MutationDecision mutationDecision = MutationDecisionFactory.getStandardMutationDecision(classesToMutate);
 	/*
 	 * (non-Javadoc)
 	 *

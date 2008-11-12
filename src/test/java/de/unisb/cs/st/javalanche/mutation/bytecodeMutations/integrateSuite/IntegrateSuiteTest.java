@@ -1,13 +1,13 @@
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Map;
 
-import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.junit.Test;
+
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.testClasses.AllTests;
 import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.SelectiveTestSuite;
 import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.TestSuiteUtil;

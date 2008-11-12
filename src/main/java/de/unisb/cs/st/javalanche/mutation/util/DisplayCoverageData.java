@@ -4,7 +4,6 @@ import java.util.List;
 
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverage;
-import de.unisb.cs.st.javalanche.mutation.results.TestName;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 /**
@@ -18,21 +17,25 @@ public class DisplayCoverageData {
 
 	public static void main(String[] args) {
 		List<Mutation> mutationListFromDb = QueryManager
-				.getMutationIdListFromDb(1000);
+				.getMutationIdListFromDb(Integer.MAX_VALUE);
 		System.out.println("got " + mutationListFromDb.size()
 				+ " mutations from the db");
 		for (Mutation mutation : mutationListFromDb) {
-			System.out.println("Tests for mutation " + mutation);
 			MutationCoverage mutationCoverageData = QueryManager
 					.getMutationCoverageData(mutation.getId());
-			if (mutationCoverageData != null) {
-				List<TestName> testsNames = mutationCoverageData
-						.getTestsNames();
-				for (TestName testName : testsNames) {
-					System.out.println("\t" + testName.getName());
-				}
+			if (mutationCoverageData != null
+					&& mutationCoverageData.getTestsNames().size() > 0) {
+				System.out.printf("%03d tests for mutation %d\n",
+						mutationCoverageData.getTestsNames().size(), mutation
+								.getId());
+				// List<TestName> testsNames = mutationCoverageData
+				// .getTestsNames();
+				// for (TestName testName : testsNames) {
+				// System.out.println("\t" + testName.getName());
+				// }
 			} else {
-				System.out.println("\tNo tests covering this mutation");
+//				System.out.println("\tNo tests covering this mutation"
+//						+ mutation.getId());
 			}
 		}
 	}

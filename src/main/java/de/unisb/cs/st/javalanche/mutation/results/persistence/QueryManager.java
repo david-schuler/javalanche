@@ -342,6 +342,18 @@ public class QueryManager {
 		return l > 0;
 	}
 
+	public static long getResultFromCountQuery(String query) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		Query q = session.createQuery(query);
+		List results = q.list();
+		long l = getResultFromCountQuery(results);
+		tx.commit();
+		session.close();
+		return l;
+
+	}
+
 	public static long getResultFromCountQuery(List results) {
 		Long l = null;
 		if (results.size() > 0) {
@@ -669,7 +681,9 @@ public class QueryManager {
 				Query mutationCoverageQuery = session
 						.createQuery("from MutationCoverage WHERE mutationID IN (:mids)");
 				long time = System.currentTimeMillis() - start;
-				logger.debug("Query took: " + Formater.formatMilliseconds(time));
+				logger
+						.debug("Query took: "
+								+ Formater.formatMilliseconds(time));
 				mutationCoverageQuery.setParameterList("mids", set);
 				logger.debug("getting coverage results from db"
 						+ mutationCoverageQuery.getQueryString());
@@ -726,8 +740,7 @@ public class QueryManager {
 				// http://www.hibernate.org/hib_docs/reference/en/html/batch.html
 				long startFlush = System.currentTimeMillis();
 				flushs++;
-				logger.debug("Temporary flush " + flushs + " -  Saves"
-						+ saves);
+				logger.debug("Temporary flush " + flushs + " -  Saves" + saves);
 				session.flush();
 				session.clear();
 				long timeFlush = System.currentTimeMillis() - startFlush;
@@ -923,8 +936,8 @@ public class QueryManager {
 		String prefix = MutationProperties.PROJECT_PREFIX;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		String queryString = "SELECT count(DISTINCT name) FROM TestName WHERE name LIKE '"
-				+ prefix + "%'";
+		String queryString = "SELECT count(DISTINCT name) FROM TestName WHERE project='"
+				+ prefix + "'";
 		SQLQuery sqlQuery = session.createSQLQuery(queryString);
 		List results = sqlQuery.list();
 		long resultFromCountQuery = getResultFromCountQuery(results);
@@ -943,5 +956,13 @@ public class QueryManager {
 		tx.commit();
 		session.close();
 		return resultFromCountQuery;
+	}
+
+	public static void delete(Object tm) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		session.delete(tm);
+		tx.commit();
+		session.close();
 	}
 }

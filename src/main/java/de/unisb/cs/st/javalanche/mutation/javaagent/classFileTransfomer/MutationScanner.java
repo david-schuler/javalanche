@@ -5,8 +5,12 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
 import org.apache.log4j.Logger;
+
+import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationScannerTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecisionFactory;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
@@ -23,29 +27,8 @@ public class MutationScanner implements ClassFileTransformer {
 	private MutationScannerTransformer mutationScannerTransformer = new MutationScannerTransformer(
 			mpc);
 
-	private MutationDecision md = new MutationDecision() {
+	private MutationDecision md = MutationDecisionFactory.SCAN_DECISION;
 
-		private String prefix = System
-				.getProperty(MutationProperties.PROJECT_PREFIX_KEY);
-
-		public boolean shouldBeHandled(String classNameWithDots) {
-			if (classNameWithDots.startsWith("java")
-					|| classNameWithDots.startsWith("sun")
-					|| classNameWithDots.startsWith("org.aspectj.org.eclipse")) {
-				return false;
-			}
-			if (classNameWithDots.toLowerCase().contains("test")) {
-				return false;
-			}
-			if (prefix != null && classNameWithDots.startsWith(prefix)) {
-				if (QueryManager.hasMutationsforClass(classNameWithDots)) {
-					return false;
-				}
-				return true;
-			}
-			return false;
-		}
-	};
 	static {
 		// DB must be loaded before transform method is entered. Otherwise
 		// program crashes.
@@ -88,7 +71,7 @@ public class MutationScanner implements ClassFileTransformer {
 				long addedTests = QueryManager.getNumberOfTests()
 						- numberOfTestsPre;
 				String testMessage = String.format(
-						"Added %d tests. Tests with prefix %s : %d",
+						"Added %d tests. Tests for project %s : %d",
 						addedTests, MutationProperties.PROJECT_PREFIX,
 						numberOfTests);
 				long coveredMutations = QueryManager
@@ -145,7 +128,7 @@ public class MutationScanner implements ClassFileTransformer {
 			} catch (Throwable t) {
 				t.printStackTrace();
 				logger.info(t.getMessage());
-				logger.info(t.getStackTrace());
+				logger.info(Util.getStackTraceString());
 				System.out
 						.println("Exception during instrumentation - exiting");
 				System.exit(1);

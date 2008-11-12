@@ -64,11 +64,13 @@ public class MutationTestResult implements Serializable {
 	@IndexColumn(name = "passing_id")
 	private List<TestMessage> passing = new ArrayList<TestMessage>();
 
-// TODO UNCOMMENT AND UPDATE SCHEMA	@OneToMany(cascade = CascadeType.ALL)
-//	// , fetch = FetchType.EAGER)
-//	@JoinTable(name = "MutationTestResult_ViolatedInvariants", joinColumns = { @JoinColumn(name = "mutationTestResult_id") }, inverseJoinColumns = @JoinColumn(name = "invariant_id"))
-//	@IndexColumn(name = "mapping_id")
-//	private List<Invariant> invariants = new ArrayList<Invariant>();
+	// TODO UNCOMMENT AND UPDATE SCHEMA @OneToMany(cascade = CascadeType.ALL)
+	// // , fetch = FetchType.EAGER)
+	// @JoinTable(name = "MutationTestResult_ViolatedInvariants", joinColumns =
+	// { @JoinColumn(name = "mutationTestResult_id") }, inverseJoinColumns =
+	// @JoinColumn(name = "invariant_id"))
+	// @IndexColumn(name = "mapping_id")
+	// private List<Invariant> invariants = new ArrayList<Invariant>();
 
 	// Temporal(TemporalType.TIME)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -324,25 +326,30 @@ public class MutationTestResult implements Serializable {
 	}
 
 	public void addInvariant(Invariant invariant) {
-//	TODO	if (invariants == null) {
-//			invariants = new ArrayList<Invariant>();
-//		}
-//		invariants.add(invariant);
+		// TODO if (invariants == null) {
+		// invariants = new ArrayList<Invariant>();
+		// }
+		// invariants.add(invariant);
 	}
 
 	/**
 	 * @return the invariants
 	 */
 	public List<Invariant> getInvariants() {
-// TODO		return invariants;
+		// TODO return invariants;
 		return null;
 	}
 
 	/**
-	 * @param invariants the invariants to set
+	 * @param invariants
+	 *            the invariants to set
 	 */
 	public void setInvariants(List<Invariant> invariants) {
-//		this.invariants = invariants;
+		// this.invariants = invariants;
+	}
+
+	public void addFailure(TestMessage tm) {
+		failures.add(tm);
 	}
 
 }
