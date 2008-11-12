@@ -20,9 +20,9 @@ import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
  * @author David Schuler
  *
  */
-public class MutationTestListener implements TestListener {
+public class MutationJunitTestListener implements TestListener {
 
-	private static Logger logger = Logger.getLogger(MutationTestListener.class);
+	private static Logger logger = Logger.getLogger(MutationJunitTestListener.class);
 
 	/**
 	 * Stores the start time of a test not thread safe if the same test runs in

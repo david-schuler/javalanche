@@ -25,7 +25,7 @@ import junit.framework.TestResult;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
 
-import de.unisb.cs.st.javalanche.mutation.runtime.MutationTestListener;
+import de.unisb.cs.st.javalanche.mutation.runtime.MutationJunitTestListener;
 
 @Entity
 public class MutationTestResult implements Serializable {
@@ -149,7 +149,7 @@ public class MutationTestResult implements Serializable {
 	}
 
 	public MutationTestResult(TestResult mutationTestResult,
-			MutationTestListener mutationTestListener,
+			MutationJunitTestListener mutationTestListener,
 			Set<String> touchingTestCases) {
 		this.runs = mutationTestResult.runCount();
 		this.failures = mutationTestListener.getFailureMessages();

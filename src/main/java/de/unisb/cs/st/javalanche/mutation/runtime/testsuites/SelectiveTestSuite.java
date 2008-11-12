@@ -22,7 +22,7 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationSwitcher;
-import de.unisb.cs.st.javalanche.mutation.runtime.MutationTestListener;
+import de.unisb.cs.st.javalanche.mutation.runtime.MutationJunitTestListener;
 import de.unisb.cs.st.javalanche.mutation.runtime.ResultReporter;
 import de.unisb.cs.st.ds.util.Util;
 
@@ -91,7 +91,7 @@ public class SelectiveTestSuite extends TestSuite {
 	/**
 	 * Currently used MutationTestListner.
 	 */
-	private MutationTestListener actualListener;
+	private MutationJunitTestListener actualListener;
 
 	/**
 	 * Currently active Mutation.
@@ -172,9 +172,9 @@ public class SelectiveTestSuite extends TestSuite {
 									+ actualMutation);
 					if (actualListener == null) {
 						logger.warn("Listener is null - creating new one");
-						actualListener = new MutationTestListener();
+						actualListener = new MutationJunitTestListener();
 					}
-					actualListener = new MutationTestListener();
+					actualListener = new MutationJunitTestListener();
 
 					actualListener.addError(new Test() {
 
@@ -282,7 +282,7 @@ public class SelectiveTestSuite extends TestSuite {
 			totalTests += testsForThisRun.size();
 			actualMutationTestResult = new TestResult();
 			mutationSwitcher.switchOn();
-			actualListener = new MutationTestListener();
+			actualListener = new MutationJunitTestListener();
 			actualMutationTestResult.addListener(actualListener);
 
 			runTests(allTests, actualMutationTestResult, testsForThisRun);
@@ -345,7 +345,7 @@ public class SelectiveTestSuite extends TestSuite {
 			logger.debug("Unmutated mutation:" + actualMutation);
 			TestResult unmutatedTestResult = new TestResult();
 			actualMutationTestResult = unmutatedTestResult;
-			MutationTestListener unmutatedListener = new MutationTestListener();
+			MutationJunitTestListener unmutatedListener = new MutationJunitTestListener();
 			actualListener = unmutatedListener;
 			unmutatedTestResult.addListener(unmutatedListener);
 			runTests(allTests, unmutatedTestResult, testsForThisRun);

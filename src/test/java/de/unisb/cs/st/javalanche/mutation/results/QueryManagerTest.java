@@ -19,7 +19,7 @@ import de.unisb.cs.st.javalanche.mutation.properties.TestProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.cs.st.javalanche.mutation.runtime.MutationTestListener;
+import de.unisb.cs.st.javalanche.mutation.runtime.MutationJunitTestListener;
 import de.unisb.cs.st.javalanche.mutation.testutil.TestUtil;
 
 public class QueryManagerTest {
@@ -80,7 +80,7 @@ public class QueryManagerTest {
 		Mutation resultMutation = QueryManager.getMutation(testMutation);
 		Assert.assertNull(resultMutation.getMutationResult());
 		QueryManager.updateMutation(resultMutation, new MutationTestResult(
-				new TestResult(), new MutationTestListener(), null));
+				new TestResult(), new MutationJunitTestListener(), null));
 		Mutation checkMutation = QueryManager.getMutation(testMutation);
 		Assert.assertNotNull(checkMutation.getMutationResult());
 	}

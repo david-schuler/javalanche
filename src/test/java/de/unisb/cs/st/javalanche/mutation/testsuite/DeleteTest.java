@@ -18,7 +18,7 @@ import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
-import de.unisb.cs.st.javalanche.mutation.runtime.MutationTestListener;
+import de.unisb.cs.st.javalanche.mutation.runtime.MutationJunitTestListener;
 
 public class DeleteTest {
 
@@ -31,7 +31,7 @@ public class DeleteTest {
 		Transaction tx = session.beginTransaction();
 		Mutation m = new Mutation("Test", 99, 0, MutationType.NO_MUTATION,
 				false);
-		MutationTestListener mutationTestListener = new MutationTestListener();
+		MutationJunitTestListener mutationTestListener = new MutationJunitTestListener();
 		TestMessage passingTestMessage = new TestMessage(PASS_TEST,
 				"test passed");
 		TestMessage failingTestMessage = new TestMessage(PASS_TEST,

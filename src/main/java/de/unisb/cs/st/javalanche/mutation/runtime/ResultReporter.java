@@ -86,7 +86,7 @@ public class ResultReporter {
 	}
 
 	public synchronized void report(TestResult mutationTestResult,
-			Mutation mutation, MutationTestListener mutationTestListener) {
+			Mutation mutation, MutationJunitTestListener mutationTestListener) {
 		if (mutationTestResult == null || mutation == null || mutation == null) {
 			throw new IllegalArgumentException("Argument was null: "
 					+ mutationTestResult == null ? "mutationTestResult" : ""

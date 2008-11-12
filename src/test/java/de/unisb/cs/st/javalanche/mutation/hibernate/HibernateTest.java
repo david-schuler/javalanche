@@ -16,7 +16,7 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
-import de.unisb.cs.st.javalanche.mutation.runtime.MutationTestListener;
+import de.unisb.cs.st.javalanche.mutation.runtime.MutationJunitTestListener;
 
 @SuppressWarnings("unchecked")
 // Because of lists returned by hibernate
@@ -30,7 +30,7 @@ public class HibernateTest {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		TestResult tr= new TestResult();
-		testMutaion.setMutationResult(new MutationTestResult(tr,new MutationTestListener(), new HashSet<String>()));
+		testMutaion.setMutationResult(new MutationTestResult(tr,new MutationJunitTestListener(), new HashSet<String>()));
 		session.save(testMutaion);
 		tx.commit();
 		session.close();
