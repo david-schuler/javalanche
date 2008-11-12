@@ -214,7 +214,16 @@ public class MutationProperties {
 	public static final String STOP_AFTER_FIRST_FAIL_KEY = "mutation.stop.after.first.fail";
 
 	public static final boolean STOP_AFTER_FIRST_FAIL = getPropertyOrDefault(
-			MULTIPLE_MAKEFILES_KEY, true);
+
+	STOP_AFTER_FIRST_FAIL_KEY, true);
+
+	private static final String DEFAULT_TIMEOUT_IN_SECONDS_KEY = "mutation.default.timeout";
+	public static final int DEFAULT_TIMEOUT_IN_SECONDS = getPropertyOrDefault(
+			DEFAULT_TIMEOUT_IN_SECONDS_KEY, 10);
+
+	private static final String SAVE_INTERVAL_KEY = "mutation.default.timeout";
+	public static final int SAVE_INTERVAL = getPropertyOrDefault(
+			SAVE_INTERVAL_KEY, 10);
 
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");

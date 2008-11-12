@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -47,10 +48,14 @@ public class MutationForRun {
 	private MutationForRun() {
 		mutations = getMutationsForRun();
 		logger.info("Applying " + mutations.size() + " mutations");
+		List<Long> ids = new  ArrayList<Long>();
 		for (Mutation m : mutations) {
-			logger.info("Mutation ID: " + m.getId());
-			logger.info(m);
+			logger.debug("Mutation ID: " + m.getId());
+			logger.debug(m);
+			ids.add(m.getId());
 		}
+		String join = StringUtils.join(ids.toArray(), ", ");
+		logger.info("Mutaiton Ids: " + join);
 	}
 
 	public Collection<String> getClassNames() {
@@ -68,10 +73,10 @@ public class MutationForRun {
 	private static List<Mutation> getMutationsForRun() {
 		List<Mutation> mutationsToReturn = new ArrayList<Mutation>();
 		if (System.getProperty(MUTATION_FILE) != null) {
-			logger.info("Found Property mutation.file");
+			logger.debug("Found Property mutation.file");
 			String filename = System.getProperty(MUTATION_FILE);
 			if (!filename.equals("")) {
-				logger.info("Value of mutation file: " + filename);
+				logger.debug("Value of mutation file: " + filename);
 				File file = new File(filename);
 				if (file.exists()) {
 					logger.info("Location of mutation file: "
@@ -122,9 +127,13 @@ public class MutationForRun {
 				logger.info("All mutations got results - exiting now");
 			}
 			System.out.println("ALL_RESULTS");
-			System.out.println("All mutations have results - They have already been aplied and executed");
+			System.out
+					.println("All mutations have results - They have already been aplied and executed");
 
-			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT) { // TODO INTRODUCE own testRunMode
+			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT) { // TODO
+				// INTRODUCE
+				// own
+				// testRunMode
 				System.exit(0);
 			}
 		}

@@ -85,15 +85,8 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	private static List<String> systemExitClassList = Arrays
 			.asList(systemExitClasses);
 
-	// private static Set<String> testCases = (Set<String>) XmlIo
-	// .fromXml(MutationProperties.TESTCASES_FILE);
-
 	static {
 		logger.info("Loading MutationFileTransformer");
-		logger.info("Log4J Configuration at: "
-				+ System.getProperty("log4j.configuration"));
-		// logger.info("TestCases");
-		// logger.info(testCases);
 	}
 
 	private static MutationDecision mutationDecision = MutationDecisionFactory.getStandardMutationDecision(classesToMutate);

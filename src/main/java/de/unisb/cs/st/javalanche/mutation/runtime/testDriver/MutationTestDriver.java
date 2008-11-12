@@ -12,9 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.log4j.helpers.Loader;
 
 import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.mutationCoverage.CoverageData;
@@ -33,9 +31,7 @@ public abstract class MutationTestDriver {
 
 	private static final String DRIVER_KEY = "mutation.test.driver";
 
-	private static final long DEFAULT_TIMEOUT_IN_SECONDS = 10;
-
-	private static long timeout = DEFAULT_TIMEOUT_IN_SECONDS;
+	private static long timeout = MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS;
 
 	private static Logger logger = Logger.getLogger(MutationTestDriver.class);
 
@@ -49,7 +45,7 @@ public abstract class MutationTestDriver {
 
 	private String actualTestName;
 
-	private static final int saveIntervall = 30;
+	private static final int saveIntervall = MutationProperties.SAVE_INTERVAL;
 
 	private static final String MUTATION_TEST_LISTENER_KEY = "mutation.test.listener";
 
@@ -273,7 +269,7 @@ public abstract class MutationTestDriver {
 		mutationSwitcher.switchOff();
 		future.cancel(true);
 		try {
-			Thread.sleep(DEFAULT_TIMEOUT_IN_SECONDS * 1000);
+			Thread.sleep(MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS * 1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
