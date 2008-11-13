@@ -9,7 +9,7 @@ import junit.framework.TestSuite;
 import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.testClasses.AllTests;
-import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.SelectiveTestSuite;
+import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.MutationTestSuite;
 import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.TestSuiteUtil;
 
 public class IntegrateSuiteTest {
@@ -19,7 +19,7 @@ public class IntegrateSuiteTest {
 		TestSuite suite = AllTests.suite();
 		Map<String, junit.framework.Test> map = TestSuiteUtil.getAllTests(suite);
 //		suite.run(new TestResult());
-		TestSuite selectiveTestSuite = SelectiveTestSuite.toSelectiveTestSuite(suite);
+		TestSuite selectiveTestSuite = MutationTestSuite.toMutationTestSuite(suite);
 		assertTrue(selectiveTestSuite!=null);
 //		assertTrue(selectiveTestSuite instanceof SelectiveTestSuite);
 		assertTrue(map.size() >= suite.testCount());

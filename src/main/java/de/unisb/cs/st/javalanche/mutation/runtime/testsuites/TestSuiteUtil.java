@@ -38,8 +38,7 @@ public class TestSuiteUtil {
 				collectTests(suite, resultMap,lowerCaseSet);
 			} else if (test instanceof TestCase) {
 				TestCase testCase = (TestCase) test;
-				String fullTestName = ScanAndCoverageTestSuite
-						.getFullTestCaseName(testCase);
+				String fullTestName = getFullTestCaseName(testCase);
 				String nameForMap = checkName(fullTestName, resultMap);
 				insertTestName(resultMap, lowerCaseSet, test, nameForMap);
 			} else if (test instanceof Test) {
@@ -52,6 +51,12 @@ public class TestSuiteUtil {
 			}
 		}
 		return resultMap;
+	}
+
+	private static String getFullTestCaseName(TestCase testCase) {
+		String fullTestName = testCase.getClass().getName() + "."
+				+ testCase.getName();
+		return fullTestName;
 	}
 
 	private static void insertTestName(Map<String, Test> resultMap,

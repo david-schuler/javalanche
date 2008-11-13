@@ -11,16 +11,15 @@ import java.util.Map.Entry;
 import junit.framework.TestResult;
 
 import org.apache.log4j.Logger;
+
 import de.unisb.cs.st.ds.util.io.XmlIo;
+import de.unisb.cs.st.javalanche.invariants.runtime.InvariantObserver;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-
-import de.unisb.cs.st.javalanche.invariants.runtime.InvariantObserver;
-
 
 /**
  *
@@ -194,13 +193,13 @@ public class ResultReporter {
 				logger.info("Touch called by mutated code in test: "
 						+ actualTestCase + " for mutation: " + mutationID
 						+ "  Thread " + Thread.currentThread() /*
-						 * + "Trace " +
-						 * Util.getStackTraceString()
-						 */);
+																 * + "Trace " +
+																 * Util.getStackTraceString()
+																 */);
 				rr.touched = true;
 			}
 		}
-//		System.exit(0);
+		// System.exit(0);
 	}
 
 	/**
@@ -244,7 +243,7 @@ public class ResultReporter {
 	public static String summary(boolean finishedNormal) {
 		RunResult runResult = new RunResult(reportedMutations,
 				touchedMutations, MutationForRun.getAppliedMutations(),
-				unMutatedMutations, finishedNormal);
+				finishedNormal);
 		String resultFile = System
 				.getProperty(MutationProperties.RESULT_FILE_KEY);
 		if (resultFile != null) {

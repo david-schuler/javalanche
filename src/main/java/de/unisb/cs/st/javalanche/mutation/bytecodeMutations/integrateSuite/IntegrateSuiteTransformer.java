@@ -68,9 +68,9 @@ public class IntegrateSuiteTransformer extends BytecodeTransformer {
 	}
 
 	public static BytecodeTransformer getIntegrateSelectiveTestSuiteTransformer() {
-		String targetClass = "de/unisb/cs/st/javalanche/mutation/runtime/testsuites/SelectiveTestSuite";
-		String integrationMethod = "toSelectiveTestSuite";
-		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lde/unisb/cs/st/javalanche/mutation/runtime/testsuites/SelectiveTestSuite;";
+		String targetClass = "de/unisb/cs/st/javalanche/mutation/runtime/testsuites/MutationTestSuite";
+		String integrationMethod = "toMutationTestSuite";
+		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lde/unisb/cs/st/javalanche/mutation/runtime/testsuites/MutationTestSuite;";
 		return new IntegrateSuiteTransformer(targetClass, integrationMethod,
 				integrationMethodSignature);
 	}
@@ -84,9 +84,9 @@ public class IntegrateSuiteTransformer extends BytecodeTransformer {
 	}
 
 	public static BytecodeTransformer getIntegrateScanAndCoverageTestSuiteTransformer() {
-		String targetClass = "de/unisb/cs/st/javalanche/mutation/runtime/testsuites/ScanAndCoverageTestSuite";
-		String integrationMethod = "toScanAndCoverageTestSuite";
-		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lde/unisb/cs/st/javalanche/mutation/runtime/testsuites/ScanAndCoverageTestSuite;";
+		String targetClass = "de/unisb/cs/st/javalanche/mutation/runtime/testsuites/MutationTestSuite";
+		String integrationMethod = "toMutationTestSuite";
+		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lde/unisb/cs/st/javalanche/mutation/runtime/testsuites/MutationTestSuite;";
 		return new IntegrateSuiteTransformer(targetClass, integrationMethod,
 				integrationMethodSignature);
 	}

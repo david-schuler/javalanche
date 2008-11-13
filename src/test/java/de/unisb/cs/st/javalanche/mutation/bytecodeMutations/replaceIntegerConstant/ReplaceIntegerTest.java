@@ -18,7 +18,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConsta
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
-import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.SelectiveTestSuite;
+import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.MutationTestSuite;
 
 public class ReplaceIntegerTest {
 
@@ -59,7 +59,7 @@ public class ReplaceIntegerTest {
 
 	@Test
 	public void runTests() {
-		SelectiveTestSuite selectiveTestSuite = new SelectiveTestSuite();
+		MutationTestSuite selectiveTestSuite = new MutationTestSuite();
 		TestSuite suite = new TestSuite(IntegerConstantsTest.class);
 		selectiveTestSuite.addTest(suite);
 		@SuppressWarnings("unused")

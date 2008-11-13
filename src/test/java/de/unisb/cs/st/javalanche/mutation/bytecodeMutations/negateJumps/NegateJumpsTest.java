@@ -20,7 +20,7 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
-import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.SelectiveTestSuite;
+import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.MutationTestSuite;
 
 public class NegateJumpsTest {
 
@@ -63,7 +63,7 @@ public class NegateJumpsTest {
 		System.setProperty(MutationProperties.RESULT_FILE_KEY,
 				"target/unittestResults.xml");
 		ByteCodeTestUtils.redefineMutations(TEST_CLASS_NAME);
-		SelectiveTestSuite selectiveTestSuite = new SelectiveTestSuite();
+		MutationTestSuite selectiveTestSuite = new MutationTestSuite();
 		TestSuite suite = new TestSuite(JumpsTest.class);
 		selectiveTestSuite.addTest(suite);
 		System.out.println(TEST_CLASS.hashCode());

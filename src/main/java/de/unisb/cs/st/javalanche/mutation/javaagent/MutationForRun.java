@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,8 +36,6 @@ public class MutationForRun {
 		private static MutationForRun INSTANCE = new MutationForRun();
 	}
 
-	// private static final int DEFAULT_MUTATIONS_PER_RUN = 30;
-
 	private List<Mutation> mutations;
 
 	private List<Mutation> appliedMutations = new ArrayList<Mutation>();
@@ -48,7 +47,7 @@ public class MutationForRun {
 	private MutationForRun() {
 		mutations = getMutationsForRun();
 		logger.info("Applying " + mutations.size() + " mutations");
-		List<Long> ids = new  ArrayList<Long>();
+		List<Long> ids = new ArrayList<Long>();
 		for (Mutation m : mutations) {
 			logger.debug("Mutation ID: " + m.getId());
 			logger.debug(m);
@@ -190,8 +189,12 @@ public class MutationForRun {
 		List<Mutation> notApplied = new ArrayList<Mutation>();
 		int applied = 0;
 		boolean showMutations = mutations.size() < 5;
+		List<Long> appliedIds = new ArrayList<Long>();
+		for (Mutation m : appliedMutations) {
+			appliedIds.add(m.getId());
+		}
 		for (Mutation m : mutations) {
-			if (appliedMutations.contains(m)) {
+			if (appliedIds.contains(m.getId())) {
 				applied++;
 				if (showMutations) {
 					logger.info("Applied Mutation: "
@@ -205,6 +208,8 @@ public class MutationForRun {
 				+ " where applied to bytecode");
 		if (applied < mutations.size() || notApplied.size() > 0) {
 			logger.error("Not all mutations where applied to bytecode");
+			logger.error(appliedMutations);
+			logger.error(mutations);
 			for (Mutation mutation : notApplied) {
 				logger.warn("Mutation not applied " + mutation.getId());
 			}

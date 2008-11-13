@@ -22,8 +22,6 @@ public class RunResult {
 
 	private int numberOfAppliedMutations;
 
-	private int numberOfUnMutatedMutations;
-
 	@SuppressWarnings("unused")
 	private Set<Mutation> touchedMutations;
 
@@ -60,7 +58,7 @@ public class RunResult {
 
 	public RunResult(Set<Mutation> reportedMutations,
 			Set<Mutation> touchedMutations, List<Mutation> appliedMutations,
-			Set<Mutation> unMutatedMutations, boolean finishedNormal) {
+			 boolean finishedNormal) {
 		super();
 		this.finishedNormal = finishedNormal;
 		this.reported = reportedMutations.size();
@@ -69,7 +67,6 @@ public class RunResult {
 		this.touchedMutations = touchedMutations;
 		this.numberOfAppliedMutations = appliedMutations.size();
 		this.appliedMutations = appliedMutations;
-		this.numberOfUnMutatedMutations = unMutatedMutations.size();
 		touched = 0;
 		reported = 0;
 		numberOfAppliedMutations = 0;
@@ -97,15 +94,11 @@ public class RunResult {
 
 	@Override
 	public String toString() {
-		String s = String.format("%d mutations were applied (Checks %d)"
-				+ "\n%d Mutation Results were recorded"
-				+ "\n%d Mutations where actually touched.",
-				numberOfAppliedMutations, numberOfUnMutatedMutations, reported,
+		String s = String.format("%d mutations were applied. "
+				+ "%d Mutation results were recorded."
+				+ "%d Mutations where actually touched.",
+				numberOfAppliedMutations, reported,
 				touched);
-//		s += '\n';
-//		s += touched + "  " + touchedMutations.size() + '\n';
-//		s += reported + "  " + reportedMutations.size() + '\n';
-//		s += numberOfAppliedMutations + "  " + appliedMutations.size() + '\n';
 		return s;
 	}
 

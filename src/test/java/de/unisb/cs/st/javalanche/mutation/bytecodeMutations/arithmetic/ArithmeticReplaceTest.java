@@ -9,7 +9,7 @@ import org.junit.Test;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.testclasses.Arithmetic;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.testclasses.ArithmeticTest;
-import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.SelectiveTestSuite;
+import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.MutationTestSuite;
 
 public class ArithmeticReplaceTest {
 
@@ -53,7 +53,7 @@ public class ArithmeticReplaceTest {
 	@Test
 	public void runTests() {
 		ByteCodeTestUtils.redefineMutations(TEST_CLASS_NAME);
-		SelectiveTestSuite selectiveTestSuite = new SelectiveTestSuite();
+		MutationTestSuite selectiveTestSuite = new MutationTestSuite();
 		TestSuite suite = new TestSuite(ArithmeticTest.class);
 		selectiveTestSuite.addTest(suite);
 		@SuppressWarnings("unused")

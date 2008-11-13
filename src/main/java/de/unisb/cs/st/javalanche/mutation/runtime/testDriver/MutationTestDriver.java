@@ -69,8 +69,6 @@ public abstract class MutationTestDriver {
 		newInstance.run();
 	}
 
-
-
 	public void run() {
 		if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST
 				|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT) {
@@ -127,7 +125,7 @@ public abstract class MutationTestDriver {
 		timeout = 120;
 		// prepareTests();
 		if (doColdRun) {
-		coldRun(allTests);
+			coldRun(allTests);
 		}
 		logger.info("Start run of tests and collect coverage data");
 		for (String testName : allTests) {
@@ -415,22 +413,23 @@ public abstract class MutationTestDriver {
 	@SuppressWarnings("unchecked")
 	private void addListenersFromProperty() {
 		String listenerString = System.getProperty(MUTATION_TEST_LISTENER_KEY);
-		String[] split = listenerString.split(",");
-		for (String listenerName : split) {
-			logger
-					.info("Trying to add mutation test listener: "
-							+ listenerName);
-			try {
-				Class<? extends MutationTestListener> clazz = (Class<? extends MutationTestListener>) Class
-						.forName(listenerName);
-				MutationTestListener listenerInstance = clazz.newInstance();
-				addMutationTestListener(listenerInstance);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+		if (listenerString != null) {
+			String[] split = listenerString.split(",");
+			for (String listenerName : split) {
+				logger.info("Trying to add mutation test listener: "
+						+ listenerName);
+				try {
+					Class<? extends MutationTestListener> clazz = (Class<? extends MutationTestListener>) Class
+							.forName(listenerName);
+					MutationTestListener listenerInstance = clazz.newInstance();
+					addMutationTestListener(listenerInstance);
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

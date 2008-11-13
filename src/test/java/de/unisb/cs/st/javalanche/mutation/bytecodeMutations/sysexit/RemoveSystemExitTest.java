@@ -14,7 +14,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsCollectorTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.sysexit.testclasses.SysExit;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.sysexit.testclasses.SysExitTest;
-import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.SelectiveTestSuite;
+import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.MutationTestSuite;
 
 public class RemoveSystemExitTest {
 
@@ -58,7 +58,7 @@ public class RemoveSystemExitTest {
 
 	@Test
 	public void runTests() {
-		SelectiveTestSuite selectiveTestSuite = new SelectiveTestSuite();
+		MutationTestSuite selectiveTestSuite = new MutationTestSuite();
 		TestSuite suite = new TestSuite(SysExitTest.class);
 		// selectiveTestSuite.addTest(suite);
 		// @SuppressWarnings("unused")
