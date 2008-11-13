@@ -27,4 +27,11 @@ public class PrintListener implements MutationTestListener {
 		System.out.println("PrintListener: " + message);
 	}
 
+	public void end() {
+		print("Mutation test start");
+	}
+
+	public void start() {
+		print("Mutation test end");
+	}
 }

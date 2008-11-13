@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 
 import org.apache.log4j.Logger;
 import de.unisb.cs.st.ds.util.io.XmlIo;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.mutationCoverage.CoverageData;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
@@ -31,14 +32,6 @@ import de.unisb.cs.st.ds.util.Util;
  * for the mutated program. It repeatedly executes the test-cases for every
  * mutation, but only executes the tests that cover the mutation.
  *
- * @author David Schuler
- *
- */
-/**
- * @author David Schuler
- *
- */
-/**
  * @author David Schuler
  *
  */
@@ -392,7 +385,14 @@ public class SelectiveTestSuite extends TestSuite {
 			} else {
 				try {
 					ResultReporter.setActualTestCase(test.toString());
+					CoverageData.setTestName(testName);
 					runWithTimeout(test, testResult);
+					CoverageData.unsetTestName(testName);
+					if(testResult.errorCount() + testResult.failureCount() >0){
+						String message = "Test failed" + testName;
+						logger.warn(message);
+						throw new RuntimeException(message);
+					}
 				} catch (Exception e) {
 					logger.warn(String.format(
 							"Exception thrown by test %s Exception: %s", test

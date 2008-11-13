@@ -4,4 +4,6 @@ public interface MutationTestRunnable extends Runnable{
 
 	public boolean hasFinished();
 
+	public SingleTestResult getResult();
+
 }

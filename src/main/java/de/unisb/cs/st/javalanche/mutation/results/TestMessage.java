@@ -70,7 +70,7 @@ public class TestMessage  implements Serializable{
 	public TestMessage(String testCaseName, String message, long duration) {
 		super();
 		this.testCaseName = testCaseName;
-		if (message.length() > MAX_MESSAGE_LENGTH) {
+		if (message!= null && message.length() > MAX_MESSAGE_LENGTH) {
 			logger.info("Got long error message from test:  ("
 					+ message.length() + ") " + testCaseName + "\n" + message);
 			this.message = message.substring(0, Math.min(message.length(),

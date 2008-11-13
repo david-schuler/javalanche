@@ -6,13 +6,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+import junit.framework.TestListener;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import junit.framework.Test;
 
 import org.apache.log4j.Logger;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.mutationCoverage.CoverageData;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit3MutationTestDriver;
 
 public class ScanAndCoverageTestSuite extends TestSuite {
 
@@ -22,6 +25,8 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 	static {
 		logger.info(ScanAndCoverageTestSuite.class + "  is loaded ");
 	}
+
+	private boolean newMode = true;
 
 	public ScanAndCoverageTestSuite(String name) {
 		super(name);
@@ -36,6 +41,12 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 	@Override
 	public void run(TestResult result) {
 		logger.info("TestSuite started");
+		if (newMode) {
+			logger.info("Running in new mode");
+			Junit3MutationTestDriver testDriver = new Junit3MutationTestDriver(this);
+			testDriver.run();
+			return;
+		}
 		TestResult firstTestResult = new TestResult();
 
 		// super.run(firstTestResult);
@@ -69,6 +80,27 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 		int testCount = 0;
 
 		List<String> testsRun = new ArrayList<String>();
+		result.addListener(new TestListener() {
+
+			public void addError(Test test, Throwable t) {
+				logger.warn("Error " + test + "  " + t);
+			}
+
+			public void addFailure(Test test, AssertionFailedError t) {
+				logger.warn("Failure " + test + "  " + t);
+			}
+
+			public void endTest(Test test) {
+				logger.warn(test + "  end");
+
+			}
+
+			public void startTest(Test test) {
+				logger.warn(test + " start");
+
+			}
+
+		});
 		for (Map.Entry<String, Test> entry : allTestEntrySet) {
 			testCount++;
 			String testName = entry.getKey();
@@ -76,8 +108,14 @@ public class ScanAndCoverageTestSuite extends TestSuite {
 					+ allTestEntrySet.size() + ") " + testName);
 			try {
 				setTestName(testName);
-				runTest(entry.getValue(), result);
 
+				runTest(entry.getValue(), result);
+				if (result.errorCount() + result.failureCount() > 0) {
+					String message = "Test failed" + testName;
+
+					logger.warn(message);
+					throw new RuntimeException(message);
+				}
 				CoverageData.optionalSave();
 			} catch (Error e) {
 				logger.warn("Exception During test " + testName + " "

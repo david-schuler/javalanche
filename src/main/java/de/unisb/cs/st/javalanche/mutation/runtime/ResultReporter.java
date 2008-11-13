@@ -194,9 +194,9 @@ public class ResultReporter {
 				logger.info("Touch called by mutated code in test: "
 						+ actualTestCase + " for mutation: " + mutationID
 						+ "  Thread " + Thread.currentThread() /*
-																 * + "Trace " +
-																 * Util.getStackTraceString()
-																 */);
+						 * + "Trace " +
+						 * Util.getStackTraceString()
+						 */);
 				rr.touched = true;
 			}
 		}

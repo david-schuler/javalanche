@@ -11,6 +11,16 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 public interface MutationTestListener {
 
 	/**
+	 * This method is called once before the mutation testing
+	 */
+	void start();
+
+	/**
+	 * This method is called once after the mutation testing
+	 */
+	void end();
+
+	/**
 	 * This method is called everytime a new mutation is tested.
 	 *
 	 * @param mutation

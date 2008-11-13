@@ -62,4 +62,13 @@ public class SingleTestResult {
 	public boolean hasPassed() {
 		return result == TestOutcome.PASS;
 	}
+
+	public TestMessage getTestMessage() {
+		return testMessage;
+	}
+
+	@Override
+	public String toString() {
+		return result + (touched ? " touched " : " ") + testMessage.toString();
+	}
 }

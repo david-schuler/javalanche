@@ -68,7 +68,7 @@ public class MutationProperties {
 
 	public enum RunMode {
 		SCAN("scan"), MUTATION_TEST("mutation"), TEST_TESTSUIT_FIRST("test1"), TEST_TESTSUITE_SECOND(
-				"test2"), MUTATION_TEST_INVARIANT("mutation-invariant");
+				"test2"), MUTATION_TEST_INVARIANT("mutation-invariant"), OFF("off");
 
 		private String key;
 
