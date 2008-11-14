@@ -27,24 +27,47 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationObserver;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationSwitcher;
 import de.unisb.cs.st.javalanche.mutation.runtime.ResultReporter;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit3MutationTestDriver;
 
+/**
+ * Abstract class that drives the mutation test process. Driver for specific
+ * test architectures must subclass this class.
+ *
+ * @see Junit3MutationTestDriver
+ *
+ * @author David Schuler
+ *
+ */
 public abstract class MutationTestDriver {
 
 	private static final String DRIVER_KEY = "mutation.test.driver";
 
+	/**
+	 * Timeout for the test. After this time a test is stopped.
+	 */
 	private static long timeout = MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS;
 
 	private static Logger logger = Logger.getLogger(MutationTestDriver.class);
 
-	private Mutation actualMutation;
+	/**
+	 * The mutation that is currently active.
+	 */
+	private Mutation currentMutation;
 
+	/**
+	 * The name of the test that is currently active.
+	 */
+	private String currentTestName;
+
+	/**
+	 * Mutation switcher that is used to enable and disable mutations.
+	 */
 	private MutationSwitcher mutationSwitcher;
 
-	private ResultReporter actualReporter;
-
+	/**
+	 * Flag that indicates if the shutdown method was called.
+	 */
 	private boolean shutdownMethodCalled;
-
-	private String actualTestName;
 
 	private static final int saveIntervall = MutationProperties.SAVE_INTERVAL;
 
@@ -59,6 +82,14 @@ public abstract class MutationTestDriver {
 		runFromProperty();
 	}
 
+	/**
+	 * Instanciate a MutationTestDriver from a property (mutation.test.driver).
+	 * And uses this driver to un the mutation tests
+	 *
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
 	@SuppressWarnings("unchecked")
 	public static void runFromProperty() throws ClassNotFoundException,
 			InstantiationException, IllegalAccessException {
@@ -80,6 +111,10 @@ public abstract class MutationTestDriver {
 		}
 	}
 
+	/**
+	 * Runs the tests whitout applyin any changes. This method is used to check
+	 * if the driver works correctly.
+	 */
 	private void runNormalTests() {
 		logger.info("Running tests of project");
 		List<String> allTests = getAllTests();
@@ -114,6 +149,10 @@ public abstract class MutationTestDriver {
 		}
 	}
 
+	/**
+	 * Method that runs the tests to scan for mutation possibilities.
+	 *
+	 */
 	@SuppressWarnings("unchecked")
 	public void scanTests() {
 		logger.info("Running tests to scan for mutations");
@@ -146,6 +185,13 @@ public abstract class MutationTestDriver {
 		CoverageData.endCoverage();
 	}
 
+	/**
+	 * Runs the given list of tests whitout any special modifications. This has
+	 * the purpose to get all classes loaded that are involved in the testsing.
+	 *
+	 * @param allTests
+	 *            the tests to run
+	 */
 	private void coldRun(List<String> allTests) {
 		int counter = 0;
 		int size = allTests.size();
@@ -159,7 +205,10 @@ public abstract class MutationTestDriver {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * Method that runs he mutation testsing. All mutations for this run are
+	 * caried out and their corresponding tests are run.
+	 */
 	public void runMutations() {
 		logger.info("Running Mutations");
 		Thread shutDownThread = new Thread(new MutationDriverShutdownHook(this));
@@ -170,32 +219,29 @@ public abstract class MutationTestDriver {
 		int totalMutations = 0, totalTests = 0;
 		List<String> allTests = getAllTests();
 		while (mutationSwitcher.hasNext()) {
-			actualMutation = mutationSwitcher.next();
+			currentMutation = mutationSwitcher.next();
 			totalMutations++;
-			checkClasspath(actualMutation);
-			Set<String> testsForThisRun = MutationProperties.COVERAGE_INFORMATION ? mutationSwitcher
+			checkClasspath(currentMutation);
+			Set<String> testsForThisRun = (MutationProperties.COVERAGE_INFORMATION ? mutationSwitcher
 					.getTests()
-					: new HashSet(allTests);
+					: new HashSet<String>(allTests));
 			if (testsForThisRun == null) {
-				logger.warn("No tests for " + actualMutation);
+				logger.warn("No tests for " + currentMutation);
 				continue;
 			}
-
 			totalTests += testsForThisRun.size();
 			logger.info("Applying " + totalMutations + "th mutation with id "
-					+ actualMutation.getId() + ". Running "
+					+ currentMutation.getId() + ". Running "
 					+ testsForThisRun.size() + " tests");
 			// Do the mutation test
 			mutationSwitcher.switchOn();
-			mutationStart(actualMutation);
-			MutationTestResult mutationTestResult = runTests(testsForThisRun,
-					actualReporter);
+			mutationStart(currentMutation);
+			MutationTestResult mutationTestResult = runTests(testsForThisRun);
 			mutationSwitcher.switchOff();
-			mutationEnd(actualMutation);
-
+			mutationEnd(currentMutation);
 			// Report the results
-			actualMutation.setMutationResult(mutationTestResult);
-			ResultReporter.report(actualMutation);
+			currentMutation.setMutationResult(mutationTestResult);
+			ResultReporter.report(currentMutation);
 			if (totalMutations % saveIntervall == 0) {
 				logger.info("Saving " + saveIntervall + " mutaitons");
 				ResultReporter.persist();
@@ -209,20 +255,26 @@ public abstract class MutationTestDriver {
 		Runtime.getRuntime().removeShutdownHook(shutDownThread);
 	}
 
-	private void checkClasspath(Mutation actualMutation) {
+	/**
+	 * Check if class of given mutation is on the classpath. When this is not
+	 * the case an exception ist thrown.
+	 *
+	 * @param mutation
+	 *            the mutation that should be checked
+	 */
+	private void checkClasspath(Mutation mutation) {
 		try {
 			@SuppressWarnings("unused")
-			Class<?> c = Class.forName(actualMutation.getClassName());
+			Class<?> c = Class.forName(mutation.getClassName());
 		} catch (ClassNotFoundException e) {
-			logger.error("Class " + actualMutation.getClassName()
+			logger.error("Class " + mutation.getClassName()
 					+ " not on classpath");
 			throw new RuntimeException(
 					"Mutation classes are missing on the class path ", e);
 		}
 	}
 
-	private MutationTestResult runTests(Set<String> testsForThisRun,
-			ResultReporter actualReporter) {
+	private MutationTestResult runTests(Set<String> testsForThisRun) {
 		int counter = 0;
 		int size = testsForThisRun.size();
 		// prepareTests();
@@ -245,7 +297,7 @@ public abstract class MutationTestDriver {
 			// resultsForMutation.add(testResult);
 			// return testResult;
 
-			actualTestName = testName;
+			currentTestName = testName;
 			MutationTestRunnable runnable = getTestRunnable(testName);
 			testStart(testName);
 			// SingleTestResult runTest = runTest(testName, actualReporter);
@@ -261,21 +313,26 @@ public abstract class MutationTestDriver {
 				break;
 			}
 		}
-		actualTestName = "No test name set";
+		currentTestName = "No test name set";
 		MutationTestResult mutationTestResult = SingleTestResult
 				.toMutationTestResult(resultsForMutation);
 		return mutationTestResult;
 	}
 
+	/**
+	 * Return runnable that executes the given test.
+	 *
+	 * @param testName
+	 *            the test to create the runnable for
+	 * @return a runnable that executes the given test
+	 */
 	protected abstract MutationTestRunnable getTestRunnable(String testName);
 
-	// protected abstract MutationTestResult testsFinish();
-
-	// protected abstract SingleTestResult runTest(String testName,
-	// ResultReporter actualReporter);
-
-	// protected abstract void prepareTests();
-
+	/**
+	 * Return all tests that are availble to this test suite
+	 *
+	 * @return a list of all tests
+	 */
 	protected abstract List<String> getAllTests();
 
 	/**
@@ -324,7 +381,7 @@ public abstract class MutationTestDriver {
 			logger.error("Exception thrown", t);
 		}
 		if (!future.isDone()) {
-			switchOfOrExit(future);
+			switchOfMutation(future);
 		}
 		stopWatch.stop();
 		if (!r.hasFinished()) {
@@ -338,9 +395,17 @@ public abstract class MutationTestDriver {
 		return stopWatch.getTime();
 	}
 
-	private void switchOfOrExit(Future<?> future) {
+	/**
+	 * This method tries to stop a thread by disabling the current mutation.
+	 * This method is called when a thread that executes a mutation does not
+	 * return, e.g it is stuck in an endless loop.
+	 *
+	 * @param future
+	 *            the future that executes the mutation
+	 */
+	private void switchOfMutation(Future<?> future) {
 		String message1 = "Could not kill thread for mutation: "
-				+ actualMutation;
+				+ currentMutation;
 		logger.info(message1 + " - Switching mutation of and wait");
 		mutationSwitcher.switchOff();
 		future.cancel(true);
@@ -349,66 +414,98 @@ public abstract class MutationTestDriver {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		// if (future.isDone()) {
-		// logger.info("Mutation thread finished after disabling mutation");
-		// }
 	}
 
 	public void unexpectedShutdown() {
 		if (!shutdownMethodCalled) {
 			shutdownMethodCalled = true;
-			MutationTestResult mutationResult = actualMutation
+			MutationTestResult mutationResult = currentMutation
 					.getMutationResult();
 			if (mutationResult == null) {
 				logger.info("mutation result is null");
 				mutationResult = new MutationTestResult();
-				actualMutation.setMutationResult(mutationResult);
+				currentMutation.setMutationResult(mutationResult);
 			} else {
 				logger.info("Mutation result:  " + mutationResult);
 			}
 			String message = "Test caused the JVM to shutdown. Either to an unexpeted failure or the mutation caused an inifinite loop.";
 			logger.warn(message);
-			TestMessage tm = new TestMessage(actualTestName, message);
+			TestMessage tm = new TestMessage(currentTestName, message);
 			mutationResult.addFailure(tm);
-			ResultReporter.report(actualMutation);
+			ResultReporter.report(currentMutation);
 			ResultReporter.persist();
 		} else {
 			logger.warn("Method already called");
 		}
 	}
 
+	/**
+	 * Adds a mutation listener.
+	 *
+	 */
 	public void addMutationTestListener(MutationTestListener listener) {
 		listeners.add(listener);
 	}
 
+	/**
+	 * Removes a mutation listener.
+	 */
 	public void removeMutationTestListener(MutationTestListener listener) {
 		listeners.remove(listener);
 	}
 
+	/**
+	 * Inform all listeners that the tests for a mutation start.
+	 *
+	 * @param m
+	 *            the mutation that is now applied
+	 */
 	private void mutationStart(Mutation m) {
 		for (MutationTestListener listener : listeners) {
 			listener.mutationStart(m);
 		}
 	}
 
+	/**
+	 * Inform all listeners that the tests for a mutation have ended.
+	 *
+	 * @param m
+	 *            the mutation that has ended
+	 */
 	private void mutationEnd(Mutation m) {
 		for (MutationTestListener listener : listeners) {
 			listener.mutationEnd(m);
 		}
 	}
 
+	/**
+	 * Inform all listeners that a test starts.
+	 *
+	 * @param testName
+	 *            the test that starts
+	 */
 	private void testEnd(String testName) {
 		for (MutationTestListener listener : listeners) {
 			listener.testEnd(testName);
 		}
 	}
 
+	/**
+	 * Inform all listeners that a test has ended.
+	 *
+	 * @param testName
+	 *            the test that ends
+	 */
 	private void testStart(String testName) {
 		for (MutationTestListener listener : listeners) {
 			listener.testStart(testName);
 		}
 	}
 
+	/**
+	 * Adds a {@link MutationTestListener} from a property. Multiple listeners
+	 * are sperated by commas.
+	 */
 	@SuppressWarnings("unchecked")
 	private void addListenersFromProperty() {
 		String listenerString = System.getProperty(MUTATION_TEST_LISTENER_KEY);

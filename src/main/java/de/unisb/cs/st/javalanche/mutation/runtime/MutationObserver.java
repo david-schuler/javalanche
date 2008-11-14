@@ -1,7 +1,9 @@
 package de.unisb.cs.st.javalanche.mutation.runtime;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,7 +16,8 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
 /**
- * TODO MAke this class a singleton.
+ * Class used by the mutations at runtime to report the testcases that cover a
+ * mutation.
  *
  * @author David Schuler
  *
@@ -23,19 +26,48 @@ public class MutationObserver implements MutationTestListener {
 
 	private static Logger logger = Logger.getLogger(MutationObserver.class);
 
-	private static List<Mutation> reportedMutations;
+	/**
+	 * All mutations that were activated.
+	 */
+	private static List<Mutation> reportedMutations = new ArrayList<Mutation>();
 
-	private static Collection<String> touchingTestCases;
+	/**
+	 * All tests that wher touched by tests.
+	 */
+	private static Collection<String> touchingTestCases = new HashSet<String>();
 
+	/**
+	 * Id of the currently active mutation.
+	 */
 	private static long expectedID;
 
+	/**
+	 * Name of the currently active test.
+	 */
 	private static String actualTestCase;
 
-	private static Set<Mutation> touchedMutations;
+	/**
+	 * Set of all mutations that where touched during this run.
+	 */
+	private static Set<Mutation> touchedMutations = new HashSet<Mutation>();
+
+	/**
+	 * Currently active mutation.
+	 */
 	private static Mutation actualMutation;
 
-	private static boolean touched;
+	/**
+	 * Indicates wheter the currently active Mutation was touched or not.
+	 */
+	private static boolean touched = false;
 
+	/**
+	 * This method is called by statements that are added to the mutated code.
+	 * It is called every time the mutated statements get executed.
+	 *
+	 * @param mutationID
+	 *            the id of the mutation that is executed
+	 */
 	public static synchronized void touch(long mutationID) {
 		// (actualMutation == null ? "null " : actualMutation.getId() + ""));
 		if (mutationID != expectedID) {
@@ -78,33 +110,66 @@ public class MutationObserver implements MutationTestListener {
 	}
 
 	/**
-	 * @return the touchingTestCases
+	 * Return all test cases that touched the currently active mutation up to
+	 * this point.
+	 *
+	 * @return the test cases that touched the currently active mutation
 	 */
 	public static Collection<String> getTouchingTestCases() {
 		return touchingTestCases;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#end()
+	 */
 	public void end() {
 	}
 
+	/**
+	 * Called when a mutation starts. Resets the proper variables.
+	 *
+	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#mutationStart(de.unisb.cs.st.javalanche.mutation.results.Mutation)
+	 */
 	public void mutationStart(Mutation mutation) {
+		reportedMutations.add(mutation);
 		actualMutation = mutation;
 		touchingTestCases.clear();
 		expectedID = mutation.getId();
+		touched = false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#mutationEnd(de.unisb.cs.st.javalanche.mutation.results.Mutation)
+	 */
 	public void mutationEnd(Mutation mutation) {
-
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#start()
+	 */
 	public void start() {
-
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#testEnd(java.lang.String)
+	 */
 	public void testEnd(String testName) {
 		actualTestCase = null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#testStart(java.lang.String)
+	 */
 	public void testStart(String testName) {
 		actualTestCase = testName;
 	}

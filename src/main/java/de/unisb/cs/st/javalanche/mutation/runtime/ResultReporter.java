@@ -23,8 +23,17 @@ public class ResultReporter {
 
 	private static Logger logger = Logger.getLogger(ResultReporter.class);
 
+	/**
+	 * All mutations results have been reported for.
+	 */
 	private static List<Mutation> reportedMutations = new ArrayList<Mutation>();
 
+	/**
+	 * Reports the results of the given mutation.
+	 *
+	 * @param mutation
+	 *            the mutation the result is reported for
+	 */
 	public static synchronized void report(Mutation mutation) {
 		if (mutation == null) {
 			throw new IllegalArgumentException(

@@ -13,6 +13,10 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
  */
 public class BytecodeTasks {
 
+	/**
+	 * When set true, System.println statements will be inserted that signalize
+	 * whether a mutation is covered.
+	 */
 	private static final boolean PRINT_STATEMENTS_ENABLED = false;
 
 	private BytecodeTasks() {
@@ -45,7 +49,8 @@ public class BytecodeTasks {
 			mv.visitJumpInsn(Opcodes.IFNULL, l1);
 			Label l2 = new Label();
 			mv.visitLabel(l2);
-		//	insertPrintStatements(mv, "Mutation touched: " + mutation.getId());
+			// insertPrintStatements(mv, "Mutation touched: " +
+			// mutation.getId());
 			insertMutationTouchedCode(mv, mutation);
 			mutationCode.insertCodeBlock(mv);
 			mv.visitJumpInsn(Opcodes.GOTO, endLabel);
@@ -59,6 +64,14 @@ public class BytecodeTasks {
 
 	}
 
+	/**
+	 * Insert calls that signalize whether the mutated code was executed.
+	 *
+	 * @param mv
+	 *            the methodvisitor to add the statements
+	 * @param mutation
+	 *            the mutation that is covered or not
+	 */
 	private static void insertMutationTouchedCode(MethodVisitor mv,
 			Mutation mutation) {
 		if (PRINT_STATEMENTS_ENABLED) {
@@ -68,8 +81,8 @@ public class BytecodeTasks {
 		}
 		mv.visitLdcInsn(mutation.getId());
 		mv.visitMethodInsn(Opcodes.INVOKESTATIC,
-				"de/unisb/cs/st/javalanche/mutation/runtime/ResultReporter", "touch",
-				"(J)V");
+				"de/unisb/cs/st/javalanche/mutation/runtime/MutationObserver",
+				"touch", "(J)V");
 	}
 
 	/**
