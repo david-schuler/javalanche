@@ -42,12 +42,14 @@ public abstract class MutationTestDriver {
 
 	private static final String DRIVER_KEY = "mutation.test.driver";
 
+	private static final String MUTATION_TEST_LISTENER_KEY = "mutation.test.listener";
+
+	private static Logger logger = Logger.getLogger(MutationTestDriver.class);
+
 	/**
 	 * Timeout for the test. After this time a test is stopped.
 	 */
 	private static long timeout = MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS;
-
-	private static Logger logger = Logger.getLogger(MutationTestDriver.class);
 
 	/**
 	 * The mutation that is currently active.
@@ -69,13 +71,21 @@ public abstract class MutationTestDriver {
 	 */
 	private boolean shutdownMethodCalled;
 
-	private static final int saveIntervall = MutationProperties.SAVE_INTERVAL;
+	/**
+	 * The sve intervall in which the mutation results are written to the
+	 * database.
+	 */
+	protected static final int saveIntervall = MutationProperties.SAVE_INTERVAL;
 
-	private static final String MUTATION_TEST_LISTENER_KEY = "mutation.test.listener";
-
+	/**
+	 * The listeneres that are informed about mutation events.
+	 */
 	private List<MutationTestListener> listeners = new ArrayList<MutationTestListener>();
 
-	private boolean doColdRun;
+	/**
+	 * True if all tests should be run once before the actual mutation testing.
+	 */
+	protected boolean doColdRun;
 
 	public static void main(String[] args) throws ClassNotFoundException,
 			InstantiationException, IllegalAccessException {
@@ -116,7 +126,7 @@ public abstract class MutationTestDriver {
 	 * if the driver works correctly.
 	 */
 	private void runNormalTests() {
-		logger.info("Running tests of project");
+		logger.info("Running tests of project " + MutationProperties.PROJECT_PREFIX);
 		List<String> allTests = getAllTests();
 		int counter = 0;
 		int size = allTests.size();
@@ -156,13 +166,10 @@ public abstract class MutationTestDriver {
 	@SuppressWarnings("unchecked")
 	public void scanTests() {
 		logger.info("Running tests to scan for mutations");
-
-		// mutationSwitcher = new MutationSwitcher();
 		List<String> allTests = getAllTests();
 		int counter = 0;
 		int size = allTests.size();
 		timeout = 120;
-		// prepareTests();
 		if (doColdRun) {
 			coldRun(allTests);
 		}
@@ -243,7 +250,7 @@ public abstract class MutationTestDriver {
 			currentMutation.setMutationResult(mutationTestResult);
 			ResultReporter.report(currentMutation);
 			if (totalMutations % saveIntervall == 0) {
-				logger.info("Saving " + saveIntervall + " mutaitons");
+				logger.info("Saving " + saveIntervall + " mutations");
 				ResultReporter.persist();
 			}
 		}

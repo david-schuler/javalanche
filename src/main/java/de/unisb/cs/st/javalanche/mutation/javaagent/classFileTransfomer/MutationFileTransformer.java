@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
@@ -17,12 +18,10 @@ import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecisionFactory;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
-import de.unisb.cs.st.javalanche.mutation.objectInspector.asmAdapters.ObjectInspectorTransformer;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 /**
@@ -119,19 +118,19 @@ public class MutationFileTransformer implements ClassFileTransformer {
 					classfileBuffer = integrateSuiteTransformer
 							.transformBytecode(classfileBuffer);
 				}
-				if (isObservedTestCase(classNameWithDots)) {
-					try {
-						logger.info("Trying to transform test class "
-								+ classNameWithDots);
-						ObjectInspectorTransformer objectInspectorTransformer = new ObjectInspectorTransformer();
-						classfileBuffer = objectInspectorTransformer
-								.transformBytecode(classfileBuffer);
-					} catch (Exception e) {
-						logger.warn("Exception Thrown" + e);
-						e.printStackTrace();
-					}
-					logger.info("Test class transformed " + classNameWithDots);
-				}
+//				if (isObservedTestCase(classNameWithDots)) {
+//					try {
+//						logger.info("Trying to transform test class "
+//								+ classNameWithDots);
+////						ObjectInspectorTransformer objectInspectorTransformer = new ObjectInspectorTransformer();
+////						classfileBuffer = objectInspectorTransformer
+////								.transformBytecode(classfileBuffer);
+//					} catch (Exception e) {
+//						logger.warn("Exception Thrown" + e);
+//						e.printStackTrace();
+//					}
+//					logger.info("Test class transformed " + classNameWithDots);
+//				}
 
 				if (mutationDecision.shouldBeHandled(classNameWithDots)) {
 					logger.info("Transforming: " + classNameWithDots);

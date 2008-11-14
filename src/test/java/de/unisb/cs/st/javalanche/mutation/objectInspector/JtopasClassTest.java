@@ -12,7 +12,6 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
-import de.unisb.cs.st.javalanche.mutation.objectInspector.asmAdapters.ObjectInspectorClassAdapter;
 
 public class JtopasClassTest {
 
@@ -38,8 +37,8 @@ public class JtopasClassTest {
 					ClassReader cr = new ClassReader(JtopasClassTest.class
 							.getClassLoader().getResourceAsStream(
 									TEST_CLASS_FILENAME));
-					cr.accept(new ObjectInspectorClassAdapter(tcv),
-							ClassReader.EXPAND_FRAMES);
+//					cr.accept(new ObjectInspectorClassAdapter(tcv),
+//							ClassReader.EXPAND_FRAMES);
 					byte[] bytecode = cw.toByteArray();
 					return super
 							.defineClass(name, bytecode, 0, bytecode.length);
