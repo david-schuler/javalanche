@@ -1,6 +1,5 @@
 package de.unisb.cs.st.javalanche.mutation.runtime.testDriver;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +24,7 @@ import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
 import de.unisb.cs.st.javalanche.mutation.results.TestName;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.runtime.MutationObserver;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationSwitcher;
 import de.unisb.cs.st.javalanche.mutation.runtime.ResultReporter;
 
@@ -163,6 +163,7 @@ public abstract class MutationTestDriver {
 	public void runMutations() {
 		logger.info("Running Mutations");
 		Thread shutDownThread = new Thread(new MutationDriverShutdownHook(this));
+		addMutationTestListener(new MutationObserver());
 		addListenersFromProperty();
 		Runtime.getRuntime().addShutdownHook(shutDownThread);
 		mutationSwitcher = new MutationSwitcher();
@@ -170,7 +171,6 @@ public abstract class MutationTestDriver {
 		List<String> allTests = getAllTests();
 		while (mutationSwitcher.hasNext()) {
 			actualMutation = mutationSwitcher.next();
-			actualReporter = ResultReporter.createInstance(actualMutation);
 			totalMutations++;
 			checkClasspath(actualMutation);
 			Set<String> testsForThisRun = MutationProperties.COVERAGE_INFORMATION ? mutationSwitcher
@@ -194,8 +194,8 @@ public abstract class MutationTestDriver {
 			mutationEnd(actualMutation);
 
 			// Report the results
-			actualReporter.report(actualMutation, mutationTestResult);
 			actualMutation.setMutationResult(mutationTestResult);
+			ResultReporter.report(actualMutation);
 			if (totalMutations % saveIntervall == 0) {
 				logger.info("Saving " + saveIntervall + " mutaitons");
 				ResultReporter.persist();
@@ -204,7 +204,7 @@ public abstract class MutationTestDriver {
 		ResultReporter.persist();
 		logger.info("Test Runs finished. Run " + totalTests + " tests for "
 				+ totalMutations + " mutations ");
-		logger.info("" + ResultReporter.summary(true));
+		logger.info("" + MutationObserver.summary(true));
 		MutationForRun.getInstance().reportAppliedMutations();
 		Runtime.getRuntime().removeShutdownHook(shutDownThread);
 	}
@@ -231,7 +231,6 @@ public abstract class MutationTestDriver {
 			counter++;
 			logger.info("(" + counter + " / " + size + ") Running test:  "
 					+ testName);
-			ResultReporter.setActualTestCase(testName);
 
 			// File scriptFile = new File(TEST_BASE_PATH, testName);
 			// SingleTestResult testResult = testScript(scriptFile);
@@ -371,7 +370,7 @@ public abstract class MutationTestDriver {
 			logger.warn(message);
 			TestMessage tm = new TestMessage(actualTestName, message);
 			mutationResult.addFailure(tm);
-			actualReporter.report(actualMutation, mutationResult);
+			ResultReporter.report(actualMutation);
 			ResultReporter.persist();
 		} else {
 			logger.warn("Method already called");

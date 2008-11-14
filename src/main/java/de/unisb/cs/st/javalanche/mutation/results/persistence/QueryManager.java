@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
@@ -15,14 +14,15 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
+import de.unisb.cs.st.ds.util.Formater;
+import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverage;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestName;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
-import de.unisb.cs.st.ds.util.Formater;
-import de.unisb.cs.st.ds.util.Util;
 
 /**
  * Class that provides static method that execute queries.
@@ -146,15 +146,12 @@ public class QueryManager {
 		session.close();
 	}
 
-	public static void updateMutations(Map<Mutation, MutationTestResult> results) {
+	public static void updateMutations(List<Mutation> results) {
 		logger.info("Storing results for " + results.size() + " mutations");
-		Set<Entry<Mutation, MutationTestResult>> entrySet = results.entrySet();
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
 		int saved = 1;
-		for (Entry<Mutation, MutationTestResult> entry : entrySet) {
-			MutationTestResult mutationTestResult = entry.getValue();
-			Mutation mutation = entry.getKey();
+		for (Mutation mutation: results) {
 			Mutation mutationFromDB = (Mutation) session.get(Mutation.class,
 					mutation.getId());
 			if (mutationFromDB.getMutationResult() != null) {
@@ -162,16 +159,16 @@ public class QueryManager {
 						.warn("Mutation already has a test result - not storing the given result");
 				logger.warn("Mutation:" + mutationFromDB);
 				logger.warn("Result (that is not stored): "
-						+ mutationTestResult);
+						+ mutation);
 				session.setReadOnly(mutationFromDB, true);
 				session.close();
 				break;
-			} else if (mutationTestResult != null) {
-				session.save(mutationTestResult);
-				saved++;
+			} else {
+				session.save(mutation.getMutationResult());
 				logger.debug("Setting result for mutation "
 						+ mutationFromDB.getId());
-				mutationFromDB.setMutationResult(mutationTestResult);
+				mutationFromDB.setMutationResult(mutation.getMutationResult());
+				saved++;
 			}
 			if (saved % 20 == 0) { // 20, same as the JDBC batch size
 				// flush a batch of inserts and release memory:
@@ -666,9 +663,8 @@ public class QueryManager {
 		int setSize = coverageData.keySet().size();
 		if (l > 0 && setSize > 0) {
 			List<Set<Long>> sets;
-			logger.info("size of set: " + coverageData.keySet().size());
 			if (setSize > 500) {
-				logger.info("splitting key set because it is to large");
+				logger.info("Splitting key set because it is to large");
 				// http://opensource.atlassian.com/projects/hibernate/browse/HHH-1985
 				sets = splitSet(coverageData.keySet(), 500);
 			} else {

@@ -1,8 +1,8 @@
 package de.unisb.cs.st.javalanche.mutation.runtime;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
@@ -23,13 +23,13 @@ public class RunResult {
 	private int numberOfAppliedMutations;
 
 	@SuppressWarnings("unused")
-	private Set<Mutation> touchedMutations;
+	private Collection<Mutation> touchedMutations;
 
 	@SuppressWarnings("unused")
-	private Set<Mutation> reportedMutations;
+	private Collection<Mutation> reportedMutations;
 
 	@SuppressWarnings("unused")
-	private List<Mutation> appliedMutations;
+	private Collection<Mutation> appliedMutations;
 
 	private List<Long> touchedIds = new ArrayList<Long>();
 
@@ -56,8 +56,8 @@ public class RunResult {
 		return touched;
 	}
 
-	public RunResult(Set<Mutation> reportedMutations,
-			Set<Mutation> touchedMutations, List<Mutation> appliedMutations,
+	public RunResult(Collection<Mutation> reportedMutations,
+			Collection<Mutation> touchedMutations, Collection<Mutation> appliedMutations,
 			 boolean finishedNormal) {
 		super();
 		this.finishedNormal = finishedNormal;
@@ -95,7 +95,7 @@ public class RunResult {
 	@Override
 	public String toString() {
 		String s = String.format("%d mutations were applied. "
-				+ "%d Mutation results were recorded."
+				+ "%d Mutation results were recorded. "
 				+ "%d Mutations where actually touched.",
 				numberOfAppliedMutations, reported,
 				touched);
@@ -105,7 +105,7 @@ public class RunResult {
 	/**
 	 * @return the reportedMutations
 	 */
-	public Set<Mutation> getReportedMutations() {
+	public Collection<Mutation> getReportedMutations() {
 		return reportedMutations;
 	}
 

@@ -68,7 +68,8 @@ public class MutationProperties {
 
 	public enum RunMode {
 		SCAN("scan"), MUTATION_TEST("mutation"), TEST_TESTSUIT_FIRST("test1"), TEST_TESTSUITE_SECOND(
-				"test2"), MUTATION_TEST_INVARIANT("mutation-invariant"), OFF("off");
+				"test2"), MUTATION_TEST_INVARIANT("mutation-invariant"), OFF(
+				"off");
 
 		private String key;
 
@@ -90,6 +91,8 @@ public class MutationProperties {
 	public static final RunMode RUN_MODE = getRunMode();
 
 	public static final String RESULT_FILE_KEY = "mutation.result.file";
+
+	public static final String RESULT_FILE = getProperty(RESULT_FILE_KEY);
 
 	public static final String MUTATION_FILE_KEY = "mutation.file";
 
@@ -223,7 +226,7 @@ public class MutationProperties {
 
 	private static final String SAVE_INTERVAL_KEY = "mutation.default.timeout";
 	public static final int SAVE_INTERVAL = getPropertyOrDefault(
-			SAVE_INTERVAL_KEY, 10);
+			SAVE_INTERVAL_KEY, 100);
 
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");

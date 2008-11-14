@@ -54,14 +54,14 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 		}
 	}
 
-	private final TestSuite suite;
+//	private final TestSuite suite;
 
 	private final Map<String, Test> allTests;
 
-	private List<SingleTestResult> resultsForMutation = new ArrayList<SingleTestResult>();
+//	private List<SingleTestResult> resultsForMutation = new ArrayList<SingleTestResult>();
 
 	public Junit3MutationTestDriver(TestSuite suite) {
-		this.suite = suite;
+//		this.suite = suite;
 		allTests = TestSuiteUtil.getAllTests(suite);
 	}
 
