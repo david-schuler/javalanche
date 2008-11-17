@@ -110,6 +110,10 @@ public abstract class MutationTestDriver {
 		newInstance.run();
 	}
 
+	/**
+	 * Runs the mutation testing. Depending on
+	 * {@link MutationProperties.RUN_MODE} the corresponding method is called.
+	 */
 	public void run() {
 		if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST
 				|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT) {
@@ -122,11 +126,12 @@ public abstract class MutationTestDriver {
 	}
 
 	/**
-	 * Runs the tests whitout applyin any changes. This method is used to check
+	 * Runs the tests without applying any changes. This method is used to check
 	 * if the driver works correctly.
 	 */
 	private void runNormalTests() {
-		logger.info("Running tests of project " + MutationProperties.PROJECT_PREFIX);
+		logger.info("Running tests of project "
+				+ MutationProperties.PROJECT_PREFIX);
 		List<String> allTests = getAllTests();
 		int counter = 0;
 		int size = allTests.size();
@@ -281,6 +286,13 @@ public abstract class MutationTestDriver {
 		}
 	}
 
+	/**
+	 * Run all the given tests
+	 *
+	 * @param testsForThisRun
+	 *            a set of tests to be run
+	 * @return a mutaiton test result that sumarizes the outcome of the tests
+	 */
 	private MutationTestResult runTests(Set<String> testsForThisRun) {
 		int counter = 0;
 		int size = testsForThisRun.size();
@@ -423,6 +435,11 @@ public abstract class MutationTestDriver {
 		}
 	}
 
+	/**
+	 * Method gets called when the mutation testing is finished because of an
+	 * unexpected event. Most likely this will be an endless loop caused by a
+	 * mutation.
+	 */
 	public void unexpectedShutdown() {
 		if (!shutdownMethodCalled) {
 			shutdownMethodCalled = true;

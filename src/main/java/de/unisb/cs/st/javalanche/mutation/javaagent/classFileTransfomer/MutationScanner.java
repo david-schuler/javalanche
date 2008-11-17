@@ -100,11 +100,6 @@ public class MutationScanner implements ClassFileTransformer {
 				logger.debug(classNameWithDots);
 
 				if (md.shouldBeHandled(classNameWithDots)) {
-					// TraceClassVisitor tr = new TraceClassVisitor(new
-					// PrintWriter(MutationPreMain.sysout));
-					// ClassReader cr = new ClassReader(classfileBuffer);
-					// cr.accept(tr,0);
-					// return classfileBuffer;
 					classfileBuffer = mutationScannerTransformer
 							.transformBytecode(classfileBuffer);
 					logger.info(mpc.size()

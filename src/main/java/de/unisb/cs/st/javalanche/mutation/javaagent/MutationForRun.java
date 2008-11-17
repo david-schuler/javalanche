@@ -20,6 +20,13 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
+/**
+ * Singelton class that holds all mutations that should be applied and executed
+ * during a run.
+ *
+ * @author David Schuler
+ *
+ */
 public class MutationForRun {
 
 	private static final String MUTATION_FILE = "mutation.file";

@@ -18,6 +18,12 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 import de.unisb.cs.st.javalanche.invariants.javaagent.InvariantTransformer;;
 
+/** 
+ * Class that is used by 
+ * 
+ * @author David Schuler
+ *
+ */
 public class MutationPreMain {
 
 	static {

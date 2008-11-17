@@ -18,6 +18,12 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestRunnabl
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult;
 import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.TestSuiteUtil;
 
+/**
+ * Mutation test driver for Junit 3 tests.
+ *
+ * @author David Schuler
+ *
+ */
 public class Junit3MutationTestDriver extends MutationTestDriver {
 
 	private final class SingleTestListener implements TestListener {
@@ -54,14 +60,15 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 		}
 	}
 
-//	private final TestSuite suite;
+	// private final TestSuite suite;
 
 	private final Map<String, Test> allTests;
 
-//	private List<SingleTestResult> resultsForMutation = new ArrayList<SingleTestResult>();
+	// private List<SingleTestResult> resultsForMutation = new
+	// ArrayList<SingleTestResult>();
 
 	public Junit3MutationTestDriver(TestSuite suite) {
-//		this.suite = suite;
+		// this.suite = suite;
 		allTests = TestSuiteUtil.getAllTests(suite);
 	}
 
@@ -99,13 +106,13 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 			}
 
 			public SingleTestResult getResult() {
-				String message =  listener
-				.getMessage();
-				if(message==null){
+				String message = listener.getMessage();
+				if (message == null) {
 					message = "";
 				}
-				SingleTestResult res = new SingleTestResult(testName,message, result.failureCount()
-						+ result.errorCount() < 1, duration);
+				SingleTestResult res = new SingleTestResult(testName, message,
+						result.failureCount() + result.errorCount() < 1,
+						duration);
 				return res;
 			}
 

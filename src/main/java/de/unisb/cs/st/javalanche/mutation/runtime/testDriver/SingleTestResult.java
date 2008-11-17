@@ -8,18 +8,44 @@ import java.util.List;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
 
+/**
+ * Sumarrizes the results of one Test.
+ *
+ * @author David Schuler
+ *
+ */
 public class SingleTestResult {
 
+	/**
+	 * Enumeration that signals if a test case passed, failed or caused an
+	 * error.
+	 */
 	public enum TestOutcome {
 		PASS, FAIL, ERROR
 	};
 
+	/**
+	 * The outcome of this test.
+	 */
 	public TestOutcome result;
 
+	/**
+	 * The passing/failing message of this test.
+	 */
 	public TestMessage testMessage;
 
-	private boolean touched;
-
+	/**
+	 * Creates a new SingleTestResult with given parameters.
+	 *
+	 * @param testCaseName
+	 *            the name of the test case
+	 * @param message
+	 *            the message for this test
+	 * @param pass
+	 *            signals wheter the test passed or not
+	 * @param duration
+	 *            the time the test took
+	 */
 	public SingleTestResult(String testCaseName, String message, boolean pass,
 			long duration) {
 		super();
@@ -27,48 +53,85 @@ public class SingleTestResult {
 		this.testMessage = new TestMessage(testCaseName, message, duration);
 	}
 
+	/**
+	 * Transforms a collection of SingleTestResults to a MutationTestResult
+	 *
+	 * @param testResults
+	 *            the single test results for one mutation
+	 * @return the mutation test result.
+	 */
 	public static MutationTestResult toMutationTestResult(
-			Collection<SingleTestResult> testScriptResults) {
+			Collection<SingleTestResult> testResults) {
 		MutationTestResult result = new MutationTestResult();
 		List<TestMessage> passing = new ArrayList<TestMessage>();
 		List<TestMessage> failing = new ArrayList<TestMessage>();
+		List<TestMessage> errors = new ArrayList<TestMessage>();
 		boolean touched = false;
-		for (SingleTestResult tsr : testScriptResults) {
-			if (tsr.touched) {
-				touched = tsr.touched;
+		for (SingleTestResult tsr : testResults) {
+			if (tsr.testMessage.isHasTouched()) {
+				touched = tsr.testMessage.isHasTouched();
 			}
 			if (tsr.result == TestOutcome.PASS) {
 				passing.add(tsr.testMessage);
+			} else if (tsr.result == TestOutcome.ERROR) {
+				errors.add(tsr.testMessage);
 			} else {
 				failing.add(tsr.testMessage);
 			}
 		}
 		result.setPassing(passing);
+		result.setErrors(errors);
 		result.setFailures(failing);
 		result.setDate(new Date());
-		result.setRuns(testScriptResults.size());
+		result.setRuns(testResults.size());
 		result.setTouched(touched);
 		return result;
 	}
 
+	/**
+	 * Used to signal whether the mutation was touched by this test.
+	 *
+	 * @param b
+	 *            signals whether the mutation was touched by this test
+	 */
 	public void setTouched(boolean b) {
-		this.touched = b;
+		testMessage.setHasTouched(b);
 	}
 
+	/**
+	 * Return the duration of this test.
+	 *
+	 * @return the duration of this test
+	 */
 	public long getDuration() {
 		return testMessage.getDuration();
 	}
 
+	/**
+	 * Return true, if the test passed.
+	 *
+	 * @return true, if the test passed
+	 */
 	public boolean hasPassed() {
 		return result == TestOutcome.PASS;
 	}
 
+	/**
+	 * Return the test message of this test.
+	 *
+	 * @return the test message of this test
+	 */
 	public TestMessage getTestMessage() {
 		return testMessage;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return result + (touched ? " touched " : " ") + testMessage.toString();
+		return result + testMessage.toString();
 	}
 }

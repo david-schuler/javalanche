@@ -25,8 +25,8 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 /**
- * {@link MutationTransformer} is used to apply mutations during runtime via a
- * java agent.
+ * MutationTransformer is used to apply mutations during runtime via a java
+ * agent.
  *
  * @author David Schuler
  *
@@ -50,7 +50,6 @@ public class MutationFileTransformer implements ClassFileTransformer {
 		}
 
 	}
-
 
 	private static MutationTransformer mutationTransformer = new MutationTransformer();
 
@@ -88,7 +87,9 @@ public class MutationFileTransformer implements ClassFileTransformer {
 		logger.info("Loading MutationFileTransformer");
 	}
 
-	private static MutationDecision mutationDecision = MutationDecisionFactory.getStandardMutationDecision(classesToMutate);
+	private static MutationDecision mutationDecision = MutationDecisionFactory
+			.getStandardMutationDecision(classesToMutate);
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -104,33 +105,18 @@ public class MutationFileTransformer implements ClassFileTransformer {
 				String classNameWithDots = className.replace('/', '.');
 				// logger.info(className + " is passed to transformer");
 				if (isSystemExitClass(classNameWithDots)) {
-					logger
-							.info("Trying to remove calls to system exit from class"
-									+ classNameWithDots);
+					logger.info("Removing calls to System.exit() from class: "
+							+ classNameWithDots);
 					classfileBuffer = systemExitTransformer
 							.transformBytecode(classfileBuffer);
 				}
-				if (compareWithSuiteProperty(classNameWithDots)
-						|| classNameWithDots.endsWith("AllTests")) {
+				if (compareWithSuiteProperty(classNameWithDots)) {
 					logger.info("Trying to integrate SelectiveTestSuite");
 					BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer
 							.getIntegrateSelectiveTestSuiteTransformer();
 					classfileBuffer = integrateSuiteTransformer
 							.transformBytecode(classfileBuffer);
 				}
-//				if (isObservedTestCase(classNameWithDots)) {
-//					try {
-//						logger.info("Trying to transform test class "
-//								+ classNameWithDots);
-////						ObjectInspectorTransformer objectInspectorTransformer = new ObjectInspectorTransformer();
-////						classfileBuffer = objectInspectorTransformer
-////								.transformBytecode(classfileBuffer);
-//					} catch (Exception e) {
-//						logger.warn("Exception Thrown" + e);
-//						e.printStackTrace();
-//					}
-//					logger.info("Test class transformed " + classNameWithDots);
-//				}
 
 				if (mutationDecision.shouldBeHandled(classNameWithDots)) {
 					logger.info("Transforming: " + classNameWithDots);
@@ -146,8 +132,8 @@ public class MutationFileTransformer implements ClassFileTransformer {
 					return transformedBytecode;
 				}
 			} catch (Throwable t) {
-				logger.fatal("Transformation of class " + className
-						+ " failed", t);
+				logger.fatal(
+						"Transformation of class " + className + " failed", t);
 				StringWriter writer = new StringWriter();
 				t.printStackTrace(new PrintWriter(writer));
 				logger.fatal(writer.getBuffer().toString());
@@ -160,37 +146,27 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	}
 
 	/**
-	 * Decides if the objects that exist in this test case should be serialized.
-	 * This is configured in an xml file (
-	 *
-	 * @see MutationProperties.TESTCASES_FILE).
+	 * Checks if the given class name equals to the test suite property.
 	 *
 	 * @param classNameWithDots
-	 *            The name of the class seperated with dots
-	 * @return True, if the objects should be serialized.
+	 *            the class name to check
+	 * @return true, if
 	 */
-	private boolean isObservedTestCase(String classNameWithDots) {
-		if (MutationProperties.OBSERVE_OBJECTS) {
-			// if (testCases.contains(classNameWithDots)) {
-			// return true;
-			// } else
-			if (classNameWithDots.endsWith("InspectorTest")) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public static boolean compareWithSuiteProperty(String classNameWithDots) {
-		boolean returnValue = false;
 		String testSuiteName = System
 				.getProperty(MutationProperties.TEST_SUITE_KEY);
-		if (testSuiteName != null && classNameWithDots.contains(testSuiteName)) {
-			returnValue = true;
-		}
-		return returnValue;
+		return testSuiteName != null
+				&& classNameWithDots.contains(testSuiteName);
+
 	}
 
+	/**
+	 * Checks if the given class contains a System.exit() call.
+	 *
+	 * @param classNameWithDots
+	 *            the class to check
+	 * @return true, if the class contains a call to System.exit()
+	 */
 	private boolean isSystemExitClass(String classNameWithDots) {
 		if (classNameWithDots.toLowerCase().contains("Main")) {
 			logger.info("Checking " + classNameWithDots + " for System exit");
