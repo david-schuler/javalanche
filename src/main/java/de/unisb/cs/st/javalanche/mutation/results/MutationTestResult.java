@@ -22,6 +22,7 @@ import javax.persistence.TemporalType;
 
 import junit.framework.TestResult;
 
+import org.apache.log4j.Logger;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
 
@@ -30,6 +31,7 @@ import de.unisb.cs.st.javalanche.mutation.runtime.MutationJunitTestListener;
 @Entity
 public class MutationTestResult implements Serializable {
 
+	private static Logger logger = Logger.getLogger(MutationTestResult.class);
 	/**
 	 *
 	 */
@@ -75,9 +77,6 @@ public class MutationTestResult implements Serializable {
 	// Temporal(TemporalType.TIME)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
-
-	// @Column(name="vInvariants", nullable=true)
-	// @IndexColumn(name = "violated_id")
 
 	@CollectionOfElements
 	@JoinTable(name = "ViolatedInvariants", joinColumns = { @JoinColumn(name = "result_id") })
@@ -163,6 +162,16 @@ public class MutationTestResult implements Serializable {
 			// updateTimes(mutationTestListener.getDurations());
 			touched = true;
 		}
+	}
+
+	public MutationTestResult(List<TestMessage> passing,
+			List<TestMessage> failures, List<TestMessage> errors,
+			boolean touched) {
+		this.passing = passing;
+		this.failures = failures;
+		this.errors = errors;
+		this.touched = touched;
+		this.runs = passing.size() + failures.size() + errors.size();
 	}
 
 	private static void updateTouched(Set<String> touchingTestCases,

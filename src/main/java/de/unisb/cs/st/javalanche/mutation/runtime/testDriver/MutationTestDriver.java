@@ -40,6 +40,8 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit3Mutatio
  */
 public abstract class MutationTestDriver {
 
+	protected static final String SINGLE_TEST_NAME_KEY = "single.test.name";
+
 	private static final String DRIVER_KEY = "mutation.test.driver";
 
 	private static final String MUTATION_TEST_LISTENER_KEY = "mutation.test.listener";
@@ -121,7 +123,8 @@ public abstract class MutationTestDriver {
 		} else if (MutationProperties.RUN_MODE == RunMode.SCAN) {
 			scanTests();
 		} else {
-			runNormalTests();
+			// runNormalTests();
+			runSingleTest();
 		}
 	}
 
@@ -241,7 +244,6 @@ public abstract class MutationTestDriver {
 				logger.warn("No tests for " + currentMutation);
 				continue;
 			}
-			totalTests += testsForThisRun.size();
 			logger.info("Applying " + totalMutations + "th mutation with id "
 					+ currentMutation.getId() + ". Running "
 					+ testsForThisRun.size() + " tests");
@@ -249,6 +251,7 @@ public abstract class MutationTestDriver {
 			mutationSwitcher.switchOn();
 			mutationStart(currentMutation);
 			MutationTestResult mutationTestResult = runTests(testsForThisRun);
+			totalTests += mutationTestResult.getRuns();
 			mutationSwitcher.switchOff();
 			mutationEnd(currentMutation);
 			// Report the results
@@ -269,7 +272,7 @@ public abstract class MutationTestDriver {
 
 	/**
 	 * Check if class of given mutation is on the classpath. When this is not
-	 * the case an exception ist thrown.
+	 * the case an exception is thrown.
 	 *
 	 * @param mutation
 	 *            the mutation that should be checked
@@ -303,8 +306,6 @@ public abstract class MutationTestDriver {
 			logger.info("(" + counter + " / " + size + ") Running test:  "
 					+ testName);
 
-			// File scriptFile = new File(TEST_BASE_PATH, testName);
-			// SingleTestResult testResult = testScript(scriptFile);
 			// if (reporter != null) {
 			// boolean touched = reporter.getTouchingTestCases()
 			// .contains(testName);
@@ -319,10 +320,13 @@ public abstract class MutationTestDriver {
 			currentTestName = testName;
 			MutationTestRunnable runnable = getTestRunnable(testName);
 			testStart(testName);
-			// SingleTestResult runTest = runTest(testName, actualReporter);
 			runWithTimeout(runnable);
 			testEnd(testName);
 			SingleTestResult result = runnable.getResult();
+			boolean touched = MutationObserver.getTouchingTestCases().contains(
+					testName);
+			result.setTouched(touched);
+			resultsForMutation.add(result);
 			if (MutationProperties.STOP_AFTER_FIRST_FAIL && !result.hasPassed()) {
 				logger
 						.info("Test failed for mutation not running more tests. Test: "
@@ -364,7 +368,7 @@ public abstract class MutationTestDriver {
 	 *            TestResult that is used to store the results.
 	 *
 	 */
-	private long runWithTimeout(MutationTestRunnable r) {
+	protected long runWithTimeout(MutationTestRunnable r) {
 		ExecutorService service = Executors.newSingleThreadExecutor();
 		Future<?> future = service.submit(r);
 		logger.debug("Start timed test: ");
@@ -382,8 +386,8 @@ public abstract class MutationTestDriver {
 			future.get(timeout, TimeUnit.SECONDS);
 			long time2 = stopWatch.getTime();
 			if (time2 - time1 > 1000) {
-				logger.info("Get got process some extra time " + time1 + "  "
-						+ time2);
+				logger.info("Process got some extra time: " + (time2 - time1)
+						+ "  " + time2);
 			}
 			future.cancel(true);
 		} catch (InterruptedException e) {
@@ -425,10 +429,13 @@ public abstract class MutationTestDriver {
 	private void switchOfMutation(Future<?> future) {
 		String message1 = "Could not kill thread for mutation: "
 				+ currentMutation;
-		logger.info(message1 + " - Switching mutation of and wait");
-		mutationSwitcher.switchOff();
+		logger.info(message1 + " - Switching mutation of");
+		if (mutationSwitcher != null) {
+			mutationSwitcher.switchOff();
+		}
 		future.cancel(true);
 		try {
+			logger.info("Sleeping");
 			Thread.sleep(MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS * 1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -551,6 +558,23 @@ public abstract class MutationTestDriver {
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+
+	/**
+	 * Run one single given test.
+	 */
+	protected void runSingleTest() {
+		String testName = System.getProperty(SINGLE_TEST_NAME_KEY);
+		logger.info("Running single test" + testName);
+		MutationTestRunnable runnable = getTestRunnable(testName);
+		runWithTimeout(runnable);
+		SingleTestResult result = runnable.getResult();
+		logger.info("Test result: " + result);
+		if (!result.hasPassed()) {
+			logger.warn("Test has not passed " + testName);
+		} else {
+			logger.info("Test passed " + testName);
 		}
 	}
 }

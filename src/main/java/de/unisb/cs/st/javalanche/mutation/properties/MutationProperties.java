@@ -224,9 +224,9 @@ public class MutationProperties {
 	public static final int DEFAULT_TIMEOUT_IN_SECONDS = getPropertyOrDefault(
 			DEFAULT_TIMEOUT_IN_SECONDS_KEY, 10);
 
-	private static final String SAVE_INTERVAL_KEY = "mutation.default.timeout";
+	private static final String SAVE_INTERVAL_KEY = "mutation.save.interval";
 	public static final int SAVE_INTERVAL = getPropertyOrDefault(
-			SAVE_INTERVAL_KEY, 100);
+			SAVE_INTERVAL_KEY, 10);
 
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
@@ -268,7 +268,7 @@ public class MutationProperties {
 				}
 			}
 		}
-		return RunMode.MUTATION_TEST;
+		return RunMode.OFF;
 	}
 
 	private static final String getPropertyOrDefault(String key,

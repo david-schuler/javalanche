@@ -62,7 +62,6 @@ public class SingleTestResult {
 	 */
 	public static MutationTestResult toMutationTestResult(
 			Collection<SingleTestResult> testResults) {
-		MutationTestResult result = new MutationTestResult();
 		List<TestMessage> passing = new ArrayList<TestMessage>();
 		List<TestMessage> failing = new ArrayList<TestMessage>();
 		List<TestMessage> errors = new ArrayList<TestMessage>();
@@ -79,13 +78,9 @@ public class SingleTestResult {
 				failing.add(tsr.testMessage);
 			}
 		}
-		result.setPassing(passing);
-		result.setErrors(errors);
-		result.setFailures(failing);
-		result.setDate(new Date());
-		result.setRuns(testResults.size());
-		result.setTouched(touched);
-		return result;
+		MutationTestResult r = new MutationTestResult(passing, failing, errors,
+				touched);
+		return r;
 	}
 
 	/**
@@ -132,6 +127,6 @@ public class SingleTestResult {
 	 */
 	@Override
 	public String toString() {
-		return result + testMessage.toString();
+		return result + "  " + testMessage.toString();
 	}
 }

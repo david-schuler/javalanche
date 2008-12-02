@@ -133,6 +133,7 @@ public class MutationObserver implements MutationTestListener {
 	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#mutationStart(de.unisb.cs.st.javalanche.mutation.results.Mutation)
 	 */
 	public void mutationStart(Mutation mutation) {
+		logger.info("Mutation start");
 		reportedMutations.add(mutation);
 		actualMutation = mutation;
 		touchingTestCases.clear();
