@@ -1,80 +1,98 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-    <head>
-        <title>Javalanche-Invariant Checker</title>
-        <meta name="description" content="" />
-        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
-        <meta name="keywords" content="mutation test java"/>
-        <meta name="description" content="Mutaiton Test"/>
-        <link rel="stylesheet" title="Normal" type="text/css" media="screen" href="style.css" />
-    </head>
-    <body>
-        <div id="main">
-            <div id="header">
-                <h1>Javalanche-Invariant Checker</h1>
-            </div>
-            <div id="menu">
-                <ul>
-                    <li class="selected">
-                        <a href="./index.html">Install</a>
-                    </li>
-                    <li>
-                        <a href="./index.html#run">Run Javalanche</a>
-                    </li>
+	<head>
+		<title>Javalanche Mutation Test</title>
+		<meta name="description" content="" />
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+		<meta name="keywords" content="mutation test java"/>
+		<meta name="description" content="Mutaiton Test"/>
+		<link rel="stylesheet" title="Normal" type="text/css" media="screen" href="style.css" />
+	</head>
+	<body>
+		<div id="main">
+			<div id="header">
+				<h1>Javalanche Mutation Test</h1>
+			</div>
+			<div id="menu">
+				<ul>
+					<li class="selected">
+						<a href="./index.html">Install</a>
+					</li>
+					<li>
+						<a href="./index.html#run">Run Javalanche</a>
+					</li>
                    <!-- <li><a href="./index.html#info">Further Information</a></li> -->
-                </ul>
-            </div>
-            <div id="content">
-                <div class="article">
-                    <h2>Install</h2>
+				</ul>
+			</div>
+			<div id="content">
+				<div class="article">
+					<h2>Install</h2>
+					
+					<h3>Requirements</h3>
+                    To run the mutation testing tool, you need the following software on your system:<br/>
+					<ul>
+						<li> a Java 1.5 Runtime Environment</li>
+						<li> the <a href="http://ant.apache.org/">ant</a> build tool</li>
+						<li> a <a href="http://www.mysql.com/">MySQL</a> Database </li>
+					</ul>
+					<h3>Install</h3>
+                    Install Javalanche and a MySQL database.
                     
-                    <h3>Requirements</h3>
-                    To run the invariant checker tool, you need the following software on your system:<br/>
-                    <ul>
-                        <li> a Java 1.6 Runtime Environment</li>
-                        <li>
-                            <a href="http://www.st.cs.uni-sb.de/models/adabu2/">Adabu2</a>
-                        </li>
-                        <li> the <a href="http://ant.apache.org/">ant</a> build tool</li>
-                    </ul>
-                    <h3>Install</h3>
-                    The Javalanche Invariant Checker can be compiled using maven:
+                    To compile Javalanche and produce files that are later
+                    needed by the buildfiles run the maven assembly command:
                     <div class="antblock">
-                        mvn compile
+                        mvn assembly:assembly
                     </div>
+                    Note that the tests will only pass if the database is correctly
+                    installed, which is yet not the case.<br/>
+                    After executing maven, configure hibernate in <code>src/main/resources/hibernate.cfg.xml</code> 
+                    and export the databaseschema with the <code>schemaexport</code> ant task.  
+                    <div class="antblock">
+                        ant schemaexport
+                    </div>
+                    Now everything should be ready to run the mutation testing tool on a program.
                 </div>
-                <div class="article" id="run">
-                    <h2>Run the tool</h2>
-                    <h3>Preparation</h3>
-                    The recommended way to compute the invariant checkers
-                    for a project is using ant.
+				<div class="article" id="run">
+					<h2>Run the tool</h2>
+					<h3>Preparation</h3>
+                    The recommended way to run the mutation testing is using ant.
                     For that purpose following additions have to be made to a
                     projects build file.
                     
 <div class="antblock">
+	&lt;property name=&quot;project.prefix&quot; value=&quot;org.your.project&quot; /&gt;<br/>
+	&lt;property name=&quot;project.test.suite&quot; value=&quot;YourProjectsTestSuite	&quot; /&gt;<br/>
     &lt;property file=&quot;javalanche.properties&quot; /&gt;<br/>
-    &lt;import file=&quot;${javalanche.invariant.build.file}&quot;/&gt;
-</div>                  
-    These statements include a properties file and import a build file that contains
-    the tasks that are needed to determine invariants. <br/>
+    &lt;import file=&quot;${javalanche.mutation.build.file}&quot;/&gt;<br/>
+					</div>                  
+    These statements set some properties, include a properties file and import a build file that contains
+    the tasks that are needed to determine invariants.(Not that the order of these statements matters since the imported file uses the prviously defined properties) <br/>
     
+	The <code>project.prefix</code> property hast to be set to the package prefix of your project.
+	All classes with this prefix will be used for mutation testing. <br/>
+
+	The <code>project.test.suite</code> property hast to be set to the name of the Junit class that executes all tests in your project. <br/> 
+		
     Following properties have to be set in the included properties file:
     <ul>
 
-        <li><code>javalanche.jars.dir</code> A folder with the jars that are needed to run Javalanche</li>
-        <li><code>javalanche.projects.location</code> This is optional. A path that points to the root of the projects included in Javalanche. This can be useful if you are working with the source of Javalanche. </li>
-        <li><code>javalanche.invariant.build.file</code>Location of the build file to include.</li>
-    </ul>
-<br/>
+        <li><code>javalanche.jars.dir</code> A folder with the jars that are needed to run Javalanche (Typically: /path/to/javalanche-mutation/target/javalanche-mutation-0.1-dist.dir/lib/)</li>
+						<li>
+							<code>javalanche.projects.location</code> This is optional. A path that points to the root of the projects included in Javalanche. This can be useful if you are working with the source of Javalanche. If you are not using this option you have to make sure that a jar of javalanche-mutation is on the classpath.</li>
+						<li>
+							<code>javalanche.invariant.build.file</code> Location of the build file to include (Typically: /path/to/javalanche-mutation/src/main/resources/mutation-build.xml) </li>
+					</ul>
+					<br/>
     An example properties file looks like this:
 <div class="antblock">
-javalanche.projects.location=/scratch2/schuler/projects/<br/>
-javalanche.jars.dir=/scratch2/schuler/jars/<br/>
-javalanche.invariant.build.file=/scratch2/schuler/projects/adabu2-check-invariants/src/main/resources/invariant-build.xml<br/>
-</div>  
+javalanche.projects.location=/path/to/projects/<br/>
+javalanche.jars.dir=/path/to/jars/<br/>
+javalanche.invariant.build.file=/path/to/javalanche-mutation/src/main/resources/invariant-build.xml<br/>
+					</div>  
     
-Furthermore, a modified test task has to be added to the build file.
+Furthermore, a modified test task has to be added to the build file.<br/>
+
 If the projects original test task looks like this:
 <div class="antblock">              
 &lt;target&nbsp;name=&quot;test&quot;&nbsp;description=&quot;-&nbsp;run&nbsp;the&nbsp;projects&nbsp;tests&quot;&gt;<br/>
@@ -90,18 +108,21 @@ If the projects original test task looks like this:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;formatter&nbsp;type=&quot;plain&quot;&nbsp;usefile=&quot;true&quot;/&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&lt;/junit&gt;<br/>
 &lt;/target&gt;<br/>
-</div>
+					</div>
 The task that is added has to look like this (Added or changed lines are bold):
 
 
 <div class="antblock">   
-<b>&lt;target&nbsp;name=&quot;test-javalanche&quot;&nbsp;description=&quot;-&nbsp;modified&nbsp;test&nbsp;task&nbsp;that&nbsp;is&nbsp;called&nbsp;by&nbsp;javalanche&quot;&gt;</b><br/>
+<b>&lt;target&nbsp;name=&quot;test-javalanche&quot;&nbsp;description=&quot;-&nbsp;modified&nbsp;test&nbsp;task&nbsp;that&nbsp;is&nbsp;called&nbsp;by&nbsp;javalanche&quot;&gt;</b>
+						<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&lt;junit&nbsp;&nbsp;printsummary=&quot;on&quot;&nbsp;fork=&quot;true&quot;&nbsp;forkmode=&quot;once&quot;&nbsp;showoutput=&quot;true&quot;&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;classpath&gt;<br/>
-<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;javalanche.classpath.add&quot;&nbsp;/&gt;</b><br/>
+						<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;javalanche.classpath.add&quot;&nbsp;/&gt;</b>
+						<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&nbsp;refid=&quot;test.classpath&quot;&nbsp;/&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/classpath&gt;<br/>
-<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;line=&quot;${javalanche.arg.line}&quot;&nbsp;/&gt;</b><br/>
+						<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jvmarg&nbsp;line=&quot;${javalanche.arg.line}&quot;&nbsp;/&gt;</b>
+						<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;batchtest&nbsp;&nbsp;todir=&quot;${test.results}&quot;&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;fileset&nbsp;dir=&quot;${test.classes}&quot;&gt;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;include&nbsp;name=&quot;**/ProjectTestSuit.class&quot;/&gt;<br/>
@@ -113,172 +134,102 @@ The task that is added has to look like this (Added or changed lines are bold):
 </div>
 For this task it is important that there is one test suite that contains all tests.
 If such a test suite does not exist, it has to be created.
-<h3>Test the added task</h3>
-In order to test the added tasks, run the command
+				<h3>Test the added task</h3>
+					In order to test the added tasks, run the command
 					<div class="antblock">
 					ant testTask
 					</div>
 					This should behave in the same way as the project's  
 					test task. 
 					
-                    <h3>Run Adabu Tracer</h3>
-                    First the execution of a test suite has to be traced in order
-                    to determine invariants for the program. This is done with Adabu2.
-                    More details on running Adabu2 can be found on the projects <a href"http://www.st.cs.uni-sb.de/models/adabu2/howto.html"="">website</a>.
-
+                    <h3>Scan for Mutation Possibilities</h3>                    
+                    The first step is to scan for possible mutations in the program under study. Therefore, the programs test suite has to be executed,
+                    and the tool scans for all possible mutations.<br/>
+					This is done with the following command:
 					<div class="antblock">
-					ant trace
+					ant scan
 					</div>
-					The task adds the following arguments to start the JVM:
-                    <table>
-                        <tr><th>Argument</th>
-                            <th>Description</th>
-                        </tr>
-                        <tr>
-                            <td>-Xmx1024m</td>
-                            <td>Set maximum Java heap size.</td>
-                        </tr>
-                        <tr>
-                            <td>-Xbootclasspath/a:${adabu.boot.jars}</td>
-                            <td>Appends the jars needed by Adabu2 to the bootclasspath.</td>
-                        </tr>
-                        <tr>
-                            <td>-javaagent:${adabu.javaagent}</td>
-                            <td>Use Adabu2 as javaagent.</td>
-                        </tr>
-                        <tr>
-                            <td>-Dadabu2.resultfilename=${adabu2.resultfilename}</td>
-                            <td>The name of the result file(s). If the property <code>invariant.multifile</code> is set, a trace file for every test is produced.</td>
-                        </tr>
-                        <tr>
-                            <td>-Dadabu2.skiparrayreads=true</td>
-                            <td>Do not trace array reads - makes the tracing faster.</td>
-                        </tr>
-                        <tr>
-                            <td>-Dinvariant.multifile=true</td>
-                            <td>Create a trace file for every test.</td>
-                        </tr>
-						The files that are generated for determining the invariants are stored in a sub directory with 
-						the name <code>invariant-files</code>.
-                    </table>
-  
-                    <h3>Create Daikon Input Files</h3>
-The traces generated by Aadabu2 have to be transformed in order to be processed
-by daikon. This is done with the class <code>DaikonTraceFileGenerator</code> ,
-which takes two arguments (prefix, and result file name) that where also used in
-the previous step.
-The class produces one <code>dtrace</code> file for every Adabu2 trace file.<br/>
-The ant task <code> createDaikonFiles</code> produces these files:
+					
+					<h3>Create task files</h3>
+                    Typically you do not want to execute all possible mutations
+                    in one run. Therefore, task files are created that specify which mutations to execute in one run
+					<br/>
+					The ant task <code> createTasks</code> produces these files:
              	    <div class="antblock">
-ant createDaikonFiles
-                    </div>
-
-                    
-                    <h3>Run Daikon</h3>
-In order to determine invariants, daikon has to process the <code>dtrace</code>  files produced
-in the previous step. To this end, daikon has to be run on every <code>dtrace</code> file.
-<br/>
-This can be done the following way. 
-The class <code>DaikonMakeFileGenerator</code> generate a Makefile that executes 
-a given script on each dtrace file in a given directory. The script takes the <code>dtrace</code>
-as first argument and the name of the result file as second argument.
-
-The ant task <code>generateDaikonMakefile</code> generates a Makefile that has a
-target for every <code>dtrace</code> file.
-             	    <div class="antblock">
-ant generateDaikonMakefile
-                    </div>
-					<table>
-                        <tr>
-                            <th>Argument</th>
-                            <th>Description</th>
-                        </tr>
-                        <tr>
-                            <td>trace.dir</td>
-                            <td>The directory with the trace files.</td>
-                        </tr>
-                        <tr>
-                            <td>daikon.command</td>
-                            <td>The command (script) to start daikon.</td>
-                        </tr>
-                    </table>           
-                    A script that runs daikon can look like this.
-                    <div class="antblock">
-! /bin/sh<br/>
-nice -10 java -Xmx2048m -cp /path/to/daikon.jar daikon.Daikon --no_text_output -o ${2} ${1} 
-                    </div>
-The ant task <code>generateDaikonScript</code> produces such a script (with the name runDaikon.sh)
-             	    <div class="antblock">
-ant generateDaikonScript
-                    </div>
-                    The make command executes the Makefile.
-					<div class="antblock">
-                        make 
-                    </div>
-					Multiple tasks can be run in parallel with the -j switch:
-                    <div class="antblock">
-                        make -j5
+					ant createTasks
                     </div>
 					
-                    <h3>Create Invariant Checkers</h3>
-The dynamic invariants that were detected by daikon, can be transformed into invariant
-checkers. These invariant checkers can later be used to check for invariant violations 
-at runtime. The class <code>DaikonInvariantReader</code> creates invariant checkers for all invariant files in a directory.
-<br/>        
-The ant task <code>createInvariantCheckers</code> creates the invariant checkers:
-             	    <div class="antblock">
-ant createInvariantCheckers
+					<h3>Execute one task</h3>
+                    A single task can be executed with the following ant task. Furthermor the location of the task file and a name for an output file has to be specified.
+					 <div class="antblock">
+                    ant \<br/>
+                    -Dmutation.file=/path/to/tasks/mutation-task-01.txt \<br/>
+                    -Dmutation.result.file=/path/to/result/dir/result-mutation-task-01.xml \<br/>
+                    runMutations
                     </div>
-This task produces a file that contains all invariant checkers. The name of the 
-file is <code>project.prefix-invariant-checkers.ser</code>.
-
-                    <table>
-                        <tr>
-                            <th>Argument</th>
-                            <th>Description</th>
-                        </tr>
-                        <tr>
-                            <td>-Dmutation.package.prefix</td>
-                            <td> The prefix of the classes that should be analyzed. 
-                        Only classes with a fully qualified name (package + class name) that start with this prefix are analyzed.</td>
-                        </tr>
-                    
-                    </table>
-
-                <h3>Scan fields</h3>
-In order to apply the invariant checkers, the project has to be scanned once for 
-all fields, their corresponding type, and visibility (private, public, ...).<br/>
-The ant task <code>scanFields</code> does this:
-<div class="antblock">
-	ant scanFields
-</div>
-
-
-<h3>Check Invariants</h3>         
-For performance reasons every test case is traced separately, because daikon cannot handle the execution of the whole
-test suite for large projects. 
-Thus, the learned invariants are not guaranteed to hold for all runs and have 
-to be checked on the whole test suite.<br/>
-This can be done the <code>checkInvariants</code> task:
-             	    <div class="antblock">
-ant checkInvariants
+					
+					
+					<h3>Execute Mutiple Tasks</h3>
+                    It is possible to run multiple mutation testing tasks in parallel with
+                    the <a href="http://www.gnu.org/software/make/">make</a> tool.
+    
+                    A Makefile to execute the tasks can be generated with the following task.
+                    <div class="antblock">
+					ant generateMutationMakefile
                     </div>
-This step has to be carried several times until no invariants are violated anymore.
-If this is the case a message of the following form is printed:
-<div class="antblock">
-No invariant violations:<br/>
-RUN_SUCCESSFULL
-</div>
-The invariant checker file prefixed with <code>CHECKED</code> then only contains 
-checkers for the dynamic invariants that hold for the whole test suite. 
-</div>
-                </div> 
-            </div>
-            <div id="footer">
-                <p>
+                    This task creates a Makefile that calls a script named <code>
+					runMutations.sh</code> in the current directory. The script
+                    is called with two arguments. 
+					First the name of the task file, and second a unique numberfor this task.
+					An exmple script can look as follows:
+					<div class="antblock">
+					#!/bin/sh
+					OUTPUTFILE=output-runMutationDaikon-${2}.txt <br/>
+					while  ! grep -q ALL_RESULTS ${OUTPUTFILE}<br/>
+					do<br/>
+						echo "Task ${2} not completed - starting task"<br/>
+						nice -10 ant runMutations ${3} -Dmutation.file=${1}  -Dmutation.result.file=result-${2}.xml 2>&amp;1 | tee -a $OUTPUTFILE <br/>
+						sleep 1<br/>
+					done<br/>
+					</div>
+					The loop in this script is due to the fact that some mutations 
+					cause the virtual machine to shut down because they end up in an endless loop.
+					In such cases the task has to be started again to test the remaining mutaitons.<br/>
+					
+					The make command executes the Makefile.
+					<div class="antblock">
+						make
+					</div>
+						Multiple tasks can be run in parallel with the -j switch:
+					<div class="antblock">
+						make -j5
+					</div>
+					
+				<h3>Analyze Results</h3>
+                    The results of the mutation testing can be analyzed with the
+                    class <code>de.st.cs.unisb.javalanche.analyze.AnalyzeMain</code>.
+					This fetches all mutations with given prefix from the databse, and
+					hands them over to several implementations of the 
+					<code>de.st.cs.unisb.javalanche.analyze.MutationAnalyzer</code>
+					interface.<br/>
+				<div class="antblock">
+					ant analyzeResults
+				  </div>
+					To write your own analyzer, you have to implement the interface  <code>MutationAnalyzer</code>
+					ant register it in <code>AnalyzeMain</code>.
+				
+				<h3> Delete data </h3>
+					The ant task <code>deleteResults</code> deletes all mutation test results of this project from the database.<br/>
+					The ant task <code>deleteMutations</code> deletes all mutations of this project from the database, such that <code> scan</code> hast to be run again<br/>
+					The ant task <code>cleanJavalancheMutation</code> deletes all files produced by the mutation testing.
+				</div>
+		</div>
+	</div>
+	<div id="footer">
+		<p>
                     Designed by <a href="http://www.pixelcarnage.com/">PixelCarnage</a>.<br />Released under the GNU GPL for free distribution and modification.
                 </p>
-            </div>
-        </div>
-    </body>
+	</div>
+	
+</body>
 </html>
