@@ -48,6 +48,7 @@ public class NegateJumpsTest {
 
 	@Before
 	public void setup() {
+		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
 		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
 				linenumbers);
 	}
@@ -90,7 +91,7 @@ public class NegateJumpsTest {
 				nonNulls++;
 				Assert.assertTrue(2 >= singleTestResult.getNumberOfErrors()
 						+ singleTestResult.getNumberOfFailures());
-				Assert.assertTrue(1 <= singleTestResult.getNumberOfErrors()
+				Assert.assertTrue("Expected at least one error for mutation:  " + m, 1 <= singleTestResult.getNumberOfErrors()
 						+ singleTestResult.getNumberOfFailures());
 
 				Assert.assertTrue(singleTestResult.isTouched());

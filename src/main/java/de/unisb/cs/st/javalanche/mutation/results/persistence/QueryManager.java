@@ -522,6 +522,10 @@ public class QueryManager {
 						+ mutation);
 			} else {
 				counter++;
+				if(counter%1000==0){
+					session.flush();
+					session.clear();
+				}
 				try {
 					logger.info(counter + ": Trying to save mutation :"
 							+ mutation);

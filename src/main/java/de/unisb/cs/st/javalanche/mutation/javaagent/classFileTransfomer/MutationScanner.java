@@ -94,6 +94,7 @@ public class MutationScanner implements ClassFileTransformer {
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
 		if (className != null) {
+
 			try {
 
 				String classNameWithDots = className.replace('/', '.');

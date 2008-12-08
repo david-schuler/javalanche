@@ -24,11 +24,12 @@ public class CoverageMakefileGenerator {
 		for (String testName : linesFromFile) {
 			String command = "./runCobertura.sh " + testName;
 			count++;
-			Target t = new Target("task-" + count, command);
+			Target t = new Target("coverage-report/coverage-" + testName.replace('/', '_')
+					+ ".xml", command);
 			targets.add(t);
 		}
 		String makeFileContent = MakefileGenerator.generateMakefile(targets);
-//		logger.info(makeFileContent);
+		// logger.info(makeFileContent);
 		Io.writeFile(makeFileContent, new File("CoberturaMakefile"));
 	}
 }

@@ -1,5 +1,8 @@
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.apache.log4j.Logger;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
@@ -35,6 +38,7 @@ public class IntegrateTestSuiteMethodAdapter extends MethodAdapter {
 					integrationMethodSignature);
 
 		}
+
 		mv.visitInsn(opcode);
 	}
 

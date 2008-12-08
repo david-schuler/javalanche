@@ -1,5 +1,5 @@
-<project name="JavalancheMutationInclude-File to include from ant build files" default="">
-	
+<project  default="">
+<!--name=" Javalanche Mutation Include - File to include from a projects ant build file to enable mutation testing"-->	
 	
 	<property name="mutation.base.dir" value="${javalanche.projects.location}/mutationTest/" />
 	<property name="mutation.base.dir" value="${javalanche.projects.location}/util/target/classes" />
@@ -23,6 +23,26 @@
 		<antcall target="test-javalanche">
 			<param name="javalanche.arg.line" value="-Dmutation.run.mode=off" />
 			<reference refid="testTask.javalanche.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>
+	
+	<target name="testTask2" description="* ">
+		<property name="test.task.2.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="test.task.2.memory" value="-Xmx1524m"/>
+		<property name="test.task.2.mutation.run.mode" value="-Dmutation.run.mode=test1"/>
+		<property name="test.task.2.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="test.task.2.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="test.task.2.verbose" value="-verbose"/>
+		
+		
+		<path id="test.task.2.classpath.add">
+			<path refid="mutation.classpath"/>
+		</path>
+		
+		<antcall target="test-javalanche">
+			<!--${test.task.2.verbose}-->
+			<param name="javalanche.arg.line" value="  ${test.task.2.mutation.javaagent} ${test.task.2.memory} ${test.task.2.mutation.run.mode} ${test.task.2.javalanche.package.prefix} ${test.task.2.javalanche.project.test.suite} " />
+			<reference refid="test.task.2.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>
 	
@@ -61,7 +81,7 @@
 		
 		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="1024m" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
-			<sysproperty key="mutation.number.of.tasks" value="1" />
+			<sysproperty key="mutation.number.of.tasks" value="100" />
 			<sysproperty key="mutation.mutations.per.task" value="400" />
 			<sysproperty key="javalanche.mutation.output.dir" value="${javalanche.mutation.output.dir}" />
 			<classpath>
@@ -71,7 +91,20 @@
 	</target>
 	
 	
+    <target name="createTasksFew">
+		<mkdir dir="${javalanche.mutation.output.dir}"/>
 		
+		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="1024m" fork="true">
+			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
+			<sysproperty key="mutation.number.of.tasks" value="10" />
+			<sysproperty key="mutation.mutations.per.task" value="10" />
+			<sysproperty key="javalanche.mutation.output.dir" value="${javalanche.mutation.output.dir}" />
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+	
 	
 	
 	<target name="runMutations" description="* run a given mutation task">

@@ -23,9 +23,6 @@ public class MyAdviceAdapter extends AdviceAdapter {
 	}
 
 
-
-
-
 	@Override
 	protected void onMethodEnter() {
 		superCallSeen = true;

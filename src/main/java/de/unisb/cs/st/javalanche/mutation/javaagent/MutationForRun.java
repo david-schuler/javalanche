@@ -61,7 +61,7 @@ public class MutationForRun {
 			ids.add(m.getId());
 		}
 		String join = StringUtils.join(ids.toArray(), ", ");
-		logger.info("Mutaiton Ids: " + join);
+		logger.info("Mutation Ids: " + join);
 	}
 
 	public Collection<String> getClassNames() {

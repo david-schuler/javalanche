@@ -77,6 +77,7 @@ public class MutationObserver implements MutationTestListener {
 			throw new RuntimeException(message);
 		} else {
 			touchingTestCases.add(actualTestCase);
+			logger.info(MutationObserver.class.getClassLoader());
 			if (!touched) {
 				touchedMutations.add(actualMutation);
 				logger.info("Touch called by mutated code in test: "

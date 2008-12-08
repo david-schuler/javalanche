@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.st.cs.unisb</groupId>
-	<artifactId>javalanche</artifactId>
+	<artifactId>javalanche-mutation</artifactId>
 	<packaging>jar</packaging>
 	<version>0.1</version>
 	<name>mutationTest</name>
@@ -41,7 +41,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<forkMode>pertest</forkMode>
-					<argLine>-javaagent:${user.home}/workspace/mutationTest/target/javaagent.jar -Dmutation.run.mode=mutation-no-invariant -D=invariant.mode=off</argLine>
+					<argLine>-javaagent:${user.home}/workspace/mutationTest/target/javaagent.jar -Dmutation.run.mode=mutation -D=invariant.mode=off</argLine>
 					<useSystemClassLoader>true</useSystemClassLoader>
 					<excludes>
 						<exclude>**/TestProperties.java</exclude>
@@ -359,5 +359,18 @@
 			<artifactId>ds-util</artifactId>
 			<version>0.1</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.google.code.google-collections</groupId>
+			<artifactId>google-collect</artifactId>
+			<version>snapshot-20080530</version>
+		</dependency>
+		
+		<dependency>
+			  <groupId>jfreechart</groupId> 
+			  <artifactId>jfreechart</artifactId> 
+			  <version>1.0.0</version> 
+		</dependency>
+		
 	</dependencies>
 </project>

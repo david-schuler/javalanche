@@ -182,4 +182,8 @@ public final class RhinoTestRunnable implements MutationTestRunnable {
 		return message;
 	}
 
+	public void setFailed(boolean b) {
+		boolean failed = b;
+	}
+
 }

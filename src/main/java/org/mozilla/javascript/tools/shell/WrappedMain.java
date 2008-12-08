@@ -9,8 +9,8 @@ import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.SystemExitTool;
 import de.unisb.cs.st.ds.util.SystemExitTool.SystemExitException;
+import de.unisb.cs.st.javalanche.rhino.ClassLoaderUtil;
 import de.unisb.cs.st.javalanche.rhino.RhinoTestRunnable;
-import de.unisb.cs.st.javalanche.util.ClassLoaderUtil;
 
 /**
  * Wrappes the Main class of the shell package.

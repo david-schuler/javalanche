@@ -13,6 +13,7 @@ public class MutationProperties {
 
 	private static Logger logger = Logger.getLogger(MutationProperties.class);
 
+
 	public static final String PROPERTIES_FILE = "mutation.incl.properties";
 
 	public static final Properties PROPERTIES = getProperties();
@@ -218,7 +219,7 @@ public class MutationProperties {
 
 	public static final boolean STOP_AFTER_FIRST_FAIL = getPropertyOrDefault(
 
-	STOP_AFTER_FIRST_FAIL_KEY, true);
+	STOP_AFTER_FIRST_FAIL_KEY, false);
 
 	private static final String DEFAULT_TIMEOUT_IN_SECONDS_KEY = "mutation.default.timeout";
 	public static final int DEFAULT_TIMEOUT_IN_SECONDS = getPropertyOrDefault(
@@ -226,7 +227,22 @@ public class MutationProperties {
 
 	private static final String SAVE_INTERVAL_KEY = "mutation.save.interval";
 	public static final int SAVE_INTERVAL = getPropertyOrDefault(
-			SAVE_INTERVAL_KEY, 10);
+			SAVE_INTERVAL_KEY, 100);
+
+	public static final String IGNORE_RIC_KEY = "javalanche.ignore.ric";
+	public static final boolean IGNORE_RIC = getPropertyOrDefault(
+			IGNORE_RIC_KEY, false);
+
+	public static final String IGNORE_NEGATE_JUMPS_KEY = "javalanche.ignore.jumps";
+	public static final boolean IGNORE_NEGATE_JUMPS = getPropertyOrDefault(
+			IGNORE_NEGATE_JUMPS_KEY, false);
+
+	public static final String IGNORE_ARITHMETIC_REPLACE_KEY = "javalanche.ignore.replace";
+	public static final boolean IGNORE_ARITHMETIC_REPLACE = getPropertyOrDefault(IGNORE_ARITHMETIC_REPLACE_KEY, false);
+
+	public static final String IGNORE_REMOVE_CALLS_KEY = "javalanche.ignore.remove.calls";
+	public static final boolean IGNORE_REMOVE_CALLS = getPropertyOrDefault(IGNORE_REMOVE_CALLS_KEY, false);
+
 
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");

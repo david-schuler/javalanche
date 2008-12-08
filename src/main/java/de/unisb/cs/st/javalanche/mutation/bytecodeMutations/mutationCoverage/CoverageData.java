@@ -73,7 +73,7 @@ public class CoverageData {
 	private static boolean shouldSave;
 
 	public static void touch(long id) {
-		
+
 		call++;
 		if (call % ((int) 1e6) == 0) {
 			logger.info("Touch called " + call + "times.  Test "
@@ -85,7 +85,7 @@ public class CoverageData {
 		// Only for debugging puprosses. Impacts performance
 		// logger.info("Test " + SingletonHolder.instance.testName.get()
 		// + " touched mutation " + id);
-
+		logger.info("XYZ  `" + SingletonHolder.instance.getTestName() + "   " +  CoverageData.class.getClassLoader());
 		Set<String> coveredTests = SingletonHolder.instance.coverageData
 				.get(id);
 		if (coveredTests == null) {
@@ -101,7 +101,7 @@ public class CoverageData {
 	}
 
 	public static void setTestName(String testName) {
-		logger.info("Setting testname " + testName);
+		logger.info("Setting testname " + testName + "    " + CoverageData.class.getClassLoader());
 
 		CoverageData instance = SingletonHolder.instance;
 		instance.testsRun.add(testName);

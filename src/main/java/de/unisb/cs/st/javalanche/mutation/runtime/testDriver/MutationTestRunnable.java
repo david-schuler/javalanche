@@ -23,4 +23,12 @@ public interface MutationTestRunnable extends Runnable {
 	 */
 	public SingleTestResult getResult();
 
+	/**
+	 * Signalize this runnable that it failed.
+	 *
+	 * @param b
+	 *            true, if it failed
+	 */
+	public void setFailed(boolean b);
+
 }

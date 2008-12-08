@@ -10,8 +10,11 @@ import org.objectweb.asm.util.CheckMethodAdapter;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.PossibilitiesArithmeticReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsPossibilitiesMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.MyAdviceAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.RemoveCallsPossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.PossibilitiesRicMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 
 public class MutationsCollectorClassAdapter extends ClassAdapter {
 
@@ -49,15 +52,23 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 		if (debug) {
 			mv = new CheckMethodAdapter(mv);
 		}
-
-		mv = new PossibilitiesRicMethodAdapter(mv, className, name, mpc,
-				ricPossibilities);
-		mv = new NegateJumpsPossibilitiesMethodAdapter(mv, className, name,
-				mpc, negatePossibilities);
-		mv = new PossibilitiesArithmeticReplaceMethodAdapter(mv, className,
-				name, mpc, arithmeticPossibilities);
-//		mv = new RemoveCallsPossibilitiesMethodAdapter(new MyAdviceAdapter(mv,access,name,desc), className, name,
-//				mpc, removeCallsPossibilities);
+		if (!MutationProperties.IGNORE_RIC) {
+			mv = new PossibilitiesRicMethodAdapter(mv, className, name, mpc,
+					ricPossibilities);
+		}
+		if (!MutationProperties.IGNORE_NEGATE_JUMPS) {
+			mv = new NegateJumpsPossibilitiesMethodAdapter(mv, className, name,
+					mpc, negatePossibilities);
+		}
+		if (!MutationProperties.IGNORE_ARITHMETIC_REPLACE) {
+			mv = new PossibilitiesArithmeticReplaceMethodAdapter(mv, className,
+					name, mpc, arithmeticPossibilities);
+		}
+		if (!MutationProperties.IGNORE_REMOVE_CALLS) {
+			mv = new RemoveCallsPossibilitiesMethodAdapter(new MyAdviceAdapter(
+					mv, access, name, desc), className, name, mpc,
+					removeCallsPossibilities);
+		}
 		return mv;
 	}
 }

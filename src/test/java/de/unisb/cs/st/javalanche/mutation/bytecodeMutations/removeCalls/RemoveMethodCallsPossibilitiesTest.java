@@ -4,6 +4,7 @@ import static junit.framework.Assert.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.URL;
 import java.util.List;
 
 import org.junit.Test;
@@ -20,8 +21,10 @@ public class RemoveMethodCallsPossibilitiesTest {
 
 	@Test
 	public void testForOneClass() throws Exception {
-		File file = new File("target/test-classes/"
-				+ MethodCalls.class.getName().replace('.', '/') + ".class");
+		String className = MethodCalls.class.getName();
+		String resourceName = className.replace('.', '/') + ".class";
+		URL systemResource = ClassLoader.getSystemResource(resourceName);
+		File file = new File(systemResource.toURI());
 		ClassReader cr = new ClassReader(new FileInputStream(file));
 		ClassWriter cw = new ClassWriter(0);
 		MutationPossibilityCollector mutationPossibilityCollector = new MutationPossibilityCollector();
@@ -37,10 +40,9 @@ public class RemoveMethodCallsPossibilitiesTest {
 				possibilityCount++;
 			}
 		}
-		int expectedMutations = 6;
+		int expectedMutations = 4;
 		assertEquals("Expecting " + expectedMutations
 				+ " mutations that remove calls", expectedMutations,
 				possibilityCount);
 	}
-
 }

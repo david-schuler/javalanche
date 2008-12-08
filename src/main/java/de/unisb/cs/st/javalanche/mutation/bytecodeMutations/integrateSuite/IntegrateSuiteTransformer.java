@@ -2,6 +2,7 @@ package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite;
 
 import java.io.PrintWriter;
 
+import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -14,6 +15,8 @@ import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class IntegrateSuiteTransformer extends BytecodeTransformer {
 
+	private static Logger logger = Logger
+			.getLogger(IntegrateSuiteTransformer.class);
 	private String targetClass;
 
 	private String integrationMethod;

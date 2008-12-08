@@ -67,7 +67,7 @@
     &lt;import file=&quot;${javalanche.mutation.build.file}&quot;/&gt;<br/>
 					</div>                  
     These statements set some properties, include a properties file and import a build file that contains
-    the tasks that are needed to determine invariants.(Not that the order of these statements matters since the imported file uses the prviously defined properties) <br/>
+    the tasks that are needed to comput mutations.(Note that the order of these statements matters since the imported file uses the prviously defined properties) <br/>
     
 	The <code>project.prefix</code> property hast to be set to the package prefix of your project.
 	All classes with this prefix will be used for mutation testing. <br/>
@@ -81,14 +81,14 @@
 						<li>
 							<code>javalanche.projects.location</code> This is optional. A path that points to the root of the projects included in Javalanche. This can be useful if you are working with the source of Javalanche. If you are not using this option you have to make sure that a jar of javalanche-mutation is on the classpath.</li>
 						<li>
-							<code>javalanche.invariant.build.file</code> Location of the build file to include (Typically: /path/to/javalanche-mutation/src/main/resources/mutation-build.xml) </li>
+							<code>javalanche.mutation.build.file</code> Location of the build file to include (Typically: /path/to/javalanche-mutation/src/main/resources/mutation-build.xml) </li>
 					</ul>
 					<br/>
     An example properties file looks like this:
 <div class="antblock">
 javalanche.projects.location=/path/to/projects/<br/>
 javalanche.jars.dir=/path/to/jars/<br/>
-javalanche.invariant.build.file=/path/to/javalanche-mutation/src/main/resources/invariant-build.xml<br/>
+javalanche.mutaiton.build.file=/path/to/javalanche-mutation/src/main/resources/invariant-build.xml<br/>
 					</div>  
     
 Furthermore, a modified test task has to be added to the build file.<br/>
@@ -183,7 +183,7 @@ If such a test suite does not exist, it has to be created.
 					First the name of the task file, and second a unique numberfor this task.
 					An exmple script can look as follows:
 					<div class="antblock">
-					#!/bin/sh
+					#!/bin/sh<br/>
 					OUTPUTFILE=output-runMutationDaikon-${2}.txt <br/>
 					while  ! grep -q ALL_RESULTS ${OUTPUTFILE}<br/>
 					do<br/>
@@ -222,7 +222,13 @@ If such a test suite does not exist, it has to be created.
 					The ant task <code>deleteResults</code> deletes all mutation test results of this project from the database.<br/>
 					The ant task <code>deleteMutations</code> deletes all mutations of this project from the database, such that <code> scan</code> hast to be run again<br/>
 					The ant task <code>cleanJavalancheMutation</code> deletes all files produced by the mutation testing.
-				</div>
+			</div>
+			<div class="article" id="additional">	
+				<h3> Adding your own mutation test listener </h3>
+				To aobserve the mutation testing process a class has to implement
+				the interface <code>de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener</code>.
+				The fully qualified name of this class hast to be passed in the property <code>javalanche.mutation.test.listener</code> (e.g. in the <code>test-javalanche</code> task).
+			</div>
 		</div>
 	</div>
 	<div id="footer">

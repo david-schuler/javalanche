@@ -25,6 +25,9 @@ public class MutationDecisionFactory {
 
 				return false;
 			}
+			if (classNameWithDots.contains(".test.")) {
+				return false;
+			}
 			if (classNameWithDots.startsWith(MutationProperties.PROJECT_PREFIX)) {
 				if (QueryManager.hasMutationsforClass(classNameWithDots)) {
 					return false;

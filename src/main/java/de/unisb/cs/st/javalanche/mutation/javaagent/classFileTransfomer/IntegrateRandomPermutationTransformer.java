@@ -24,7 +24,7 @@ public class IntegrateRandomPermutationTransformer implements
 			if (classNameWithDots.endsWith("AllTests")
 					|| compareWithSuiteProperty(classNameWithDots)) {
 				logger.info("Trying to integrate RandomPermutationTestSuite");
-				BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer.getIntegrateRandomPermutationTestSuiteTransformer();
+				BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer.getIntegrateSelectiveTestSuiteTransformer();
 				classfileBuffer = integrateSuiteTransformer
 						.transformBytecode(classfileBuffer);
 			}

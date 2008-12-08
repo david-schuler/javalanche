@@ -9,7 +9,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+
 import org.apache.log4j.Logger;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.util.CheckClassAdapter;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
@@ -129,6 +133,10 @@ public class MutationFileTransformer implements ClassFileTransformer {
 						e.printStackTrace();
 					}
 					logger.info("Class transformed: " + classNameWithDots);
+					String checkClass = checkClass(transformedBytecode);
+					logger.info("Check of class failed: " + checkClass);
+					if(checkClass != null || checkClass.length() > 0){
+					}
 					return transformedBytecode;
 				}
 			} catch (Throwable t) {
@@ -143,6 +151,14 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			}
 		}
 		return classfileBuffer;
+	}
+
+	private String checkClass(byte[] transformedBytecode) {
+		ClassReader cr = new ClassReader(transformedBytecode);
+		StringWriter sw = new StringWriter();
+
+		CheckClassAdapter.verify(cr, false, new PrintWriter(sw));
+		return sw.toString();
 	}
 
 	/**

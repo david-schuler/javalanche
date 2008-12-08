@@ -12,6 +12,7 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.apache.commons.lang.time.StopWatch;
+import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestDriver;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestRunnable;
@@ -25,6 +26,8 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.TestSuiteUtil;
  *
  */
 public class Junit3MutationTestDriver extends MutationTestDriver {
+
+	private static Logger logger = Logger.getLogger(SingleTestListener.class);
 
 	private final class SingleTestListener implements TestListener {
 
@@ -90,15 +93,19 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 
 			private long duration;
 
-			public void run() {
-				StopWatch stopWatch = new StopWatch();
-				stopWatch.start();
-				Test test = allTests.get(testName);
-				test.run(result);
-				stopWatch.stop();
-				duration = stopWatch.getTime();
-				finished = true;
+			private boolean failed = false;
 
+			public void run() {
+				try {
+					StopWatch stopWatch = new StopWatch();
+					stopWatch.start();
+					Test test = allTests.get(testName);
+					test.run(result);
+					stopWatch.stop();
+					duration = stopWatch.getTime();
+				} finally {
+					finished = true;
+				}
 			}
 
 			public synchronized boolean hasFinished() {
@@ -110,10 +117,17 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 				if (message == null) {
 					message = "";
 				}
+				if (result.failureCount() + result.errorCount() >= 1) {
+					failed = true;
+				}
 				SingleTestResult res = new SingleTestResult(testName, message,
-						result.failureCount() + result.errorCount() < 1,
-						duration);
+						!failed, duration);
 				return res;
+			}
+
+			public void setFailed(boolean failed) {
+				logger.info("Failed set to " + failed);
+				this.failed = failed;
 			}
 
 		};

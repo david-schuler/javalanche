@@ -151,4 +151,21 @@
 		</junit>
 	</target>
 	
+	
+	
+	<target name="testDBPerformance" description="test the databases performance">
+		<property name="db.perf.dir" value="target/db-performance" />
+		<mkdir dir="${db.perf.dir}"/>
+		<copy file="src/main/resources/log4j-silent.properties" tofile="${db.perf.dir}/log4j.properties"/>
+
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.DBPerformanceTest" maxmemory="1024m" fork="true">
+			<classpath>
+				<pathelement path="${db.perf.dir}" />
+			
+				<path refid="test.classpath" />
+			</classpath>
+		</java>
+	</target>
+
+	
 </project>

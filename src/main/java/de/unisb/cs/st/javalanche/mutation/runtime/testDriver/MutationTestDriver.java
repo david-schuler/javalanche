@@ -11,6 +11,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
@@ -44,7 +45,7 @@ public abstract class MutationTestDriver {
 
 	private static final String DRIVER_KEY = "mutation.test.driver";
 
-	private static final String MUTATION_TEST_LISTENER_KEY = "mutation.test.listener";
+	private static final String MUTATION_TEST_LISTENER_KEY = "javalanche.mutation.test.listener";
 
 	private static Logger logger = Logger.getLogger(MutationTestDriver.class);
 
@@ -123,8 +124,10 @@ public abstract class MutationTestDriver {
 		} else if (MutationProperties.RUN_MODE == RunMode.SCAN) {
 			scanTests();
 		} else {
-			// runNormalTests();
-			runSingleTest();
+			System.out.println("MutationTestDriver.run()"
+					+ MutationProperties.RUN_MODE);
+			runNormalTests();
+
 		}
 	}
 
@@ -135,17 +138,31 @@ public abstract class MutationTestDriver {
 	private void runNormalTests() {
 		logger.info("Running tests of project "
 				+ MutationProperties.PROJECT_PREFIX);
+		// addMutationTestListener(new AdabuListener());
+		addListenersFromProperty();
 		List<String> allTests = getAllTests();
 		int counter = 0;
 		int size = allTests.size();
-		timeout = 120;
+		timeout = Integer.MAX_VALUE;
 		boolean allPass = true;
 		List<SingleTestResult> failing = new ArrayList<SingleTestResult>();
+		testsStart();
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+		coldRun(allTests);
 		for (String testName : allTests) {
 			counter++;
-			logger.info("(" + counter + " / " + size + ") Running test:  "
+			logger.info(DurationFormatUtils.formatDurationHMS(stopWatch
+					.getTime())
+					+ " ("
+					+ counter
+					+ " / "
+					+ size
+					+ ") Running test:  "
 					+ testName);
 			MutationTestRunnable runnable = getTestRunnable(testName);
+			testStart(testName);
+
 			runWithTimeout(runnable);
 			SingleTestResult result = runnable.getResult();
 			logger.info(result.getTestMessage());
@@ -154,7 +171,9 @@ public abstract class MutationTestDriver {
 				failing.add(result);
 				logger.warn("Test has not passed " + testName);
 			}
+			testEnd(testName);
 		}
+		testsEnd();
 		if (allPass) {
 			logger.info("All " + allTests.size() + " tests passed ");
 		} else {
@@ -184,6 +203,7 @@ public abstract class MutationTestDriver {
 		logger.info("Start run of tests and collect coverage data");
 		for (String testName : allTests) {
 			counter++;
+			logger.info("Set testName " + testName);
 			CoverageData.setTestName(testName);
 			logger.info("(" + counter + " / " + size + ") Running test:  "
 					+ testName);
@@ -258,7 +278,9 @@ public abstract class MutationTestDriver {
 			currentMutation.setMutationResult(mutationTestResult);
 			ResultReporter.report(currentMutation);
 			if (totalMutations % saveIntervall == 0) {
-				logger.info("Saving " + saveIntervall + " mutations");
+				logger.info("Reached save intervall. Saving " + saveIntervall
+						+ " mutations. Total mutations tested until now: "
+						+ totalMutations);
 				ResultReporter.persist();
 			}
 		}
@@ -375,6 +397,7 @@ public abstract class MutationTestDriver {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		service.shutdown();
+		boolean exception = false;
 		try {
 			boolean terminated = service.awaitTermination(timeout,
 					TimeUnit.SECONDS);
@@ -390,25 +413,36 @@ public abstract class MutationTestDriver {
 						+ "  " + time2);
 			}
 			future.cancel(true);
+
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+			exception = true;
 			logger.error("Exception thrown", e);
 		} catch (ExecutionException e) {
+			exception = true;
 			e.printStackTrace();
 			logger.error("Exception thrown", e);
 		} catch (TimeoutException e) {
+			exception = true;
 			e.printStackTrace();
 			logger.error("Exception thrown", e);
 		} catch (Throwable t) {
+			exception = true;
 			t.printStackTrace();
 			logger.error("Exception thrown", t);
+		} finally {
+			if (exception) {
+				r.setFailed(true);
+			}
 		}
 		if (!future.isDone()) {
+			r.setFailed(true);
 			switchOfMutation(future);
 		}
 		stopWatch.stop();
 		if (!r.hasFinished()) {
 			String message = "Mutated Thread is still running";
+			r.setFailed(true);
 			logger.warn(message);
 			System.out.println(message);
 			System.out.println("Exiting now");
@@ -530,6 +564,24 @@ public abstract class MutationTestDriver {
 	private void testStart(String testName) {
 		for (MutationTestListener listener : listeners) {
 			listener.testStart(testName);
+		}
+	}
+
+	/**
+	 * Inform all listeners that the test process has started.
+	 */
+	private void testsStart() {
+		for (MutationTestListener listener : listeners) {
+			listener.start();
+		}
+	}
+
+	/**
+	 * Inform all listeners that the test process has finished.
+	 */
+	private void testsEnd() {
+		for (MutationTestListener listener : listeners) {
+			listener.end();
 		}
 	}
 

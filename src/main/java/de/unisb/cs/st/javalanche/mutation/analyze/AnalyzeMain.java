@@ -33,11 +33,13 @@ public class AnalyzeMain {
 		if (!didOutput) {
 			// analyzeMutations(new MutationAnalyzer[] { new
 			// Invariant2Analyzer() });
-			analyzeMutations(new MutationAnalyzer[] {
-					new InvariantAnalyzer(),
-					new MutationResultAnalyzer(),
-					new KilledAnalyzer(),
-					/* new AssertAnalyzer() *//* , new AspectJAnalyzer() */ new IdAnalyzer() });
+			analyzeMutations(new MutationAnalyzer[] { new InvariantAnalyzer(),
+					new MutationResultAnalyzer(), new KilledAnalyzer()
+					/* , new AssertAnalyzer() */
+					/* , new AspectJAnalyzer() */
+					/* , new IdAnalyzer() */
+					, new CoverageAnalyzer()
+			});
 
 		}
 	}

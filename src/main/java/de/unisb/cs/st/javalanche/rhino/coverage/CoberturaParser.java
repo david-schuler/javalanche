@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,10 @@ import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.google.common.base.Join;
+
+import de.unisb.cs.st.ds.util.io.Io;
 
 public class CoberturaParser {
 
@@ -76,6 +81,62 @@ public class CoberturaParser {
 	private static Logger logger = Logger.getLogger(CoberturaParser.class);
 
 	public static void main(String[] args) {
+		File[] files = getXmlFiles();
+		Map<CoverageData, String> map = parseFiles(files);
+		FailureMatrix fm = FailureMatrix.parseFile(new File(
+				"/scratch/schuler/subjects/ibugs_rhino-0.1/failureMatrix.csv"));
+		List<PriorizationResult> prioritizedTotal = CoverageData
+				.prioritizeTotal(new ArrayList<CoverageData>(map.keySet()));
+		summarizePriorization(fm, prioritizedTotal, "total-coverage");
+		List<PriorizationResult> prioritizedAdditional = CoverageData
+				.prioritizeAdditional(new ArrayList<CoverageData>(map.keySet()));
+		summarizePriorization(fm, prioritizedAdditional, "additional-coverage");
+
+	}
+
+	private static void summarizePriorization(FailureMatrix fm,
+			List<PriorizationResult> prioritizedAdditional,
+			String prioritizationType) {
+		Collections.reverse(prioritizedAdditional);
+		List<String> testList = new ArrayList<String>();
+		int totalFailures = fm.getNumberOfFailures();
+		int count = 0;
+		logger.info("Result for: " + prioritizationType);
+		StringBuilder sb = new StringBuilder();
+		for (PriorizationResult prioritizationResult : prioritizedAdditional) {
+			count++;
+			testList.add(prioritizationResult.getTestName());
+			int detectedFailures = fm.getDetectedFailures(testList);
+			System.out.println(count + "  "
+					+ prioritizationResult.getTestName() + " ("
+					+ prioritizationResult.getInfo() + ")  -  "
+					+ detectedFailures + " out of " + totalFailures
+					+ " failures");
+			String join = Join.join(",",
+					new Object[] { count, prioritizationResult.getTestName(),
+							detectedFailures, totalFailures,
+							"\"" + prioritizationResult.getInfo() + "\"" });
+			sb.append(join).append('\n');
+		}
+		Io.writeFile(sb.toString(), new File(prioritizationType + ".csv"));
+	}
+
+	private static Map<CoverageData, String> parseFiles(File[] files) {
+		Map<CoverageData, String> map = new HashMap<CoverageData, String>();
+		int count = 0;
+		for (File file : files) {
+			count++;
+			CoverageData coverageData = parseFile(file);
+			String name = parseTestName(file);
+			coverageData.setTestName(parseTestName(file));
+			logger.info("Test " + name + "(" + count + ") covered "
+					+ coverageData.getNumberOfCoveredLines() + "  lines ");
+			map.put(coverageData, name);
+		}
+		return map;
+	}
+
+	private static File[] getXmlFiles() {
 		String dirName = "/scratch/schuler/subjects/ibugs_rhino-0.1/coverage-report/";
 		File dir = new File(dirName);
 		File[] files = dir.listFiles(new FilenameFilter() {
@@ -88,38 +149,28 @@ public class CoberturaParser {
 			}
 
 		});
-		Map<CoverageData, String> map = new HashMap<CoverageData, String>();
-		for (File file : files) {
-			CoverageData coverageData = parseFile(file);
-			String name = parseTestName(file);
-			map.put(coverageData, name);
-		}
-		List<CoverageData> sortedList = new ArrayList<CoverageData>(map
-				.keySet());
-		CoverageData.prioritize(sortedList);
-		int count = 0;
-		for (CoverageData coverageData : sortedList) {
-			count++;
-			String testname = map.get(coverageData);
-			System.out.println(count + "  " + testname + " "
-					+ coverageData.getNumberOfCoveredLines());
-		}
+		return files;
 	}
 
 	private static String parseTestName(File file) {
 		String fileName = file.getName();
-		String substring = "NO NAME " + fileName;
+		String parseErr = "PARSE ERROR ";
+		String substring = parseErr + fileName;
 		try {
 			substring = fileName.substring("coverage-".length(), fileName
 					.lastIndexOf('.'));
 		} catch (IndexOutOfBoundsException e) {
 			logger.warn("Could not find testname for " + fileName, e);
 		}
-		if(substring == null || substring.length() == 0){
-			substring = "NO NAME " + fileName;
+		if (substring == null || substring.length() == 0) {
+			substring = parseErr + fileName;
 		}
-		return substring.replace('_', '/');
-
+		String result = substring.replace('_', '/');
+		result = result.replace("js1/5", "js1_5");
+		result = result.replace("js1/2", "js1_2");
+		result = result.replace("ecma/3", "ecma_3");
+		result = result.replace("ecma/2", "ecma_2");
+		return result;
 	}
 
 	private static CoverageData parseFile(File file) {
@@ -130,11 +181,11 @@ public class CoberturaParser {
 		// Parse the file using the handler
 		parseXmlFile(file, handler, false);
 		CoverageData coverageData = handler.getCoverageData();
-		int numberOfCoveredLines = coverageData.getNumberOfCoveredLines();
+
 		sw.stop();
 		logger.info("Parser took: "
 				+ DurationFormatUtils.formatDurationHMS(sw.getTime()));
-		logger.info(numberOfCoveredLines);
+
 		return coverageData;
 	}
 
