@@ -1,3 +1,4 @@
+
 <project name="Mutation Test" default="" basedir=".">
 
 	<!-- Classpath declaration -->
@@ -8,7 +9,7 @@
 		</fileset>
 		<pathelement location="target/javalanche-0.1-dist.dir/lib/mysql-connector-java-5.0.3.jar" />
 	</path>
-
+	
 	<path id="mutation.classpath">
 		<fileset dir="target/javalanche-0.1-dist.dir/lib/">
 			<include name="**/*.jar" />
@@ -32,7 +33,7 @@
 					<exclude name="**/commons-logging-1.1.jar" />
 					<include name="**/*.jar" />
 				</fileset>
-				
+			
 			</classpath>
 			<annotationconfiguration configurationfile="src/main/resources/hibernate.cfg.xml" />
 			<hbm2ddl drop="true" create="true" export="true" outputfilename="${proj.shortname}-ddl.sql" delimiter=";" format="true" />
@@ -56,7 +57,7 @@
 		</echo>
 	</target>
 
-
+	
 	<target name="generateDDL" depends="">
 		<mkdir dir="${basedir}/target/generated-sources/schema" />
 		<hibernatetool destdir="${basedir}/target/generated-sources">
@@ -93,28 +94,23 @@
 	
 	<target name="clean">
 		<delete dir="target/ant"/>
-	</target>	
-	
+	</target>
 
+	
 	<target name="compile">
 		<mkdir dir="${classes.dest.dir}"/>
-		<javac destdir="${classes.dest.dir}"  debug="true"
-		 source="1.5"
-         target="1.5">
+		<javac destdir="${classes.dest.dir}" debug="true" source="1.5" target="1.5">
 			<src>
 				<pathelement location="src/main/java"></pathelement>
 			</src>
 			<classpath refid="build.classpath"></classpath>
 		</javac>
-	</target>	
-	
+	</target>
 
-	<target name="compile-test" depends="compile" >
+	
+	<target name="compile-test" depends="compile">
 		<mkdir dir="${test.dest.dir}"></mkdir>
-		<javac destdir="${test.dest.dir}"  debug="true"
-		 source="1.5"
-         target="1.5"
-		 >
+		<javac destdir="${test.dest.dir}" debug="true" source="1.5" target="1.5">
 			<src>
 				<pathelement location="src/test/java"/>
 			</src>
@@ -125,12 +121,12 @@
 			</classpath>
 		</javac>
 	</target>
-
+	
 	
 	
 	<target name="test" depends="compile-test" description="- run the test suite">
 		<mkdir dir="${test.reports.dir}"/>
-		<junit dir="./" failureproperty="test.failure"  haltonerror="true" haltonfailure="true" printsummary="true" fork="true" forkmode="perTest">
+		<junit dir="./" failureproperty="test.failure" haltonerror="true" haltonfailure="true" printsummary="true" fork="true" forkmode="perTest">
 			<jvmarg value="-javaagent:/Users/schuler/workspace/mutationTest/target/javaagent.jar"/>
 			<jvmarg value="-Dmutation.run.mode=mutation-no-invariant"/>
 			<jvmarg value="-D=invariant.mode=off"/>
@@ -145,7 +141,7 @@
 					<include name="**/Test*.java"/>
 					<include name="**/*Test.java"/>
 					<exclude name="**/JtopasClassTest.java"/>
-					
+				
 				</fileset>
 			</batchtest>
 		</junit>
@@ -157,15 +153,22 @@
 		<property name="db.perf.dir" value="target/db-performance" />
 		<mkdir dir="${db.perf.dir}"/>
 		<copy file="src/main/resources/log4j-silent.properties" tofile="${db.perf.dir}/log4j.properties"/>
-
+		
 		<java classname="de.unisb.cs.st.javalanche.mutation.util.DBPerformanceTest" maxmemory="1024m" fork="true">
 			<classpath>
 				<pathelement path="${db.perf.dir}" />
-			
+				
 				<path refid="test.classpath" />
 			</classpath>
 		</java>
 	</target>
-
+		
+	<target name="createBootclasspathJar" description="Create the jar that has to be put on the bootclasspath">
+		<echo message="creating javaagent from ant" />
+		<jar destfile="target/javalanche-mutation-bootclasspath.jar" >
+			<fileset dir="target/classes" includes="**/java/lang/*.class" />
+		</jar>
+	</target>
 	
+
 </project>

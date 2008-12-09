@@ -5,9 +5,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.AbstractMutationAdapter;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.mutationCoverage.CoverageData;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
 
 public class RemoveCallsPossibilitiesMethodAdapter extends
 		AbstractMutationAdapter {
@@ -41,7 +41,7 @@ public class RemoveCallsPossibilitiesMethodAdapter extends
 				mpc.addPossibility(m);
 				addPossibilityForLine();
 				if (insertCoverageCalls) {
-					CoverageData.insertCoverageCalls(mv, m);
+					CoverageDataUtil.insertCoverageCalls(mv, m);
 				}
 			}
 		}

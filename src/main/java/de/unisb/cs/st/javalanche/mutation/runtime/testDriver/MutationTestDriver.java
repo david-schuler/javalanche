@@ -16,7 +16,6 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.Util;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.mutationCoverage.CoverageData;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode;
@@ -25,6 +24,7 @@ import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
 import de.unisb.cs.st.javalanche.mutation.results.TestName;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationObserver;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationSwitcher;
 import de.unisb.cs.st.javalanche.mutation.runtime.ResultReporter;
@@ -204,7 +204,7 @@ public abstract class MutationTestDriver {
 		for (String testName : allTests) {
 			counter++;
 			logger.info("Set testName " + testName);
-			CoverageData.setTestName(testName);
+			CoverageDataRuntime.setTestName(testName);
 			logger.info("(" + counter + " / " + size + ") Running test:  "
 					+ testName);
 
@@ -215,9 +215,9 @@ public abstract class MutationTestDriver {
 			TestName tm = new TestName(testName,
 					MutationProperties.PROJECT_PREFIX, duration);
 			QueryManager.save(tm);
-			CoverageData.unsetTestName(testName);
+			CoverageDataRuntime.unsetTestName(testName);
 		}
-		CoverageData.endCoverage();
+		CoverageDataUtil.endCoverage();
 	}
 
 	/**

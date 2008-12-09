@@ -4,9 +4,9 @@ import java.util.Map;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.mutationCoverage.CoverageData;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
 
 public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 
@@ -39,12 +39,12 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 						Mutation.MutationType.RIC_ZERO, isClassInit);
 				mutationPossibilityCollector.addPossibility(mutationZero);
 				if (insertCoverageCalls) {
-						CoverageData.insertCoverageCalls(mv, mutationZero);
+						CoverageDataUtil.insertCoverageCalls(mv, mutationZero);
 				}
 			}
 			if (insertCoverageCalls) {
-				CoverageData.insertCoverageCalls(mv, mutationPlus1);
-				CoverageData.insertCoverageCalls(mv, mutationMinus1);
+				CoverageDataUtil.insertCoverageCalls(mv, mutationPlus1);
+				CoverageDataUtil.insertCoverageCalls(mv, mutationMinus1);
 
 			}
 		}

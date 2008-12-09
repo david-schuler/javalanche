@@ -4,10 +4,11 @@ import java.util.Map;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.AbstractMutationAdapter;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.mutationCoverage.CoverageData;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
 
 public class PossibilitiesArithmeticReplaceMethodAdapter extends
 		AbstractMutationAdapter {
@@ -118,7 +119,7 @@ public class PossibilitiesArithmeticReplaceMethodAdapter extends
 			mpc.addPossibility(mutation);
 			addPossibilityForLine();
 			if (insertCoverageCalls) {
-				CoverageData.insertCoverageCalls(mv, mutation);
+				CoverageDataUtil.insertCoverageCalls(mv, mutation);
 			}
 		}
 	}
