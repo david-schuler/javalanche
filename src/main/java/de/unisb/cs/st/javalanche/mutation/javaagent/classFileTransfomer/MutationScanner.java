@@ -98,7 +98,7 @@ public class MutationScanner implements ClassFileTransformer {
 			try {
 
 				String classNameWithDots = className.replace('/', '.');
-				logger.debug(classNameWithDots);
+				logger.info("XXX: " + classNameWithDots);
 
 				if (md.shouldBeHandled(classNameWithDots)) {
 					classfileBuffer = mutationScannerTransformer
@@ -106,6 +106,8 @@ public class MutationScanner implements ClassFileTransformer {
 					logger.info(mpc.size()
 							+ " mutation possibilities found for class "
 							+ className);
+
+					logger.info("XYZ: " + classNameWithDots);
 					mpc.updateDB();
 					mpc.clear();
 				} else {

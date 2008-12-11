@@ -17,7 +17,8 @@ public class MutationDecisionFactory {
 			}
 			if (classNameWithDots.startsWith("java")
 					|| classNameWithDots.startsWith("sun")
-					|| classNameWithDots.startsWith("org.aspectj.org.eclipse")) {
+					|| classNameWithDots.startsWith("org.aspectj.org.eclipse")
+					|| classNameWithDots.startsWith("org.mozilla.javascript.gen.c")) {
 				return false;
 			}
 			if (classNameWithDots.contains(TEST_PACKAGE)

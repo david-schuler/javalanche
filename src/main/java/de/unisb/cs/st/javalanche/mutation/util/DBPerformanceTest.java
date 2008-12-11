@@ -36,9 +36,11 @@ public class DBPerformanceTest {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		try {
-			FileWriter fw = new FileWriter(new File("test.txt"));
+			File file = new File("test.txt");
+			file.deleteOnExit();
+			FileWriter fw = new FileWriter(file);
 			BufferedWriter w = new BufferedWriter(fw);
-			for (int i = 0; i < 500 * 1024 * 1024; i++) {
+			for (int i = 0; i < 50 * 1024 * 1024; i++) {
 				w.append('x');
 			}
 			w.close();

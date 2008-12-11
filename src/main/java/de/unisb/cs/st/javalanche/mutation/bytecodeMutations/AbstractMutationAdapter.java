@@ -43,6 +43,7 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 
 	protected int getLineNumber() {
 		if (lineNumber < 0) {
+			// TODO FIX rhino produces classses with no linenumber information
 			throw new RuntimeException(String.format(
 					"Line number not available for class: %s method: %s",
 					className, methodName));

@@ -84,13 +84,8 @@ public class CoverageDataRuntime {
 	}
 
 	public static void setTestName(String testName) {
-		System.out
-				.println("CoverageDataRuntime.setTestName() - Setting testname "
-						+ testName
-						+ "    "
-						+ CoverageDataRuntime.class.getClassLoader());
-
 		CoverageDataRuntime instance = SingletonHolder.instance;
+
 		instance.testsRun.add(testName);
 
 		if (instance.getTestName() == null) {
@@ -114,14 +109,11 @@ public class CoverageDataRuntime {
 	}
 
 	public static void unsetTestName(String testName) {
-		System.out
-				.println("CoverageDataRuntime.unsetTestName() - Unsetting testname "
-						+ testName);
+
 		CoverageDataRuntime instance = SingletonHolder.instance;
 		String oldTestName = instance.getTestName();
 		if (oldTestName == null) {
-			System.out
-					.println("CoverageDataRuntime.setTestName() - Test name was  set to null expected "
+			System.out.println("CoverageDataRuntime.setTestName() - Test name was  set to null expected "
 							+ testName);
 		} else if (oldTestName.equals(testName)) {
 			instance._setTestName(null);
