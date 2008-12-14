@@ -37,6 +37,8 @@ public class MutationTestResult implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	public static final MutationTestResult NO_RESULT = new MutationTestResult();
+
 	@Id
 	@GeneratedValue
 	private Long id;

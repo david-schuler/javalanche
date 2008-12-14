@@ -9,16 +9,19 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
+import org.objectweb.asm.util.TraceClassVisitor;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationTransformer;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
+import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecisionFactory;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
@@ -126,6 +129,18 @@ public class MutationFileTransformer implements ClassFileTransformer {
 					logger.info("Transforming: " + classNameWithDots);
 					byte[] transformedBytecode = null;
 					try {
+						// transformedBytecode = classfileBuffer;
+						ClassReader cr = new ClassReader(classfileBuffer);
+						logger.info("Mutation Transformer");
+						ClassWriter cw = new ClassWriter(
+								ClassWriter.COMPUTE_MAXS);
+						ClassVisitor cv = cw;
+						if (MutationProperties.TRACE_BYTECODE) {
+							cv = new TraceClassVisitor(cv, new PrintWriter(
+									MutationPreMain.sysout));
+						}
+						cv = new MutationsClassAdapter(cv);
+						cr.accept(cv, 0);
 						transformedBytecode = mutationTransformer
 								.transformBytecode(classfileBuffer);
 					} catch (Exception e) {
@@ -134,8 +149,8 @@ public class MutationFileTransformer implements ClassFileTransformer {
 					}
 					logger.info("Class transformed: " + classNameWithDots);
 					String checkClass = checkClass(transformedBytecode);
-					logger.info("Check of class failed: " + checkClass);
-					if(checkClass != null || checkClass.length() > 0){
+					if (checkClass != null && checkClass.length() > 0) {
+						logger.info("Check of class failed: " + checkClass);
 					}
 					return transformedBytecode;
 				}
@@ -156,8 +171,11 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	private String checkClass(byte[] transformedBytecode) {
 		ClassReader cr = new ClassReader(transformedBytecode);
 		StringWriter sw = new StringWriter();
-
-		CheckClassAdapter.verify(cr, false, new PrintWriter(sw));
+		CheckClassAdapter check = new CheckClassAdapter(new ClassWriter(
+				ClassWriter.COMPUTE_MAXS));
+		cr.accept(check, ClassReader.EXPAND_FRAMES);
+		// cr.accept(check,0);
+		// CheckClassAdapter.verify(cr, false, new PrintWriter(sw));
 		return sw.toString();
 	}
 

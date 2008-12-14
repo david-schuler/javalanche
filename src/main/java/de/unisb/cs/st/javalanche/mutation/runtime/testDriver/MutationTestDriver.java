@@ -262,6 +262,8 @@ public abstract class MutationTestDriver {
 					: new HashSet<String>(allTests));
 			if (testsForThisRun == null) {
 				logger.warn("No tests for " + currentMutation);
+				currentMutation.setMutationResult(MutationTestResult.NO_RESULT);
+				ResultReporter.report(currentMutation);
 				continue;
 			}
 			logger.info("Applying " + totalMutations + "th mutation with id "

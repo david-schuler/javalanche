@@ -81,17 +81,88 @@ public class CoberturaParser {
 	private static Logger logger = Logger.getLogger(CoberturaParser.class);
 
 	public static void main(String[] args) {
+
 		File[] files = getXmlFiles();
 		Map<CoverageData, String> map = parseFiles(files);
 		FailureMatrix fm = FailureMatrix.parseFile(new File(
 				"/scratch/schuler/subjects/ibugs_rhino-0.1/failureMatrix.csv"));
-		List<PriorizationResult> prioritizedTotal = CoverageData
-				.prioritizeTotal(new ArrayList<CoverageData>(map.keySet()));
-		summarizePriorization(fm, prioritizedTotal, "total-coverage");
-		List<PriorizationResult> prioritizedAdditional = CoverageData
-				.prioritizeAdditional(new ArrayList<CoverageData>(map.keySet()));
-		summarizePriorization(fm, prioritizedAdditional, "additional-coverage");
+		ArrayList<CoverageData> coverageDataList = new ArrayList<CoverageData>(
+				map.keySet());
+		List<List<PriorizationResult>> averageList = new ArrayList<List<PriorizationResult>>();
+		final int SHUFFLES = 1000;
+//		for (int i = 1; i < SHUFFLES; i++) {
+//			if(i %100 == 0){
+//				System.out.println("Computing result " + i);
+//			}
+//			Collections.shuffle(coverageDataList);
+//			List<PriorizationResult> prioritizedTotal = CoverageData
+//					.prioritizeTotal(coverageDataList);
+//			averageList
+//					.add(new ArrayList<PriorizationResult>(prioritizedTotal));
+//
+//			// summarizePriorization(fm, prioritizedTotal, "total-coverage");
+//		}
+//		double[] avarageData = generateAverageData(fm, averageList);
+//		writeRData(avarageData, "total-coverage");
+		averageList = new ArrayList<List<PriorizationResult>>();
+		for (int i = 1; i < SHUFFLES; i++) {
+			if(i %100 == 0){
+				System.out.println("Computing result " + i);
+			}
+			Collections.shuffle(coverageDataList);
+			List<PriorizationResult> prioritizedAdditional = CoverageData
+					.prioritizeAdditional(coverageDataList);
+			averageList.add(new ArrayList<PriorizationResult>(
+					prioritizedAdditional));
 
+			// summarizePriorization(fm, prioritizedTotal, "total-coverage");
+		}
+		double[] avarageDataAdd = generateAverageData(fm, averageList);
+		writeRData(avarageDataAdd, "additional-coverage");
+		//
+		//
+		// summarizePriorization(fm, prioritizedAdditional,
+		// "additional-coverage");
+
+	}
+
+	private static void writeRData(double[] avarageData,
+			String prioritizationType) {
+		Integer[] xarray = new Integer[avarageData.length];
+		Double[] yarray = new Double[avarageData.length];
+		for (int i = 0; i < avarageData.length; i++) {
+			xarray[i] = i + 1;
+			yarray[i] = avarageData[i];
+		}
+		String xJoin = Join.join(",", xarray);
+		String xString = "x <- c(" + xJoin + " )";
+		String yJoin = Join.join(",", yarray);
+		String yString = "x <- c(" + yJoin + " )";
+		System.out.println(xString);
+		System.out.println(yString);
+		Io.writeFile(xString + '\n' + yString, new File(prioritizationType
+				+ "-average.csv"));
+	}
+
+	private static double[] generateAverageData(FailureMatrix fm,
+			List<List<PriorizationResult>> averageList) {
+		double[] values = new double[averageList.get(0).size()];
+		for (List<PriorizationResult> singleResult : averageList) {
+			Collections.reverse(singleResult);
+			List<String> testList = new ArrayList<String>();
+			for (int i = 0; i < singleResult.size(); i++) {
+				PriorizationResult prioritizationResult = singleResult.get(i);
+				testList.add(prioritizationResult.getTestName());
+				int detectedFailures = fm.getDetectedFailures(testList);
+				// System.out.println("Detected Failures: " + detectedFailures);
+				values[i] += 1. * detectedFailures;
+			}
+		}
+		double size = 1.* averageList.size();
+		for (int i = 0; i < values.length; i++) {
+			values[i] = values[i] / size;
+		}
+		return values;
 	}
 
 	private static void summarizePriorization(FailureMatrix fm,
@@ -132,6 +203,7 @@ public class CoberturaParser {
 			logger.info("Test " + name + "(" + count + ") covered "
 					+ coverageData.getNumberOfCoveredLines() + "  lines ");
 			map.put(coverageData, name);
+
 		}
 		return map;
 	}
@@ -160,7 +232,7 @@ public class CoberturaParser {
 			substring = fileName.substring("coverage-".length(), fileName
 					.lastIndexOf('.'));
 		} catch (IndexOutOfBoundsException e) {
-			logger.warn("Could not find testname for " + fileName, e);
+			logger.warn("Could not find testname for " + file, e);
 		}
 		if (substring == null || substring.length() == 0) {
 			substring = parseErr + fileName;

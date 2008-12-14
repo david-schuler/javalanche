@@ -81,7 +81,6 @@ public class CoverageData {
 		while (coverageDataSet.size() > 0) {
 			CoverageDataSet nextEntry = getNextEntry(coverageDataSet, usedSet);
 			coverageDataSet.remove(nextEntry);
-			System.out.println(" entrySize" + nextEntry.size());
 			usedSet.addAll(nextEntry.set);
 			prioritizedList.add(new PriorizationResult(nextEntry
 					.getCoverageData().getTestName(), "Additional lines "

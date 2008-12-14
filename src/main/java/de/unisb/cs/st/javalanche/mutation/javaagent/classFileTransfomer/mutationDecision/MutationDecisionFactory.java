@@ -22,11 +22,10 @@ public class MutationDecisionFactory {
 				return false;
 			}
 			if (classNameWithDots.contains(TEST_PACKAGE)
-					&& !classNameWithDots.endsWith("Test")) {
-
+					&& !classNameWithDots.endsWith("Test") ) {
 				return false;
 			}
-			if (classNameWithDots.contains(".test.")) {
+			if (classNameWithDots.contains(".test.") || classNameWithDots.contains("Test")) {
 				return false;
 			}
 			if (classNameWithDots.startsWith(MutationProperties.PROJECT_PREFIX)) {

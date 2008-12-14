@@ -38,7 +38,7 @@ public class AnalyzeMain {
 					/* , new AssertAnalyzer() */
 					/* , new AspectJAnalyzer() */
 					/* , new IdAnalyzer() */
-					, new CoverageAnalyzer()
+/*					, new CoverageAnalyzer() */
 			});
 
 		}
@@ -57,7 +57,6 @@ public class AnalyzeMain {
 		if (prefix == null) {
 			throw new RuntimeException("no prefix set");
 		}
-
 		analyzeMutations(mutationResultAnalyzers, prefix);
 	}
 
