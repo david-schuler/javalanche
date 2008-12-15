@@ -78,13 +78,11 @@ public class MutationObserver implements MutationTestListener {
 		} else {
 			touchingTestCases.add(actualTestCase);
 			if (!touched) {
-				logger.info(MutationObserver.class.getClassLoader());
 				touchedMutations.add(actualMutation);
 				logger.info("Touch called by mutated code in test: "
 						+ actualTestCase + " for mutation: " + mutationID
-						+ " Thread " + Thread.currentThread()
-				// + "Trace " + Util.getStackTraceString()
-						);
+						+ " Thread " + Thread.currentThread() + " loaded by class loader " + MutationObserver.class.getClassLoader());
+				// + "Trace " + Util.getStackTraceString());
 				touched = true;
 			}
 		}

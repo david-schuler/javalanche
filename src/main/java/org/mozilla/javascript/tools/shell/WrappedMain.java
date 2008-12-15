@@ -44,11 +44,11 @@ public class WrappedMain {
 		//displayJavaCommand(args);
 		PrintStream errBack = System.err;
 		PrintStream outBack = System.out;
-		System.setOut(out);
-		System.setErr(err);
-		SystemExitTool.forbidSystemExitCall();
+//		System.setOut(out);
+//		System.setErr(err);
 		int exec = 0;
 		if (useMain) {
+			SystemExitTool.forbidSystemExitCall();
 			if (useClassLoader) {
 				try {
 					ClassLoader classLoader = ClassLoaderUtil

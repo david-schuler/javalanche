@@ -408,6 +408,7 @@ public abstract class MutationTestDriver {
 			if (!terminated) {
 				service.shutdownNow();
 			}
+			Class.forName("org.apache.log4j.spi.ThrowableInformation");
 			future.get(timeout, TimeUnit.SECONDS);
 			long time2 = stopWatch.getTime();
 			if (time2 - time1 > 1000) {
