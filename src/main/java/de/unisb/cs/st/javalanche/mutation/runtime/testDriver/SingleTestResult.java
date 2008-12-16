@@ -2,7 +2,6 @@ package de.unisb.cs.st.javalanche.mutation.runtime.testDriver;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
@@ -27,7 +26,7 @@ public class SingleTestResult {
 	/**
 	 * The outcome of this test.
 	 */
-	public TestOutcome result;
+	public TestOutcome outcome;
 
 	/**
 	 * The passing/failing message of this test.
@@ -46,10 +45,10 @@ public class SingleTestResult {
 	 * @param duration
 	 *            the time the test took
 	 */
-	public SingleTestResult(String testCaseName, String message, boolean pass,
+	public SingleTestResult(String testCaseName, String message, TestOutcome testOutcome,
 			long duration) {
 		super();
-		this.result = pass ? TestOutcome.PASS : TestOutcome.FAIL;
+		this.outcome = testOutcome;
 		this.testMessage = new TestMessage(testCaseName, message, duration);
 	}
 
@@ -70,9 +69,9 @@ public class SingleTestResult {
 			if (tsr.testMessage.isHasTouched()) {
 				touched = tsr.testMessage.isHasTouched();
 			}
-			if (tsr.result == TestOutcome.PASS) {
+			if (tsr.outcome == TestOutcome.PASS) {
 				passing.add(tsr.testMessage);
-			} else if (tsr.result == TestOutcome.ERROR) {
+			} else if (tsr.outcome == TestOutcome.ERROR) {
 				errors.add(tsr.testMessage);
 			} else {
 				failing.add(tsr.testMessage);
@@ -108,7 +107,7 @@ public class SingleTestResult {
 	 * @return true, if the test passed
 	 */
 	public boolean hasPassed() {
-		return result == TestOutcome.PASS;
+		return outcome == TestOutcome.PASS;
 	}
 
 	/**
@@ -127,6 +126,6 @@ public class SingleTestResult {
 	 */
 	@Override
 	public String toString() {
-		return result + "  " + testMessage.toString();
+		return outcome + "  " + testMessage.toString();
 	}
 }

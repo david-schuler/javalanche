@@ -21,7 +21,7 @@ public class IdAnalyzer implements MutationAnalyzer {
 					sb.append("\t" + e.getTestCaseName() + "\n");
 				}
 				sb.append("Failures:\n");
-				List<TestMessage> failures = mutationResult.getFailures();
+				Collection<TestMessage> failures = mutationResult.getFailures();
 				for (TestMessage e : failures) {
 					sb.append("\t" + e.getTestCaseName() + "\n");
 				}

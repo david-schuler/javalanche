@@ -88,18 +88,15 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 	}
 
 	private static String formatLine(String message, int number, String percent) {
-		return String.format("%-55s %d (%s)\n", message, number, percent);
+		return String.format("%-55s %10d (%6s)\n", message, number, percent);
 	}
 
 	private String formatLine(String message, int number) {
-		return String.format("%-55s %d \n", message, number);
+		return String.format("%-55s %10d \n", message, number);
 	}
 
 	private String formatLine(String message, String number) {
-		return String.format("%-55s %s \n", message, number);
+		return String.format("%-55s %10s \n", message, number);
 	}
 
-	public static void main(String[] args) {
-		System.out.println(formatLine("TEST", 1, "13%"));
-	}
 }

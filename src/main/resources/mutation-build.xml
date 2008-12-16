@@ -203,6 +203,7 @@
 	<target name="analyzeResults" description="* analyze the mutation test results.">
 		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.AnalyzeMain" maxmemory="1024m" fork="true">
 			<jvmarg value="-Dmutation.package.prefix=${project.prefix}" />
+			<jvmarg value="-Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.mutation.analyze.MutationResultAnalyzer,de.unisb.cs.st.javalanche.mutation.analyze.CoverageAnalyzer,de.unisb.cs.st.javalanche.mutation.analyze.MutationPrioritizationAnalyzer" />
 			<classpath>
 				<path refid="mutation.classpath" />
 			</classpath>

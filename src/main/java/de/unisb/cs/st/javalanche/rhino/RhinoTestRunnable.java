@@ -16,6 +16,7 @@ import org.mozilla.javascript.tools.shell.WrappedMain;
 
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestRunnable;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult.TestOutcome;
 
 public final class RhinoTestRunnable implements MutationTestRunnable {
 
@@ -123,11 +124,15 @@ public final class RhinoTestRunnable implements MutationTestRunnable {
 
 	public static SingleTestResult getSingleTestResult(String scriptFilename,
 			String outString, String errString, int exitCode, long duration) {
-		boolean passed = false;
+		TestOutcome testOutcome = TestOutcome.FAIL;
 		if (exitCode != 0 || outString == null || errString == null
 				|| errString.length() > 0 || outString.indexOf("FAILED!") > -1
 		/* || outString.indexOf("PASSED!") < 0 */) {
 			// System.out.println("Test failed " + script);
+			if (outString.contains("Exception")
+					|| errString.contains("Exception")) {
+				testOutcome = TestOutcome.ERROR;
+			}
 			if (exitCode != 0) {
 				if (exitCode != 3) {
 					logger
@@ -139,11 +144,10 @@ public final class RhinoTestRunnable implements MutationTestRunnable {
 
 			}
 		} else {
-			passed = true;
+			testOutcome = TestOutcome.PASS;
 		}
-
-		return new SingleTestResult(scriptFilename,/* errString */
-		"", passed, duration);
+		return new SingleTestResult(scriptFilename, errString, testOutcome,
+				duration);
 	}
 
 	private long getDuration() {

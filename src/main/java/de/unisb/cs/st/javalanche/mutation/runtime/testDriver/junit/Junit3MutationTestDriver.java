@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
@@ -17,6 +18,7 @@ import org.apache.log4j.Logger;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestDriver;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestRunnable;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult.TestOutcome;
 import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.TestSuiteUtil;
 
 /**
@@ -89,15 +91,17 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 
 			final TestResult result = new TestResult();
 
-			SingleTestListener listener = new SingleTestListener();
+			private SingleTestListener listener = new SingleTestListener();
 
 			private long duration;
 
 			private boolean failed = false;
 
+			private StopWatch stopWatch;
+
 			public void run() {
 				try {
-					StopWatch stopWatch = new StopWatch();
+					stopWatch = new StopWatch();
 					stopWatch.start();
 					Test test = allTests.get(testName);
 					test.run(result);
@@ -117,17 +121,21 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 				if (message == null) {
 					message = "";
 				}
-				if (result.failureCount() + result.errorCount() >= 1) {
-					failed = true;
+
+				TestOutcome outcome = TestOutcome.PASS;
+				if (result.failureCount() > 0) {
+					outcome = TestOutcome.FAIL;
+				} else if (result.errorCount() > 0) {
+					outcome = TestOutcome.ERROR;
 				}
 				SingleTestResult res = new SingleTestResult(testName, message,
-						!failed, duration);
+						outcome, duration);
 				return res;
 			}
 
 			public void setFailed(boolean failed) {
-				logger.info("Failed set to " + failed);
-				this.failed = failed;
+				listener.addError(allTests.get(testName), new TimeoutException(
+						"Test took to long "  + stopWatch.getTime()  +  " ms"));
 			}
 
 		};

@@ -19,6 +19,7 @@ import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestDriver;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestRunnable;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult.TestOutcome;
 
 public final class RhinoTestDriver extends MutationTestDriver {
 
@@ -102,18 +103,12 @@ public final class RhinoTestDriver extends MutationTestDriver {
 		List<String> ignoreList = Io.getLinesFromFile(new File(
 				"output/271545/post-fix/mozilla/js/tests/rhino-n.tests"));
 
-		// int dbg = 0;
 		int ignore = 0;
 		for (File f : files) {
 			logger.info("File:  " + f);
 			String testName = getRelativeLocation(f);
 			logger.info("Test name: " + testName);
-			// if (!testList.contains(testName)) {
-			// logger.info("Not runnning test. (Not specified in test.txt");
-			// continue;
-			// }
-			// if (dbg++ > 5)
-			// break;
+
 			if (ignoreList.contains(testName)) {
 				logger
 						.info("Not running test because its on the projects ignore list");
@@ -123,8 +118,8 @@ public final class RhinoTestDriver extends MutationTestDriver {
 			if (failingList.contains(testName)) {
 				String message = "Not running test (Failed in previous run)";
 				logger.info(message + testName);
-				failingTests.add(new SingleTestResult(testName, message, false,
-						0));
+				failingTests.add(new SingleTestResult(testName, message,
+						TestOutcome.ERROR, 0));
 				continue;
 			}
 			MutationTestRunnable testRunnable = getTestRunnable(testName);

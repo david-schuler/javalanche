@@ -90,23 +90,24 @@ public class CoberturaParser {
 				map.keySet());
 		List<List<PriorizationResult>> averageList = new ArrayList<List<PriorizationResult>>();
 		final int SHUFFLES = 1000;
-//		for (int i = 1; i < SHUFFLES; i++) {
-//			if(i %100 == 0){
-//				System.out.println("Computing result " + i);
-//			}
-//			Collections.shuffle(coverageDataList);
-//			List<PriorizationResult> prioritizedTotal = CoverageData
-//					.prioritizeTotal(coverageDataList);
-//			averageList
-//					.add(new ArrayList<PriorizationResult>(prioritizedTotal));
-//
-//			// summarizePriorization(fm, prioritizedTotal, "total-coverage");
-//		}
-//		double[] avarageData = generateAverageData(fm, averageList);
-//		writeRData(avarageData, "total-coverage");
+		for (int i = 1; i < SHUFFLES; i++) {
+			if (i % 100 == 0) {
+				System.out.println("Computing result " + i);
+			}
+			Collections.shuffle(coverageDataList);
+			List<PriorizationResult> prioritizedTotal = CoverageData
+					.prioritizeTotal(coverageDataList);
+			averageList.add(new ArrayList<PriorizationResult>(prioritizedTotal));
+			if(i==1){
+				double[] averageData = generateAverageData(fm, averageList);
+				writeRData(averageData, "total-coverage");
+			}
+		}
+		double[] avarageData = generateAverageData(fm, averageList);
+		writeRData(avarageData, "total-coverage-average");
 		averageList = new ArrayList<List<PriorizationResult>>();
 		for (int i = 1; i < SHUFFLES; i++) {
-			if(i %100 == 0){
+			if (i % 100 == 0) {
 				System.out.println("Computing result " + i);
 			}
 			Collections.shuffle(coverageDataList);
@@ -114,16 +115,14 @@ public class CoberturaParser {
 					.prioritizeAdditional(coverageDataList);
 			averageList.add(new ArrayList<PriorizationResult>(
 					prioritizedAdditional));
+			if(i==1){
+				double[] averageData = generateAverageData(fm, averageList);
+				writeRData(averageData, "additional-coverage");
+			}
 
-			// summarizePriorization(fm, prioritizedTotal, "total-coverage");
 		}
 		double[] avarageDataAdd = generateAverageData(fm, averageList);
-		writeRData(avarageDataAdd, "additional-coverage");
-		//
-		//
-		// summarizePriorization(fm, prioritizedAdditional,
-		// "additional-coverage");
-
+		writeRData(avarageDataAdd, "additional-coverage-average");
 	}
 
 	private static void writeRData(double[] avarageData,
@@ -137,7 +136,7 @@ public class CoberturaParser {
 		String xJoin = Join.join(",", xarray);
 		String xString = "x <- c(" + xJoin + " )";
 		String yJoin = Join.join(",", yarray);
-		String yString = "x <- c(" + yJoin + " )";
+		String yString = "y" + prioritizationType + "  <- c(" + yJoin + " )";
 		System.out.println(xString);
 		System.out.println(yString);
 		Io.writeFile(xString + '\n' + yString, new File(prioritizationType
@@ -158,7 +157,7 @@ public class CoberturaParser {
 				values[i] += 1. * detectedFailures;
 			}
 		}
-		double size = 1.* averageList.size();
+		double size = 1. * averageList.size();
 		for (int i = 0; i < values.length; i++) {
 			values[i] = values[i] / size;
 		}

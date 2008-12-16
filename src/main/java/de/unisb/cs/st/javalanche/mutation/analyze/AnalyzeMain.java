@@ -2,6 +2,7 @@ package de.unisb.cs.st.javalanche.mutation.analyze;
 
 import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -12,36 +13,56 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 /**
- * Analyzes the mutation results for a project.
+ * Analyzes the mutation results for a project. Either a list (comma separated)
+ * of {@link MutationAnalyzer} is given via the property
+ * "javalanche.mutation.analyzers" or a set of default analyzers is used.
  *
  * @author David Schuler
  *
  */
 public class AnalyzeMain {
 
-	public static void main(String[] args) {
-		// analyzeMutations(new MutationResultAnalyzer());
-		boolean didOutput = false;
-		if (args.length >= 1) {
-			String arg = args[0].toLowerCase();
-			if (arg.equals("exp")) {
-				didOutput = true;
-				analyzeMutations(new MutationAnalyzer[] { new ExperimentAnalyzer2() });
-			}
-		}
+	public static final String ANALYZERS_KEY = "javalanche.mutation.analyzers";
 
-		if (!didOutput) {
-			// analyzeMutations(new MutationAnalyzer[] { new
-			// Invariant2Analyzer() });
+	public static void main(String[] args) {
+		MutationAnalyzer[] analyzers = getAnalyzersFromProperty();
+		if (analyzers != null && analyzers.length > 0) {
+			analyzeMutations(analyzers);
+		} else {
 			analyzeMutations(new MutationAnalyzer[] { new InvariantAnalyzer(),
 					new MutationResultAnalyzer(), new KilledAnalyzer()
-					/* , new AssertAnalyzer() */
-					/* , new AspectJAnalyzer() */
-					/* , new IdAnalyzer() */
-/*					, new CoverageAnalyzer() */
+			/* , new AssertAnalyzer() */
+			/* , new AspectJAnalyzer() */
+			/* , new IdAnalyzer() */
+			/* , new CoverageAnalyzer() */
 			});
 
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static MutationAnalyzer[] getAnalyzersFromProperty() {
+		String property = System.getProperty(ANALYZERS_KEY);
+		List<MutationAnalyzer> analyzers = new ArrayList<MutationAnalyzer>();
+		if (property != null) {
+			String[] split = property.split(",");
+			for (String analyzer : split) {
+				try {
+					Class<? extends MutationAnalyzer> analyzerClass = (Class<? extends MutationAnalyzer>) Class
+							.forName(analyzer);
+					MutationAnalyzer analyzerInstance = analyzerClass
+							.newInstance();
+					analyzers.add(analyzerInstance);
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return analyzers.toArray(new MutationAnalyzer[0]);
 	}
 
 	/**
@@ -82,10 +103,12 @@ public class AnalyzeMain {
 		@SuppressWarnings("unchecked")
 		List<Mutation> mutations = query.list();
 		StringBuilder sb = new StringBuilder();
+		sb.append("--------------------------------------------------------------------------------\n");
 		for (MutationAnalyzer mutationAnalyzer : mutationAnalyzers) {
 			String analyzeResult = mutationAnalyzer.analyze(mutations);
 			sb.append("Results from " + mutationAnalyzer.getClass() + "\n");
 			sb.append(analyzeResult);
+			sb.append("\n--------------------------------------------------------------------------------\n");
 		}
 		long l = getNumberOfMutationsWithoutResult(session, prefix);
 		System.out.println("Analyzed Results for mutations with prefix: "

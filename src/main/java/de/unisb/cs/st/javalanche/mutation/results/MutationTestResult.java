@@ -271,7 +271,7 @@ public class MutationTestResult implements Serializable {
 	/**
 	 * @return the failures
 	 */
-	public List<TestMessage> getFailures() {
+	public Collection<TestMessage> getFailures() {
 		return failures;
 	}
 
