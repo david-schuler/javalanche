@@ -2,9 +2,10 @@ package de.unisb.cs.st.javalanche.mutation.runtime.jmx;
 
 public interface MutationMXMBean {
 
-	public int getConductedMutations();
+	public int getNumberOfMutations();
 
-	public void setNextSafe(boolean b);
+	public String getMutations();
 
-	public boolean getNextSafe();
+	public String getCurrentTest();
+
 }

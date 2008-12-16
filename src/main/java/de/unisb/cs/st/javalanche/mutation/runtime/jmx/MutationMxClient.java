@@ -4,19 +4,16 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.net.MalformedURLException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.management.Attribute;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
-import javax.management.IntrospectionException;
 import javax.management.InvalidAttributeValueException;
-import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
-import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import javax.management.remote.JMXConnector;
@@ -25,30 +22,30 @@ import javax.management.remote.JMXServiceURL;
 
 import org.apache.commons.lang.time.DurationFormatUtils;
 
-public class Client {
+public class MutationMxClient {
 
-	public static void connectToAll(int i) {
+	public static boolean connectToAll(int i) {
 		JMXConnector jmxc = null;
 		JMXServiceURL url = null;
+
 		try {
 			url = new JMXServiceURL(MXBeanRegisterer.ADDRESS + i);
 			jmxc = JMXConnectorFactory.connect(url, null);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("Could not connect to address: " + url);
+			return false;
+//			System.out.println("Could not connect to address: " + url);
 			// e.printStackTrace();
 		}
 		if (jmxc != null) {
 			try {
 				MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
 				ObjectName objectName = new ObjectName(MXBeanRegisterer.OBJECT_NAME);
-				Object attribute = mbsc.getAttribute(objectName, "NextSafe");
-				System.out.println("Before: " + attribute);
-				mbsc.setAttribute(objectName, new Attribute("NextSafe",
-						Boolean.FALSE));
-				attribute = mbsc.getAttribute(objectName, "NextSafe");
-				System.out.println("After:  " + attribute);
+				Object numberOfMutations = mbsc.getAttribute(objectName, "NumberOfMutations");
+				Object currentTest = mbsc.getAttribute(objectName, "CurrentTest");
+				Object allMutations = mbsc.getAttribute(objectName, "Mutations");
+
 				final RuntimeMXBean remoteRuntime =
 		                ManagementFactory.newPlatformMXBeanProxy(
 		                    mbsc,
@@ -60,6 +57,10 @@ public class Client {
 		        System.out.println("Running for : " + DurationFormatUtils.formatDurationHMS(remoteRuntime.getUptime()));
 		        System.out.println("Classpath: " + remoteRuntime.getClassPath());
 		        System.out.println("Args: " + remoteRuntime.getInputArguments());
+
+		        System.out.println("All Mutations: " + allMutations);
+		        System.out.println("Mutations tested: " + numberOfMutations);
+		        System.out.println("Current test: " + currentTest);
 
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -77,16 +78,21 @@ public class Client {
 				e.printStackTrace();
 			} catch (ReflectionException e) {
 				e.printStackTrace();
-			} catch (InvalidAttributeValueException e) {
-				e.printStackTrace();
 			}
 		}
+		return true;
 	}
 
 	public static void main(String[] args) throws IOException {
-		for (int i = 0; i < 10; i++) {
-			connectToAll(i);
+		List<Integer> noConnection = new ArrayList<Integer>();
+		for (int i = 0; i < 100; i++) {
+			boolean result = connectToAll(i);
+			if(!result){
+				noConnection.add(i);
+			}
+
 		}
+		System.out.println("Got no connection for ids: "  + noConnection);
 //		if (false) {
 //			// JMXServiceURL url = new JMXServiceURL(
 //			// "service:jmx:rmi:///jndi/rmi://localhost:9999/server");
