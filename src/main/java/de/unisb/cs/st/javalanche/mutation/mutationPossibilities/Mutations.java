@@ -65,11 +65,6 @@ public class Mutations implements Iterable<Mutation> {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static Mutations fromXML() {
-		return new Mutations((List<Mutation>) XmlIo
-				.fromXml(new File(MutationProperties.MUTATIONS_TO_APPLY_FILE)));
-	}
 
 	public boolean containsClass(String className) {
 		return mutationMap.containsKey(className);

@@ -29,8 +29,6 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
  */
 public class MutationForRun {
 
-	private static final String MUTATION_FILE = "mutation.file";
-
 	private static Logger logger = Logger.getLogger(MutationForRun.class);
 
 	/**
@@ -78,22 +76,20 @@ public class MutationForRun {
 
 	private static List<Mutation> getMutationsForRun() {
 		List<Mutation> mutationsToReturn = new ArrayList<Mutation>();
-		if (System.getProperty(MUTATION_FILE) != null) {
-			logger.debug("Found Property mutation.file");
-			String filename = System.getProperty(MUTATION_FILE);
-			if (!filename.equals("")) {
-				logger.debug("Value of mutation file: " + filename);
-				File file = new File(filename);
-				if (file.exists()) {
-					logger.info("Location of mutation file: "
-							+ file.getAbsolutePath());
-					mutationsToReturn = getMutationsByFile(file);
-				} else {
-					logger.info("Mutation file does not exist " + file);
-				}
+		if (System.getProperty(MutationProperties.MUTATION_FILE_NAME) != null) {
+			logger.debug("Value of mutation file: "
+					+ MutationProperties.MUTATION_FILE_NAME);
+			File file = new File(MutationProperties.MUTATION_FILE_NAME);
+			if (file.exists()) {
+				logger.info("Location of mutation file: "
+						+ file.getAbsolutePath());
+				mutationsToReturn = getMutationsByFile(file);
+			} else {
+				logger.info("Mutation file does not exist " + file);
 			}
 		} else {
-			logger.info("Property not found: " + MUTATION_FILE);
+			logger.info("Property not found: "
+					+ MutationProperties.MUTATION_FILE_KEY);
 		}
 		// if (mutationsToReturn.size() == 0) {
 		// mutationsToReturn =

@@ -45,22 +45,6 @@ public class MutationProperties {
 
 	public static final String OUTPUT_DIR = getProperty("javalanche.mutation.output.dir");
 
-	// public static final String ASPECTJ_DIR = "/scratch/schuler/aspectJ/";
-
-	public static final String CLOVER_REPORT_DIR = OUTPUT_DIR + "clover_html/";
-
-	public static final String MUTATIONS_TO_APPLY_FILE = OUTPUT_DIR
-			+ "/mutations-to-apply.xml";
-
-	public static final String CLOVER_RESULTS_FILE = OUTPUT_DIR
-			+ "/clover-coverage-results.xml";
-
-	// public static final String TESTS_TO_EXECUTE_FILE = OUTPUT_DIR
-	// + "/tests-to-execute.txt";
-
-	public static final String MUTATION_RESULT_FILE = OUTPUT_DIR
-			+ "/mutation-results.txt";
-
 	public static final String[] TEST_CLASSES_TO_INSTRUMENT = { "de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps" };
 
 	/*
@@ -96,6 +80,8 @@ public class MutationProperties {
 	public static final String RESULT_FILE = getProperty(RESULT_FILE_KEY);
 
 	public static final String MUTATION_FILE_KEY = "mutation.file";
+
+	public static final String MUTATION_FILE_NAME = getProperty(MUTATION_FILE_KEY);
 
 	public static final String MUTATION_TEST_DEBUG_KEY = "mutation.test.debug";
 
@@ -326,4 +312,5 @@ public class MutationProperties {
 					+ key);
 		}
 	}
+
 }
