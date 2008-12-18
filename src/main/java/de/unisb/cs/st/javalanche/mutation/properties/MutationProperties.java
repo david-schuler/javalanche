@@ -213,7 +213,7 @@ public class MutationProperties {
 
 	private static final String SAVE_INTERVAL_KEY = "mutation.save.interval";
 	public static final int SAVE_INTERVAL = getPropertyOrDefault(
-			SAVE_INTERVAL_KEY, 100);
+			SAVE_INTERVAL_KEY, 20);
 
 	public static final String IGNORE_RIC_KEY = "javalanche.ignore.ric";
 	public static final boolean IGNORE_RIC = getPropertyOrDefault(

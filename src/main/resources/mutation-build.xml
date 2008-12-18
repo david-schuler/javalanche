@@ -109,7 +109,7 @@
 	
 	
 	<target name="runMutations" description="* run a given mutation task">
-<!--		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="run.mutations.memory" value="-Xmx1524m"/>
 		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=mutation"/>
 		<property name="run.mutations.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
@@ -117,21 +117,19 @@
 		<property name="run.mutations.mutation.file" value="-Dmutation.file=${mutation.file}"/>
 		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
 		<property name="run.mutations.verbose" value="-verbose"/>
--->		
-		
-	<!--	<path id="run.mutations.classpath.add">
+		<property name="run.mutations.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.mutation.runtime.jmx.JmxMutationTestListener"/>
+		<path id="run.mutations.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
-		-->	<!--${run.mutations.verbose}-->
-		<!--
+			<!--${run.mutations.verbose}-->
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value="  ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} " />
+			<param name="javalanche.arg.line" value="  ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.listener}" />
 			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
-		-->
-		<antcall target="runMutationsInternal">
+
+		<!--antcall target="runMutationsInternal">
 			<param name="javalanche.mutaiton.runMode" value="mutation" />
-		</antcall>
+		</antcall-->
 	</target>
 	
 	
@@ -148,6 +146,7 @@
 		<property name="run.mutations.checker.file" value="-Dinvariant.checker.file=${invariant.checker.file}"/>
 		<property name="run.mutations.verbose.summary" value="-Dverbose.invariant.summary=false"/>
 		<property name="run.mutations.javalanche.invariant.mode" value="-Dinvariant.mode=INVARIANT"/>
+		<property name="run.mutations.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.mutation.runtime.jmx.JmxMutationTestListener"/>
 
 		<path id="check.invariant.javalanche.classpath.add">
 		</path>
@@ -158,7 +157,7 @@
 		</path>
 		<!--${run.mutations.verbose}-->
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value=" ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode}" />
+			<param name="javalanche.arg.line" value=" ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode} ${run.mutations.listener} " />
 			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>
@@ -255,4 +254,14 @@ Additional Stuff
 		</java>
 	</target>
 
+	
+	<target name="startJmxClient" description="* start a jmx client that displays monitoring data for all mutation testsing processes">
+		<java classname="de.unisb.cs.st.javalanche.mutation.runtime.jmx.MutationMxClient" maxmemory="2048m" fork="true">
+			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+	
 	</project>

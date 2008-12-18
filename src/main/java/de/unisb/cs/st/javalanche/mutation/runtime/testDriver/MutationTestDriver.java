@@ -253,6 +253,7 @@ public abstract class MutationTestDriver {
 		mutationSwitcher = new MutationSwitcher();
 		int totalMutations = 0, totalTests = 0;
 		List<String> allTests = getAllTests();
+		testsStart();
 		while (mutationSwitcher.hasNext()) {
 			currentMutation = mutationSwitcher.next();
 			totalMutations++;
@@ -286,6 +287,7 @@ public abstract class MutationTestDriver {
 				ResultReporter.persist();
 			}
 		}
+		testsEnd();
 		ResultReporter.persist();
 		logger.info("Test Runs finished. Run " + totalTests + " tests for "
 				+ totalMutations + " mutations ");

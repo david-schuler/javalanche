@@ -76,7 +76,7 @@ public class MutationForRun {
 
 	private static List<Mutation> getMutationsForRun() {
 		List<Mutation> mutationsToReturn = new ArrayList<Mutation>();
-		if (System.getProperty(MutationProperties.MUTATION_FILE_NAME) != null) {
+		if (MutationProperties.MUTATION_FILE_NAME != null) {
 			logger.debug("Value of mutation file: "
 					+ MutationProperties.MUTATION_FILE_NAME);
 			File file = new File(MutationProperties.MUTATION_FILE_NAME);

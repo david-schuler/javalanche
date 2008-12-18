@@ -88,7 +88,7 @@ public class Mutation implements Serializable{
 	}
 
 	public String toShortString() {
-		return String.format("%d %s %s - %d (%d)- %s \n%s ", id, className,
+		return String.format("%d %s %s - %d (%d)- %s  [%s ]", id, className,
 				isClassInit() ? "in static part" : "not static", lineNumber,
 				mutationForLine, mutationType.toString(),
 				mutationResult == null ? "No Result" : mutationResult

@@ -1,5 +1,6 @@
 package de.unisb.cs.st.javalanche.mutation.runtime.jmx;
 
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
@@ -8,6 +9,7 @@ public class JmxMutationTestListener implements MutationTestListener {
 	private MutationMX bean;
 
 	public void end() {
+//		System.out.println("JmxMutationTestListener.end()");
 		MXBeanRegisterer.unregister(bean);
 	}
 
@@ -15,6 +17,7 @@ public class JmxMutationTestListener implements MutationTestListener {
 	}
 
 	public void mutationStart(Mutation mutation) {
+//		System.out.println("JmxMutationTestListener.mutationStart()");
 		bean.addMutation(mutation);
 	}
 
@@ -25,7 +28,7 @@ public class JmxMutationTestListener implements MutationTestListener {
 	}
 
 	private static int getRunNumber() {
-		String run = "mutation-task-org_mozilla-27.txt";
+		String run = MutationProperties.MUTATION_FILE_NAME;
 		int start = run.lastIndexOf('-') + 1;
 		int end = run.lastIndexOf(".txt");
 		String numberString = run.substring(start, end);
@@ -37,10 +40,11 @@ public class JmxMutationTestListener implements MutationTestListener {
 	}
 
 	public void testStart(String testName) {
+//		System.out.println("JmxMutationTestListener.testStart()" + bean);
 		bean.setTest(testName);
 	}
 
 	public static void main(String[] args) {
-		System.out.println(getRunNumber());
+		new JmxMutationTestListener().start();
 	}
 }

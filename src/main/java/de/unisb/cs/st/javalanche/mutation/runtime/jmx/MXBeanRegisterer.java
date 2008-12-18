@@ -3,6 +3,7 @@ package de.unisb.cs.st.javalanche.mutation.runtime.jmx;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.management.InstanceAlreadyExistsException;
@@ -14,6 +15,7 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
+import javax.management.remote.rmi.RMIConnectorServer;
 
 public class MXBeanRegisterer {
 
@@ -31,8 +33,8 @@ public class MXBeanRegisterer {
 			JMXServiceURL url;
 			Map<String, Object> env = null;
 
-			// env = new HashMap<String, Object>();
-			// env.put(RMIConnectorServer.JNDI_REBIND_ATTRIBUTE, "true");
+			env = new HashMap<String, Object>();
+			env.put(RMIConnectorServer.JNDI_REBIND_ATTRIBUTE, "true");
 
 			// rmiregistry 9994 &
 			String address = ADDRESS + id;
@@ -41,7 +43,6 @@ public class MXBeanRegisterer {
 					.newJMXConnectorServer(url, env, mbs);
 			cs.start();
 			System.out.println("MBean registered under adress: " + address);
-			Thread.sleep(Long.MAX_VALUE);
 		} catch (MalformedObjectNameException e) {
 			e.printStackTrace();
 		} catch (NullPointerException e) {
@@ -56,8 +57,6 @@ public class MXBeanRegisterer {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 		return mbean;
 	}
@@ -66,7 +65,7 @@ public class MXBeanRegisterer {
 		registerMutationMXBean(args.length);
 	}
 
-	public static void unregister(MutationMX bean) {
+	public static void unregister(MutationMXMBean bean) {
 		// TODO Auto-generated method stub
 
 	}
