@@ -4,8 +4,10 @@
 	<property name="mutation.base.dir" value="${javalanche.projects.location}/mutationTest/" />
 	<property name="javalanche.mutation.javaagent" value="${mutation.base.dir}/target/javaagent.jar" />
 	<property name="mutation.classes.dir" value="${mutation.base.dir}/target/classes" />
-	<property name="mutation.jars.dir" value="${mutation.base.dir}/target/javalanche-0.1-dist.dir/lib/" />
+	<property name="mutation.jars.dir" value="${mutation.base.dir}/target/javalanche-mutation-0.1-dist.dir/lib/" />
 	<property name="javalanche.mutation.output.dir" value="${basedir}/mutation-files" />
+	
+	<property name="javalanche.maxmemory" value="2048m" />
 	
 	<path id="mutation.classpath">
 		<pathelement location="${mutation.classes.dir}"/>
@@ -80,7 +82,7 @@
 	<target name="createTasks" description="* create task files that are used to execute the mutations">
 		<mkdir dir="${javalanche.mutation.output.dir}"/>
 		
-		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="1024m" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
 			<sysproperty key="mutation.number.of.tasks" value="100" />
 			<sysproperty key="mutation.mutations.per.task" value="400" />
@@ -95,7 +97,7 @@
     <target name="createTasksFew">
 		<mkdir dir="${javalanche.mutation.output.dir}"/>
 		
-		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="1024m" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
 			<sysproperty key="mutation.number.of.tasks" value="10" />
 			<sysproperty key="mutation.mutations.per.task" value="10" />
@@ -200,9 +202,9 @@
 	</target>
 
 	<target name="analyzeResults" description="* analyze the mutation test results.">
-		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.AnalyzeMain" maxmemory="1024m" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.AnalyzeMain" maxmemory="${javalanche.maxmemory}" fork="true">
 			<jvmarg value="-Dmutation.package.prefix=${project.prefix}" />
-			<jvmarg value="-Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.mutation.analyze.MutationResultAnalyzer,de.unisb.cs.st.javalanche.mutation.analyze.CoverageAnalyzer,de.unisb.cs.st.javalanche.mutation.analyze.MutationPrioritizationAnalyzer" />
+<!--						<jvmarg value="-Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.mutation.analyze.MutationPrioritizationAnalyzer" />-->
 			<classpath>
 				<path refid="mutation.classpath" />
 			</classpath>
@@ -214,7 +216,7 @@ Additional Stuff
 -->
 	<target name="deleteResults" description="* delete mutation results for this project">
 		<echo> Deleting mutation result with prefix: ${project.prefix} </echo>
-		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.tools.ResultDeleter" maxmemory="2048m" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.tools.ResultDeleter" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
 			<classpath>
 				<path refid="mutation.classpath" />
@@ -225,7 +227,7 @@ Additional Stuff
 	
 	<target name="deleteSingleResult" description="* delete result for single specified mutation (property ${mutation.id}) ">
 		<echo> Deleting mutation with id: ${mutation.id} </echo>
-		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.tools.ResultDeleter" maxmemory="512m" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.tools.ResultDeleter" maxmemory="${javalanche.maxmemory}" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
 			</classpath>
@@ -236,7 +238,7 @@ Additional Stuff
 	
 	<target name="deleteMutations" description="* delete mutations for this project">
 		<echo> Deleting mutations with prefix: ${project.prefix} </echo>
-		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.tools.MutationDeleter" maxmemory="2048m" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.tools.MutationDeleter" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
 			<classpath>
 				<path refid="mutation.classpath" />
@@ -246,7 +248,7 @@ Additional Stuff
 	
 	<target name="displayCoverageData" description="* display coverage data for this project">
 		<echo> Coverage data for project: ${project.prefix} </echo>
-		<java classname="de.unisb.cs.st.javalanche.mutation.util.DisplayCoverageData" maxmemory="2048m" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.DisplayCoverageData" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
 			<classpath>
 				<path refid="mutation.classpath" />
@@ -256,7 +258,7 @@ Additional Stuff
 
 	
 	<target name="startJmxClient" description="* start a jmx client that displays monitoring data for all mutation testsing processes">
-		<java classname="de.unisb.cs.st.javalanche.mutation.runtime.jmx.MutationMxClient" maxmemory="2048m" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.runtime.jmx.MutationMxClient" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
 			<classpath>
 				<path refid="mutation.classpath" />

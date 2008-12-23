@@ -1,5 +1,6 @@
 package de.unisb.cs.st.javalanche.mutation.runtime.jmx;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.apache.commons.lang.time.StopWatch;
 import com.google.common.base.Join;
 
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
@@ -68,24 +70,31 @@ public class MutationMX implements MutationMXMBean {
 
 	public String getMutationSummary() {
 		MutationForRun instance = MutationForRun.getInstance();
-		List<Mutation> mutationList = instance.getMutations();
-		int withResult = 0;
-		long totalDuration = 0;
-		for (Mutation mutation : mutationList) {
-			if (mutation.getMutationResult() != null) {
-				withResult++;
-				MutationTestResult mutationResult = mutation
-						.getMutationResult();
-				Collection<TestMessage> allTestMessages = mutationResult
-						.getAllTestMessages();
-				long duration = 0;
-				for (TestMessage tm : allTestMessages) {
-					duration += tm.getDuration();
-				}
-				totalDuration += duration;
+		List<Mutation> mutationListInstance = instance.getMutations();
+		List<Mutation> mutationList = new ArrayList<Mutation>();
+		if (MutationProperties.MUTATION_FILE_NAME != null) {
+			File file = new File(MutationProperties.MUTATION_FILE_NAME);
+			if (file.exists()) {
+				mutationList = MutationForRun.getMutationsByFile(file);
 			}
 		}
-		return String.format("Out of %d mutations for this run %d got results (Run for %s)",
-				mutationList.size(), withResult, DurationFormatUtils.formatDurationHMS(totalDuration));
+//		int withResult = 0;
+//		long totalDuration = 0;
+//		for (Mutation mutation : mutationList) {
+//			if (mutation.getMutationResult() != null) {
+//				withResult++;
+//				MutationTestResult mutationResult = mutation
+//						.getMutationResult();
+//				Collection<TestMessage> allTestMessages = mutationResult
+//						.getAllTestMessages();
+//				long duration = 0;
+//				for (TestMessage tm : allTestMessages) {
+//					duration += tm.getDuration();
+//				}
+//				totalDuration += duration;
+//			}
+//		}
+		return String.format("Out of %d mutations of ///  this task %%d got results (Run for %%s). Mutations for this run %d.",
+				mutationList.size(), /*withResult, DurationFormatUtils.formatDurationHMS(totalDuration), */ mutationListInstance.size());
 	}
 }

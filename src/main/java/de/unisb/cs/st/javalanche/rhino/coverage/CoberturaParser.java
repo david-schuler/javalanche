@@ -81,7 +81,11 @@ public class CoberturaParser {
 	private static Logger logger = Logger.getLogger(CoberturaParser.class);
 
 	public static void main(String[] args) {
+		MutationPrioritizer.getMutationPrioritization();
+//		getCoveragePrioritization();
+	}
 
+	private static void getCoveragePrioritization() {
 		File[] files = getXmlFiles();
 		Map<CoverageData, String> map = parseFiles(files);
 		FailureMatrix fm = FailureMatrix.parseFile(new File(

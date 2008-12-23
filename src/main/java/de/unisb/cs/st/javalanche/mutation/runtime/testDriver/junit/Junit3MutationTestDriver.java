@@ -93,20 +93,17 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 
 			private SingleTestListener listener = new SingleTestListener();
 
-			private long duration;
 
 			private boolean failed = false;
 
-			private StopWatch stopWatch;
+			private StopWatch stopWatch = new StopWatch();
 
 			public void run() {
 				try {
-					stopWatch = new StopWatch();
 					stopWatch.start();
 					Test test = allTests.get(testName);
 					test.run(result);
 					stopWatch.stop();
-					duration = stopWatch.getTime();
 				} finally {
 					finished = true;
 				}
@@ -129,7 +126,7 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 					outcome = TestOutcome.ERROR;
 				}
 				SingleTestResult res = new SingleTestResult(testName, message,
-						outcome, duration);
+						outcome, stopWatch.getTime());
 				return res;
 			}
 

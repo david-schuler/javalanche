@@ -22,7 +22,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "className",
 		"lineNumber", "mutationForLine", "mutationType" }) })
-public class Mutation implements Serializable{
+public class Mutation implements Serializable {
 
 	/**
 	 *
@@ -113,6 +113,14 @@ public class Mutation implements Serializable{
 	 */
 	public Long getId() {
 		return id;
+	}
+
+	/**
+	 * @param id
+	 * @return the id
+	 */
+	public Long setId(Long id) {
+		return this.id = id;
 	}
 
 	/**
@@ -286,6 +294,12 @@ public class Mutation implements Serializable{
 		return mutationResult != null
 				&& mutationResult.getNumberOfErrors()
 						+ mutationResult.getNumberOfFailures() > 0;
+	}
+
+	public void loadAll() {
+		if (mutationResult != null) {
+			mutationResult.loadAll();
+		}
 	}
 
 }

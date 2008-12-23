@@ -7,23 +7,24 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListene
 public class JmxMutationTestListener implements MutationTestListener {
 
 	private MutationMX bean;
+	private MXBeanRegisterer beanReg = new MXBeanRegisterer();
 
 	public void end() {
-//		System.out.println("JmxMutationTestListener.end()");
-		MXBeanRegisterer.unregister(bean);
+		// System.out.println("JmxMutationTestListener.end()");
+		beanReg.unregister(bean);
 	}
 
 	public void mutationEnd(Mutation mutation) {
 	}
 
 	public void mutationStart(Mutation mutation) {
-//		System.out.println("JmxMutationTestListener.mutationStart()");
+		// System.out.println("JmxMutationTestListener.mutationStart()");
 		bean.addMutation(mutation);
 	}
 
 	public void start() {
 		int runNumber = getRunNumber();
-		bean = MXBeanRegisterer.registerMutationMXBean(runNumber);
+		bean = beanReg.registerMutationMXBean(runNumber);
 
 	}
 
@@ -40,7 +41,7 @@ public class JmxMutationTestListener implements MutationTestListener {
 	}
 
 	public void testStart(String testName) {
-//		System.out.println("JmxMutationTestListener.testStart()" + bean);
+		// System.out.println("JmxMutationTestListener.testStart()" + bean);
 		bean.setTest(testName);
 	}
 

@@ -1,5 +1,6 @@
 package de.unisb.cs.st.javalanche.mutation.results.persistence;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.time.DurationFormatUtils;
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -151,15 +154,14 @@ public class QueryManager {
 		Session session = HibernateUtil.openSession();
 		Transaction tx = session.beginTransaction();
 		int saved = 1;
-		for (Mutation mutation: results) {
+		for (Mutation mutation : results) {
 			Mutation mutationFromDB = (Mutation) session.get(Mutation.class,
 					mutation.getId());
 			if (mutationFromDB.getMutationResult() != null) {
 				logger
 						.warn("Mutation already has a test result - not storing the given result");
 				logger.warn("Mutation:" + mutationFromDB);
-				logger.warn("Result (that is not stored): "
-						+ mutation);
+				logger.warn("Result (that is not stored): " + mutation);
 				session.setReadOnly(mutationFromDB, true);
 				session.close();
 				break;
@@ -264,60 +266,6 @@ public class QueryManager {
 		session.close();
 	}
 
-	// public static String[] getTestCasesExternalData(Mutation mutation) {
-	// return getTestCasesExternalData(mutation.getClassName(), mutation
-	// .getLineNumber());
-	// }
-
-	// /**
-	// * Gets all test cases from the database that cover the given line of the
-	// * class.
-	// *
-	// * @param className
-	// * The name of the class to get the test cases for.
-	// * @param lineNumber
-	// * The linenumber to get the test cases for.
-	// * @return An array that contains the names of the testcases that cover
-	// this
-	// * line.
-	// */
-	// public static String[] getTestCasesExternalData(String className,
-	// int lineNumber) {
-	// Session session = HibernateUtil.getSessionFactory().openSession();
-	// Transaction tx = session.beginTransaction();
-	// Query query = session
-	// .createQuery("from TestCoverageClassResult as clazz join
-	// clazz.lineResults as lineres where clazz.className=:clname and
-	// lineres.lineNumber=:lnumber");
-	// query.setString("clname", className);
-	// query.setInteger("lnumber", lineNumber);
-	// query.setFetchSize(10);
-	// List l = query.list();
-	// assert l.size() <= 1;
-	// List<String> retList = null;
-	// if (l.size() >= 1) {
-	// Object[] array = (Object[]) l.get(0);
-	// if (array.length >= 2) {
-	// TestCoverageLineResult lineResult = (TestCoverageLineResult) array[1];
-	// List<TestCoverageTestCaseName> testCaseNames = lineResult
-	// .getTestCases();
-	// retList = new ArrayList<String>();
-	// for (TestCoverageTestCaseName name : testCaseNames) {
-	// retList.add(name.getTestCaseName());
-	// }
-	// }
-	// }
-	// tx.commit();
-	// session.close();
-	// if (retList == null) {
-	// logger.info("no testcases found for line " + lineNumber
-	// + " of class " + className);
-	// return null;
-	// }
-	// logger.info("Found " + retList.size() + " testcases for line "
-	// + lineNumber + " of class " + className);
-	// return retList.toArray(new String[0]);
-	// }
 
 	/**
 	 * Checks if there are mutations for given class in the database.
@@ -348,17 +296,29 @@ public class QueryManager {
 		tx.commit();
 		session.close();
 		return l;
+	}
 
+	public static long getResultFromSQLCountQuery(String query) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		Query q = session.createSQLQuery(query);
+		List results = q.list();
+		long l = getResultFromCountQuery(results);
+		tx.commit();
+		session.close();
+		return l;
 	}
 
 	public static long getResultFromCountQuery(List results) {
-		Long l = null;
+		long l = 0;
 		if (results.size() > 0) {
 			Object firstElement = results.get(0);
 			if (firstElement instanceof Long) {
 				l = (Long) firstElement;
 			} else if (firstElement instanceof BigInteger) {
 				l = ((BigInteger) firstElement).longValue();
+			} else if (firstElement instanceof BigDecimal) {
+				l = ((BigDecimal) firstElement).longValue();
 			} else {
 				throw new RuntimeException("Expected a long result. Got:  "
 						+ firstElement.getClass());
@@ -366,7 +326,7 @@ public class QueryManager {
 		} else {
 			throw new RuntimeException("Got an empty list.");
 		}
-		return l.longValue();
+		return l;
 	}
 
 	/**
@@ -423,23 +383,22 @@ public class QueryManager {
 		// join fetch m.mutationResult.failures inner join fetch
 		// m.mutationResult.errors inner join fetch m.mutationResult.passing
 		// WHERE m.id IN (:ids)");
-
 		Query query = session
 				.createQuery("FROM Mutation m  WHERE m.id IN (:ids)");
 		query.setParameterList("ids", ids);
-
-		List results = query.list();
-
-		List<Mutation> mutationList = new ArrayList<Mutation>();
-
-		for (Object m : results) {
-			mutationList.add((Mutation) m);
+		List<Mutation> results = query.list();
+		int flushCount = 0;
+		for (Mutation m : results) {
+			m.loadAll();
+			flushCount++;
+//			if (flushCount % 10 == 0) {
+//				session.flush();
+//				session.clear();
+//			}
 		}
-
 		tx.commit();
 		session.close();
-
-		return mutationList;
+		return results;
 	}
 
 	/**
@@ -522,7 +481,7 @@ public class QueryManager {
 						+ mutation);
 			} else {
 				counter++;
-				if(counter%1000==0){
+				if (counter % 1000 == 0) {
 					session.flush();
 					session.clear();
 				}
@@ -668,7 +627,7 @@ public class QueryManager {
 		if (l > 0 && setSize > 0) {
 			List<Set<Long>> sets;
 			if (setSize > 500) {
-				logger.info("Splitting key set because it is to large");
+				logger.info("Splitting key set because it is to large" + setSize);
 				// http://opensource.atlassian.com/projects/hibernate/browse/HHH-1985
 				sets = splitSet(coverageData.keySet(), 500);
 			} else {
@@ -676,33 +635,27 @@ public class QueryManager {
 				sets.add(coverageData.keySet());
 			}
 			for (Set<Long> set : sets) {
-				long start = System.currentTimeMillis();
+				StopWatch stopWatch = new StopWatch();
 				logger.debug("Start query");
 				Query mutationCoverageQuery = session
 						.createQuery("from MutationCoverage WHERE mutationID IN (:mids)");
-				long time = System.currentTimeMillis() - start;
-				logger
-						.debug("Query took: "
-								+ Formater.formatMilliseconds(time));
 				mutationCoverageQuery.setParameterList("mids", set);
-				logger.debug("getting coverage results from db"
-						+ mutationCoverageQuery.getQueryString());
 				List<MutationCoverage> dbResults = mutationCoverageQuery.list();
+				logger.debug("Query took: " + DurationFormatUtils.formatDurationHMS(stopWatch.getTime()));
 				for (MutationCoverage mutationCoverage : dbResults) {
 					dbCoverageMap.put(mutationCoverage.getMutationID(),
 							mutationCoverage);
 				}
 			}
 		}
-		long start = System.currentTimeMillis();
+		StopWatch stopWatch = new StopWatch();
 		logger.debug("Start flush");
-		logger.debug("Temporary flush. ");
 		session.flush();
 		session.clear();
-		long time = System.currentTimeMillis() - start;
-		logger.debug("Flush took: " + Formater.formatMilliseconds(time));
+		logger.debug("Flush took: " + DurationFormatUtils.formatDurationHMS(stopWatch.getTime()));
 
 		int saves = 0, flushs = 0;
+		System.out.print("Writting coverage data to the database (This may take a while).");
 		for (Map.Entry<Long, Set<String>> entry : coverageData.entrySet()) {
 			List<TestName> testNames = new ArrayList<TestName>();
 			Long mutationID = entry.getKey();
@@ -747,8 +700,10 @@ public class QueryManager {
 				logger.debug("Flush took: "
 						+ Formater.formatMilliseconds(timeFlush));
 				saves = 0;
+				System.out.print('.');
 			}
 		}
+		System.out.println(" Coverage data saved to db");
 		tx.commit();
 		session.close();
 		logger.debug("coverage data saved to db");
@@ -789,9 +744,9 @@ public class QueryManager {
 		}
 		tx.commit();
 		session.close();
-		if (mc == null) {
-			logger.warn("found no coverage data for mutation with id " + id);
-		}
+//		if (mc == null) {
+//			logger.warn("found no coverage data for mutation with id " + id);
+//		}
 
 		return mc;
 	}

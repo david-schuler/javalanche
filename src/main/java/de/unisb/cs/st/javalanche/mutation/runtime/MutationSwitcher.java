@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
@@ -33,7 +34,7 @@ public class MutationSwitcher {
 	 */
 	private Mutation actualMutation;
 
-	private long mutationStartTime;
+	private StopWatch stopWatch = new StopWatch();
 
 	private void initMutations() {
 		if (mutations == null) {
@@ -87,7 +88,8 @@ public class MutationSwitcher {
 					+ actualMutation.getMutationVariable() + " in line "
 					+ actualMutation.getLineNumber() + " - "
 					+ actualMutation.toString());
-			mutationStartTime = System.currentTimeMillis();
+			stopWatch.reset();
+			stopWatch.start();
 			System.setProperty(actualMutation.getMutationVariable(), "1");
 			System.setProperty(MutationProperties.ACTUAL_MUTATION_KEY,
 					actualMutation.getId() + "");
@@ -102,10 +104,10 @@ public class MutationSwitcher {
 		if (actualMutation != null) {
 			System.clearProperty(actualMutation.getMutationVariable());
 			System.clearProperty(MutationProperties.ACTUAL_MUTATION_KEY);
-			mutationStartTime = System.currentTimeMillis() - mutationStartTime;
+			stopWatch.stop();
 			logger.info("Disabling mutation: "
 					+ actualMutation.getMutationVariable() + " Time needed "
-					+ mutationStartTime);
+					+ stopWatch.getTime());
 			actualMutation = null;
 		}
 	}

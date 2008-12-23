@@ -17,7 +17,7 @@
 		</fileset>
 	</path>
 
-
+	<property name="proj.shortname" value="jvl-mu"/>
 
 	<!-- Hibernate Tools import -->
 	<taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" classpathref="project.classpath" />
@@ -67,7 +67,7 @@
 			<format property="dump.tstamp" pattern="dd-MM-yyyy_hh-mm-aa" />
 		</tstamp>
 		<property name="dump.file" location="${basedir}/mutation-test_${dump.tstamp}.dump" />
-		<exec dir="." executable="/usr/bin/mysqldump">
+		<exec dir="." executable="/scratch/schuler/mysql/bin/mysqldump">
 			<arg line="--port=3308 --user=mutation --password=mu -h 127.0.0.1 -r ${dump.file} mutation_test " />
 		</exec>
 		<echo>

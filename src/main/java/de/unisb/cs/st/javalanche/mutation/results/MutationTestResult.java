@@ -366,4 +366,18 @@ public class MutationTestResult implements Serializable {
 		allMessages.addAll(errors);
 		return allMessages;
 	}
+
+	public void loadAll() {
+		if (errors != null)
+			errors.size();
+		if (passing != null)
+			passing.size();
+		if (failures != null)
+			failures.size();
+		if (invariants != null)
+			invariants.size();
+		if (violatedInvariants != null) {
+			int length = violatedInvariants.length;
+		}
+	}
 }

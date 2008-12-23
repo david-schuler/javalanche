@@ -29,12 +29,13 @@ public class AnalyzeMain {
 		if (analyzers != null && analyzers.length > 0) {
 			analyzeMutations(analyzers);
 		} else {
-			analyzeMutations(new MutationAnalyzer[] { new InvariantAnalyzer(),
-					new MutationResultAnalyzer(), new KilledAnalyzer()
+			analyzeMutations(new MutationAnalyzer[] {
+//					new InvariantAnalyzer(),
+//					new MutationResultAnalyzer(), new KilledAnalyzer(),
 			/* , new AssertAnalyzer() */
 			/* , new AspectJAnalyzer() */
 			/* , new IdAnalyzer() */
-			/* , new CoverageAnalyzer() */
+			 new CoverageAnalyzer()
 			});
 
 		}

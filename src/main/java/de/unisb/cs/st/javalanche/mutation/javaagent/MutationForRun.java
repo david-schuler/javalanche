@@ -141,7 +141,7 @@ public class MutationForRun {
 		}
 	}
 
-	private static List<Mutation> getMutationsByFile(File file) {
+	public static List<Mutation> getMutationsByFile(File file) {
 		List<Long> idList = Io.getIDsFromFile(file);
 		List<Mutation> returnList = null;
 		if (idList.size() > 0) {

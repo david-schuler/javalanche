@@ -33,10 +33,10 @@ public class DeleteTest {
 				false);
 		MutationJunitTestListener mutationTestListener = new MutationJunitTestListener();
 		TestMessage passingTestMessage = new TestMessage(PASS_TEST,
-				"test passed");
+				"test passed", 0);
 		TestMessage failingTestMessage = new TestMessage(PASS_TEST,
-				"test failed");
-		TestMessage errorTestMessage = new TestMessage(PASS_TEST, "test error");
+				"test failed",0);
+		TestMessage errorTestMessage = new TestMessage(PASS_TEST, "test error",0);
 		List<TestMessage> passing = Arrays
 				.asList(new TestMessage[] { passingTestMessage });
 		List<TestMessage> failing = Arrays

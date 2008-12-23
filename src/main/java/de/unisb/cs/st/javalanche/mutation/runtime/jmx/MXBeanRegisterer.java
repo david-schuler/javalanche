@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -16,13 +17,21 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.management.remote.rmi.RMIConnectorServer;
+import javax.naming.ServiceUnavailableException;
+
+import org.apache.log4j.Logger;
 
 public class MXBeanRegisterer {
+	private static Logger logger = Logger.getLogger(MXBeanRegisterer.class);
 
-	public static final String ADDRESS = "service:jmx:rmi:///jndi/rmi://localhost:9994/server";
+	private static final int PORT = 9994;
+	public static final String ADDRESS = "service:jmx:rmi:///jndi/rmi://localhost:"
+			+ PORT + "/server";
 	public static final String OBJECT_NAME = "mutationTester:type=MutationTester";
 
-	public static MutationMX registerMutationMXBean(int id) {
+	private JMXConnectorServer connectorServer;
+
+	public  MutationMX registerMutationMXBean(int id) {
 		MutationMX mbean = null;
 		try {
 			MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
@@ -39,9 +48,8 @@ public class MXBeanRegisterer {
 			// rmiregistry 9994 &
 			String address = ADDRESS + id;
 			url = new JMXServiceURL(address);
-			JMXConnectorServer cs = JMXConnectorServerFactory
-					.newJMXConnectorServer(url, env, mbs);
-			cs.start();
+			connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, env, mbs);
+			connectorServer.start();
 			System.out.println("MBean registered under adress: " + address);
 		} catch (MalformedObjectNameException e) {
 			e.printStackTrace();
@@ -56,17 +64,45 @@ public class MXBeanRegisterer {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			if (e.getCause() != null
+					&& e.getCause() instanceof ServiceUnavailableException) {
+				logger
+						.warn("Could not bin JMX bean for this process. Most likely the rmiregistry is not started. Consider to start the rmiregistry "
+								+ " $> rmiregistry " + PORT + " &");
+			} else {
+				e.printStackTrace();
+			}
+
 		}
 		return mbean;
 	}
 
 	public static void main(String[] args) {
-		registerMutationMXBean(args.length);
+		new MXBeanRegisterer().registerMutationMXBean(args.length);
 	}
 
-	public static void unregister(MutationMXMBean bean) {
-		// TODO Auto-generated method stub
+	public  void unregister(MutationMXMBean bean) {
+
+		try {
+			MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+			ObjectName name = new ObjectName(
+					"mutationTester:type=MutationTester");
+			mbs.unregisterMBean(name);
+			if (connectorServer != null) {
+				connectorServer.stop();
+
+			}
+		} catch (MalformedObjectNameException e) {
+			e.printStackTrace();
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		} catch (InstanceNotFoundException e) {
+			e.printStackTrace();
+		} catch (MBeanRegistrationException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 	}
 }

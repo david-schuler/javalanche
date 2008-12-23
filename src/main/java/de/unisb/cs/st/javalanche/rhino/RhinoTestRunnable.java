@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.mozilla.javascript.tools.shell.WrappedMain;
@@ -30,7 +31,7 @@ public final class RhinoTestRunnable implements MutationTestRunnable {
 	private String outString;
 	private boolean hasRun = false;
 
-	private long duration;
+	private StopWatch stopWatch = new StopWatch();
 
 	RhinoTestRunnable(File shellFile, File optionalShellFile, File script) {
 		this.shellFile = shellFile;
@@ -44,7 +45,7 @@ public final class RhinoTestRunnable implements MutationTestRunnable {
 		List<String> argList = getArgs();
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		final ByteArrayOutputStream err = new ByteArrayOutputStream();
-		StopWatch stopWatch = new StopWatch();
+
 		String[] arguments = argList.toArray(new String[0]);
 		try {
 			stopWatch.start();
@@ -60,7 +61,6 @@ public final class RhinoTestRunnable implements MutationTestRunnable {
 			exitCode = -1;
 		} finally {
 			stopWatch.stop();
-			duration = stopWatch.getTime();
 		}
 		byte[] outByteArray = out.toByteArray();
 		outString = new String(outByteArray);
@@ -69,8 +69,9 @@ public final class RhinoTestRunnable implements MutationTestRunnable {
 		synchronized (this) {
 			hasRun = true;
 		}
-		logger.info("Runnable finsihed  Took " + duration + " \nOUT:\n"
-				+ outString + " \nERR\n" + errString);
+		logger.info("Runnable finsihed  Took "
+				+ DurationFormatUtils.formatDurationHMS(stopWatch.getTime())
+				+ " \nOUT:\n" + outString + " \nERR\n" + errString);
 	}
 
 	private List<String> getArgs() {
@@ -118,8 +119,19 @@ public final class RhinoTestRunnable implements MutationTestRunnable {
 		String errString = getErr();
 		int exitCode = getExitCode();
 		long duration = getDuration();
-		return getSingleTestResult(script.getAbsolutePath(), outString,
-				errString, exitCode, duration);
+		return getSingleTestResult(getTestsName(script.getAbsolutePath()),
+				outString, errString, exitCode, duration);
+	}
+
+	private static String getTestsName(String absolutePath) {
+		String str = "mozilla/js/tests";
+		int start = absolutePath.indexOf(str);
+		return absolutePath.substring(start + str.length() + 1);
+	}
+
+	public static void main(String[] args) {
+		String testsName = getTestsName("/scratch/schuler/subjects/ibugs_rhino-0.1/versionsFailureMatrix/277935/post-fix/mozilla/js/tests/ecma_2/RegExp/properties-002.js");
+		System.out.println(testsName);
 	}
 
 	public static SingleTestResult getSingleTestResult(String scriptFilename,
@@ -151,7 +163,7 @@ public final class RhinoTestRunnable implements MutationTestRunnable {
 	}
 
 	private long getDuration() {
-		return duration;
+		return stopWatch.getTime();
 	}
 
 	public String getCommand() {

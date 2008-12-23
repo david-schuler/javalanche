@@ -53,10 +53,6 @@ public class TestMessage  implements Serializable{
 	 */
 	private long duration;
 
-	public TestMessage(String testCaseName, String message) {
-		this(testCaseName, message, 0);
-
-	}
 
 	public TestMessage(TestMessage testMessage) {
 		this.id = new Long(0);

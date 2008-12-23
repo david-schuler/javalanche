@@ -41,6 +41,8 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit3Mutatio
  */
 public abstract class MutationTestDriver {
 
+
+
 	protected static final String SINGLE_TEST_NAME_KEY = "single.test.name";
 
 	private static final String DRIVER_KEY = "mutation.test.driver";
@@ -80,6 +82,8 @@ public abstract class MutationTestDriver {
 	 */
 	protected static final int saveIntervall = MutationProperties.SAVE_INTERVAL;
 
+	public static final String RESTART_MESSAGE =  "Mutation test thread could not be stopped. Shutting down JVM.";
+
 	/**
 	 * The listeneres that are informed about mutation events.
 	 */
@@ -89,6 +93,8 @@ public abstract class MutationTestDriver {
 	 * True if all tests should be run once before the actual mutation testing.
 	 */
 	protected boolean doColdRun;
+
+	private Thread shutDownThread;
 
 	public static void main(String[] args) throws ClassNotFoundException,
 			InstantiationException, IllegalAccessException {
@@ -246,7 +252,7 @@ public abstract class MutationTestDriver {
 	 */
 	public void runMutations() {
 		logger.info("Running Mutations");
-		Thread shutDownThread = new Thread(new MutationDriverShutdownHook(this));
+		shutDownThread = new Thread(new MutationDriverShutdownHook(this));
 		addMutationTestListener(new MutationObserver());
 		addListenersFromProperty();
 		Runtime.getRuntime().addShutdownHook(shutDownThread);
@@ -346,7 +352,7 @@ public abstract class MutationTestDriver {
 			currentTestName = testName;
 			MutationTestRunnable runnable = getTestRunnable(testName);
 			testStart(testName);
-			runWithTimeout(runnable);
+			long duration = runWithTimeout(runnable);
 			testEnd(testName);
 			SingleTestResult result = runnable.getResult();
 			boolean touched = MutationObserver.getTouchingTestCases().contains(
@@ -410,7 +416,7 @@ public abstract class MutationTestDriver {
 			if (!terminated) {
 				service.shutdownNow();
 			}
-			Class.forName("org.apache.log4j.spi.ThrowableInformation");
+			// Class.forName("org.apache.log4j.spi.ThrowableInformation");
 			future.get(timeout, TimeUnit.SECONDS);
 			long time2 = stopWatch.getTime();
 			if (time2 - time1 > 1000) {
@@ -446,10 +452,18 @@ public abstract class MutationTestDriver {
 		}
 		stopWatch.stop();
 		if (!r.hasFinished()) {
-			String message = "Mutated Thread is still running";
 			r.setFailed(true);
-			logger.warn(message);
-			System.out.println(message);
+			if (shutDownThread != null) {
+				Runtime.getRuntime().removeShutdownHook(shutDownThread);
+			}
+			logger.warn(RESTART_MESSAGE);
+			setTestMessage(new TestMessage(currentTestName, RESTART_MESSAGE, stopWatch.getTime()));
+			String m = "Mutated Thread is still running";
+			logger.warn(m);
+			testEnd(currentTestName);
+			mutationEnd(currentMutation);
+			testsEnd();
+			System.out.println(m);
 			System.out.println("Exiting now");
 			System.exit(10);
 		}
@@ -474,7 +488,7 @@ public abstract class MutationTestDriver {
 		}
 		future.cancel(true);
 		try {
-			logger.info("Sleeping");
+			logger.info("Sleeping   ");
 			Thread.sleep(MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS * 1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -489,24 +503,27 @@ public abstract class MutationTestDriver {
 	public void unexpectedShutdown() {
 		if (!shutdownMethodCalled) {
 			shutdownMethodCalled = true;
-			MutationTestResult mutationResult = currentMutation
-					.getMutationResult();
-			if (mutationResult == null) {
-				logger.info("mutation result is null");
-				mutationResult = new MutationTestResult();
-				currentMutation.setMutationResult(mutationResult);
-			} else {
-				logger.info("Mutation result:  " + mutationResult);
-			}
-			String message = "Test caused the JVM to shutdown. Either to an unexpeted failure or the mutation caused an inifinite loop.";
+			String message = "Test caused the JVM to shutdown. This should not happen.";
 			logger.warn(message);
-			TestMessage tm = new TestMessage(currentTestName, message);
-			mutationResult.addFailure(tm);
-			ResultReporter.report(currentMutation);
-			ResultReporter.persist();
+			setTestMessage(new TestMessage(currentTestName, message, 0));
 		} else {
 			logger.warn("Method already called");
 		}
+	}
+
+	private void setTestMessage(TestMessage tm ) {
+		MutationTestResult mutationResult = currentMutation
+				.getMutationResult();
+		if (mutationResult == null) {
+			logger.info("mutation result is null");
+			mutationResult = new MutationTestResult();
+			currentMutation.setMutationResult(mutationResult);
+		} else {
+			logger.info("Mutation result:  " + mutationResult);
+		}
+		mutationResult.addFailure(tm);
+		ResultReporter.report(currentMutation);
+		ResultReporter.persist();
 	}
 
 	/**
