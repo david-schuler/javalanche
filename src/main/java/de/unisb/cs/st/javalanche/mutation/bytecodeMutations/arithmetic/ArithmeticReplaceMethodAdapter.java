@@ -66,10 +66,13 @@ public class ArithmeticReplaceMethodAdapter extends AbstractMutationAdapter {
 	}
 
 	private void mutate(int opcode) {
+		logger.info("1  " + getPossibilityForLine());
 		Mutation queryMutation = new Mutation(className, getLineNumber(),
 				getPossibilityForLine(), Mutation.MutationType.ARITHMETIC_REPLACE,isClassInit);
+		logger.info("2  " + getPossibilityForLine());
 		addPossibilityForLine();
-		logger.debug("Querying mutation " + queryMutation);
+		logger.info("3  " + getPossibilityForLine());
+		logger.info("Querying mutation " + queryMutation);
 		if (MutationManager.shouldApplyMutation(queryMutation)) {
 			Mutation mutationFromDB = QueryManager.getMutation(queryMutation);
 			MutationCode unMutated = new SingleInsnMutationCode(null, opcode);

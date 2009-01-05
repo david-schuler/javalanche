@@ -51,7 +51,7 @@ public class MutationsClassAdapter extends ClassAdapter {
 		mv = new ArithmeticReplaceMethodAdapter(mv, className, name,
 				arithmeticPossibilities);
 		mv = new RemoveMethodCallsMethodAdapter(mv, className, name,
-				arithmeticPossibilities);
+				removeCallsPossibilities);
 		return mv;
 	}
 }

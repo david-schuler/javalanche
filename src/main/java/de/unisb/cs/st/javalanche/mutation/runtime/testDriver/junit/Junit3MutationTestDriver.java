@@ -98,11 +98,12 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 
 			private StopWatch stopWatch = new StopWatch();
 
+
 			public void run() {
 				try {
 					stopWatch.start();
-					Test test = allTests.get(testName);
-					test.run(result);
+					Test actualtest = allTests.get(testName);
+					actualtest.run(result);
 					stopWatch.stop();
 				} finally {
 					finished = true;
@@ -114,6 +115,7 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 			}
 
 			public SingleTestResult getResult() {
+
 				String message = listener.getMessage();
 				if (message == null) {
 					message = "";
@@ -131,8 +133,10 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 			}
 
 			public void setFailed(boolean failed) {
-				listener.addError(allTests.get(testName), new TimeoutException(
-						"Test took to long "  + stopWatch.getTime()  +  " ms"));
+				TimeoutException timeoutException = new TimeoutException(
+						"Test took to long "  + stopWatch.getTime()  +  " ms");
+				result.addError(allTests.get(testName),  timeoutException);
+				listener.addError(allTests.get(testName), timeoutException);
 			}
 
 		};
