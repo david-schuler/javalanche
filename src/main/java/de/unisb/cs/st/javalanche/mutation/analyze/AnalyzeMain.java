@@ -35,7 +35,7 @@ public class AnalyzeMain {
 			/* , new AssertAnalyzer() */
 			/* , new AspectJAnalyzer() */
 			/* , new IdAnalyzer() */
-			/*new CoverageAnalyzer()*/
+//			new CoverageAnalyzer()
 				new DebugAnalyzer()
 			});
 

@@ -11,12 +11,13 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
  * @author David Schuler
  *
  */
-public class ShowTestsForMutation {
+public class ShowMutation {
 
 	public static void main(String[] args) {
 		if (args.length > 0) {
 			Long l = Long.parseLong(args[0]);
 			Mutation mutation = QueryManager.getMutationByID(l);
+			System.out.println(mutation);
 			Set<String> testsCollectedData = QueryManager
 					.getTestsCollectedData(mutation);
 			for (String string : testsCollectedData) {

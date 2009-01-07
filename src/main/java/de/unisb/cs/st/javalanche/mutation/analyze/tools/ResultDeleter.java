@@ -91,7 +91,7 @@ public class ResultDeleter {
 	 *            the id of the mutation to delete
 	 */
 	private static void deleteMutationsResultsForId(long id) {
-		String query = "from mutation where id=" + id;
+		String query = "FROM Mutation WHERE id=" + id;
 		deleteMutationResultsFromQuery(query);
 	}
 

@@ -51,8 +51,8 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			if (!usedClasses.contains(randomMutation.getClassName())) {
 				usedClasses.add(randomMutation.getClassName());
 				i++;
-//				sb.append(i + 1 + " " + randomMutation.toShortString());
-				sb.append(i + 1 + " " + randomMutation.toString());
+				sb.append(i + 1 + " " + randomMutation.toShortString());
+//				sb.append(i + 1 + " " + randomMutation.toString());
 
 				sb.append("\t Tests: "
 						+ QueryManager.getTestsCollectedData(randomMutation)

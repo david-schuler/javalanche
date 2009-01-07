@@ -225,8 +225,8 @@ Additional Stuff
 	</target>
 	
 	
-	<target name="deleteSingleResult" description="* delete result for single specified mutation (property ${mutation.id}) ">
-		<echo> Deleting mutation with id: ${mutation.id} </echo>
+	<target name="deleteSingleResult" description="* delete result for single specified mutation (property -Dmutation.id=) ">
+		<echo> Deleting result for mutation with id: ${mutation.id} </echo>
 		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.tools.ResultDeleter" maxmemory="${javalanche.maxmemory}" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
@@ -234,6 +234,18 @@ Additional Stuff
 			<arg value="${mutation.id}"/>
 		</java>
 	</target>
+	
+		
+	<target name="showMutation" description="* delete result for single specified mutation (property -Dmutation.id=) ">
+		<echo> Display mutation with id: ${mutation.id} </echo>
+		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.tools.ShowMutation" maxmemory="${javalanche.maxmemory}" fork="true">
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+			<arg value="${mutation.id}"/>
+		</java>
+	</target>
+	
 	
 	
 	<target name="deleteMutations" description="* delete mutations for this project">

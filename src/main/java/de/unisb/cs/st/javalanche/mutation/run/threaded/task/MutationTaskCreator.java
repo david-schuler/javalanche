@@ -3,6 +3,7 @@ package de.unisb.cs.st.javalanche.mutation.run.threaded.task;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -114,6 +115,7 @@ public class MutationTaskCreator {
 		String prefix = MutationProperties.PROJECT_PREFIX;
 		int numberOfIds = numberOfTasks * mutationsPerTask;
 		List<Long> mutationIds = getMutations(prefix, numberOfIds);
+		Collections.shuffle(mutationIds);
 		for (int i = 1; i <= numberOfTasks; i++) {
 			List<Long> idsForTask = new ArrayList<Long>();
 			if (mutationIds.size() >= mutationsPerTask) {
