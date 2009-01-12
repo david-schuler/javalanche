@@ -1,5 +1,10 @@
 package de.unisb.cs.st.javalanche.mutation.hibernate;
 
+import static org.junit.Assert.*;
+
+import java.util.List;
+
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Test;
@@ -28,6 +33,17 @@ public class LongTestNameTest {
 		session.save(t);
 		tx.commit();
 		session.close();
+
+		Session session2 = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx2 = session2.beginTransaction();
+		Query query = session2
+				.createQuery("from TestName WHERE name LIKE '0123456789%'");
+		List<TestName> list = query.list();
+		assertEquals(100 *10, list.get(0).getName().length());
+		tx2.commit();
+		session2.close();
+
 	}
+
 
 }

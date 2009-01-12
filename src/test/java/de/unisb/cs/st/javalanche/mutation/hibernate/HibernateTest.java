@@ -1,6 +1,7 @@
 package de.unisb.cs.st.javalanche.mutation.hibernate;
 
-import java.util.HashSet;
+import static org.junit.Assert.*;
+
 import java.util.List;
 
 import junit.framework.TestResult;
@@ -12,26 +13,27 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
-import de.unisb.cs.st.javalanche.mutation.runtime.MutationJunitTestListener;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 @SuppressWarnings("unchecked")
 // Because of lists returned by hibernate
 public class HibernateTest {
 
-	private static Mutation testMutaion = new Mutation("testClass", 21, 0,
+	private static Mutation testMutation = new Mutation("testClass", 21, 0,
 			MutationType.RIC_PLUS_1, false);
 
 	@BeforeClass
 	public static void hibernateSave() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		TestResult tr= new TestResult();
-		testMutaion.setMutationResult(new MutationTestResult(tr,new MutationJunitTestListener(), new HashSet<String>()));
-		session.save(testMutaion);
+		TestResult tr = new TestResult();
+		testMutation.setMutationResult(new MutationTestResult());
+		session.save(testMutation);
 		tx.commit();
 		session.close();
 	}
@@ -42,7 +44,7 @@ public class HibernateTest {
 		Transaction tx = session.beginTransaction();
 		Query query = session
 				.createQuery("from Mutation where className=:name");
-		query.setString("name", testMutaion.getClassName());
+		query.setString("name", testMutation.getClassName());
 		List l = query.list();
 		for (Object object : l) {
 			session.delete(object);
@@ -52,11 +54,27 @@ public class HibernateTest {
 	}
 
 	@Test
+	public void testReatach() {
+		assertEquals(0, testMutation.getMutationForLine());
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		session.update(testMutation);
+		testMutation.setMutationForLine(10);
+		tx.commit();
+		session.close();
+		testMutation.setMutationForLine(0);
+		Mutation mutation = QueryManager.getMutation(testMutation);
+		assertNotSame(testMutation, mutation);
+		assertEquals(10, mutation.getMutationForLine());
+
+	}
+
+	@Test
 	public void hibernateQueryByLine() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session.createQuery("from Mutation where lineNumber="
-				+ testMutaion.getLineNumber());
+				+ testMutation.getLineNumber());
 		query.setMaxResults(20);
 		List results = query.list();
 		int count = 0;
@@ -66,7 +84,7 @@ public class HibernateTest {
 
 		}
 		Assert.assertTrue("Expected at least one mutation for line"
-				+ testMutaion.getLineNumber(), count > 0);
+				+ testMutation.getLineNumber(), count > 0);
 		tx.commit();
 		session.close();
 	}
@@ -76,7 +94,7 @@ public class HibernateTest {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session.createQuery("from Mutation where mutationtype="
-				+ testMutaion.getMutationType().ordinal());
+				+ testMutation.getMutationType().ordinal());
 		query.setMaxResults(100);
 		List results = query.list();
 		for (Object o : results) {
@@ -86,8 +104,10 @@ public class HibernateTest {
 						+ o.getClass() + " Expected: " + Mutation.class);
 			}
 		}
-		Assert.assertTrue("expected at least one result for mutationtype "
-				+ testMutaion.getMutationType().toString(), results.size() > 0);
+		Assert
+				.assertTrue("expected at least one result for mutationtype "
+						+ testMutation.getMutationType().toString(), results
+						.size() > 0);
 		tx.commit();
 		session.close();
 	}
