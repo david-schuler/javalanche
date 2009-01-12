@@ -30,15 +30,13 @@ public class AnalyzeMain {
 			analyzeMutations(analyzers);
 		} else {
 			analyzeMutations(new MutationAnalyzer[] {
-//					new InvariantAnalyzer(),
-//					new MutationResultAnalyzer(), new KilledAnalyzer(),
+			// new InvariantAnalyzer(),
+			// new MutationResultAnalyzer(), new KilledAnalyzer(),
 			/* , new AssertAnalyzer() */
 			/* , new AspectJAnalyzer() */
 			/* , new IdAnalyzer() */
-//			new CoverageAnalyzer()
-				new DebugAnalyzer()
-			});
-
+			// new CoverageAnalyzer()
+			new DebugAnalyzer() });
 		}
 	}
 
@@ -105,12 +103,14 @@ public class AnalyzeMain {
 		@SuppressWarnings("unchecked")
 		List<Mutation> mutations = query.list();
 		StringBuilder sb = new StringBuilder();
-		sb.append("--------------------------------------------------------------------------------\n");
+		sb
+				.append("--------------------------------------------------------------------------------\n");
 		for (MutationAnalyzer mutationAnalyzer : mutationAnalyzers) {
 			String analyzeResult = mutationAnalyzer.analyze(mutations);
 			sb.append("Results from " + mutationAnalyzer.getClass() + "\n");
 			sb.append(analyzeResult);
-			sb.append("\n--------------------------------------------------------------------------------\n");
+			sb
+					.append("\n--------------------------------------------------------------------------------\n");
 		}
 		long l = getNumberOfMutationsWithoutResult(session, prefix);
 		System.out.println("Analyzed Results for mutations with prefix: "

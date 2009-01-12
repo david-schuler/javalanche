@@ -81,7 +81,7 @@ public class MutationProperties {
 
 	public static final String MUTATION_FILE_KEY = "mutation.file";
 
-	public static final String MUTATION_FILE_NAME = getProperty(MUTATION_FILE_KEY);
+	public static String MUTATION_FILE_NAME = getProperty(MUTATION_FILE_KEY);
 
 	public static final String MUTATION_TEST_DEBUG_KEY = "mutation.test.debug";
 

@@ -92,7 +92,7 @@ public abstract class MutationTestDriver {
 	/**
 	 * True if all tests should be run once before the actual mutation testing.
 	 */
-	protected boolean doColdRun;
+	protected boolean doColdRun = true;
 
 	private Thread shutDownThread;
 
@@ -209,7 +209,7 @@ public abstract class MutationTestDriver {
 		logger.info("Start run of tests and collect coverage data");
 		for (String testName : allTests) {
 			counter++;
-			logger.info("Set testName " + testName);
+			logger.debug("Set testName " + testName);
 			CoverageDataRuntime.setTestName(testName);
 			logger.info("(" + counter + " / " + size + ") Running test:  "
 					+ testName);
@@ -259,6 +259,9 @@ public abstract class MutationTestDriver {
 		mutationSwitcher = new MutationSwitcher();
 		int totalMutations = 0, totalTests = 0;
 		List<String> allTests = getAllTests();
+		if (doColdRun) {
+			coldRun(allTests);
+		}
 		testsStart();
 		while (mutationSwitcher.hasNext()) {
 			currentMutation = mutationSwitcher.next();

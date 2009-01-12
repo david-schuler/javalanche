@@ -145,24 +145,9 @@ public class MutationTestResult implements Serializable {
 
 	@SuppressWarnings("unused")
 	public MutationTestResult() {
+		this.date = new Date();
 	}
 
-	public MutationTestResult(TestResult mutationTestResult,
-			MutationJunitTestListener mutationTestListener,
-			Set<String> touchingTestCases) {
-		this.runs = mutationTestResult.runCount();
-		this.failures = mutationTestListener.getFailureMessages();
-		this.errors = mutationTestListener.getErrorMessages();
-		this.passing = mutationTestListener.getPassingMessages();
-		this.date = new Date();
-		if (touchingTestCases != null && touchingTestCases.size() > 0) {
-			updateTouched(touchingTestCases, failures);
-			updateTouched(touchingTestCases, errors);
-			updateTouched(touchingTestCases, passing);
-			// updateTimes(mutationTestListener.getDurations());
-			touched = true;
-		}
-	}
 
 	public MutationTestResult(List<TestMessage> passing,
 			List<TestMessage> failures, List<TestMessage> errors,
@@ -174,14 +159,6 @@ public class MutationTestResult implements Serializable {
 		this.runs = passing.size() + failures.size() + errors.size();
 	}
 
-	private static void updateTouched(Set<String> touchingTestCases,
-			List<TestMessage> testMessages) {
-		for (TestMessage tm : testMessages) {
-			if (touchingTestCases.contains(tm.getTestCaseName())) {
-				tm.setHasTouched(true);
-			}
-		}
-	}
 
 	public String toShortString() {
 		StringBuilder sb = new StringBuilder(String.format(

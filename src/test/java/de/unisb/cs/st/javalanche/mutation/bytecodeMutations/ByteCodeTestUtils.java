@@ -11,6 +11,7 @@ import org.hibernate.Transaction;
 import org.junit.Assert;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverage;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
@@ -214,7 +215,7 @@ public class ByteCodeTestUtils {
 		}
 		File file = new File(DEFAULT_OUTPUT_FILE);
 		Io.writeFile(sb.toString(), file);
-		System.setProperty("mutation.file", file.getAbsolutePath());
+		MutationProperties.MUTATION_FILE_NAME=  file.getAbsolutePath();
 		MutationForRun.getInstance().reinit();
 	}
 
@@ -231,7 +232,7 @@ public class ByteCodeTestUtils {
 		generateTestDataInDB(System.getProperty("user.dir")
 				+ "/target/classes/" + classname.replace('.', '/') + ".class",
 				collector);
-		System.setProperty("mutation.run.mode", "mutation-no-invariant");
+		System.setProperty("mutation.run.mode", "mutation");
 		System.setProperty("invariant.mode", "off");
 		redefineMutations(classname);
 	}

@@ -47,8 +47,8 @@ public class ReplaceIntegerTest {
 	@Before
 	public void setup() {
 //		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
-		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
-				linenumbers);
+//		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
+//				linenumbers);
 	}
 
 	@After

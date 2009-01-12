@@ -3,7 +3,6 @@ package de.unisb.cs.st.javalanche.mutation.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
@@ -27,6 +26,7 @@ public class HibernateServerUtil {
 		}
 	};
 
+
 	public static Map<Server, SessionFactory> sessionFactories = new HashMap<Server, SessionFactory>();
 
 	static {
@@ -35,10 +35,10 @@ public class HibernateServerUtil {
 				AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration();
 				Configuration configuration = annotationConfiguration
 						.configure();
-				String property = configuration.getProperty(s.getConnection());
-				System.err.println(property);
 				configuration.setProperty(HIBERNATE_CONNECTION_URL, s
 						.getConnection());
+//				String property = configuration.getProperty(HIBERNATE_CONNECTION_URL);
+//				System.err.println(property);
 				SessionFactory sessionFactory = configuration
 						.buildSessionFactory();
 				sessionFactories.put(s, sessionFactory);
@@ -55,12 +55,12 @@ public class HibernateServerUtil {
 		return sessionFactories.get(s);
 	}
 
-	public static Session openSession(Server s) {
-		return getSessionFactory(s).openSession();
-	}
-
 	public static void shutdown(Server s) {
 		// Close caches and connection pools
 		getSessionFactory(s).close();
+	}
+
+	public static void main(String[] args) {
+		getSessionFactory(Server.HOBEL);
 	}
 }
