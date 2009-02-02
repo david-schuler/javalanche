@@ -131,7 +131,6 @@ public class MutationFileTransformer implements ClassFileTransformer {
 					try {
 						// transformedBytecode = classfileBuffer;
 						ClassReader cr = new ClassReader(classfileBuffer);
-						logger.info("Mutation Transformer");
 						ClassWriter cw = new ClassWriter(
 								ClassWriter.COMPUTE_MAXS);
 						ClassVisitor cv = cw;
@@ -147,10 +146,10 @@ public class MutationFileTransformer implements ClassFileTransformer {
 						logger.info("Exception thrown: " + e);
 						e.printStackTrace();
 					}
-					logger.info("Class transformed: " + classNameWithDots);
+					logger.debug("Class transformed: " + classNameWithDots);
 					String checkClass = checkClass(transformedBytecode);
 					if (checkClass != null && checkClass.length() > 0) {
-						logger.info("Check of class failed: " + checkClass);
+						logger.warn("Check of class failed: " + checkClass);
 					}
 					return transformedBytecode;
 				}

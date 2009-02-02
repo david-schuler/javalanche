@@ -868,12 +868,18 @@ public class QueryManager {
 	public static List<Mutation> getMutationsForClass(String className) {
 		Session session = openSession();
 		Transaction tx = session.beginTransaction();
+		List<Mutation> list = getMutationsForClass(className, session);
+		tx.commit();
+		session.close();
+		return list;
+	}
+
+	public static List<Mutation> getMutationsForClass(String className,
+			Session session) {
 		Query query = session
 				.createQuery("from Mutation as m where m.className=:name");
 		query.setParameter("name", className);
 		List<Mutation> list = query.list();
-		tx.commit();
-		session.close();
 		return list;
 	}
 

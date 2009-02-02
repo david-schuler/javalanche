@@ -11,6 +11,8 @@ import org.hibernate.Transaction;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.util.HibernateServerUtil;
+import de.unisb.cs.st.javalanche.mutation.util.HibernateServerUtil.Server;
 
 /**
  * Analyzes the mutation results for a project. Either a list (comma separated)
@@ -30,13 +32,15 @@ public class AnalyzeMain {
 			analyzeMutations(analyzers);
 		} else {
 			analyzeMutations(new MutationAnalyzer[] {
-			// new InvariantAnalyzer(),
+		 //new ManualAnalyzer(),
+		 new InvariantAnalyzer()
 			// new MutationResultAnalyzer(), new KilledAnalyzer(),
 			/* , new AssertAnalyzer() */
 			/* , new AspectJAnalyzer() */
 			/* , new IdAnalyzer() */
 			// new CoverageAnalyzer()
-			new DebugAnalyzer() });
+		//	new DebugAnalyzer()
+		 });
 		}
 	}
 
@@ -96,6 +100,7 @@ public class AnalyzeMain {
 	private static void analyzeMutations(MutationAnalyzer[] mutationAnalyzers,
 			String prefix) {
 		Session session = HibernateUtil.openSession();
+//		Session session = HibernateServerUtil.getSessionFactory(Server.KUBRICK).openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session
 				.createQuery("FROM Mutation WHERE className LIKE '" + prefix

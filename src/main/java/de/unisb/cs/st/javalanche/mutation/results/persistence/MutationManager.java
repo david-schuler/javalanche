@@ -23,17 +23,17 @@ public class MutationManager {
 
 	public static boolean shouldApplyMutation(Mutation mutation) {
 		if(mutation == null){
-			logger.log(Level.INFO, "Null Mutation");
+			logger.warn( "Null Mutation");
 			return false;
 		}
 		else if (MutationForRun.getInstance()
 				.containsMutation(mutation)) {
 			Mutation mutationFromDb = QueryManager.getMutationOrNull(mutation);
 			if (mutationFromDb == null) {
-				logger.log(Level.INFO, "Mutation not in db: " + mutation);
+				logger.warn( "Mutation not in db: " + mutation);
 				return false;
 			}
-			logger.log(Level.INFO, "Applying mutation: " + mutationFromDb);
+			logger.debug("Applying mutation: " + mutationFromDb);
 			MutationForRun.mutationApplied(mutationFromDb);
 			return true;
 		}

@@ -31,8 +31,6 @@ public class NegateJumpsMethodAdapter extends AbstractMutationAdapter {
 	@Override
 	public void visitJumpInsn(int opcode, Label label) {
 		if (mutationCode) {
-			logger.warn("Mutation Code in Jump instruction for line "
-					+ getLineNumber());
 			super.visitJumpInsn(opcode, label);
 			return;
 		}

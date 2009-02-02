@@ -53,7 +53,7 @@ public class MutationProperties {
 
 	public enum RunMode {
 		SCAN("scan"), MUTATION_TEST("mutation"), TEST_TESTSUIT_FIRST("test1"), TEST_TESTSUITE_SECOND(
-				"test2"), MUTATION_TEST_INVARIANT("mutation-invariant"), OFF(
+				"test2"), MUTATION_TEST_INVARIANT("mutation-invariant"),MUTATION_TEST_INVARIANT_PER_TEST("mutation-invariant-per-test"), OFF(
 				"off");
 
 		private String key;
@@ -185,7 +185,7 @@ public class MutationProperties {
 	public static final String TRACE_BYTECODE_KEY = "mutation.trace";
 
 	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
-			TRACE_BYTECODE_KEY, true);
+			TRACE_BYTECODE_KEY, false);
 
 	public static final String TEST_FILTER_FILE_NAME_KEY = "mutation.test.filter.map";
 	public static final String TEST_FILTER_FILE_NAME = getProperty(TEST_FILTER_FILE_NAME_KEY);

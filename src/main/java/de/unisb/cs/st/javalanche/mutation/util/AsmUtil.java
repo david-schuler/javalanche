@@ -57,8 +57,8 @@ public class AsmUtil {
 	private static String classNameToString(String className) {
 		logger.info("Name of resource: " + className);
 //		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-//		ClassLoader classLoader = AsmUtil.class.getClassLoader();
-		ClassLoader classLoader = getClassLoaderFromClasspath();
+		ClassLoader classLoader = AsmUtil.class.getClassLoader();
+//		ClassLoader classLoader = getClassLoaderFromClasspath();
 		URL resource = classLoader
 				.getResource(className);
 		logger.info("Location of class file: " + resource);
@@ -96,7 +96,8 @@ public class AsmUtil {
 		return classNameToString(className);
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ClassNotFoundException {
+System.out.println( Class.forName("org.jaxen.pattern.PatternParser"));
 		String className = System.getProperty("class.name");
 		System.out.println("Getting bytecode for class: " + className);
 		System.out.println(classToString(className));

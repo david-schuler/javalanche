@@ -20,7 +20,7 @@ public class ShowMutation {
 		if (args.length < 1) {
 			System.out.println("Usage: <mutationID> [<mutationID>]*");
 			System.out.println("Showing one mutation");
-			showMutation(47615);
+			showMutation(48930);
 		}
 		for (int i = 0; i < args.length; i++) {
 			long mutationID = Long.parseLong(args[i]);

@@ -21,8 +21,12 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 		int withResult = 0;
 		int violated = 0;
 		int violatedNotCaught = 0;
+		int killed = 0;
 		List<Mutation> violatedNotCaughtList = new ArrayList<Mutation>();
 		for (Mutation mutation : mutations) {
+			if(mutation.isKilled()){
+				killed++;
+			}
 			MutationTestResult mutationResult = mutation.getMutationResult();
 			if (mutationResult != null
 					&& mutationResult.getDifferentViolatedInvariants() > 0) {
@@ -41,6 +45,7 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 		StringBuilder sb = new StringBuilder();
 		// sb.append("Total Mutations: " + total);
 		// sb.append('\n');
+		sb.append("Killed mutations: " + killed + "\n");
 		sb.append(String.format(
 				"Mutations that violated invariants: %d (%s / %s)", violated,
 				AnalyzeUtil.formatPercent(violated, total), AnalyzeUtil

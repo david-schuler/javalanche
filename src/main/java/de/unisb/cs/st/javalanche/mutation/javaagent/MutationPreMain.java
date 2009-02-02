@@ -64,6 +64,17 @@ public class MutationPreMain {
 						new MutationFileTransformer());
 				return;
 
+			} else if (RUN_MODE == MUTATION_TEST_INVARIANT_PER_TEST) {
+				System.out.println("Run mutation tests with invariant checks per test");
+				// addClassFileTransformer(instrumentation, new
+				// InvariantTransformer());
+				addClassFileTransformer(instrumentation,
+						new InvariantTransformer());
+				addClassFileTransformer(instrumentation,
+						new MutationFileTransformer());
+				return;
+
+
 			} else if (RUN_MODE == SCAN) {
 				System.out.println("Scanning for mutations");
 				addClassFileTransformer(instrumentation, new MutationScanner());

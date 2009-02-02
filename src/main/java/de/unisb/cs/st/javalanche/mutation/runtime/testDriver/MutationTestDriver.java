@@ -29,6 +29,7 @@ import de.unisb.cs.st.javalanche.mutation.runtime.MutationObserver;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationSwitcher;
 import de.unisb.cs.st.javalanche.mutation.runtime.ResultReporter;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit3MutationTestDriver;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestListener;
 
 /**
  * Abstract class that drives the mutation test process. Driver for specific
@@ -125,7 +126,11 @@ public abstract class MutationTestDriver {
 	 */
 	public void run() {
 		if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST
-				|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT) {
+				|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT||
+				MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) {
+			if(MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST){
+				addMutationTestListener(new InvariantPerTestListener());
+			}
 			runMutations();
 		} else if (MutationProperties.RUN_MODE == RunMode.SCAN) {
 			scanTests();
@@ -288,6 +293,8 @@ public abstract class MutationTestDriver {
 			mutationEnd(currentMutation);
 			// Report the results
 			currentMutation.setMutationResult(mutationTestResult);
+
+			//TODO refactor to listener
 			ResultReporter.report(currentMutation);
 			if (totalMutations % saveIntervall == 0) {
 				logger.info("Reached save intervall. Saving " + saveIntervall
