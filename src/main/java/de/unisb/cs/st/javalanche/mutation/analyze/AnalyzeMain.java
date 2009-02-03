@@ -32,8 +32,8 @@ public class AnalyzeMain {
 		} else {
 			analyzeMutations(new MutationAnalyzer[] {
 		 //new ManualAnalyzer(),
+					 new MutationResultAnalyzer(), new KilledAnalyzer(),
 		 new InvariantAnalyzer()
-			// new MutationResultAnalyzer(), new KilledAnalyzer(),
 			/* , new AssertAnalyzer() */
 			/* , new AspectJAnalyzer() */
 			/* , new IdAnalyzer() */

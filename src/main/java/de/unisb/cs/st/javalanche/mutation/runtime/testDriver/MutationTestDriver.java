@@ -2,6 +2,7 @@ package de.unisb.cs.st.javalanche.mutation.runtime.testDriver;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -28,7 +29,6 @@ import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationObserver;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationSwitcher;
 import de.unisb.cs.st.javalanche.mutation.runtime.ResultReporter;
-import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit3MutationTestDriver;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestListener;
 
 /**
@@ -41,8 +41,6 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.Invariant
  *
  */
 public abstract class MutationTestDriver {
-
-
 
 	protected static final String SINGLE_TEST_NAME_KEY = "single.test.name";
 
@@ -77,18 +75,15 @@ public abstract class MutationTestDriver {
 	 */
 	private boolean shutdownMethodCalled;
 
-	/**
-	 * The sve intervall in which the mutation results are written to the
-	 * database.
-	 */
-	protected static final int saveIntervall = MutationProperties.SAVE_INTERVAL;
-
-	public static final String RESTART_MESSAGE =  "Mutation test thread could not be stopped. Shutting down JVM.";
+	public static final String RESTART_MESSAGE = "Mutation test thread could not be stopped. Shutting down JVM.";
 
 	/**
-	 * The listeneres that are informed about mutation events.
+	 * The listeneres that are informed about mutation events. The order in
+	 * which the listeners are called is not specified. However the
+	 * {@link ResultReporter} that stores the results to the database will
+	 * always be called at last.
 	 */
-	private List<MutationTestListener> listeners = new ArrayList<MutationTestListener>();
+	private LinkedList<MutationTestListener> listeners = new LinkedList<MutationTestListener>();
 
 	/**
 	 * True if all tests should be run once before the actual mutation testing.
@@ -124,13 +119,14 @@ public abstract class MutationTestDriver {
 	 * Runs the mutation testing. Depending on
 	 * {@link MutationProperties.RUN_MODE} the corresponding method is called.
 	 */
-	public void run() {
+	public final void run() {
 		if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST
-				|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT||
-				MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) {
-			if(MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST){
+				|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT
+				|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) {
+			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) {
 				addMutationTestListener(new InvariantPerTestListener());
 			}
+			listeners.addLast(new ResultReporter());
 			runMutations();
 		} else if (MutationProperties.RUN_MODE == RunMode.SCAN) {
 			scanTests();
@@ -138,8 +134,8 @@ public abstract class MutationTestDriver {
 			System.out.println("MutationTestDriver.run()"
 					+ MutationProperties.RUN_MODE);
 			runNormalTests();
-
 		}
+
 	}
 
 	/**
@@ -278,7 +274,7 @@ public abstract class MutationTestDriver {
 			if (testsForThisRun == null) {
 				logger.warn("No tests for " + currentMutation);
 				currentMutation.setMutationResult(MutationTestResult.NO_RESULT);
-				ResultReporter.report(currentMutation);
+				// report(currentMutation);
 				continue;
 			}
 			logger.info("Applying " + totalMutations + "th mutation with id "
@@ -290,21 +286,12 @@ public abstract class MutationTestDriver {
 			MutationTestResult mutationTestResult = runTests(testsForThisRun);
 			totalTests += mutationTestResult.getRuns();
 			mutationSwitcher.switchOff();
-			mutationEnd(currentMutation);
 			// Report the results
 			currentMutation.setMutationResult(mutationTestResult);
+			mutationEnd(currentMutation);
 
-			//TODO refactor to listener
-			ResultReporter.report(currentMutation);
-			if (totalMutations % saveIntervall == 0) {
-				logger.info("Reached save intervall. Saving " + saveIntervall
-						+ " mutations. Total mutations tested until now: "
-						+ totalMutations);
-				ResultReporter.persist();
-			}
 		}
 		testsEnd();
-		ResultReporter.persist();
 		logger.info("Test Runs finished. Run " + totalTests + " tests for "
 				+ totalMutations + " mutations ");
 		logger.info("" + MutationObserver.summary(true));
@@ -362,7 +349,7 @@ public abstract class MutationTestDriver {
 			currentTestName = testName;
 			MutationTestRunnable runnable = getTestRunnable(testName);
 			testStart(testName);
-		    runWithTimeout(runnable);
+			runWithTimeout(runnable);
 			testEnd(testName);
 			SingleTestResult result = runnable.getResult();
 			boolean touched = MutationObserver.getTouchingTestCases().contains(
@@ -467,7 +454,8 @@ public abstract class MutationTestDriver {
 				Runtime.getRuntime().removeShutdownHook(shutDownThread);
 			}
 			logger.warn(RESTART_MESSAGE);
-			setTestMessage(new TestMessage(currentTestName, RESTART_MESSAGE, stopWatch.getTime()));
+			setTestMessage(new TestMessage(currentTestName, RESTART_MESSAGE,
+					stopWatch.getTime()));
 			String m = "Mutated Thread is still running";
 			logger.warn(m);
 			testEnd(currentTestName);
@@ -513,17 +501,19 @@ public abstract class MutationTestDriver {
 	public void unexpectedShutdown() {
 		if (!shutdownMethodCalled) {
 			shutdownMethodCalled = true;
-			String message = "Test caused the JVM to shutdown. This should not happen.";
+			String message = "Test caused the JVM to shutdown.";
 			logger.warn(message);
 			setTestMessage(new TestMessage(currentTestName, message, 0));
+			testEnd(currentTestName);
+			mutationEnd(currentMutation);
+			testsEnd();
 		} else {
 			logger.warn("Method already called");
 		}
 	}
 
-	private void setTestMessage(TestMessage tm ) {
-		MutationTestResult mutationResult = currentMutation
-				.getMutationResult();
+	private void setTestMessage(TestMessage tm) {
+		MutationTestResult mutationResult = currentMutation.getMutationResult();
 		if (mutationResult == null) {
 			logger.info("mutation result is null");
 			mutationResult = new MutationTestResult();
@@ -532,8 +522,6 @@ public abstract class MutationTestDriver {
 			logger.info("Mutation result:  " + mutationResult);
 		}
 		mutationResult.addFailure(tm);
-		ResultReporter.report(currentMutation);
-		ResultReporter.persist();
 	}
 
 	/**
@@ -541,7 +529,7 @@ public abstract class MutationTestDriver {
 	 *
 	 */
 	public void addMutationTestListener(MutationTestListener listener) {
-		listeners.add(listener);
+		listeners.addFirst(listener);
 	}
 
 	/**

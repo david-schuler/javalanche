@@ -211,6 +211,11 @@ public class MutationProperties {
 	public static final int DEFAULT_TIMEOUT_IN_SECONDS = getPropertyOrDefault(
 			DEFAULT_TIMEOUT_IN_SECONDS_KEY, 10);
 
+
+	/**
+	 * The save intervall in which the mutation results are written to the
+	 * database.
+	 */
 	private static final String SAVE_INTERVAL_KEY = "mutation.save.interval";
 	public static final int SAVE_INTERVAL = getPropertyOrDefault(
 			SAVE_INTERVAL_KEY, 20);

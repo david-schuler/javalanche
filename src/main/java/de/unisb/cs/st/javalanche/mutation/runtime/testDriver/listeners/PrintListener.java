@@ -1,6 +1,7 @@
-package de.unisb.cs.st.javalanche.mutation.runtime.testDriver;
+package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners;
 
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
 /**
  * An example mutation listener that prints the events to {@link System.out}

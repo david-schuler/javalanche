@@ -16,7 +16,7 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
 /**
- * Class used by the mutations at runtime to report the testcases that cover a
+ * Class used by the mutation test driver at runtime to report the testcases that cover a
  * mutation.
  *
  * @author David Schuler
@@ -127,7 +127,7 @@ public class MutationObserver implements MutationTestListener {
 	}
 
 	/**
-	 * Called when a mutation starts. Resets the proper variables.
+	 * Called when a mutation starts. Resets the according variables.
 	 *
 	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#mutationStart(de.unisb.cs.st.javalanche.mutation.results.Mutation)
 	 */
@@ -140,18 +140,14 @@ public class MutationObserver implements MutationTestListener {
 		touched = false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#mutationEnd(de.unisb.cs.st.javalanche.mutation.results.Mutation)
+	/**
+	 * Not used
 	 */
 	public void mutationEnd(Mutation mutation) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#start()
+	/**
+	 * Not used
 	 */
 	public void start() {
 	}

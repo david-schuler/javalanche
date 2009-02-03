@@ -1,8 +1,9 @@
-package de.unisb.cs.st.javalanche.mutation.runtime.testDriver;
+package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners;
 
 import java.lang.adabu2.Tracer;
 
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
 public class AdabuListener implements MutationTestListener {
 

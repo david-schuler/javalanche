@@ -10,31 +10,38 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
 /**
  *
  * Class that manages the results of the mutation testing and persits them to
  * the database.
  *
+ *
  * @author David Schuler
  *
  */
-public class ResultReporter {
+public class ResultReporter implements MutationTestListener {
 
 	private static Logger logger = Logger.getLogger(ResultReporter.class);
 
 	/**
 	 * All mutations results have been reported for.
 	 */
-	private static List<Mutation> reportedMutations = new ArrayList<Mutation>();
+	private List<Mutation> reportedMutations = new ArrayList<Mutation>();
+
+	/**
+	 * Counts the number of mutations that are reported to the db.
+	 */
+	private int reportCount;
 
 	/**
 	 * Reports the results of the given mutation.
 	 *
 	 * @param mutation
-	 *            the mutation the result is reported for
+	 *            The mutation the result is reported for.
 	 */
-	public static synchronized void report(Mutation mutation) {
+	private synchronized void report(Mutation mutation) {
 		if (mutation == null) {
 			throw new IllegalArgumentException(
 					"Argument was null: " + mutation == null ? ", mutation"
@@ -82,7 +89,7 @@ public class ResultReporter {
 	/**
 	 * Persits the reported mutations to the database.
 	 */
-	public synchronized static void persist() {
+	public synchronized void persist() {
 		logger.debug("Start storing " + reportedMutations.size()
 				+ " mutation test results in db");
 		QueryManager.updateMutations(reportedMutations);
@@ -91,15 +98,48 @@ public class ResultReporter {
 		reportedMutations.clear();
 	}
 
+	public void end() {
+		persist();
+	}
+
 	/**
-	 * Checks if a given mutation was already reported.
-	 *
-	 * @param m
-	 *            the mutation to check
-	 * @return true, if given mutation is already reported
+	 * Report the result of the mutation and store them to the db in regular
+	 * intervals.
 	 */
-	public synchronized boolean isReported(Mutation m) {
-		return reportedMutations.contains(m);
+	public void mutationEnd(Mutation mutation) {
+		report(mutation);
+		reportCount++;
+		if (reportCount % MutationProperties.SAVE_INTERVAL == 0) {
+			logger.info("Reached save intervall. Saving "
+					+ MutationProperties.SAVE_INTERVAL
+					+ " mutations. Total mutations tested until now: "
+					+ reportCount);
+			persist();
+		}
+	}
+
+	/**
+	 * Not used
+	 */
+	public void mutationStart(Mutation mutation) {
+	}
+
+	/**
+	 * Not used
+	 */
+	public void start() {
+	}
+
+	/**
+	 * Not used
+	 */
+	public void testEnd(String testName) {
+	}
+
+	/**
+	 * Not used
+	 */
+	public void testStart(String testName) {
 	}
 
 }
