@@ -22,19 +22,19 @@ public class Jumps {
 
 	public int method3(int value) {
 		int r = 0;
-		for (int i = 0; i < value; i++) {
-			r -= 1;
+		if (r >=0) {
+			return -1 * value;
 		}
-		return r;
+		return value;
 	}
 
 	public boolean method4(int a) {
 		Integer i1 = new Integer(a);
 		Integer i2 = new Integer(12);
-		if(a > -1){
+		if (a > -1) {
 			i2 = i1;
 		}
-		if(i1 == i2){
+		if (i1 == i2) {
 			return true;
 		}
 		return false;

@@ -45,7 +45,7 @@ public class ClassLoaderUtil {
 
 		@Override
 		public Class<?> loadClass(String name) throws ClassNotFoundException {
-			Class c = null;
+			Class<?> c = null;
 			if (name.startsWith("org.mozilla.javascript.tools.shell")) {
 				System.out
 						.println("MyURLClassLoader.loadClass() class " + name);

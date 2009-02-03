@@ -1,14 +1,11 @@
 package de.unisb.cs.st.javalanche.mutation.mutationPossibilities;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import de.unisb.cs.st.ds.util.io.XmlIo;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
 public class Mutations implements Iterable<Mutation> {

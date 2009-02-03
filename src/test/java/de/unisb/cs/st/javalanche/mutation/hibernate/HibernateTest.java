@@ -4,8 +4,6 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-import junit.framework.TestResult;
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -31,7 +29,6 @@ public class HibernateTest {
 	public static void hibernateSave() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		TestResult tr = new TestResult();
 		testMutation.setMutationResult(new MutationTestResult());
 		session.save(testMutation);
 		tx.commit();

@@ -362,7 +362,7 @@ public abstract class MutationTestDriver {
 			currentTestName = testName;
 			MutationTestRunnable runnable = getTestRunnable(testName);
 			testStart(testName);
-			long duration = runWithTimeout(runnable);
+		    runWithTimeout(runnable);
 			testEnd(testName);
 			SingleTestResult result = runnable.getResult();
 			boolean touched = MutationObserver.getTouchingTestCases().contains(

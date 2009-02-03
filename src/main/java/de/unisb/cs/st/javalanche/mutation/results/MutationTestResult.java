@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,18 +19,12 @@ import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import junit.framework.TestResult;
-
-import org.apache.log4j.Logger;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
-
-import de.unisb.cs.st.javalanche.mutation.runtime.MutationJunitTestListener;
 
 @Entity
 public class MutationTestResult implements Serializable {
 
-	private static Logger logger = Logger.getLogger(MutationTestResult.class);
 	/**
 	 *
 	 */
@@ -354,6 +347,7 @@ public class MutationTestResult implements Serializable {
 		if (invariants != null)
 			invariants.size();
 		if (violatedInvariants != null) {
+			@SuppressWarnings("unused")
 			int length = violatedInvariants.length;
 		}
 	}

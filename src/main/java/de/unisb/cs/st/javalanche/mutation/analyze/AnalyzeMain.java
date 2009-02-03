@@ -8,11 +8,10 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.cs.st.javalanche.mutation.util.HibernateServerUtil;
-import de.unisb.cs.st.javalanche.mutation.util.HibernateServerUtil.Server;
 
 /**
  * Analyzes the mutation results for a project. Either a list (comma separated)

@@ -69,13 +69,8 @@ public class ExperimentAnalyzer2 implements MutationAnalyzer {
 		File fullDataFile = new File("fullData.xml");
 		if (fullDataFile.exists()) {
 			Object fullDataObject = XmlIo.fromXml(fullDataFile);
-			if (fullDataObject instanceof ExperimentData) {
-				ExperimentData fullData = (ExperimentData) fullDataObject;
-				return ExperimentData2.compare(fullData, experimentData);
-			} else {
-				ExperimentData2 fullData = (ExperimentData2) fullDataObject;
-				return ExperimentData2.compare(fullData, experimentData);
-			}
+			ExperimentData2 fullData = (ExperimentData2) fullDataObject;
+			return ExperimentData2.compare(fullData, experimentData);
 		}
 		return experimentData.toString();
 	}

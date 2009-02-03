@@ -13,7 +13,6 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestDriver;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestRunnable;
@@ -29,7 +28,6 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.TestSuiteUtil;
  */
 public class Junit3MutationTestDriver extends MutationTestDriver {
 
-	private static Logger logger = Logger.getLogger(SingleTestListener.class);
 
 	private final class SingleTestListener implements TestListener {
 

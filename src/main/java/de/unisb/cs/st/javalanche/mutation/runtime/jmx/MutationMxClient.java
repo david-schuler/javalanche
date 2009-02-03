@@ -23,11 +23,8 @@ import javax.management.remote.JMXServiceURL;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
-import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
@@ -171,6 +168,7 @@ public class MutationMxClient {
 		analyzeDB();
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void analyzeDB() {
 		Session session = HibernateUtil.openSession();
 		Transaction transaction = session.beginTransaction();

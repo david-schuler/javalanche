@@ -1,7 +1,6 @@
 package de.unisb.cs.st.javalanche.mutation.analyze;
 
 import java.util.Collection;
-import java.util.List;
 
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;

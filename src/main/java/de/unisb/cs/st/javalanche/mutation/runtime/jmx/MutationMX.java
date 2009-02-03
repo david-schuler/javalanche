@@ -2,10 +2,8 @@ package de.unisb.cs.st.javalanche.mutation.runtime.jmx;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang.time.StopWatch;
 
 import com.google.common.base.Join;
@@ -13,8 +11,6 @@ import com.google.common.base.Join;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
-import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
 
 public class MutationMX implements MutationMXMBean {
 

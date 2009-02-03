@@ -1,21 +1,19 @@
 package de.unisb.cs.st.javalanche.mutation.misc;
 
+import static org.junit.Assert.*;
+import static org.objectweb.asm.Opcodes.*;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.junit.Test;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.AnalyzerAdapter;
-
-import static org.junit.Assert.*;
-import static org.objectweb.asm.Opcodes.*;
 
 public class AnalyzerTest {
 
@@ -32,12 +30,12 @@ public class AnalyzerTest {
 			super.visitTypeInsn(opcode, desc);
 			if (opcode == NEW) {
 				System.out.println("Stack: " + stack);
-				Iterator iterator = stack.iterator();
+//				Iterator<?> iterator = stack.iterator();
 //				while(iterator.hasNext()){
 //					System.out.println(((Label) iterator.next()).info);
 //				}
 //				System.out.println("Locals: " + locals);
-				iterator = locals.iterator();
+//				iterator = locals.iterator();
 //				while(iterator.hasNext()){
 //					System.out.println(iterator.next());
 //				}

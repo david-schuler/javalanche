@@ -61,11 +61,11 @@ public class WrappedMain {
 								String[].class);
 						logger.debug("Main method: " + mainMethod);
 						Method exitCodeMethod = loadClass.getMethod(
-								"getExitCode", null);
+								"getExitCode", (Class[]) null);
 						logger.debug("Exit Code method " + exitCodeMethod);
 						Object invoke = mainMethod.invoke(null,
 								new Object[] { args });
-						exec = (Integer) exitCodeMethod.invoke(null, null);
+						exec = (Integer) exitCodeMethod.invoke(null, (Object[]) null);
 
 					} catch (ClassNotFoundException e) {
 						e.printStackTrace();

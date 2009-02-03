@@ -1,7 +1,7 @@
 package de.unisb.cs.st.javalanche.mutation.results.persistence;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 

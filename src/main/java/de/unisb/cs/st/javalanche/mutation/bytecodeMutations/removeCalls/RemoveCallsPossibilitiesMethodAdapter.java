@@ -9,7 +9,7 @@ import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibil
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
 
-public class RemoveCallsPossibilitiesMethodAdapter extends
+public final class RemoveCallsPossibilitiesMethodAdapter extends
 		AbstractMutationAdapter {
 
 	private static Logger logger = Logger
@@ -26,6 +26,8 @@ public class RemoveCallsPossibilitiesMethodAdapter extends
 		myAdviceAdapter = mv;
 		this.mpc = mpc;
 	}
+
+
 
 	public void visitMethodInsn(final int opcode, final String owner,
 			final String name, final String desc) {

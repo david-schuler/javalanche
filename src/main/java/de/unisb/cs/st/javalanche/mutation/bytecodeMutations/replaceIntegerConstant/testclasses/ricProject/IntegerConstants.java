@@ -14,7 +14,7 @@ public class IntegerConstants {
 
 	public boolean method3(int arg) {
 		boolean b = true;
-		int threshold = 5;
-		return arg == threshold && b;
+		int magicValue = 5;
+		return arg == magicValue && b;
 	}
 }

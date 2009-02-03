@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -23,11 +22,11 @@ public class InvariantDbReader {
 
 	private static Logger logger = Logger.getLogger(InvariantDbReader.class);
 
-	private static final Pattern p = Pattern.compile("(.*)\\((.*)\\)");
+//	private static final Pattern p = Pattern.compile("(.*)\\((.*)\\)");
 
-	private static final String DEFAULT_FILENAME = "trace.out";
+//	private static final String DEFAULT_FILENAME = "trace.out";
 
-	private static final String ADABU2_RESULTFILENAME = "adabu2.resultfilename";
+//	private static final String ADABU2_RESULTFILENAME = "adabu2.resultfilename";
 
 	public static void main(String[] args) {
 		invariantsToDB();

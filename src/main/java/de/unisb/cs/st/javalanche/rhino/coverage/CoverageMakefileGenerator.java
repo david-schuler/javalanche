@@ -4,16 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import de.unisb.cs.st.ds.util.MakefileGenerator;
 import de.unisb.cs.st.ds.util.MakefileGenerator.Target;
 import de.unisb.cs.st.ds.util.io.Io;
 
 public class CoverageMakefileGenerator {
 
-	private static Logger logger = Logger
-			.getLogger(CoverageMakefileGenerator.class);
 
 	public static void main(String[] args) {
 		File f = new File(

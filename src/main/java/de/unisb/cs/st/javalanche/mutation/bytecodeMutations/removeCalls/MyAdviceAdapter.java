@@ -1,52 +1,48 @@
-/**
- *
- */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls;
 
-import org.apache.log4j.Logger;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.AdviceAdapter;
 
+/**
+ * Class Adapter that checks if a super call for a constructor has already been
+ * seen.
+ *
+ * @author David Schuler
+ *
+ */
 public class MyAdviceAdapter extends AdviceAdapter {
 
-	private static Logger logger = Logger.getLogger(MyAdviceAdapter.class);
-
-	private final String name;
 
 	private boolean superCallSeen;
 
 	public MyAdviceAdapter(MethodVisitor mv, int access, String name,
 			String desc) {
 		super(mv, access, name, desc);
-		this.name = name;
-		logger.debug("Method name " + name + " " + this);
+		// Preconditions.checkArgument(name.equals("<init>"), "Expect that this
+		// method adapter is only used for constructors" );
 	}
 
-
+	/* (non-Javadoc)
+	 * @see org.objectweb.asm.commons.AdviceAdapter#onMethodEnter()
+	 */
 	@Override
 	protected void onMethodEnter() {
 		superCallSeen = true;
-		logger.debug("Method name " + name + " " + this);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.objectweb.asm.commons.AdviceAdapter#onMethodExit(int)
+	 */
 	@Override
 	protected void onMethodExit(int opcode) {
 	}
 
 	/**
-	 * @return the superCallSeen
+	 * @return true, if the super call for this constructor was already
+	 *         processed.
 	 */
-	public boolean isSuperCallSeen() {
-		logger.debug(superCallSeen + " - Method name " + name + " " + this);
+	boolean isSuperCallSeen() {
 		return superCallSeen;
-	}
-
-	/**
-	 * @param superCallSeen
-	 *            the superCallSeen to set
-	 */
-	public void setSuperCallSeen(boolean superCallSeen) {
-		this.superCallSeen = superCallSeen;
 	}
 
 }

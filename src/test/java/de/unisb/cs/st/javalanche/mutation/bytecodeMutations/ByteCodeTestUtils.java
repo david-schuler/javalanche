@@ -84,7 +84,6 @@ public class ByteCodeTestUtils {
 		for (Mutation m : mutations) {
 			MutationTestResult singleTestResult = m.getMutationResult();
 			if (singleTestResult != null) {
-				logger.info("Trying to delete + " + singleTestResult);
 				m.setMutationResult(null);
 				session.delete(singleTestResult);
 			}

@@ -1,11 +1,7 @@
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls;
 
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
-
-import junit.framework.TestResult;
-import junit.framework.TestSuite;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -16,16 +12,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.util.TraceClassVisitor;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.CollectorByteCodeTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.testclasses.MethodCalls;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.testclasses.MethodCallsTest;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
-import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.MutationTestSuite;
 
 public class RemoveMethodCallsTest {
 
@@ -37,8 +30,6 @@ public class RemoveMethodCallsTest {
 
 		@Override
 		protected ClassVisitor classVisitorFactory(ClassWriter cw) {
-			TraceClassVisitor tcv = new TraceClassVisitor(cw, new PrintWriter(
-					System.out));
 			return new RemoveMethodCallsPossibilityClassAdapter(cw, mpc,
 					new HashMap<Integer, Integer>());
 		}
@@ -81,6 +72,7 @@ public class RemoveMethodCallsTest {
 	public void testMakeMavenHappy() {
 
 	}
+
 //	@Test
 //	public void runTests() {
 //		MutationTestSuite selectiveTestSuite = new MutationTestSuite();

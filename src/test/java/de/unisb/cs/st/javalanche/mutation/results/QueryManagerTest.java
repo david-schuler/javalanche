@@ -4,8 +4,6 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-import junit.framework.TestResult;
-
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.After;
@@ -14,12 +12,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
 import de.unisb.cs.st.javalanche.mutation.hibernate.HibernateTest;
 import de.unisb.cs.st.javalanche.mutation.properties.TestProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.cs.st.javalanche.mutation.runtime.MutationJunitTestListener;
 import de.unisb.cs.st.javalanche.mutation.testutil.TestUtil;
 
 public class QueryManagerTest {

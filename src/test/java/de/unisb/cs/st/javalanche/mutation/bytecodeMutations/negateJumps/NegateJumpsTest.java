@@ -99,6 +99,7 @@ public class NegateJumpsTest {
 		}
 		tx.commit();
 		session.close();
+		System.out.println("AAA" + nonNulls);
 		Assert.assertTrue("Expected results from mutations", nonNulls > 5);
 	}
 

@@ -27,45 +27,48 @@ public class ExperimentData2 implements Serializable {
 
 	private static Logger logger = Logger.getLogger(ExperimentData2.class);
 
-	Set<Long> caughtIds = new HashSet<Long>();
-	Set<Long> survivedTotalIds = new HashSet<Long>();
-	Set<Long> survivedViolatedIds = new HashSet<Long>();
-	Set<Long> survivedNonViolatedCoveredIds = new HashSet<Long>();
-	private final Map<Long, Mutation> survivedViolatedMap;
+	Set<Long> detectedIds = new HashSet<Long>();
+	Set<Long> notDetectedIds = new HashSet<Long>();
+	Set<Long> notDetectedViolatedIds = new HashSet<Long>();
+	Set<Long> notDetectedNotViolatedIds = new HashSet<Long>();
+	private final Map<Long, Mutation> notDetectedViolatedMap;
 
-	public ExperimentData2(Set<Long> caughtIds, Set<Long> survivedTotalIds,
-			Set<Long> survivedViolatedIds,
+	public ExperimentData2(Set<Long> detectedIds, Set<Long> notDetectedIds,
+			Set<Long> notDetectedViolatedIds,
 			Set<Long> survivedNonViolatedCoveredIds,
 			Map<Long, Mutation> survivedViolatedMap) {
 		super();
-		this.caughtIds = caughtIds;
-		this.survivedTotalIds = survivedTotalIds;
-		this.survivedViolatedIds = survivedViolatedIds;
-		this.survivedNonViolatedCoveredIds = survivedNonViolatedCoveredIds;
-		this.survivedViolatedMap = survivedViolatedMap;
+		this.detectedIds = detectedIds;
+		this.notDetectedIds = notDetectedIds;
+		this.notDetectedViolatedIds = notDetectedViolatedIds;
+		this.notDetectedNotViolatedIds = survivedNonViolatedCoveredIds;
+		this.notDetectedViolatedMap = survivedViolatedMap;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Killed mutations" + caughtIds);
+		sb.append("Killed mutations: " + detectedIds);
 		sb.append('\n');
-		sb.append("Mutation ids of survived mutations" + survivedTotalIds);
+		sb.append("Mutation ids of survived mutations" + notDetectedIds);
 		sb.append('\n');
 		sb
 				.append("Mutation ids of covered and survived mutations that violated no invariants: "
-						+ survivedNonViolatedCoveredIds);
+						+ notDetectedNotViolatedIds);
 		sb.append('\n');
 		sb.append("Mutation ids survived mutations that violated invariants: "
-				+ survivedViolatedIds);
-
+				+ notDetectedViolatedIds);
 		sb.append('\n');
 		return sb.toString();
 	}
 
 	public String compareToFile(File experimentDataFile) {
-		ExperimentData2 fromXml = (ExperimentData2) XmlIo
-				.fromXml(experimentDataFile);
+		ExperimentData2 fromXml = XmlIo.get(experimentDataFile);
 		return compareToData(fromXml);
 	}
 
@@ -75,35 +78,27 @@ public class ExperimentData2 implements Serializable {
 	}
 
 	static String compare(ExperimentData2 fullRun, ExperimentData2 other) {
-		return compare(fullRun.toExperimentData(), other);
-	}
 
-	private ExperimentData toExperimentData() {
-		return new ExperimentData(caughtIds, survivedTotalIds,
-				survivedViolatedIds, survivedNonViolatedCoveredIds);
-	}
+		Set<Long> notDetectedViolatedIntersection = new HashSet<Long>(fullRun.detectedIds);
+		notDetectedViolatedIntersection.retainAll(other.notDetectedViolatedIds);
 
-	static String compare(ExperimentData fullRun, ExperimentData2 other) {
-		Set<Long> survivedViolatedIntersection = new HashSet<Long>();
-
-		survivedViolatedIntersection.addAll(fullRun.caughtIds);
-		survivedViolatedIntersection.retainAll(other.survivedViolatedIds);
-
-		Set<Long> fullRunCaughtIds = fullRun.caughtIds;
+		Set<Long> fullRunDetectedIds = fullRun.detectedIds;
 		List<Mutation> violatingIds = new ArrayList<Mutation>(
-				other.survivedViolatedMap.values());
+				other.notDetectedViolatedMap.values());
 		StringBuilder sb = new StringBuilder();
 		sb.append("Ranking for different violations\n");
+
 		for (int i = 5; i <= 100; i += 5) {
-			String percentKilled = getPercentKilled(fullRunCaughtIds,
+			String percentKilled = getPercentKilled(fullRunDetectedIds,
 					violatingIds, i,
 					AnalyzeUtil.DIFFERENT_VIOLATIONS_COMPARATOR);
 			sb.append(percentKilled);
 			sb.append('\n');
 		}
+
 		sb.append("Sorted distribution of different violations:\n");
 
-		String distribution = getDistribution(other.survivedViolatedMap
+		String distribution = getDistribution(other.notDetectedViolatedMap
 				.values());
 		sb.append(distribution);
 		// sb.append("Ranking for total violations\n");
@@ -115,21 +110,19 @@ public class ExperimentData2 implements Serializable {
 		// }
 
 		sb.append('\n');
-		Set<Long> survivedNonViolatedCoveredIntersection = new HashSet<Long>();
-		survivedNonViolatedCoveredIntersection.addAll(fullRun.caughtIds);
-		survivedNonViolatedCoveredIntersection
-				.retainAll(other.survivedNonViolatedCoveredIds);
+		Set<Long> notDetectedNotViolatedIntersection = new HashSet<Long>(fullRun.detectedIds);
+		notDetectedNotViolatedIntersection
+				.retainAll(other.notDetectedNotViolatedIds);
 		sb
 				.append(String
 						.format(
-								"%d out of %d mutation that did not violate invariants and are covered were caught. %s\n",
-								survivedNonViolatedCoveredIntersection.size(),
-								other.survivedNonViolatedCoveredIds.size(),
+								"%d out of %d covered mutation that did not violate invariants were caught. %s\n",
+								notDetectedNotViolatedIntersection.size(),
+								other.notDetectedNotViolatedIds.size(),
 								AnalyzeUtil.formatPercent(
-										survivedNonViolatedCoveredIntersection
+										notDetectedNotViolatedIntersection
 												.size(),
-										other.survivedNonViolatedCoveredIds
-												.size())));
+										other.notDetectedNotViolatedIds.size())));
 		return sb.toString();
 	}
 

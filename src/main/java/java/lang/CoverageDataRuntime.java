@@ -24,11 +24,6 @@ import java.util.Set;
  */
 public class CoverageDataRuntime {
 
-	private static final boolean SAVE_INTERVALLS = false;
-
-	// static Logger logger = Logger.getLogger(CoverageDataRuntime.class);
-
-	// public ThreadLocal<String> testName = new ThreadLocal<String>();
 	public String testName;
 
 	static class SingletonHolder {
@@ -42,7 +37,6 @@ public class CoverageDataRuntime {
 
 	private Set<String> testsRun = new HashSet<String>();
 
-	private int saveCount = 1;
 
 	private CoverageDataRuntime() {
 	}
@@ -53,7 +47,6 @@ public class CoverageDataRuntime {
 
 	static int call = 0;
 
-	private static boolean shouldSave;
 
 	public static void touch(long id) {
 
@@ -64,7 +57,6 @@ public class CoverageDataRuntime {
 					+ SingletonHolder.instance.getTestName()
 
 					+ " touched mutation " + id);
-			shouldSave = true;
 		}
 		// Only for debugging puprosses. Impacts performance
 		// logger.info("Test " + SingletonHolder.instance.testName.get()
@@ -113,7 +105,8 @@ public class CoverageDataRuntime {
 		CoverageDataRuntime instance = SingletonHolder.instance;
 		String oldTestName = instance.getTestName();
 		if (oldTestName == null) {
-			System.out.println("CoverageDataRuntime.setTestName() - Test name was  set to null expected "
+			System.out
+					.println("CoverageDataRuntime.setTestName() - Test name was  set to null expected "
 							+ testName);
 		} else if (oldTestName.equals(testName)) {
 			instance._setTestName(null);
@@ -144,13 +137,6 @@ public class CoverageDataRuntime {
 		touch(23454904540l);
 	}
 
-	// public static void optionalSave() {
-	// if (SAVE_INTERVALLS && shouldSave) {
-	// CoverageDataRuntime instance = SingletonHolder.instance;
-	// // saveAndEmpty();
-	// shouldSave = false;
-	// }
-	// }
 
 	public static Set<String> getTestsRun() {
 		return SingletonHolder.instance.testsRun;
@@ -159,4 +145,5 @@ public class CoverageDataRuntime {
 	public static Map<Long, Set<String>> getCoverageData() {
 		return SingletonHolder.instance.coverageData;
 	}
+
 }

@@ -20,6 +20,7 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
  */
 public class LongTestNameTest {
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testTestName() {
 		String base = "0123456789";

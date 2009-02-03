@@ -7,10 +7,6 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 
-import com.sun.tools.example.debug.gui.SourceModel.Line;
-
-import de.unisb.cs.st.ds.util.Util;
-
 public abstract class AbstractMutationAdapter extends MethodAdapter {
 
 	private static final Logger logger = Logger
