@@ -1,7 +1,7 @@
 /**
  *
  */
-package de.unisb.cs.st.javalanche.mutation.analyze;
+package de.unisb.cs.st.javalanche.mutation.analyze.splitExperiment;
 
 import java.io.File;
 import java.io.Serializable;
@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import de.unisb.cs.st.ds.util.io.XmlIo;
+import de.unisb.cs.st.javalanche.mutation.analyze.AnalyzeUtil;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
 public class ExperimentData2 implements Serializable {

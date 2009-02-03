@@ -1,4 +1,4 @@
-package de.unisb.cs.st.javalanche.mutation.analyze;
+package de.unisb.cs.st.javalanche.mutation.analyze.splitExperiment;
 
 import java.io.File;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.io.SerializeIo;
 import de.unisb.cs.st.ds.util.io.XmlIo;
+import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
