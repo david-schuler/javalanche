@@ -15,7 +15,6 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 		return null;
 	}
 
-
 	public String analyze(Iterable<Mutation> mutations) {
 		int total = 0;
 		int withResult = 0;
@@ -24,7 +23,7 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 		int killed = 0;
 		List<Mutation> violatedNotCaughtList = new ArrayList<Mutation>();
 		for (Mutation mutation : mutations) {
-			if(mutation.isKilled()){
+			if (mutation.isKilled()) {
 				killed++;
 			}
 			MutationTestResult mutationResult = mutation.getMutationResult();
@@ -60,26 +59,29 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 										.formatPercent(violatedNotCaught,
 												violated)));
 		sb.append('\n');
-		sb
-				.append("List of mutations that violated invariants and were not caught:\n");
+		if (false) {
+			sb
+					.append("List of mutations that violated invariants and were not caught:\n");
 
+			Collections.sort(violatedNotCaughtList, new Comparator<Mutation>() {
 
-		Collections.sort(violatedNotCaughtList, new Comparator<Mutation>() {
+				public int compare(Mutation o1, Mutation o2) {
+					int i1 = o1.getMutationResult()
+							.getDifferentViolatedInvariants();
+					int i2 = o2.getMutationResult()
+							.getDifferentViolatedInvariants();
+					return i1 - i2;
+				}
 
-			public int compare(Mutation o1, Mutation o2) {
-				int i1 = o1.getMutationResult()
-						.getDifferentViolatedInvariants();
-				int i2 = o2.getMutationResult()
-						.getDifferentViolatedInvariants();
-				return i1 - i2;
+			});
+			for (Mutation mutation2 : violatedNotCaughtList) {
+				sb.append(mutation2.toShortString());
+				sb.append('\n');
+				sb.append("Violated invariants ids: "
+						+ Arrays.toString(mutation2.getMutationResult()
+								.getViolatedInvariants()));
+				sb.append('\n');
 			}
-
-		});
-		for (Mutation mutation2 : violatedNotCaughtList) {
-			sb.append(mutation2.toShortString());
-			sb.append('\n');
-			sb.append("Violated invariants ids: " + Arrays.toString(mutation2.getMutationResult().getViolatedInvariants()));
-			sb.append('\n');
 		}
 		return sb.toString();
 	}

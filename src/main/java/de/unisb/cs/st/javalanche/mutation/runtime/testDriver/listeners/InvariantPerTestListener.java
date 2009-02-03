@@ -19,8 +19,14 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
+/**
+ * Class collects the invariants that where violated by every test, and adds
+ * them to the mutation's result if they where learned from this test.
+ *
+ * @author David Schuler
+ *
+ */
 public class InvariantPerTestListener implements MutationTestListener {
-
 
 	private Map<String, Set<Integer>> idsPerTest = new HashMap<String, Set<Integer>>();
 
@@ -82,7 +88,8 @@ public class InvariantPerTestListener implements MutationTestListener {
 		MutationTestResult mutationResult = mutation.getMutationResult();
 		mutationResult.setDifferentViolatedInvariants(totalViolations.size());
 		mutationResult.setTotalViolations(totalViolations.size());
-		mutationResult.setViolatedInvariants(PrimitiveArrays.toIntArray(totalViolations));
+		mutationResult.setViolatedInvariants(PrimitiveArrays
+				.toIntArray(totalViolations));
 	}
 
 	public void mutationStart(Mutation mutation) {
