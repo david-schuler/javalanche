@@ -11,6 +11,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
+
 /**
  *
  * Class that stores a mutation. It stores its type, where it is (was) applied
@@ -301,5 +303,7 @@ public class Mutation implements Serializable {
 			mutationResult.loadAll();
 		}
 	}
+
+
 
 }

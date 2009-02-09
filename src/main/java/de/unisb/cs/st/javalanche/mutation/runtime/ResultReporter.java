@@ -107,14 +107,16 @@ public class ResultReporter implements MutationTestListener {
 	 * intervals.
 	 */
 	public void mutationEnd(Mutation mutation) {
-		report(mutation);
-		reportCount++;
-		if (reportCount % MutationProperties.SAVE_INTERVAL == 0) {
-			logger.info("Reached save intervall. Saving "
-					+ MutationProperties.SAVE_INTERVAL
-					+ " mutations. Total mutations tested until now: "
-					+ reportCount);
-			persist();
+		if (!reportedMutations.contains(mutation)) {
+			report(mutation);
+			reportCount++;
+			if (reportCount % MutationProperties.SAVE_INTERVAL == 0) {
+				logger.info("Reached save intervall. Saving "
+						+ MutationProperties.SAVE_INTERVAL
+						+ " mutations. Total mutations tested until now: "
+						+ reportCount);
+				persist();
+			}
 		}
 	}
 

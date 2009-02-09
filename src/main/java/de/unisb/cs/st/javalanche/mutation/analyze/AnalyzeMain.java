@@ -9,6 +9,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import de.unisb.cs.st.javalanche.mutation.analyze.invariant.InvariantSplitAnalyzer;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
@@ -31,10 +32,14 @@ public class AnalyzeMain {
 			analyzeMutations(analyzers);
 		} else {
 			analyzeMutations(new MutationAnalyzer[] {
-		 //new ManualAnalyzer(),
-					 new MutationResultAnalyzer(), new KilledAnalyzer(),
-		 new InvariantAnalyzer()
-			/* , new AssertAnalyzer() */
+					new InvariantSplitAnalyzer()
+					/*
+		 new MutationResultAnalyzer(),
+		 new KilledAnalyzer(),
+		 new InvariantAnalyzer(),
+		 new ManualAnalyzer()
+		*/
+		 /* , new AssertAnalyzer() */
 			/* , new AspectJAnalyzer() */
 			/* , new IdAnalyzer() */
 			// new CoverageAnalyzer()

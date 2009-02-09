@@ -11,7 +11,9 @@ public class JmxMutationTestListener implements MutationTestListener {
 
 	public void end() {
 		// System.out.println("JmxMutationTestListener.end()");
-		beanReg.unregister(bean);
+		if (bean != null) {
+			beanReg.unregister(bean);
+		}
 	}
 
 	public void mutationEnd(Mutation mutation) {
@@ -19,12 +21,16 @@ public class JmxMutationTestListener implements MutationTestListener {
 
 	public void mutationStart(Mutation mutation) {
 		// System.out.println("JmxMutationTestListener.mutationStart()");
-		bean.addMutation(mutation);
+		if (bean != null) {
+			bean.addMutation(mutation);
+		}
 	}
 
 	public void start() {
 		int runNumber = getRunNumber();
-		bean = beanReg.registerMutationMXBean(runNumber);
+		if (runNumber >= 0) {
+			bean = beanReg.registerMutationMXBean(runNumber);
+		}
 
 	}
 
@@ -32,9 +38,12 @@ public class JmxMutationTestListener implements MutationTestListener {
 		String run = MutationProperties.MUTATION_FILE_NAME;
 		int start = run.lastIndexOf('-') + 1;
 		int end = run.lastIndexOf(".txt");
-		String numberString = run.substring(start, end);
-		int result = Integer.parseInt(numberString);
-		return result;
+		if (start > -1 && end > 0) {
+			String numberString = run.substring(start, end);
+			int result = Integer.parseInt(numberString);
+			return result;
+		}
+		return -1;
 	}
 
 	public void testEnd(String testName) {
@@ -42,7 +51,9 @@ public class JmxMutationTestListener implements MutationTestListener {
 
 	public void testStart(String testName) {
 		// System.out.println("JmxMutationTestListener.testStart()" + bean);
-		bean.setTest(testName);
+		if (bean != null) {
+			bean.setTest(testName);
+		}
 	}
 
 	public static void main(String[] args) {

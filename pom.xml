@@ -41,7 +41,9 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<forkMode>pertest</forkMode>
-					<argLine>-javaagent:${user.home}/workspace/mutationTest/target/javaagent.jar -Dmutation.run.mode=mutation -D=invariant.mode=OFF</argLine>
+					<!--argLine>-javaagent:${user.home}/workspace/mutationTest/target/javaagent.jar -Dmutation.run.mode=mutation -D=invariant.mode=OFF</argLine-->
+					
+					<argLine>-javaagent:target/javaagent.jar -Dmutation.run.mode=mutation -D=invariant.mode=OFF</argLine>
 					
 					<useSystemClassLoader>true</useSystemClassLoader>
 					<excludes>
@@ -383,6 +385,12 @@
 			<groupId>de.unisb.cs.st</groupId>
 			<artifactId>adabu2-tracer</artifactId>
 			<version>0.4-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>log4j</groupId>
+		  <artifactId>log4j</artifactId>
+		  <version>1.2.9</version>
 		</dependency>
 		
 	</dependencies>

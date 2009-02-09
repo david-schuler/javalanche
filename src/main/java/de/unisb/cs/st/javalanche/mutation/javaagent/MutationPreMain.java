@@ -16,10 +16,11 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
-import de.unisb.cs.st.javalanche.invariants.javaagent.InvariantTransformer;;
+import de.unisb.cs.st.javalanche.invariants.javaagent.InvariantTransformer;
+import de.unisb.cs.st.tracer.TraceTransformer;
 
 /**
- * Class that is used by
+ * Class that is used by the javaagent.
  *
  * @author David Schuler
  *
@@ -64,8 +65,10 @@ public class MutationPreMain {
 						new MutationFileTransformer());
 				return;
 
-			} else if (RUN_MODE == MUTATION_TEST_INVARIANT_PER_TEST) {
-				System.out.println("Run mutation tests with invariant checks per test");
+			} else if (RUN_MODE == MUTATION_TEST_INVARIANT_PER_TEST
+					|| RUN_MODE == CHECK_INVARIANTS_PER_TEST) {
+				System.out
+						.println("Run mutation tests with invariant checks per test");
 				// addClassFileTransformer(instrumentation, new
 				// InvariantTransformer());
 				addClassFileTransformer(instrumentation,
@@ -74,7 +77,10 @@ public class MutationPreMain {
 						new MutationFileTransformer());
 				return;
 
-
+			} else if (RUN_MODE == MUTATION_TEST_COVERAGE) {
+				addClassFileTransformer(instrumentation,
+						new MutationFileTransformer());
+				instrumentation.addTransformer(new TraceTransformer());
 			} else if (RUN_MODE == SCAN) {
 				System.out.println("Scanning for mutations");
 				addClassFileTransformer(instrumentation, new MutationScanner());
@@ -90,6 +96,7 @@ public class MutationPreMain {
 						new IntegrateCheckNamesSuiteTransformer());
 				return;
 			}
+
 		} catch (Throwable t) {
 			t.printStackTrace();
 			if (true) {

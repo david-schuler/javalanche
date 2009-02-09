@@ -3,15 +3,15 @@
 
 	<!-- Classpath declaration -->
 	<path id="project.classpath">
-		<fileset dir="target/javalanche-0.1-dist.dir/lib/">
-			<include name="**/*.jar" />
+		<fileset dir="target/javalanche-mutation-0.1-dist.dir/lib/">
+		<include name="**/*.jar" />
 			<include name="**/*.zip" />
 		</fileset>
-		<pathelement location="target/javalanche-0.1-dist.dir/lib/mysql-connector-java-5.0.3.jar" />
+		<pathelement location="target/javalanche-mutation-0.1-dist.dir/lib/mysql-connector-java-5.0.3.jar" />
 	</path>
 	
 	<path id="mutation.classpath">
-		<fileset dir="target/javalanche-0.1-dist.dir/lib/">
+		<fileset dir="target/javalanche-mutation-0.1-dist.dir/lib/">
 			<include name="**/*.jar" />
 			<include name="**/*.zip" />
 		</fileset>
@@ -27,9 +27,9 @@
 		<hibernatetool destdir="${basedir}">
 			<classpath>
 				<pathelement path="target/classes/" />
-				<pathelement location="target/javalanche-0.1-dist.dir/lib/mysql-connector-java-5.1-nightly-20071110-bin.jar" />
+				<pathelement location="target/javalanche-mutation-0.1-dist.dir/lib/mysql-connector-java-5.1-nightly-20071110-bin.jar" />
 				<!--<path refid="mutation.classpath" />-->
-				<fileset dir="target/javalanche-0.1-dist.dir/lib">
+				<fileset dir="target/javalanche-mutation-0.1-dist.dir/lib">
 					<exclude name="**/commons-logging-1.1.jar" />
 					<include name="**/*.jar" />
 				</fileset>
@@ -47,9 +47,9 @@
 		<hibernatetool destdir="${basedir}">
 			<classpath>
 				<pathelement path="target/classes/" />
-				<pathelement location="target/javalanche-0.1-dist.dir/lib/mysql-connector-java-5.1-nightly-20071110-bin.jar" />
+				<pathelement location="target/javalanche-mutation-0.1-dist.dir/lib/mysql-connector-java-5.1-nightly-20071110-bin.jar" />
 				<!--<path refid="mutation.classpath" />-->
-				<fileset dir="target/javalanche-0.1-dist.dir/lib">
+				<fileset dir="target/javalanche-mutation-0.1-dist.dir/lib">
 					<exclude name="**/commons-logging-1.1.jar" />
 					<include name="**/*.jar" />
 				</fileset>
@@ -72,7 +72,7 @@
 		</exec>
 		<echo>
 			Dump written to: ${dump.file}
-		</echo>
+		/</echo>
 	</target>
 
 	
@@ -95,7 +95,7 @@
 	
 	
 	<path id="build.classpath">
-		<fileset dir="target/javalanche-0.1-dist.dir/lib/">
+		<fileset dir="target/javalanche-mutation-0.1-dist.dir/lib/">
 			<include name="**/*.jar"/>
 		</fileset>
 		<pathelement location="../adabu2-check-invariants/target/classes/"/>
@@ -145,7 +145,7 @@
 	<target name="test" depends="compile-test" description="- run the test suite">
 		<mkdir dir="${test.reports.dir}"/>
 		<junit dir="./" failureproperty="test.failure" haltonerror="true" haltonfailure="true" printsummary="true" fork="true" forkmode="perTest">
-			<jvmarg value="-javaagent:/Users/schuler/workspace/mutationTest/target/javaagent.jar"/>
+			<jvmarg value="-javaagent:./target/javaagent.jar"/>
 			<jvmarg value="-Dmutation.run.mode=mutation-no-invariant"/>
 			<jvmarg value="-D=invariant.mode=off"/>
 			<!--formatter type="xml"/-->

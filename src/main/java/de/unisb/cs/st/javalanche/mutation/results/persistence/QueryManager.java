@@ -34,6 +34,10 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
  * @author David Schuler
  *
  */
+/**
+ * @author David Schuler
+ *
+ */
 @SuppressWarnings("unchecked")
 public class QueryManager {
 
@@ -172,7 +176,7 @@ public class QueryManager {
 				break;
 			} else {
 				session.save(mutation.getMutationResult());
-				logger.debug("Setting result for mutation "
+				logger.info("Setting result for mutation "
 						+ mutationFromDB.getId());
 				mutationFromDB.setMutationResult(mutation.getMutationResult());
 				saved++;
@@ -929,6 +933,18 @@ public class QueryManager {
 		return resultFromCountQuery;
 	}
 
+	public static List<TestName> getTestsForProject() {
+		Session session = openSession();
+		Transaction tx = session.beginTransaction();
+		String queryString = "FROM TestName WHERE project=:project";
+		Query query = session.createQuery(queryString);
+		query.setParameter("project", MutationProperties.PROJECT_PREFIX);
+		List<TestName> results = query.list();
+		tx.commit();
+		session.close();
+		return results;
+	}
+
 	public static void delete(Object tm) {
 		Session session = openSession();
 		Transaction tx = session.beginTransaction();
@@ -951,4 +967,49 @@ public class QueryManager {
 	public static void setSessionFactory(SessionFactory sessionFactory) {
 		QueryManager.sessionFactory = sessionFactory;
 	}
+
+	/**
+	 * Return the object with given id and class from the database.
+	 *
+	 * @param id
+	 *            the id of the object
+	 * @param clazz
+	 *            the class of the object to return
+	 * @return the object with given id and class from the database.
+	 */
+	public static <T> T getObjectById(Long id, Class<T> clazz) {
+		Session session = openSession();
+		Transaction tx = session.beginTransaction();
+		T result = getObjectById(id, clazz, session);
+		tx.commit();
+		session.close();
+		return result;
+	}
+
+	/**
+	 * Return the object with given id and class from the database. If there is
+	 * no object with the given id in the database then null is returned.
+	 *
+	 * @param id
+	 *            the id of the object
+	 * @param clazz
+	 *            the class of the object to return
+	 * @param session
+	 *            a session that is used for the query
+	 * @return the object with given id and class from the database.
+	 */
+	public static <T> T getObjectById(Long id, Class<T> clazz, Session session) {
+		T result = null;
+		String name = clazz.getName();
+		Query query = session.createQuery("FROM  " + name
+				+ " n  WHERE n.id = (:id)");
+		query.setParameter("id", id);
+		List results = query.list();
+		if (results.size() > 0) {
+			T m = (T) results.get(0);
+			result = m;
+		}
+		return result;
+	}
+
 }

@@ -31,7 +31,7 @@ public class MXBeanRegisterer {
 
 	private JMXConnectorServer connectorServer;
 
-	public  MutationMX registerMutationMXBean(int id) {
+	public MutationMX registerMutationMXBean(int id) {
 		MutationMX mbean = null;
 		try {
 			MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
@@ -48,7 +48,8 @@ public class MXBeanRegisterer {
 			// rmiregistry 9994 &
 			String address = ADDRESS + id;
 			url = new JMXServiceURL(address);
-			connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, env, mbs);
+			connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(
+					url, env, mbs);
 			connectorServer.start();
 			System.out.println("MBean registered under adress: " + address);
 		} catch (MalformedObjectNameException e) {
@@ -69,6 +70,7 @@ public class MXBeanRegisterer {
 				logger
 						.warn("Could not bin JMX bean for this process. Most likely the rmiregistry is not started. Consider to start the rmiregistry "
 								+ " $> rmiregistry " + PORT + " &");
+				mbean = null;
 			} else {
 				e.printStackTrace();
 			}
@@ -81,7 +83,7 @@ public class MXBeanRegisterer {
 		new MXBeanRegisterer().registerMutationMXBean(args.length);
 	}
 
-	public  void unregister(MutationMXMBean bean) {
+	public void unregister(MutationMXMBean bean) {
 
 		try {
 			MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();

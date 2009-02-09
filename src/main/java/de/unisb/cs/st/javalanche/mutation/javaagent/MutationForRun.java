@@ -43,7 +43,7 @@ public class MutationForRun {
 
 	private List<Mutation> mutations;
 
-	private List<Mutation> appliedMutations = new ArrayList<Mutation>();
+	private Set<Mutation> appliedMutations = new HashSet<Mutation>();
 
 	public static MutationForRun getInstance() {
 		return SingletonHolder.INSTANCE;
@@ -132,7 +132,8 @@ public class MutationForRun {
 			System.out
 					.println("All mutations have results - They have already been aplied and executed");
 
-			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT || MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) { // TODO
+			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT
+					|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) { // TODO
 				// INTRODUCE
 				// own
 				// testRunMode
@@ -223,7 +224,7 @@ public class MutationForRun {
 		return getInstance().appliedMutations.size();
 	}
 
-	public static List<Mutation> getAppliedMutations() {
+	public static Set<Mutation> getAppliedMutations() {
 		return getInstance().appliedMutations;
 	}
 }

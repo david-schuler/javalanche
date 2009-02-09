@@ -13,7 +13,6 @@ public class MutationProperties {
 
 	private static Logger logger = Logger.getLogger(MutationProperties.class);
 
-
 	public static final String PROPERTIES_FILE = "mutation.incl.properties";
 
 	public static final Properties PROPERTIES = getProperties();
@@ -53,8 +52,10 @@ public class MutationProperties {
 
 	public enum RunMode {
 		SCAN("scan"), MUTATION_TEST("mutation"), TEST_TESTSUIT_FIRST("test1"), TEST_TESTSUITE_SECOND(
-				"test2"), MUTATION_TEST_INVARIANT("mutation-invariant"),MUTATION_TEST_INVARIANT_PER_TEST("mutation-invariant-per-test"), OFF(
-				"off");
+				"test2"), MUTATION_TEST_INVARIANT("mutation-invariant"), MUTATION_TEST_INVARIANT_PER_TEST(
+				"mutation-invariant-per-test"), MUTATION_TEST_COVERAGE(
+				"mutation-coverage"), OFF("off"), CHECK_INVARIANTS_PER_TEST(
+				"check-per-test");
 
 		private String key;
 
@@ -211,14 +212,13 @@ public class MutationProperties {
 	public static final int DEFAULT_TIMEOUT_IN_SECONDS = getPropertyOrDefault(
 			DEFAULT_TIMEOUT_IN_SECONDS_KEY, 10);
 
-
 	/**
 	 * The save intervall in which the mutation results are written to the
 	 * database.
 	 */
 	private static final String SAVE_INTERVAL_KEY = "mutation.save.interval";
 	public static final int SAVE_INTERVAL = getPropertyOrDefault(
-			SAVE_INTERVAL_KEY, 20);
+			SAVE_INTERVAL_KEY, 50);
 
 	public static final String IGNORE_RIC_KEY = "javalanche.ignore.ric";
 	public static final boolean IGNORE_RIC = getPropertyOrDefault(
@@ -229,11 +229,12 @@ public class MutationProperties {
 			IGNORE_NEGATE_JUMPS_KEY, false);
 
 	public static final String IGNORE_ARITHMETIC_REPLACE_KEY = "javalanche.ignore.replace";
-	public static final boolean IGNORE_ARITHMETIC_REPLACE = getPropertyOrDefault(IGNORE_ARITHMETIC_REPLACE_KEY, false);
+	public static final boolean IGNORE_ARITHMETIC_REPLACE = getPropertyOrDefault(
+			IGNORE_ARITHMETIC_REPLACE_KEY, false);
 
 	public static final String IGNORE_REMOVE_CALLS_KEY = "javalanche.ignore.remove.calls";
-	public static final boolean IGNORE_REMOVE_CALLS = getPropertyOrDefault(IGNORE_REMOVE_CALLS_KEY, false);
-
+	public static final boolean IGNORE_REMOVE_CALLS = getPropertyOrDefault(
+			IGNORE_REMOVE_CALLS_KEY, false);
 
 	private static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");

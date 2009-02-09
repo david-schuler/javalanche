@@ -45,20 +45,38 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 		// sb.append("Total Mutations: " + total);
 		// sb.append('\n');
 		sb.append("Killed mutations: " + killed + "\n");
-		sb.append(String.format(
-				"Mutations that violated invariants: %d (%s / %s)", violated,
-				AnalyzeUtil.formatPercent(violated, total), AnalyzeUtil
-						.formatPercent(violated, withResult)));
+		sb
+				.append(String
+						.format(
+								"Mutations that violated invariants: %d (%s relative to all mutations / %s relative to mutations that where covered)",
+								violated, AnalyzeUtil.formatPercent(violated,
+										total), AnalyzeUtil.formatPercent(
+										violated, withResult)));
 		sb.append('\n');
 		sb
 				.append(String
 						.format(
-								"Mutations that violated invariants and were not caught: %d (%s / %s)",
+								"Mutations that violated invariants and were not detected: %d (%s relative to all mutations  / %s relative to mutations that where covered / %s relative to mutations that violated invariants/ %s relative to all covered and not detected mutations)",
 								violatedNotCaught, AnalyzeUtil.formatPercent(
 										violatedNotCaught, total), AnalyzeUtil
 										.formatPercent(violatedNotCaught,
-												violated)));
+												withResult), AnalyzeUtil
+										.formatPercent(violatedNotCaught,
+												violated), AnalyzeUtil
+												.formatPercent(violatedNotCaught,
+														withResult-killed)));
 		sb.append('\n');
+		int violatedCaught = violated - violatedNotCaught;
+		sb
+				.append(String
+						.format(
+								"Mutations that violated invariants and were detected:  %d (%s relative to all mutations  / %s relative to mutations that where covered / %s relative to mutations that violated invariants / %s relative to all detected mutations)",
+								violatedCaught, AnalyzeUtil.formatPercent(
+										violatedCaught, total),
+								AnalyzeUtil.formatPercent(violatedCaught,
+										withResult), AnalyzeUtil.formatPercent(
+										violatedCaught, violated),AnalyzeUtil.formatPercent(
+												violatedCaught, killed)));
 		if (false) {
 			sb
 					.append("List of mutations that violated invariants and were not caught:\n");

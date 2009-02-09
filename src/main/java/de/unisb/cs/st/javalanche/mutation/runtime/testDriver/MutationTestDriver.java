@@ -130,7 +130,11 @@ public abstract class MutationTestDriver {
 			runMutations();
 		} else if (MutationProperties.RUN_MODE == RunMode.SCAN) {
 			scanTests();
-		} else {
+		} else if (MutationProperties.RUN_MODE == RunMode.CHECK_INVARIANTS_PER_TEST) {
+			addMutationTestListener(new InvariantPerTestListener());
+			runNormalTests();
+		}
+		else {
 			System.out.println("MutationTestDriver.run()"
 					+ MutationProperties.RUN_MODE);
 			runNormalTests();

@@ -81,6 +81,10 @@ public class MutationTestResult implements Serializable {
 
 	private int totalViolations;
 
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinTable(name = "MutationTestResult_AddResults")
+	private List<AddResult> addResults = new ArrayList<AddResult>();
+
 	/**
 	 * @return the violatedInvariants
 	 */
@@ -350,5 +354,35 @@ public class MutationTestResult implements Serializable {
 			@SuppressWarnings("unused")
 			int length = violatedInvariants.length;
 		}
+	}
+
+	/**
+	 * @return the addResults
+	 */
+	public List<AddResult> getAddResults() {
+		return addResults;
+	}
+
+	/**
+	 * @return the addResults
+	 */
+	public void addResults(AddResult r) {
+		addResults.add(r);
+	}
+
+	/**
+	 * @param addResults the addResults to set
+	 */
+	public void setAddResults(List<AddResult> addResults) {
+		this.addResults = addResults;
+	}
+
+	public <T> T getAddResult(Class<T> clazz) {
+		for(AddResult addResult : addResults){
+			if(clazz.isInstance(addResult)){
+				return (T) addResult;
+			}
+		}
+		return null;
 	}
 }
