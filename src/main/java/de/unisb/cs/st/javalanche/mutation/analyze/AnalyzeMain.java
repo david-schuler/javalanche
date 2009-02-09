@@ -13,6 +13,7 @@ import de.unisb.cs.st.javalanche.mutation.analyze.invariant.InvariantSplitAnalyz
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.tracer.TracerAnalyzer;
 
 /**
  * Analyzes the mutation results for a project. Either a list (comma separated)
@@ -32,7 +33,8 @@ public class AnalyzeMain {
 			analyzeMutations(analyzers);
 		} else {
 			analyzeMutations(new MutationAnalyzer[] {
-					new InvariantSplitAnalyzer()
+					new TracerAnalyzer()
+					//new InvariantSplitAnalyzer()
 					/*
 		 new MutationResultAnalyzer(),
 		 new KilledAnalyzer(),
