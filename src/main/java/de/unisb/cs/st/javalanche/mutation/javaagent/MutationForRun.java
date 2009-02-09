@@ -15,13 +15,12 @@ import org.hibernate.Transaction;
 
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 /**
- * Singelton class that holds all mutations that should be applied and executed
+ * Singleton class that holds all mutations that should be applied and executed
  * during a run.
  *
  * @author David Schuler
@@ -41,10 +40,20 @@ public class MutationForRun {
 		private static MutationForRun INSTANCE = new MutationForRun();
 	}
 
+	/**
+	 * List that holds the mutations that should be applied for this run (It
+	 * will only contain mutations without results).
+	 */
 	private List<Mutation> mutations;
 
+	/**
+	 * Contains all mutations that are reported to have been applied.
+	 */
 	private Set<Mutation> appliedMutations = new HashSet<Mutation>();
 
+	/**
+	 * @return the instance of this singleton.
+	 */
 	public static MutationForRun getInstance() {
 		return SingletonHolder.INSTANCE;
 	}
@@ -62,6 +71,9 @@ public class MutationForRun {
 		logger.info("Mutation Ids: " + join);
 	}
 
+	/**
+	 * @return The names of the classes to mutate.
+	 */
 	public Collection<String> getClassNames() {
 		Set<String> classNames = new HashSet<String>();
 		for (Mutation m : mutations) {
@@ -70,10 +82,24 @@ public class MutationForRun {
 		return classNames;
 	}
 
+	/**
+	 * The list of mutations for this run. This list will only contain mutations
+	 * without results, if they already have a result they will not be apllied
+	 * again.
+	 *
+	 * @return the list of mutations for this run.
+	 */
 	public List<Mutation> getMutations() {
 		return Collections.unmodifiableList(mutations);
 	}
 
+	/**
+	 * Reads a list of mutation ids from a file and fetches the corresponding
+	 * mutations from the database. Mutations that already have a result are
+	 * filtered such that they get not applied again.
+	 *
+	 * @return a list of mutations for this run.
+	 */
 	private static List<Mutation> getMutationsForRun() {
 		List<Mutation> mutationsToReturn = new ArrayList<Mutation>();
 		if (MutationProperties.MUTATION_FILE_NAME != null) {
@@ -91,16 +117,18 @@ public class MutationForRun {
 			logger.info("Property not found: "
 					+ MutationProperties.MUTATION_FILE_KEY);
 		}
-		// if (mutationsToReturn.size() == 0) {
-		// mutationsToReturn =
-		// QueryManager.getCoveredMutationListFromDb(DEFAULT_MUTATIONS_PER_RUN);
-		// }
 		filterMutationsWithResult(mutationsToReturn);
 		return mutationsToReturn;
 	}
 
+	/**
+	 * Removes the mutations that have a result from the given list of
+	 * mutations.
+	 *
+	 * @param mutations
+	 *            the list of mutations to be filtered.
+	 */
 	private static void filterMutationsWithResult(List<Mutation> mutations) {
-		int preSize = mutations.size();
 		if (mutations != null) {
 			// make sure that we have not got any mutations that have already an
 			// result
@@ -116,32 +144,20 @@ public class MutationForRun {
 					toRemove.add(m);
 				}
 			}
-
 			mutations.removeAll(toRemove);
-
 			tx.commit();
 			session.close();
 		}
-		if (mutations == null || mutations.size() == 0) {
-			if (mutations == null || preSize == 0) {
-				logger.error("No mutations for this run - exiting now");
-			} else {
-				logger.info("All mutations got results - exiting now");
-			}
-			System.out.println("ALL_RESULTS");
-			System.out
-					.println("All mutations have results - They have already been aplied and executed");
-
-			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT
-					|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) { // TODO
-				// INTRODUCE
-				// own
-				// testRunMode
-				System.exit(0);
-			}
-		}
 	}
 
+	/**
+	 * Reads a list of mutation ids from a file and fetches the corresponding
+	 * mutations from the database.
+	 *
+	 * @param file
+	 *            the file to read from
+	 * @return a list of mutations read from the db.
+	 */
 	public static List<Mutation> getMutationsByFile(File file) {
 		List<Long> idList = Io.getIDsFromFile(file);
 		List<Mutation> returnList = null;
@@ -155,21 +171,27 @@ public class MutationForRun {
 
 	}
 
+	/**
+	 * Reinitializes this singleton - used for unit testing.
+	 */
 	public void reinit() {
 		mutations = getMutationsForRun();
 		logger.info("Got " + mutations.size() + " mutations");
 	}
 
+	/**
+	 *
+	 * @param mutation
+	 *            the mutation to check
+	 * @return true, if the given mutation is a mutation for this run.
+	 */
 	public boolean containsMutation(Mutation mutation) {
-		boolean result = hasMutation(mutation);
-		if (result) {
-			logger.debug("mutation contained:  " + mutation);
-		} else {
-			logger.debug("mutation not contained:  " + mutation);
-		}
-		return result;
+		return hasMutation(mutation);
 	}
 
+	/**
+	 * Helper method for containsMutation.
+	 */
 	private boolean hasMutation(Mutation searchMutation) {
 		if (searchMutation != null) {
 			for (Mutation m : mutations) {
@@ -181,6 +203,13 @@ public class MutationForRun {
 		return false;
 	}
 
+	/**
+	 * Method that is called by the instrumentation classes to signalize that
+	 * the given mutation was applied.
+	 *
+	 * @param mutation
+	 *            the mutation that was applied.
+	 */
 	public static void mutationApplied(Mutation mutation) {
 		getInstance()._mutationApplied(mutation);
 	}
@@ -189,6 +218,10 @@ public class MutationForRun {
 		appliedMutations.add(mutation);
 	}
 
+	/**
+	 * Called at the end of mutation testing. Prints a message, and an error
+	 * message if one or more mutations where not applied.
+	 */
 	public void reportAppliedMutations() {
 		List<Mutation> notApplied = new ArrayList<Mutation>();
 		int applied = 0;
@@ -220,11 +253,24 @@ public class MutationForRun {
 		}
 	}
 
+	/**
+	 * @return the number of applied mutations.
+	 */
 	public static int getNumberOfAppliedMutations() {
 		return getInstance().appliedMutations.size();
 	}
 
+	/**
+	 * @return a set of all applied mutations.
+	 */
 	public static Set<Mutation> getAppliedMutations() {
-		return getInstance().appliedMutations;
+		return Collections.unmodifiableSet(getInstance().appliedMutations);
+	}
+
+	/**
+	 * @return true, if one or more mutations do not hav a result.
+	 */
+	public static boolean hasMutationsWithoutResults() {
+		return getInstance().getMutations().size() > 0;
 	}
 }

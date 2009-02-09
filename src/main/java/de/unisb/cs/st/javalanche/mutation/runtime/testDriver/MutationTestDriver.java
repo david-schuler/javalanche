@@ -122,7 +122,8 @@ public abstract class MutationTestDriver {
 	public final void run() {
 		if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST
 				|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT
-				|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) {
+				|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST
+				|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_COVERAGE) {
 			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) {
 				addMutationTestListener(new InvariantPerTestListener());
 			}
@@ -133,8 +134,7 @@ public abstract class MutationTestDriver {
 		} else if (MutationProperties.RUN_MODE == RunMode.CHECK_INVARIANTS_PER_TEST) {
 			addMutationTestListener(new InvariantPerTestListener());
 			runNormalTests();
-		}
-		else {
+		} else {
 			System.out.println("MutationTestDriver.run()"
 					+ MutationProperties.RUN_MODE);
 			runNormalTests();
@@ -257,6 +257,12 @@ public abstract class MutationTestDriver {
 	 */
 	public void runMutations() {
 		logger.info("Running Mutations");
+		if (!MutationForRun.hasMutationsWithoutResults()) {
+			System.out.println("ALL_RESULTS");
+			System.out
+					.println("All mutations have results - this means they have already been aplied and executed");
+			return;
+		}
 		shutDownThread = new Thread(new MutationDriverShutdownHook(this));
 		addMutationTestListener(new MutationObserver());
 		addListenersFromProperty();

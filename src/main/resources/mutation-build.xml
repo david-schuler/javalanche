@@ -195,7 +195,7 @@
 	
 	
 	
-		<target name="runMutationsCoverage" description="* run a given mutation tasks with line coverage tracing enabled"/>
+	<target name="runMutationsCoverage" description="* run a given mutation tasks with line coverage tracing enabled">
 		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="run.mutations.memory" value="-Xmx1524m"/>
 		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=mutation-coverage"/>

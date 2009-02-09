@@ -3,7 +3,6 @@ package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,7 +15,6 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.PrimitiveArrays;
-import com.sun.org.apache.bcel.internal.generic.ALOAD;
 
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.ds.util.io.SerializeIo;
