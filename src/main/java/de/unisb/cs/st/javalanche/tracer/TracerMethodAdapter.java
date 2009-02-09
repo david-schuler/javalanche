@@ -46,7 +46,7 @@ public class TracerMethodAdapter extends MethodAdapter {
 			case Opcodes.IRETURN:
 			case Opcodes.LRETURN:
 			case Opcodes.RETURN:
-				this.visitMethodInsn(Opcodes.INVOKESTATIC, TRACER_CLASS_NAME, "getInstance", "()Lde/unisb/cs/st/tracer/Trace;");
+				this.visitMethodInsn(Opcodes.INVOKESTATIC, TRACER_CLASS_NAME, "getInstance", "()L" + TRACER_CLASS_NAME   +";");
 				this.visitLdcInsn(className);
 				this.visitLdcInsn(methodName);
 				this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TRACER_CLASS_NAME, "end", "(Ljava/lang/String;Ljava/lang/String;)V");
@@ -64,7 +64,7 @@ public class TracerMethodAdapter extends MethodAdapter {
 	 */
 	public void visitLineNumber(int line, Label start) {
 		if (!methodName.equals("<clinit>")) {
-			this.visitMethodInsn(Opcodes.INVOKESTATIC, TRACER_CLASS_NAME, "getInstance", "()Lde/unisb/cs/st/tracer/Trace;");
+			this.visitMethodInsn(Opcodes.INVOKESTATIC, TRACER_CLASS_NAME, "getInstance", "()L" + TRACER_CLASS_NAME   +";");
 			this.visitLdcInsn(line);
 			this.visitLdcInsn(className);
 			this.visitLdcInsn(methodName);

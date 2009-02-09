@@ -13,6 +13,7 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.apache.commons.lang.time.StopWatch;
+import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestDriver;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestRunnable;
@@ -27,7 +28,8 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.TestSuiteUtil;
  *
  */
 public class Junit3MutationTestDriver extends MutationTestDriver {
-
+	private static Logger logger = Logger
+			.getLogger(Junit3MutationTestDriver.class);
 
 	private final class SingleTestListener implements TestListener {
 
@@ -91,19 +93,20 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 
 			private SingleTestListener listener = new SingleTestListener();
 
-
 			private boolean failed = false;
 
 			private StopWatch stopWatch = new StopWatch();
-
 
 			public void run() {
 				try {
 					stopWatch.start();
 					Test actualtest = allTests.get(testName);
 					actualtest.run(result);
-					stopWatch.stop();
+				} catch (Exception e) {
+					logger.debug("Cought exception from test " + e
+							+ " Message " + e.getMessage());
 				} finally {
+					stopWatch.stop();
 					finished = true;
 				}
 			}
@@ -132,8 +135,8 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 
 			public void setFailed(boolean failed) {
 				TimeoutException timeoutException = new TimeoutException(
-						"Test took to long "  + stopWatch.getTime()  +  " ms");
-				result.addError(allTests.get(testName),  timeoutException);
+						"Test took to long " + stopWatch.getTime() + " ms");
+				result.addError(allTests.get(testName), timeoutException);
 				listener.addError(allTests.get(testName), timeoutException);
 			}
 

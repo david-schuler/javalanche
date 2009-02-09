@@ -54,7 +54,8 @@ public class MutationProperties {
 		SCAN("scan"), MUTATION_TEST("mutation"), TEST_TESTSUIT_FIRST("test1"), TEST_TESTSUITE_SECOND(
 				"test2"), MUTATION_TEST_INVARIANT("mutation-invariant"), MUTATION_TEST_INVARIANT_PER_TEST(
 				"mutation-invariant-per-test"), MUTATION_TEST_COVERAGE(
-				"mutation-coverage"), OFF("off"), CHECK_INVARIANTS_PER_TEST(
+				"mutation-coverage"), CREATE_COVERAGE("create-coverage"),  OFF("off"), CHECK_INVARIANTS_PER_TEST(
+
 				"check-per-test");
 
 		private String key;

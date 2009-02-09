@@ -80,12 +80,13 @@ public class MutationPreMain {
 			} else if (RUN_MODE == MUTATION_TEST_COVERAGE) {
 				addClassFileTransformer(instrumentation,
 						new MutationFileTransformer());
-				instrumentation.addTransformer(new TraceTransformer());
+				addClassFileTransformer(instrumentation, new TraceTransformer());
 			} else if (RUN_MODE == SCAN) {
 				System.out.println("Scanning for mutations");
 				addClassFileTransformer(instrumentation, new MutationScanner());
 				return;
-			} else if (RUN_MODE == TEST_TESTSUIT_FIRST) {
+			} else if (RUN_MODE == TEST_TESTSUIT_FIRST
+					|| RUN_MODE == CREATE_COVERAGE) {
 				System.out.println("Integrating RandomPermutationTestSuite");
 				addClassFileTransformer(instrumentation,
 						new IntegrateRandomPermutationTransformer());

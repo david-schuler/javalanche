@@ -112,8 +112,7 @@ public class MutationScanner implements ClassFileTransformer {
 				} else {
 					logger.debug("Skipping class " + className);
 				}
-				if (classNameWithDots.endsWith("AllTests")
-						|| compareWithSuiteProperty(classNameWithDots)) {
+				if (compareWithSuiteProperty(classNameWithDots)) {
 					logger.info("Trying to integrate ScanAndCoverageTestSuite");
 					BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer
 							.getIntegrateScanAndCoverageTestSuiteTransformer();
