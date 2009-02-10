@@ -70,6 +70,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 	private static HashMap<String, HashMap<String, HashMap<Integer, Integer>>> originalMaps = null;
 
+	boolean firstCallToWriteOut = true;
 	PrintStream out = null;
 	StringBuffer sb = new StringBuffer();
 
@@ -92,12 +93,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		String className;
 
 		originalMaps = new HashMap<String, HashMap<String, HashMap<Integer, Integer>>>();
-		HashMap<String, HashMap<Integer, Integer>> classMap; // = new
-		// HashMap<String,
-		// HashMap<Integer,
-		// Integer>>();
-		HashMap<Integer, Integer> lineMap; // = new HashMap<Integer,
-		// Integer>();
+		HashMap<String, HashMap<Integer, Integer>> classMap;
+		HashMap<Integer, Integer> lineMap;
 
 		for (String test : originalTests) {
 			try {
@@ -128,8 +125,19 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			killed.add(results.result);
 		} else {
 			notKilled.add(results.result);
-		}
+		}		
 
+		if (firstCallToWriteOut) {
+			out.println("ID;KILLED;RESULT;" +
+					"CLASSES_TOTAL;CLASSES_MODIFIED;"+
+					"METHODS_TOTAL;METHODS_MODIFIED;" +
+					"LINES_TOTAL;LINES_MODIFIED;" +
+					"TESTS_TOTAL;TESTS_EXECUTED;" +
+					"MUTATION_TYPE;CLASS_NAME;LINE_NUMBER;MUTATION_FOR_LINE;" +
+					"CLASS_INIT;MUTATION_RESULT");
+			firstCallToWriteOut = false;
+		}
+		
 		System.out.println("ID: " + mutation.id + "\tKilled: "
 				+ mutation.killed + "\tValue: " + results.result + " ("
 				+ mutation.mutationType + ")");
@@ -139,11 +147,10 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				+ ";"
 				+ dec2.format(results.result)
 				+ ";"
-				+
-				// dec2.format(maxExecutions) + ";" +
-				// dec2.format(differenceExecutions) + ";" +
-				dec2.format(results.classesTotal) + ";"
+				+ dec2.format(results.classesTotal) + ";"
 				+ dec2.format(results.classesModified) + ";"
+				+ dec2.format(results.methodsTotal) + ";"
+				+ dec2.format(results.methodsModified) + ";"
 				+ dec2.format(results.linesTotal) + ";"
 				+ dec2.format(results.linesModified) + ";"
 				+ dec2.format(results.testsTotal) + ";"
@@ -301,46 +308,54 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 					e.printStackTrace();
 				}
 			}			
+			
+			
+			// Count the number of modified lines/methods/classes;
+			int linesTotal = 0, linesModified = 0;
+			int methodsTotal = 0, methodsModified = 0;
 
-			int linesTotal = 0, linesModified = 0, classesTotal = 0, classesModified = 0;
-
+			HashSet<String> classesTotalHash = new HashSet<String>();  
+			HashSet<String> classesModifiedHash = new HashSet<String>();
+			
 			Iterator<String> itModified = modified.keySet().iterator();
 			while (itModified.hasNext()) {
-				classesTotal++;
-				String className = itModified.next();
-				HashMap<Integer, Boolean> lineSet = modified.get(className);
+				String name = itModified.next();
+				String className = name.substring(0, name.indexOf('@'));
+				HashMap<Integer, Boolean> lineSet = modified.get(name);
 
 				Iterator<Integer> itLineSet = lineSet.keySet().iterator();
 
 				boolean first = true;
 				while (itLineSet.hasNext()) {
 					Integer line = itLineSet.next();
-					linesTotal++;
 					Boolean b = lineSet.get(line);
 					// System.out.println(className + ": " + line + " modified:
 					// " +b);
 					if (b) {
 						if (first) {
-							classesModified++;
+							methodsModified++;
 							first = false;
+							classesModifiedHash.add(className);
 							// System.out.println(className);
 						}
 						linesModified++;
 						// System.out.println(line);
 					}
+					linesTotal++;
 				}
+				methodsTotal++;
+				classesTotalHash.add(className);
 			}
 
 			results.testsExecuted = (double) mutatedTests.length;
 			results.testsTotal = (double) originalMaps.size();
-			results.result = (results.result / (double) mutatedTests.length);
-
-			
+			results.result = (results.result / (double) mutatedTests.length);			
 			results.linesTotal += (double)linesTotal;
 			results.linesModified += (double)linesModified;
-			results.classesTotal += (double)classesTotal;
-			results.classesModified += (double)classesModified;
-			
+			results.methodsTotal += (double)methodsTotal;
+			results.methodsModified += (double)methodsModified;
+			results.classesTotal += (double)classesTotalHash.size();
+			results.classesModified += (double)classesModifiedHash.size();
 			writeOut(mutation, results);
 		}
 	}
@@ -412,7 +427,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			}
 		};
 
-		Thread[] innerThread = new Thread[1];
+		Thread[] innerThread = new Thread[11];
 		for (int i = 0; i < innerThread.length; i++) {
 			innerThread[i] = new Thread(r);
 			innerThread[i].start();
