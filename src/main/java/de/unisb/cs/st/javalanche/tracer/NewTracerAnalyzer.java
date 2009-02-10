@@ -18,39 +18,41 @@ import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
 class MutationCache {
+	private static final String NO_RESULT = "No Result";
 	public long id;
 	public boolean killed;
 	public boolean classInit;
 	public String shortString;
-	public String className; 
+	public String className;
 	public int lineNumber;
 	public int mutationForLine;
 	public String mutationType;
 	public String mutationResult;
-	
+
 	public static MutationCache create(Mutation m) {
 		MutationCache mc = new MutationCache();
 		mc.id = m.getId();
-		mc.shortString =  m.toShortString();
+		mc.shortString = m.toShortString();
 		mc.killed = m.isKilled();
 		mc.classInit = m.isClassInit();
 		mc.className = m.getClassName();
 		mc.lineNumber = m.getLineNumber();
 		mc.mutationForLine = m.getMutationForLine();
 		mc.mutationType = m.getMutationType().toString();
-		mc.mutationResult = m.getMutationResult().toShortString();
-		return mc; 
+		mc.mutationResult = m.getMutationResult() != null ? m
+				.getMutationResult().toShortString() : NO_RESULT;
+		return mc;
 	}
 }
 
 class TracerResult {
 	// an artificial number
 	public double result = 0;
-	
+
 	// The summarized number of classes called by the run/mutation
 	public double classesTotal = 0;
 	public double classesModified = 0;
-	
+
 	// The summarized number of classes called by the run/mutation;
 	public double methodsTotal = 0;
 	public double methodsModified = 0;
@@ -64,10 +66,7 @@ class TracerResult {
 	public double testsExecuted = 0;
 }
 
-
 public class NewTracerAnalyzer implements MutationAnalyzer {
-
-
 
 	private static HashMap<String, HashMap<String, HashMap<Integer, Integer>>> originalMaps = null;
 
@@ -82,13 +81,10 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 	LinkedBlockingQueue<MutationCache> lbq = new LinkedBlockingQueue<MutationCache>();
 
-
-	
 	private void loadOriginalTraces() {
 		ObjectInputStream ois = null;
 
-
-		String path = TracerTestListener.TRACE_RESULT_DIR+"0/";
+		String path = TracerTestListener.TRACE_RESULT_DIR + "0/";
 		File dir = new File(path);
 		String[] originalTests = dir.list();
 
@@ -96,12 +92,17 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		String className;
 
 		originalMaps = new HashMap<String, HashMap<String, HashMap<Integer, Integer>>>();
-		HashMap<String, HashMap<Integer, Integer>> classMap; // = new HashMap<String, HashMap<Integer, Integer>>();
-		HashMap<Integer, Integer> lineMap; // = new HashMap<Integer, Integer>();
+		HashMap<String, HashMap<Integer, Integer>> classMap; // = new
+		// HashMap<String,
+		// HashMap<Integer,
+		// Integer>>();
+		HashMap<Integer, Integer> lineMap; // = new HashMap<Integer,
+		// Integer>();
 
 		for (String test : originalTests) {
 			try {
-				ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(path + test)));
+				ois = new ObjectInputStream(new BufferedInputStream(
+						new FileInputStream(path + test)));
 				numClasses = ois.readInt();
 				classMap = new HashMap<String, HashMap<Integer, Integer>>();
 				for (int i = 0; i < numClasses; i++) {
@@ -121,42 +122,43 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		}
 	}
 
-	
-	
-	private synchronized void writeOut(MutationCache mutation, TracerResult results) {
+	private synchronized void writeOut(MutationCache mutation,
+			TracerResult results) {
 		if (mutation.killed) {
 			killed.add(results.result);
 		} else {
 			notKilled.add(results.result);
 		}
 
-		System.out.println(	"ID: " + mutation.id +
-							"\tKilled: " + mutation.killed +
-							"\tValue: " + results.result +
-							" (" + mutation.mutationType + ")");
-		out.println(	mutation.id + ";" +
-						mutation.killed + ";" +
-						dec2.format(results.result) + ";" +
-						//dec2.format(maxExecutions) + ";" +
-						//dec2.format(differenceExecutions) + ";" +
-						dec2.format(results.classesTotal) + ";" +
-						dec2.format(results.classesModified) + ";" +
-						dec2.format(results.linesTotal) + ";" +
-						dec2.format(results.linesModified) + ";" +
-						dec2.format(results.testsTotal) + ";" +
-						dec2.format(results.testsExecuted) + ";" +
-						mutation.mutationType + ";" +
-						mutation.className + ";" +
-						mutation.lineNumber + ";" +
-						mutation.mutationForLine+ ";" +
-						mutation.classInit +";" +
-						mutation.mutationResult);
+		System.out.println("ID: " + mutation.id + "\tKilled: "
+				+ mutation.killed + "\tValue: " + results.result + " ("
+				+ mutation.mutationType + ")");
+		out.println(mutation.id
+				+ ";"
+				+ mutation.killed
+				+ ";"
+				+ dec2.format(results.result)
+				+ ";"
+				+
+				// dec2.format(maxExecutions) + ";" +
+				// dec2.format(differenceExecutions) + ";" +
+				dec2.format(results.classesTotal) + ";"
+				+ dec2.format(results.classesModified) + ";"
+				+ dec2.format(results.linesTotal) + ";"
+				+ dec2.format(results.linesModified) + ";"
+				+ dec2.format(results.testsTotal) + ";"
+				+ dec2.format(results.testsExecuted) + ";"
+				+ mutation.mutationType + ";" + mutation.className + ";"
+				+ mutation.lineNumber + ";" + mutation.mutationForLine + ";"
+				+ mutation.classInit + ";" + mutation.mutationResult);
 
 	}
 
-	
-	
-	private void processTest(HashMap<String, HashMap<Integer, Integer>> classMap, ObjectInputStream ois, TracerResult results, HashMap<String, HashMap<Integer, Boolean>> modified) throws IOException {
+	private void processTest(
+			HashMap<String, HashMap<Integer, Integer>> classMap,
+			ObjectInputStream ois, TracerResult results,
+			HashMap<String, HashMap<Integer, Boolean>> modified)
+			throws IOException {
 		int numClasses, numLines;
 		String className;
 
@@ -213,7 +215,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 				if (value != 0) {
 					lineSet.put(lineKey, true);
-				} else 	if (lineSet.get(lineKey) == null || !lineSet.get(lineKey)) {
+				} else if (lineSet.get(lineKey) == null
+						|| !lineSet.get(lineKey)) {
 					lineSet.put(lineKey, false);
 				} else {
 					lineSet.put(lineKey, true);
@@ -239,9 +242,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			modified.put(className, lineSet);
 		}
 
-
-
-		//process Classes only found in the original map
+		// process Classes only found in the original map
 		Iterator<String> itS = classMap.keySet().iterator();
 		String tmpS;
 		while (itS.hasNext()) {
@@ -258,7 +259,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			if (lineSet == null) {
 				lineSet = new HashMap<Integer, Boolean>();
 			}
-			while(itI.hasNext()) {
+			while (itI.hasNext()) {
 				tmp = itI.next();
 				lineSet.put(tmp, true);
 				result += lineMap.get(tmp);
@@ -266,7 +267,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			}
 			modified.put(tmpS, lineSet);
 		}
-		
+
 		results.result += (result / maxresult);
 	}
 
@@ -276,7 +277,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			long mutation_id = mutation.id;
 			ObjectInputStream ois;
 
-			String path = TracerTestListener.TRACE_RESULT_DIR + mutation_id + "/";
+			String path = TracerTestListener.TRACE_RESULT_DIR + mutation_id
+					+ "/";
 			File dir = new File(path);
 			if (!dir.exists()) {
 				System.out.println("NOT FOUND: " + mutation.shortString);
@@ -284,30 +286,30 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			}
 			String[] mutatedTests = dir.list();
 			HashMap<String, Double> map = new HashMap<String, Double>();
-			
+
 			TracerResult results = new TracerResult();
-			
+
 			HashMap<String, HashMap<Integer, Boolean>> modified = new HashMap<String, HashMap<Integer, Boolean>>();
 
 			for (String test : mutatedTests) {
 				try {
-					ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(path + test)));
+					ois = new ObjectInputStream(new BufferedInputStream(
+							new FileInputStream(path + test)));
 					processTest(originalMaps.get(test), ois, results, modified);
 					ois.close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-			
+
 			results.testsExecuted = (double) mutatedTests.length;
 			results.testsTotal = (double) originalMaps.size();
 			results.result = results.result / (double) mutatedTests.length;
-			
 
-			int linesTotal=0, linesModified=0, classesTotal=0, classesModified=0;
+			int linesTotal = 0, linesModified = 0, classesTotal = 0, classesModified = 0;
 
 			Iterator<String> itModified = modified.keySet().iterator();
-			while(itModified.hasNext()) {
+			while (itModified.hasNext()) {
 				classesTotal++;
 				String className = itModified.next();
 				HashMap<Integer, Boolean> lineSet = modified.get(className);
@@ -315,31 +317,32 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				Iterator<Integer> itLineSet = lineSet.keySet().iterator();
 
 				boolean first = true;
-				while(itLineSet.hasNext()) {
+				while (itLineSet.hasNext()) {
 					Integer line = itLineSet.next();
 					linesTotal++;
 					Boolean b = lineSet.get(line);
-					//System.out.println(className + ": " + line + " modified: " +b);
+					// System.out.println(className + ": " + line + " modified:
+					// " +b);
 					if (b) {
 						if (first) {
 							classesModified++;
-							first=false;
-							//System.out.println(className);
+							first = false;
+							// System.out.println(className);
 						}
 						linesModified++;
-						//System.out.println(line);
+						// System.out.println(line);
 					}
 				}
 			}
-			
-			results.linesTotal += (double)linesTotal;
-			results.linesModified += (double)linesModified;
-			results.classesTotal += (double)classesTotal;
-			results.classesModified += (double)classesModified;
-			
+
+			results.linesTotal += (double) linesTotal;
+			results.linesModified += (double) linesModified;
+			results.classesTotal += (double) classesTotal;
+			results.classesModified += (double) classesModified;
+
 			writeOut(mutation, results);
 		}
-	}	
+	}
 
 	public void writeShortResults(int counter, double epsilon) {
 		sb.append("Mutations processed: " + counter + "\n");
@@ -355,7 +358,10 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			}
 		}
 		if (killed.size() > 0) {
-			sb.append("\tKilled:         " + killed.size() +  "\tover epsilon: " + dec.format(over / (double)killed.size() * 100) + "%\t under epsilon: " + dec.format(under / (double)killed.size() * 100) + "%\n");
+			sb.append("\tKilled:         " + killed.size() + "\tover epsilon: "
+					+ dec.format(over / (double) killed.size() * 100)
+					+ "%\t under epsilon: "
+					+ dec.format(under / (double) killed.size() * 100) + "%\n");
 		}
 
 		// not Killed
@@ -368,12 +374,17 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				under++;
 			}
 		}
-		if (notKilled.size() >0) {
-			sb.append("\tNOT Killed:     " + notKilled.size() + "\tover epsilon: " + dec.format(over / (double)notKilled.size() * 100) + "%\t under epsilon: " + dec.format(under / (double)notKilled.size() * 100) + "%\n");
+		if (notKilled.size() > 0) {
+			sb.append("\tNOT Killed:     " + notKilled.size()
+					+ "\tover epsilon: "
+					+ dec.format(over / (double) notKilled.size() * 100)
+					+ "%\t under epsilon: "
+					+ dec.format(under / (double) notKilled.size() * 100)
+					+ "%\n");
 		}
-		
+
 	}
-	
+
 	public String analyze(Iterable<Mutation> mutations) {
 		loadOriginalTraces();
 
@@ -389,7 +400,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		Iterator<Mutation> mi = mutations.iterator();
 
 		while (mi.hasNext()) {
-			counter ++;
+			counter++;
 			Mutation m = mi.next();
 			lbq.offer(MutationCache.create(m));
 		}
