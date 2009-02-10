@@ -57,8 +57,6 @@ public class MutationPreMain {
 
 			} else if (RUN_MODE == MUTATION_TEST_INVARIANT) {
 				System.out.println("Run mutation tests with invariant checks");
-				// addClassFileTransformer(instrumentation, new
-				// InvariantTransformer());
 				addClassFileTransformer(instrumentation,
 						new InvariantTransformer());
 				addClassFileTransformer(instrumentation,
@@ -69,8 +67,7 @@ public class MutationPreMain {
 					|| RUN_MODE == CHECK_INVARIANTS_PER_TEST) {
 				System.out
 						.println("Run mutation tests with invariant checks per test");
-				// addClassFileTransformer(instrumentation, new
-				// InvariantTransformer());
+
 				addClassFileTransformer(instrumentation,
 						new InvariantTransformer());
 				addClassFileTransformer(instrumentation,
@@ -85,12 +82,16 @@ public class MutationPreMain {
 				System.out.println("Scanning for mutations");
 				addClassFileTransformer(instrumentation, new MutationScanner());
 				return;
-			} else if (RUN_MODE == TEST_TESTSUIT_FIRST
-					|| RUN_MODE == CREATE_COVERAGE) {
+			} else if (RUN_MODE == TEST_TESTSUIT_FIRST) {
 				System.out.println("Integrating RandomPermutationTestSuite");
 				addClassFileTransformer(instrumentation,
 						new IntegrateRandomPermutationTransformer());
 				return;
+			} else if (RUN_MODE == CREATE_COVERAGE) {
+				System.out.println("Integrating RandomPermutationTestSuite");
+				addClassFileTransformer(instrumentation,
+						new IntegrateRandomPermutationTransformer());
+				addClassFileTransformer(instrumentation, new TraceTransformer());
 			} else if (RUN_MODE == TEST_TESTSUITE_SECOND) {
 				System.out.println("Check test suite data in db");
 				addClassFileTransformer(instrumentation,

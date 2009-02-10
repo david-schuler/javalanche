@@ -93,10 +93,11 @@
 		</java>
 	</target>
 	
-	
-    <target name="createTasksFew">
+	<target name="mutationDir">
 		<mkdir dir="${javalanche.mutation.output.dir}"/>
-		
+	</target>
+	
+    <target name="createTasksFew" depends="mutationDir">
 		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
 			<sysproperty key="mutation.number.of.tasks" value="10" />
@@ -215,7 +216,6 @@
 	
 		<path id="run.mutations.classpath.add">
 			<path refid="mutation.classpath"/>
-			<path refid="invariant.classpath"/>
 		</path>
 		<!--${run.mutations.verbose}-->
 		<antcall target="test-javalanche">
@@ -225,15 +225,13 @@
 	</target>
 	
 	
-	<target name="createLineCoverageData" description="* Create coverage data for an original unmutated run">
+	<target name="createLineCoverageData" description="* Create coverage data for an original unmutated run" depends="mutationDir">
 		<property name="create.coverage.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="create.coverage.memory" value="-Xmx1524m"/>
 		<property name="create.coverage.mutation.run.mode" value="-Dmutation.run.mode=create-coverage"/>
 		<property name="create.coverage.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="create.coverage.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
 		<property name="create.coverage.verbose" value="-verbose"/>
-		
-
 		
 		
 		<path id="create.coverage.classpath.add">
@@ -280,12 +278,7 @@
 	</target>
 	
 	
-	
-	
-	
-	
-	
-	
+
 	
 	
 	
