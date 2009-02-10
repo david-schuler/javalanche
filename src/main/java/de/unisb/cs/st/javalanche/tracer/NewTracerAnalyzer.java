@@ -288,10 +288,10 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 						if (first) {
 							classesModified++;
 							first=false;
-							System.out.println(className);
+							//System.out.println(className);
 						}
 						linesModified++;
-						System.out.println(line);
+						//System.out.println(line);
 					}
 				}
 			}
@@ -318,19 +318,22 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 		Iterator<Mutation> mi = mutations.iterator();
 
-		int[] x = {	183, 2500, 7677, 9435, 2405,
+		/*int[] x = {	183, 2500, 7677, 9435, 2405,
 					9277, 8345, 8022, 8076, 1691,
 					184, 7777, 7773, 402, 9813,
 					9447, 8149, 7932, 7226, 7041 };
-
+		
+		*/
 		while (mi.hasNext()) {
 			counter ++;
 			Mutation m = mi.next();
+			lbq.offer(m);
+			/*
 			for (int i = 0; i < x.length; i++) {
 				if (m.getId() == x[i]) {
 					lbq.offer(m);
 				}
-			}
+			}*/
 		}
 
 		Runnable r = new Runnable() {
@@ -339,7 +342,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			}
 		};
 
-		Thread[] innerThread = new Thread[1];
+		Thread[] innerThread = new Thread[11];
 		for (int i = 0; i < innerThread.length; i++) {
 			innerThread[i] = new Thread(r);
 			innerThread[i].start();
