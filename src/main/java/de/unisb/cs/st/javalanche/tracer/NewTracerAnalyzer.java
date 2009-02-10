@@ -300,11 +300,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
-
-			results.testsExecuted = (double) mutatedTests.length;
-			results.testsTotal = (double) originalMaps.size();
-			results.result = results.result / (double) mutatedTests.length;
+			}			
 
 			int linesTotal = 0, linesModified = 0, classesTotal = 0, classesModified = 0;
 
@@ -335,11 +331,16 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				}
 			}
 
-			results.linesTotal += (double) linesTotal;
-			results.linesModified += (double) linesModified;
-			results.classesTotal += (double) classesTotal;
-			results.classesModified += (double) classesModified;
+			results.testsExecuted = (double) mutatedTests.length;
+			results.testsTotal = (double) originalMaps.size();
+			results.result = (results.result / (double) mutatedTests.length);
 
+			
+			results.linesTotal += (double)linesTotal;
+			results.linesModified += (double)linesModified;
+			results.classesTotal += (double)classesTotal;
+			results.classesModified += (double)classesModified;
+			
 			writeOut(mutation, results);
 		}
 	}
@@ -411,7 +412,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			}
 		};
 
-		Thread[] innerThread = new Thread[11];
+		Thread[] innerThread = new Thread[1];
 		for (int i = 0; i < innerThread.length; i++) {
 			innerThread[i] = new Thread(r);
 			innerThread[i].start();

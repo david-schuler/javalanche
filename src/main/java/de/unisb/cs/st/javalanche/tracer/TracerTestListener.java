@@ -8,15 +8,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
 public class TracerTestListener implements MutationTestListener {
 
 	static final String TRACE_RESULT_DIR = "mutation-files/tracer/";
+	
+	private static Logger logger = Logger.getLogger(TracerTestListener.class);
 
 	private Long mutation_id = new Long(0);
 	private String testName = null;
+	
+	private boolean saveFiles = false;
 
 	private static HashMap<String, HashMap<Integer, Integer>> classMap = new HashMap<String, HashMap<Integer, Integer>>((int)(2048 * 1.33));
 
@@ -39,56 +45,50 @@ public class TracerTestListener implements MutationTestListener {
 		}
 	}
 
-	public void start() {
+	public void start() {		
 		System.out.println("TracerTestListener.start()");
 		mutation_id = new Long(0);
 		classMap.clear();
 		createMutationDir();
+		saveFiles = true;
 	}
 
 	public void end() {
+		System.out.println("TracerTestListener.end()");
 		classMap.clear();
-		serializeHashMap();
-		//runMap.clear();
+		saveFiles = false;
 	}
 
 
 	public void testStart(String testName) {
 		this.testName = testName;
 		classMap.clear();
-
+		saveFiles = true;
 	}
 
 	public void testEnd(String testName) {
 		serializeHashMap();
-		//runMap.put(testName, (HashMap<String, HashMap<Integer, Integer>>)classMap.clone());
 		classMap.clear();
+		saveFiles = false;
 	}
 
 	public void mutationStart(Mutation mutation) {
 		this.mutation_id = mutation.getId();
 		classMap.clear();
 		createMutationDir();
+		saveFiles = true;
 	}
 
 	public void mutationEnd(Mutation mutation) {
 		classMap.clear();
-		serializeHashMap();
-		//runMap.clear();
+		saveFiles = false;
 	}
 
 	private void serializeHashMap() {
-		/*try {
-
-			FileOutputStream fout = new FileOutputStream(resultsBaseDir + mutation_id + ".ser");
-			//GZIPOutputStream gzout = new GZIPOutputStream(fout);
-			BufferedOutputStream bout = new BufferedOutputStream(fout);
-			ObjectOutputStream oos = new ObjectOutputStream(bout);
-			oos.writeObject(runMap);
-			oos.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
+		if (!saveFiles) {
+			logger.warn("Double Call to serializeHashMap");
+			return;
+		}
 		try {
 			FileOutputStream fos = new FileOutputStream(TRACE_RESULT_DIR + mutation_id + "/" + testName + ".dat");
 		    BufferedOutputStream bos = new BufferedOutputStream(fos);
