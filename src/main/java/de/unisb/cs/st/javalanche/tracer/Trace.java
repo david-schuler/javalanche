@@ -26,7 +26,7 @@ public class Trace {
 	 * This code is executed at the beginning of a method
 	 */
 	public synchronized void begin(String className, String methodName) {
-		String key = className; //+ "." + methodName;
+		String key = className ;//+ "@" + methodName;
 		if (!classMap.containsKey(key)) {
 			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>((int)(1024 * 1.33));
 			classMap.put(key, lineMap);
@@ -43,7 +43,7 @@ public class Trace {
 	 * This function is executed for every LineNumber
 	 */
 	public synchronized void logLineNumber(int line, String className, String methodName) {
-		String key = className; // + "." + methodName;
+		String key = className ;//+ "@" + methodName;
 		HashMap<Integer, Integer> lineMap = classMap.get(key);
 		Integer intline = new Integer(line);
 		if (!lineMap.containsKey(intline)) {

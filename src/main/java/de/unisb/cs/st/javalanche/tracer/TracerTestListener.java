@@ -89,7 +89,6 @@ public class TracerTestListener implements MutationTestListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
-
 		try {
 			FileOutputStream fos = new FileOutputStream(TRACE_RESULT_DIR + mutation_id + "/" + testName + ".dat");
 		    BufferedOutputStream bos = new BufferedOutputStream(fos);
