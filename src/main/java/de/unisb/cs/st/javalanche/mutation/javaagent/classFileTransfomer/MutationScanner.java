@@ -123,10 +123,10 @@ public class MutationScanner implements ClassFileTransformer {
 
 			} catch (Throwable t) {
 				t.printStackTrace();
-				logger.info(t.getMessage());
-				logger.info(Util.getStackTraceString());
-				System.out
-						.println("Exception during instrumentation - exiting");
+				String message = "Exception during instrumentation";
+				logger.warn(message, t);
+				logger.warn(Util.getStackTraceString());
+				System.out.println(message + " - exiting");
 				System.exit(1);
 			}
 		}

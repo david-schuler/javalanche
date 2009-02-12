@@ -101,6 +101,7 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 				try {
 					stopWatch.start();
 					Test actualtest = allTests.get(testName);
+					result.addListener(listener);
 					actualtest.run(result);
 				} catch (Exception e) {
 					logger.debug("Cought exception from test " + e

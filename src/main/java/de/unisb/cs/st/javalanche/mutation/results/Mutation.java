@@ -11,8 +11,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
-
 /**
  *
  * Class that stores a mutation. It stores its type, where it is (was) applied
@@ -45,6 +43,9 @@ public class Mutation implements Serializable {
 
 	private String className;
 
+	/**
+	 * The linenumber of the mutation, -1 is used when no linenumber is available.
+	 */
 	private int lineNumber;
 
 	private int mutationForLine;
@@ -66,7 +67,7 @@ public class Mutation implements Serializable {
 	public Mutation(String className, int line, int mutationForLine,
 			MutationType mutation, boolean classInit) {
 		super();
-		if (className == null || line < 0 || mutation == null) {
+		if (className == null || line < -1 || mutation == null) {
 			throw new IllegalArgumentException(String.format(
 					"Arguments were: %s - %d - %s", className, line, mutation));
 		}

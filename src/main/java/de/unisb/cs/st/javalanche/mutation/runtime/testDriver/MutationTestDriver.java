@@ -128,6 +128,9 @@ public abstract class MutationTestDriver {
 			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) {
 				addMutationTestListener(new InvariantPerTestListener());
 			}
+			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_COVERAGE) {
+				addMutationTestListener(new TracerTestListener());
+			}
 			listeners.addLast(new ResultReporter());
 			runMutations();
 		} else if (MutationProperties.RUN_MODE == RunMode.SCAN) {
@@ -135,10 +138,10 @@ public abstract class MutationTestDriver {
 		} else if (MutationProperties.RUN_MODE == RunMode.CHECK_INVARIANTS_PER_TEST) {
 			addMutationTestListener(new InvariantPerTestListener());
 			runNormalTests();
-		} else if (MutationProperties.RUN_MODE == RunMode.CREATE_COVERAGE){
+		} else if (MutationProperties.RUN_MODE == RunMode.CREATE_COVERAGE) {
 			addMutationTestListener(new TracerTestListener());
 			runNormalTests();
-		}else{
+		} else {
 			System.out.println("MutationTestDriver.run()"
 					+ MutationProperties.RUN_MODE);
 			runNormalTests();
@@ -260,11 +263,15 @@ public abstract class MutationTestDriver {
 	 * caried out and their corresponding tests are run.
 	 */
 	public void runMutations() {
-		logger.info("Running Mutations");
+		logger.info("Running Mutations "
+				+ MutationForRun.hasMutationsWithoutResults());
 		if (!MutationForRun.hasMutationsWithoutResults()) {
-			System.out.println("ALL_RESULTS");
-			System.out
-					.println("All mutations have results - this means they have already been aplied and executed");
+			String tag = "ALL_RESULTS";
+			System.out.println(tag);
+			logger.info(tag);
+			String message = "All mutations have results - this means they have already been aplied and executed";
+			System.out.println(message);
+			logger.info(message);
 			return;
 		}
 		shutDownThread = new Thread(new MutationDriverShutdownHook(this));

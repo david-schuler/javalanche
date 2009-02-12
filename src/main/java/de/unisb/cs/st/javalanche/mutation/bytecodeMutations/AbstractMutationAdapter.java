@@ -42,12 +42,12 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 	}
 
 	protected int getLineNumber() {
-		if (lineNumber < 0) {
-			// TODO FIX rhino produces classses with no linenumber information
-			throw new RuntimeException(String.format(
-					"Line number not available for class: %s method: %s",
-					className, methodName));
-		}
+//		if (lineNumber < 0) {
+			//  rhino produces classses with no linenumber information. AspectJ also produces such files
+//			throw new RuntimeException(String.format(
+//					"Line number not available for class: %s method: %s",
+//					className, methodName));
+//		}
 		return lineNumber;
 	}
 

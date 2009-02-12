@@ -47,12 +47,6 @@ public class MutationMakeFileGenerator {
 
 	private static boolean multiFileMode = MutationProperties.MULTIPLE_MAKEFILES;
 
-	// ant runMutationsDaikon -Dmutation.file=${1}
-	// -Dmutation.result.file=result-${2}.xml | tee
-	// output-runMutationDaikon-${2}.txt &
-
-	// -/scratch5/schuler/subjects/runMutationFile.sh
-
 	private static String generateMakeFile(String scriptCommand, String add) {
 		File[] files = getTaskFiles(new File(MutationProperties.RESULT_DIR));
 		logger.info("Creating targets for " + files.length + " tasks");
@@ -138,12 +132,16 @@ public class MutationMakeFileGenerator {
 	}
 
 	private static void writeMakefile(String add) {
-		String property = "mutation.comand";
-		String scriptCommand = System.getProperty(property);
+		String scriptName = "mutation.comand";
+
+		String scriptCommand = getScriptCommand(System.getProperty(scriptName));
+
 		if (scriptCommand == null) {
 			throw new RuntimeException("No command given. Expecting property "
-					+ property + "to be set");
+					+ scriptName + "to be set");
 		}
+		logger.info(scriptCommand);
+		logger.info(new File(".").getAbsoluteFile());
 		String generateMakeFile = generateMakeFile(scriptCommand, add);
 		Io.writeFile(generateMakeFile, new File("Makefile"));
 		// try {
@@ -155,6 +153,30 @@ public class MutationMakeFileGenerator {
 		// } catch (IOException e) {
 		// e.printStackTrace();
 		// }
+	}
+
+	private static String getScriptCommand(String property) {
+		String result = property;
+		File dir = new File(".").getAbsoluteFile();
+		logger.info("DIR| " + dir);
+		File scriptFile = new File(dir, property);
+		try {
+			logger.info("Script | " + scriptFile.getCanonicalPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		while (!scriptFile.exists() && dir != null) {
+			dir = dir.getParentFile();
+			scriptFile = new File(dir, property);
+		}
+		if (scriptFile.exists()) {
+			try {
+				result = scriptFile.getCanonicalPath();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 
 }

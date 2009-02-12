@@ -14,59 +14,64 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.log4j.Logger;
+
 import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
-class MutationCache {
-	private static final String NO_RESULT = "No Result";
-	public long id;
-	public boolean killed;
-	public boolean classInit;
-	public String shortString;
-	public String className;
-	public int lineNumber;
-	public int mutationForLine;
-	public String mutationType;
-	public String mutationResult;
-
-	public static MutationCache create(Mutation m) {
-		MutationCache mc = new MutationCache();
-		mc.id = m.getId();
-		mc.shortString = m.toShortString();
-		mc.killed = m.isKilled();
-		mc.classInit = m.isClassInit();
-		mc.className = m.getClassName();
-		mc.lineNumber = m.getLineNumber();
-		mc.mutationForLine = m.getMutationForLine();
-		mc.mutationType = m.getMutationType().toString();
-		mc.mutationResult = m.getMutationResult() != null ? m
-				.getMutationResult().toShortString() : NO_RESULT;
-		return mc;
-	}
-}
-
-class TracerResult {
-	// an artificial number
-	public double result = 0;
-
-	// The summarized number of classes called by the run/mutation
-	public double classesTotal = 0;
-	public double classesModified = 0;
-
-	// The summarized number of classes called by the run/mutation;
-	public double methodsTotal = 0;
-	public double methodsModified = 0;
-
-	// The summarized number of lines called by the run/mutation
-	public double linesTotal = 0;
-	public double linesModified = 0;
-
-	// The number of tests
-	public double testsTotal = 0;
-	public double testsExecuted = 0;
-}
-
 public class NewTracerAnalyzer implements MutationAnalyzer {
+
+	private static class MutationCache {
+		private static final String NO_RESULT = "No Result";
+		public long id;
+		public boolean killed;
+		public boolean classInit;
+		public String shortString;
+		public String className;
+		public int lineNumber;
+		public int mutationForLine;
+		public String mutationType;
+		public String mutationResult;
+
+		public static MutationCache create(Mutation m) {
+			MutationCache mc = new MutationCache();
+			mc.id = m.getId();
+			mc.shortString = m.toShortString();
+			mc.killed = m.isKilled();
+			mc.classInit = m.isClassInit();
+			mc.className = m.getClassName();
+			mc.lineNumber = m.getLineNumber();
+			mc.mutationForLine = m.getMutationForLine();
+			mc.mutationType = m.getMutationType().toString();
+			mc.mutationResult = m.getMutationResult() != null ? m
+					.getMutationResult().toShortString() : NO_RESULT;
+			return mc;
+		}
+	}
+
+	private static class TracerResult {
+		// an artificial number
+		public double result = 0;
+
+		// The summarized number of classes called by the run/mutation
+		public double classesTotal = 0;
+		public double classesModified = 0;
+
+		// The summarized number of classes called by the run/mutation;
+		public double methodsTotal = 0;
+		public double methodsModified = 0;
+
+		// The summarized number of lines called by the run/mutation
+		public double linesTotal = 0;
+		public double linesModified = 0;
+
+		// The number of tests
+		public double testsTotal = 0;
+		public double testsExecuted = 0;
+	}
+
+	private static final Logger logger = Logger
+			.getLogger(NewTracerAnalyzer.class);
 
 	private static HashMap<String, HashMap<String, HashMap<Integer, Integer>>> originalMaps = null;
 
@@ -125,28 +130,23 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			killed.add(results.result);
 		} else {
 			notKilled.add(results.result);
-		}		
+		}
 
 		if (firstCallToWriteOut) {
-			out.println("ID;KILLED;RESULT;" +
-					"CLASSES_TOTAL;CLASSES_MODIFIED;"+
-					"METHODS_TOTAL;METHODS_MODIFIED;" +
-					"LINES_TOTAL;LINES_MODIFIED;" +
-					"TESTS_TOTAL;TESTS_EXECUTED;" +
-					"MUTATION_TYPE;CLASS_NAME;LINE_NUMBER;MUTATION_FOR_LINE;" +
-					"CLASS_INIT;MUTATION_RESULT");
+			out.println("ID;KILLED;RESULT;" + "CLASSES_TOTAL;CLASSES_MODIFIED;"
+					+ "METHODS_TOTAL;METHODS_MODIFIED;"
+					+ "LINES_TOTAL;LINES_MODIFIED;"
+					+ "TESTS_TOTAL;TESTS_EXECUTED;"
+					+ "MUTATION_TYPE;CLASS_NAME;LINE_NUMBER;MUTATION_FOR_LINE;"
+					+ "CLASS_INIT;MUTATION_RESULT");
 			firstCallToWriteOut = false;
 		}
-		
-		System.out.println("ID: " + mutation.id + "\tKilled: "
-				+ mutation.killed + "\tValue: " + results.result + " ("
-				+ mutation.mutationType + ")");
-		out.println(mutation.id
-				+ ";"
-				+ mutation.killed
-				+ ";"
-				+ dec2.format(results.result)
-				+ ";"
+
+		logger.info("ID: " + mutation.id + "\tKilled: " + mutation.killed
+				+ "\tValue: " + results.result + " (" + mutation.mutationType
+				+ ")");
+		out.println(mutation.id + ";" + mutation.killed + ";"
+				+ dec2.format(results.result) + ";"
 				+ dec2.format(results.classesTotal) + ";"
 				+ dec2.format(results.classesModified) + ";"
 				+ dec2.format(results.methodsTotal) + ";"
@@ -282,7 +282,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		MutationCache mutation;
 		while ((mutation = lbq.poll()) != null) {
 			long mutation_id = mutation.id;
-			ObjectInputStream ois;
+			ObjectInputStream ois = null;
 
 			String path = TracerTestListener.TRACE_RESULT_DIR + mutation_id
 					+ "/";
@@ -302,25 +302,48 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				try {
 					ois = new ObjectInputStream(new BufferedInputStream(
 							new FileInputStream(path + test)));
-					processTest(originalMaps.get(test), ois, results, modified);
-					ois.close();
-				} catch (Exception e) {
+					if (originalMaps.containsKey(test)) {
+						processTest(originalMaps.get(test), ois, results,
+								modified);
+					} else {
+						logger
+								.warn("Got no coverage data of unmutated run for test: "
+										+ test);
+					}
+				} catch (FileNotFoundException e) {
 					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					if (ois != null) {
+						try {
+							ois.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
 				}
-			}			
-			
-			
+			}
+
 			// Count the number of modified lines/methods/classes;
 			int linesTotal = 0, linesModified = 0;
 			int methodsTotal = 0, methodsModified = 0;
 
-			HashSet<String> classesTotalHash = new HashSet<String>();  
+			HashSet<String> classesTotalHash = new HashSet<String>();
 			HashSet<String> classesModifiedHash = new HashSet<String>();
-			
+
 			Iterator<String> itModified = modified.keySet().iterator();
 			while (itModified.hasNext()) {
 				String name = itModified.next();
-				String className = name.substring(0, name.indexOf('@'));
+				int index = name.indexOf('@');
+				String className = null;
+				if (index > 0) {
+					className = name.substring(0, name.indexOf('@'));
+				} else {
+					throw new RuntimeException(
+							"Expected that name contains and @ character. Name: "
+									+ name);
+				}
 				HashMap<Integer, Boolean> lineSet = modified.get(name);
 
 				Iterator<Integer> itLineSet = lineSet.keySet().iterator();
@@ -349,13 +372,13 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 			results.testsExecuted = (double) mutatedTests.length;
 			results.testsTotal = (double) originalMaps.size();
-			results.result = (results.result / (double) mutatedTests.length);			
-			results.linesTotal += (double)linesTotal;
-			results.linesModified += (double)linesModified;
-			results.methodsTotal += (double)methodsTotal;
-			results.methodsModified += (double)methodsModified;
-			results.classesTotal += (double)classesTotalHash.size();
-			results.classesModified += (double)classesModifiedHash.size();
+			results.result = (results.result / (double) mutatedTests.length);
+			results.linesTotal += (double) linesTotal;
+			results.linesModified += (double) linesModified;
+			results.methodsTotal += (double) methodsTotal;
+			results.methodsModified += (double) methodsModified;
+			results.classesTotal += (double) classesTotalHash.size();
+			results.classesModified += (double) classesModifiedHash.size();
 			writeOut(mutation, results);
 		}
 	}

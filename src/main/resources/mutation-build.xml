@@ -209,17 +209,14 @@
 		<property name="run.mutations.checker.file" value="-Dinvariant.checker.file=${invariant.checker.file}"/>
 		<property name="run.mutations.verbose.summary" value="-Dverbose.invariant.summary=false"/>
 		<property name="run.mutations.javalanche.invariant.mode" value="-Dinvariant.mode=INVARIANT"/>
-		<property name="run.mutations.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.tracer.TracerTestListener"/>
 
-		<path id="check.invariant.javalanche.classpath.add">
-		</path>
-	
 		<path id="run.mutations.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
+
 		<!--${run.mutations.verbose}-->
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value=" ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode} ${run.mutations.listener} " />
+			<param name="javalanche.arg.line" value=" ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode}" />
 			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>
@@ -314,7 +311,7 @@
 	<java dir="${basedir}" fork="true" classname="de.unisb.cs.st.javalanche.mutation.util.MutationMakeFileGenerator">
 			<classpath refid="mutation.classpath"/>
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}"/>
-			<sysproperty key="mutation.comand" value="${basedir}/runMutations.sh"/>
+			<sysproperty key="mutation.comand" value="runMutations.sh"/>
 			<sysproperty key="javalanche.mutation.output.dir" value="${javalanche.mutation.output.dir}" />
 			<arg line="${prog.arg}"/>
 		</java>
