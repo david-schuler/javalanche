@@ -22,7 +22,6 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 public class NewTracerAnalyzer implements MutationAnalyzer {
 
 	private static class MutationCache {
-		private static final String NO_RESULT = "No Result";
 		public long id;
 		public boolean killed;
 		public boolean classInit;
@@ -44,7 +43,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			mc.mutationForLine = m.getMutationForLine();
 			mc.mutationType = m.getMutationType().toString();
 			mc.mutationResult = m.getMutationResult() != null ? m
-					.getMutationResult().toShortString() : NO_RESULT;
+					.getMutationResult().toShortString() : TracerConstants.NO_RESULT;
 			return mc;
 		}
 	}
@@ -87,10 +86,48 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 	LinkedBlockingQueue<MutationCache> lbq = new LinkedBlockingQueue<MutationCache>();
 
+	private HashMap<Integer, String> loadIdMap(long mutation_id) {
+		HashMap<Integer, String> idMap = new HashMap<Integer, String>();
+		if (mutation_id != 0) {
+			File tmp = new File(TracerConstants.TRACE_RESULT_DIR + mutation_id + "-" + TracerConstants.TRACE_CLASS_IDFILE);
+			if (!tmp.exists()) {
+				mutation_id = 0;
+			}
+		}
+		if (mutation_id == 0) {
+			File tmp = new File(TracerConstants.TRACE_CLASS_MASTERIDS);
+			if (!tmp.exists()) {
+				return null;
+			}
+		}
+		
+		ObjectInputStream ois = null;
+		try {
+			if (mutation_id == 0 ) {
+			ois = new ObjectInputStream(new BufferedInputStream(
+					new FileInputStream(TracerConstants.TRACE_CLASS_MASTERIDS)));
+			} else {
+				ois = new ObjectInputStream(new BufferedInputStream(
+					new FileInputStream(TracerConstants.TRACE_RESULT_DIR + mutation_id + "-" + TracerConstants.TRACE_CLASS_IDFILE)));
+			}
+			int numIds = ois.readInt();
+			idMap = new HashMap<Integer, String>();
+			for (int i = 0; i < numIds; i++) {
+				String className = ois.readUTF();
+				int id = ois.readInt();
+				idMap.put(id, className);
+			}
+			ois.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return idMap;
+	}
+	
 	private void loadOriginalTraces() {
 		ObjectInputStream ois = null;
 
-		String path = TracerTestListener.TRACE_RESULT_DIR + "0/";
+		String path = TracerConstants.TRACE_RESULT_LINE_DIR + "0/";
 		File dir = new File(path);
 		String[] originalTests = dir.list();
 
@@ -99,6 +136,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 		originalMaps = new HashMap<String, HashMap<String, HashMap<Integer, Integer>>>();
 		HashMap<String, HashMap<Integer, Integer>> classMap;
+		HashMap<Integer, String> idMap = loadIdMap(0);
 		HashMap<Integer, Integer> lineMap;
 
 		for (String test : originalTests) {
@@ -108,6 +146,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				numClasses = ois.readInt();
 				classMap = new HashMap<String, HashMap<Integer, Integer>>();
 				for (int i = 0; i < numClasses; i++) {
+					//className = idMap.get(ois.readInt());
 					className = ois.readUTF();
 					numLines = ois.readInt();
 					lineMap = new HashMap<Integer, Integer>();
@@ -115,6 +154,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 						lineMap.put(ois.readInt(), ois.readInt());
 					}
 					classMap.put(className, lineMap);
+					
 				}
 				originalMaps.put(test, classMap);
 				ois.close();
@@ -163,6 +203,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 	private void processTest(
 			HashMap<String, HashMap<Integer, Integer>> classMap,
+			HashMap<Integer, String> idMap,
 			ObjectInputStream ois, TracerResult results,
 			HashMap<String, HashMap<Integer, Boolean>> modified)
 			throws IOException {
@@ -191,6 +232,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		// process Classes
 		doneClasses = new HashSet<String>();
 		for (int i = 0; i < numClasses; i++) {
+			//className = idMap.get(ois.readInt());
 			className = ois.readUTF();
 			doneClasses.add(className);
 
@@ -284,7 +326,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			long mutation_id = mutation.id;
 			ObjectInputStream ois = null;
 
-			String path = TracerTestListener.TRACE_RESULT_DIR + mutation_id
+			String path = TracerConstants.TRACE_RESULT_LINE_DIR + mutation_id
 					+ "/";
 			File dir = new File(path);
 			if (!dir.exists()) {
@@ -292,18 +334,17 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				continue;
 			}
 			String[] mutatedTests = dir.list();
-			HashMap<String, Double> map = new HashMap<String, Double>();
 
 			TracerResult results = new TracerResult();
 
 			HashMap<String, HashMap<Integer, Boolean>> modified = new HashMap<String, HashMap<Integer, Boolean>>();
-
+			HashMap<Integer, String> idMap = loadIdMap(mutation_id);
 			for (String test : mutatedTests) {
 				try {
 					ois = new ObjectInputStream(new BufferedInputStream(
 							new FileInputStream(path + test)));
 					if (originalMaps.containsKey(test)) {
-						processTest(originalMaps.get(test), ois, results,
+						processTest(originalMaps.get(test), idMap, ois, results,
 								modified);
 					} else {
 						logger
@@ -450,7 +491,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			}
 		};
 
-		Thread[] innerThread = new Thread[11];
+		Thread[] innerThread = new Thread[1];
 		for (int i = 0; i < innerThread.length; i++) {
 			innerThread[i] = new Thread(r);
 			innerThread[i].start();
