@@ -80,11 +80,20 @@ public class Trace {
 	/*
 	 * This code is executed at the end of a method
 	 */
-	public synchronized void logIReturn(int value, String className, String methodName) {
+	public void logIReturn(int value, String className, String methodName) {
+		logData(value, className, methodName);
+	}
+	
+	public void logAReturn(Object value, String className, String methodName) {
+		//logData(value, className, methodName)
+	}
+		
+	
+	
+	private synchronized void logData(int value, String className, String methodName) {
 		if (isDataCoverageDeactivated) {
 			return;
 		}
-		
 		isLineCoverageDeactivated = true;
 		
 		//Integer key = getId(className + "@" + methodName);
