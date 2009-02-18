@@ -7,9 +7,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
+import quicktime.std.movies.media.HandlerInfo;
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.util.HandleUnsafeMutations;
 
 /**
  * Creates Mutation tasks that can later be executed on multiple JVMs
@@ -46,6 +50,8 @@ public class MutationTaskCreator {
 
 	private static final String MUTATION_NUMBER_OF_TASKS_KEY = "mutation.number.of.tasks";
 
+	private static final String MUTATION_FIXED_NUMBER_OF_TASKS_KEY = "javalanche.fixed.number.of.tasks";
+
 	private static final String TASK_DIR = getTaskDir();
 
 	public static void createMutationTasks() {
@@ -61,6 +67,13 @@ public class MutationTaskCreator {
 				.getProperty(MUTATION_PER_TASK_KEY);
 		if (mutationsPerTaskProperty != null) {
 			mutationsPerTask = Integer.parseInt(mutationsPerTaskProperty);
+		}
+		String mutationTargetTasks = System.getProperty(MUTATION_FIXED_NUMBER_OF_TASKS_KEY);
+
+		if (mutationTargetTasks != null) {
+			numberOfTasks = Integer.parseInt(mutationTargetTasks);
+			int size = QueryManager.getMutationsIdListFromDb(MutationProperties.PROJECT_PREFIX, 0).size();
+			mutationsPerTask = (int) Math.ceil(size  *1. / numberOfTasks);
 		}
 		createMutationTasks(numberOfTasks, mutationsPerTask);
 	}
@@ -140,7 +153,7 @@ public class MutationTaskCreator {
 	private static List<Long> getMutations(String prefix, int numberOfIds) {
 		logger.info("Trying to fetch " + numberOfIds + " mutations");
 		List<Long> mutationIds = QueryManager.getMutationsIdListFromDb(
-				numberOfIds, prefix, numberOfIds);
+				 prefix,numberOfIds);
 		logger.info("Got " + mutationIds.size() + " mutations");
 		return mutationIds;
 	}
@@ -157,9 +170,9 @@ public class MutationTaskCreator {
 		return resultFile;
 	}
 
-
 	public static void main(String[] args) {
 		MutationProperties.checkProperty(MutationProperties.PROJECT_PREFIX_KEY);
+		HandleUnsafeMutations.handleUnsafeMutations(HibernateUtil.getSessionFactory());
 		createMutationTasks();
 	}
 

@@ -1,4 +1,4 @@
-<project  default="">
+<project  name="mutation-include" default="">
 <!--name=" Javalanche Mutation Include - File to include from a projects ant build file to enable mutation testing"-->	
 	
 	<property name="mutation.base.dir" value="${javalanche.projects.location}/mutationTest/" />
@@ -23,6 +23,29 @@
 		<antcall target="test-javalanche">
 			<param name="javalanche.arg.line" value="-Dmutation.run.mode=off" />
 			<reference refid="testTask.javalanche.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>
+
+	
+	<target name="testTask3" description="* ">
+		<property name="test.task.3.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="test.task.3.memory" value="-Xmx1524m"/>
+		<property name="test.task.3.mutation.run.mode" value="-Dmutation.run.mode=test3"/>
+		<property name="test.task.3.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="test.task.3.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="test.task.3.verbose" value="-verbose"/>
+		
+
+		
+		
+		<path id="test.task.3.classpath.add">
+			<path refid="mutation.classpath"/>
+		</path>
+		
+		<antcall target="test-javalanche">
+			<!--${test.task.3.verbose}-->
+			<param name="javalanche.arg.line" value="  ${test.task.3.mutation.javaagent} ${test.task.3.memory} ${test.task.3.mutation.run.mode} ${test.task.3.javalanche.package.prefix} ${test.task.3.javalanche.project.test.suite} " />
+			<reference refid="test.task.3.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>
 	
@@ -97,6 +120,26 @@
 		<mkdir dir="${javalanche.mutation.output.dir}"/>
 	</target>
 	
+	<target name="createTasksFixed" description="* create a fixed number of tasks such that all mutations without a result are handled (number of tasks can be specified with -Djavalanche.fixed.number.of.tasks=X)">
+		
+	  <condition property="javalanche.fixed.number.of.tasks" value="8">
+	  	<not>
+			<isset property="javalanche.fixed.number.of.tasks"/>
+	  	</not>
+	</condition>
+
+		<mkdir dir="${javalanche.mutation.output.dir}"/>
+		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="${javalanche.maxmemory}" fork="true">
+			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
+			<sysproperty key="javalanche.fixed.number.of.tasks" value="${javalanche.fixed.number.of.tasks}" />
+			<sysproperty key="javalanche.mutation.output.dir" value="${javalanche.mutation.output.dir}" />
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+	
+	
     <target name="createTasksFew" depends="mutationDir">
 		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
@@ -133,6 +176,28 @@
 		<!--antcall target="runMutationsInternal">
 			<param name="javalanche.mutaiton.runMode" value="mutation" />
 		</antcall-->
+	</target>
+	
+	
+	<target name="runMutationsDebug" description="* debug task that runs a given mutation task but inserts the orignial statement instead of the mutated statement">
+		<property name="run.mutations.debug.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="run.mutations.debug.memory" value="-Xmx1524m"/>
+		<property name="run.mutations.debug.mutation.run.mode" value="-Dmutation.run.mode=mutation"/>
+		<property name="run.mutations.debug.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="run.mutations.debug.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="run.mutations.debug.mutation.file" value="-Dmutation.file=${mutation.file}"/>
+		<property name="run.mutations.debug.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
+		<property name="run.mutations.debug.verbose" value="-verbose"/>
+		<property name="run.mutations.debug.debug" value="-Djavalanche.debug.insert.original.code=true"/>
+		<property name="run.mutations.debug.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.mutation.runtime.jmx.JmxMutationTestListener"/>
+		<path id="run.mutations.debug.classpath.add">
+			<path refid="mutation.classpath"/>
+		</path>
+			<!--${run.mutations.debug.verbose}-->
+		<antcall target="test-javalanche">
+			<param name="javalanche.arg.line" value="  ${run.mutations.debug.mutation.javaagent} ${run.mutations.debug.memory} ${run.mutations.debug.mutation.run.mode} ${run.mutations.debug.javalanche.package.prefix} ${run.mutations.debug.javalanche.project.test.suite} ${run.mutations.debug.mutation.file} ${run.mutations.debug.mutation.result.file} ${run.mutations.debug.listener} ${run.mutations.debug.debug}" />
+			<reference refid="run.mutations.debug.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
 	</target>
 	
 	

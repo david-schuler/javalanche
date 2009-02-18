@@ -68,7 +68,7 @@ public class MXBeanRegisterer {
 			if (e.getCause() != null
 					&& e.getCause() instanceof ServiceUnavailableException) {
 				logger
-						.warn("Could not bin JMX bean for this process. Most likely the rmiregistry is not started. Consider to start the rmiregistry "
+						.warn("Could not bind JMX bean for this process. Most likely the rmiregistry is not started. Consider to start the rmiregistry "
 								+ " $> rmiregistry " + PORT + " &");
 				mbean = null;
 			} else {

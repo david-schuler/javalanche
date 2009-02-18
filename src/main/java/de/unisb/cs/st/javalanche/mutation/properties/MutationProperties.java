@@ -54,9 +54,9 @@ public class MutationProperties {
 		SCAN("scan"), MUTATION_TEST("mutation"), TEST_TESTSUIT_FIRST("test1"), TEST_TESTSUITE_SECOND(
 				"test2"), MUTATION_TEST_INVARIANT("mutation-invariant"), MUTATION_TEST_INVARIANT_PER_TEST(
 				"mutation-invariant-per-test"), MUTATION_TEST_COVERAGE(
-				"mutation-coverage"), CREATE_COVERAGE("create-coverage"),  OFF("off"), CHECK_INVARIANTS_PER_TEST(
-
-				"check-per-test");
+				"mutation-coverage"), CREATE_COVERAGE("create-coverage"), OFF(
+				"off"), CHECK_INVARIANTS_PER_TEST("check-per-test"), TEST_PERMUTED(
+				"test3");
 
 		private String key;
 
@@ -84,6 +84,16 @@ public class MutationProperties {
 	public static final String MUTATION_FILE_KEY = "mutation.file";
 
 	public static String MUTATION_FILE_NAME = getProperty(MUTATION_FILE_KEY);
+
+	public static String IGNORE_MESSAGES_KEY = "javalanche.ignore.test.messages";
+
+	public static boolean IGNORE_MESSAGES = getPropertyOrDefault(
+			IGNORE_MESSAGES_KEY, false);
+
+	public static String INSERT_ORIGINAL_INSTEAD_OF_MUTATION_KEY = "javalanche.debug.insert.original.code";
+
+	public static boolean INSERT_ORIGINAL_INSTEAD_OF_MUTATION = getPropertyOrDefault(
+			INSERT_ORIGINAL_INSTEAD_OF_MUTATION_KEY, false);
 
 	public static final String MUTATION_TEST_DEBUG_KEY = "mutation.test.debug";
 
@@ -119,7 +129,7 @@ public class MutationProperties {
 	 */
 	public static final String PROJECT_PREFIX_KEY = "mutation.package.prefix";
 
-	public static final String PROJECT_PREFIX = getPrefix();
+	public static String PROJECT_PREFIX = getPrefix();
 
 	/**
 	 *

@@ -82,13 +82,13 @@ public class MutationPreMain {
 				System.out.println("Scanning for mutations");
 				addClassFileTransformer(instrumentation, new MutationScanner());
 				return;
-			} else if (RUN_MODE == TEST_TESTSUIT_FIRST) {
+			} else if (RUN_MODE == TEST_TESTSUIT_FIRST || RUN_MODE == TEST_PERMUTED) {
 				System.out.println("Integrating RandomPermutationTestSuite");
 				addClassFileTransformer(instrumentation,
 						new IntegrateRandomPermutationTransformer());
 				return;
 			} else if (RUN_MODE == CREATE_COVERAGE) {
-				System.out.println("Integrating RandomPermutationTestSuite");
+				System.out.println("Getting line coverage data for unmutated run.");
 				addClassFileTransformer(instrumentation,
 						new IntegrateRandomPermutationTransformer());
 				addClassFileTransformer(instrumentation, new TraceTransformer());

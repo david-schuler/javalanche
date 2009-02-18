@@ -21,6 +21,7 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
 import org.apache.commons.lang.time.DurationFormatUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -34,6 +35,9 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestDriver;
 
 public class MutationMxClient {
+
+
+	private static Logger logger = Logger.getLogger(MutationMxClient.class);
 
 	private static final boolean DEBUG_ADD = false;
 
@@ -175,16 +179,14 @@ public class MutationMxClient {
 		Query query = session
 				.createQuery("from Mutation WHERE mutationResult != null AND className LIKE '"
 						+ MutationProperties.PROJECT_PREFIX + "%' ");
-		// query.setMaxResults(100);
 		List<Mutation> list = query.list();
+		RunInfo r = getRunInfo(list);
 		transaction.commit();
 		session.close();
-//		RunInfo r = getRunInfo(list);
-		RunInfo r = getFastRunInfo(list);
 		long averageRuntimeMutation = r.totalDuration / r.mutations;
 		long averageRuntimeTest = r.totalDuration / r.tests;
-		System.out.printf("Total runtime for %d mutations with %d tests: %s\n",
-				r.mutations, r.tests, DurationFormatUtils
+		System.out.printf("Already executed mutations for project %s:  %d. Number of tests: %d  Total Runtime: %s\n",
+				MutationProperties.PROJECT_PREFIX, r.mutations, r.tests, DurationFormatUtils
 						.formatDurationHMS(r.totalDuration));
 		System.out.printf("Average mutation runtime: %s\n", DurationFormatUtils
 				.formatDurationHMS(averageRuntimeMutation));
@@ -215,7 +217,11 @@ public class MutationMxClient {
 					.getAllTestMessages();
 			for (TestMessage testMessage : allTestMessages) {
 				tests++;
+				long pre = totalDuration;
 				totalDuration += testMessage.getDuration();
+				if(pre>totalDuration){
+					logger.warn("Overflow when computing total duration");
+				}
 				if (testMessage.getMessage().equals(
 						MutationTestDriver.RESTART_MESSAGE)) {
 					restarts++;

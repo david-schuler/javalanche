@@ -1,6 +1,7 @@
 package de.unisb.cs.st.javalanche.mutation.runtime.testDriver;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,7 +55,7 @@ public abstract class MutationTestDriver {
 	/**
 	 * Timeout for the test. After this time a test is stopped.
 	 */
-	private static long timeout = MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS;
+	private long timeout = MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS;
 
 	/**
 	 * The mutation that is currently active.
@@ -141,6 +142,8 @@ public abstract class MutationTestDriver {
 		} else if (MutationProperties.RUN_MODE == RunMode.CREATE_COVERAGE) {
 			addMutationTestListener(new TracerTestListener());
 			runNormalTests();
+		} else if (MutationProperties.RUN_MODE == RunMode.TEST_PERMUTED) {
+			runPermutedTests();
 		} else {
 			System.out.println("MutationTestDriver.run()"
 					+ MutationProperties.RUN_MODE);
@@ -180,14 +183,18 @@ public abstract class MutationTestDriver {
 					+ testName);
 			MutationTestRunnable runnable = getTestRunnable(testName);
 			testStart(testName);
-
+			stopWatch.reset();
+			stopWatch.start();
 			runWithTimeout(runnable);
 			SingleTestResult result = runnable.getResult();
-			logger.info(result.getTestMessage());
+			logger.info("Test took "
+					+ DurationFormatUtils
+							.formatDurationHMS(stopWatch.getTime()) + " "
+					+ testName);
 			if (!result.hasPassed()) {
 				allPass = false;
 				failing.add(result);
-				logger.warn("Test has not passed " + testName);
+				logger.warn("Test has not passed " + result.getTestMessage());
 			}
 			testEnd(testName);
 		}
@@ -202,6 +209,67 @@ public abstract class MutationTestDriver {
 			}
 
 		}
+	}
+
+	/**
+	 * Runs the tests without applying any changes.And executes each test
+	 * multiple times and in a different order. This method is used to check if
+	 * the driver works correctly.
+	 */
+	private void runPermutedTests() {
+		logger.info("Running permuted tests for project "
+				+ MutationProperties.PROJECT_PREFIX);
+		addListenersFromProperty();
+		List<String> allTests = new ArrayList<String>(getAllTests());
+		timeout = Integer.MAX_VALUE;
+		List<SingleTestResult> allFailingTests = new ArrayList<SingleTestResult>();
+		testsStart();
+		coldRun(allTests);
+		int permutations = 10;
+		for (int i = 0; i < permutations; i++) {
+			logger.info("Shuffling tests. Round " + (i + 1));
+			Collections.shuffle(allTests);
+			List<SingleTestResult> failingTests = runNormalTests(allTests);
+			allFailingTests.addAll(failingTests);
+		}
+		testsEnd();
+		if (allFailingTests.size() == 0) {
+			logger.info("All " + allTests.size() + " tests passed for "
+					+ permutations + " permutations");
+		} else {
+			logger.warn("Not all tests passed");
+			for (SingleTestResult str : allFailingTests) {
+				logger.warn(str.getTestMessage().getTestCaseName() + ": "
+						+ str.getTestMessage());
+			}
+		}
+	}
+
+	private List<SingleTestResult> runNormalTests(List<String> tests) {
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+		int counter = 0;
+		int size = tests.size();
+		List<SingleTestResult> failing = new ArrayList<SingleTestResult>();
+		for (String testName : tests) {
+			counter++;
+			String duration = DurationFormatUtils.formatDurationHMS(stopWatch
+					.getTime());
+			logger.info(duration + " (" + counter + " / " + size
+					+ ") Running test:  " + testName);
+			MutationTestRunnable runnable = getTestRunnable(testName);
+			testStart(testName);
+
+			runWithTimeout(runnable);
+			SingleTestResult result = runnable.getResult();
+			logger.debug(result.getTestMessage());
+			if (!result.hasPassed()) {
+				failing.add(result);
+				logger.warn("Test has not passed " + testName);
+			}
+			testEnd(testName);
+		}
+		return failing;
 	}
 
 	/**
@@ -244,18 +312,31 @@ public abstract class MutationTestDriver {
 	 *
 	 * @param allTests
 	 *            the tests to run
+	 * @return true if all tests passed
 	 */
-	private void coldRun(List<String> allTests) {
+	private boolean coldRun(List<String> allTests) {
 		int counter = 0;
 		int size = allTests.size();
 		logger.info("Start cold run  of tests to get all classes loaded");
+		List<String> failed = new ArrayList<String>();
 		for (String testName : allTests) {
 			counter++;
 			logger.info("(" + counter + " / " + size + ") Running test:  "
 					+ testName);
 			MutationTestRunnable runnable = getTestRunnable(testName);
 			runWithTimeout(runnable);
+			SingleTestResult result = runnable.getResult();
+			if (!result.hasPassed()) {
+				failed.add(testName + " : " + result);
+			}
 		}
+		if (failed.size() > 0) {
+			logger.warn("Tests failed");
+			for (String failMessage : failed) {
+				logger.warn(failMessage);
+			}
+		}
+		return failed.size() == 0;
 	}
 
 	/**
@@ -265,13 +346,7 @@ public abstract class MutationTestDriver {
 	public void runMutations() {
 		logger.info("Running Mutations "
 				+ MutationForRun.hasMutationsWithoutResults());
-		if (!MutationForRun.hasMutationsWithoutResults()) {
-			String tag = "ALL_RESULTS";
-			System.out.println(tag);
-			logger.info(tag);
-			String message = "All mutations have results - this means they have already been aplied and executed";
-			System.out.println(message);
-			logger.info(message);
+		if (checkMutations()) {
 			return;
 		}
 		shutDownThread = new Thread(new MutationDriverShutdownHook(this));
@@ -282,7 +357,13 @@ public abstract class MutationTestDriver {
 		int totalMutations = 0, totalTests = 0;
 		List<String> allTests = getAllTests();
 		if (doColdRun) {
-			coldRun(allTests);
+			long timeoutBack = getTimeout();
+			setTimeout(Integer.MAX_VALUE);
+			boolean allPassed = coldRun(allTests);
+			if (!allPassed) {
+				throw new RuntimeException("Tests in cold run failed");
+			}
+			setTimeout(timeoutBack);
 		}
 		testsStart();
 		while (mutationSwitcher.hasNext()) {
@@ -313,11 +394,25 @@ public abstract class MutationTestDriver {
 
 		}
 		testsEnd();
+		checkMutations();
 		logger.info("Test Runs finished. Run " + totalTests + " tests for "
 				+ totalMutations + " mutations ");
 		logger.info("" + MutationObserver.summary(true));
 		MutationForRun.getInstance().reportAppliedMutations();
 		Runtime.getRuntime().removeShutdownHook(shutDownThread);
+	}
+
+	private boolean checkMutations() {
+		boolean allResults = !MutationForRun.hasMutationsWithoutResults();
+		if (allResults) {
+			String tag = "ALL_RESULTS";
+			System.out.println(tag);
+			logger.info(tag);
+			String message = "All mutations have results - this means they have already been aplied and executed";
+			System.out.println(message);
+			logger.info(message);
+		}
+		return allResults;
 	}
 
 	/**
@@ -434,7 +529,6 @@ public abstract class MutationTestDriver {
 			if (!terminated) {
 				service.shutdownNow();
 			}
-			// Class.forName("org.apache.log4j.spi.ThrowableInformation");
 			future.get(timeout, TimeUnit.SECONDS);
 			long time2 = stopWatch.getTime();
 			if (time2 - time1 > 1000) {
@@ -534,15 +628,18 @@ public abstract class MutationTestDriver {
 	}
 
 	private void setTestMessage(TestMessage tm) {
-		MutationTestResult mutationResult = currentMutation.getMutationResult();
-		if (mutationResult == null) {
-			logger.info("mutation result is null");
-			mutationResult = new MutationTestResult();
-			currentMutation.setMutationResult(mutationResult);
-		} else {
-			logger.info("Mutation result:  " + mutationResult);
+		if (currentMutation != null) {
+			MutationTestResult mutationResult = currentMutation
+					.getMutationResult();
+			if (mutationResult == null) {
+		 		logger.info("mutation result is null");
+				mutationResult = new MutationTestResult();
+				currentMutation.setMutationResult(mutationResult);
+			} else {
+				logger.info("Mutation result:  " + mutationResult);
+			}
+			mutationResult.addFailure(tm);
 		}
-		mutationResult.addFailure(tm);
 	}
 
 	/**
@@ -669,5 +766,20 @@ public abstract class MutationTestDriver {
 		} else {
 			logger.info("Test passed " + testName);
 		}
+	}
+
+	/**
+	 * @return the timeout
+	 */
+	private long getTimeout() {
+		return timeout;
+	}
+
+	/**
+	 * @param timeout
+	 *            the timeout to set
+	 */
+	private void setTimeout(long timeout) {
+		this.timeout = timeout;
 	}
 }

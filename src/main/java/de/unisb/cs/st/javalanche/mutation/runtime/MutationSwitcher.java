@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
@@ -107,7 +108,7 @@ public class MutationSwitcher {
 			stopWatch.stop();
 			logger.info("Disabling mutation: "
 					+ actualMutation.getMutationVariable() + " Time needed "
-					+ stopWatch.getTime());
+					+ DurationFormatUtils.formatDurationHMS(stopWatch.getTime()) + " Mutaiton detected: " + actualMutation.isKilled());
 			actualMutation = null;
 		}
 	}

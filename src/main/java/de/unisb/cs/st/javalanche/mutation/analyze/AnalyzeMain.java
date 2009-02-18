@@ -9,12 +9,10 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import de.unisb.cs.st.javalanche.mutation.analyze.invariant.InvariantSplitAnalyzer;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.tracer.NewTracerAnalyzer;
-import de.unisb.cs.st.javalanche.tracer.TracerAnalyzer;
 
 /**
  * Analyzes the mutation results for a project. Either a list (comma separated)
@@ -35,6 +33,7 @@ public class AnalyzeMain {
 		} else {
 			analyzeMutations(new MutationAnalyzer[] {
 					new MutationResultAnalyzer(),
+//					new CheckAnalyzer()
 					new NewTracerAnalyzer()
 					//new InvariantSplitAnalyzer()
 					/*
@@ -46,7 +45,7 @@ public class AnalyzeMain {
 			/* , new AspectJAnalyzer() */
 			/* , new IdAnalyzer() */
 			// new CoverageAnalyzer()
-		//	new DebugAnalyzer()
+//			new DebugAnalyzer()
 		 });
 		}
 	}
@@ -118,7 +117,9 @@ public class AnalyzeMain {
 		sb
 				.append("--------------------------------------------------------------------------------\n");
 		for (MutationAnalyzer mutationAnalyzer : mutationAnalyzers) {
+
 			String analyzeResult = mutationAnalyzer.analyze(mutations);
+
 			sb.append("Results from " + mutationAnalyzer.getClass() + "\n");
 			sb.append(analyzeResult);
 			sb

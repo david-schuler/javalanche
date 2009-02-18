@@ -176,7 +176,7 @@ public class QueryManager {
 				break;
 			} else {
 				session.save(mutation.getMutationResult());
-				logger.info("Setting result for mutation "
+				logger.debug("Setting result for mutation "
 						+ mutationFromDB.getId());
 				mutationFromDB.setMutationResult(mutation.getMutationResult());
 				saved++;
@@ -558,8 +558,7 @@ public class QueryManager {
 	 *
 	 * @return a list of mutation ids.
 	 */
-	public static List<Long> getMutationsIdListFromDb(int numberOfMutations,
-			String prefix, int limit) {
+	public static List<Long> getMutationsIdListFromDb(String prefix, int limit) {
 
 		Session session = openSession();
 		Transaction tx = session.beginTransaction();
@@ -579,7 +578,6 @@ public class QueryManager {
 		}
 		logger.debug("Executing query: " + queryString);
 		Query query = session.createSQLQuery(queryString);
-		query.setMaxResults(numberOfMutations);
 		if (limit > 0) {
 			query.setMaxResults(limit);
 		}
@@ -655,6 +653,7 @@ public class QueryManager {
 			}
 		}
 		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
 		logger.debug("Start flush");
 		session.flush();
 		session.clear();
@@ -663,13 +662,15 @@ public class QueryManager {
 
 		int saves = 0, flushs = 0;
 		System.out
-				.print("Writting coverage data to the database (This may take a while).");
-
+				.println("Writting coverage data to the database (This may take a while).");
+		int count = 0, allcount =0;
 		for (Map.Entry<Long, Set<String>> entry : coverageData.entrySet()) {
 			List<TestName> testNames = new ArrayList<TestName>();
 			Long mutationID = entry.getKey();
-
-			logger.debug("save coverage results for mutation  " + mutationID);
+			count++;
+			logger.debug(DurationFormatUtils.formatDurationHMS(stopWatch
+					.getTime())
+					+ " Save coverage results for mutation  " + mutationID);
 			saves++;
 			for (String testCase : entry.getValue()) {
 				if (testCase == null) {
@@ -679,7 +680,11 @@ public class QueryManager {
 				if (testNameMap != null && testNameMap.containsKey(testCase)) {
 					testName = testNameMap.get(testCase);
 				} else {
-					logger.debug("Saving test case: " + testCase + "    - "
+					logger.debug(DurationFormatUtils
+							.formatDurationHMS(stopWatch.getTime())
+							+ "Saving test case: "
+							+ testCase
+							+ "    - "
 							+ saves);
 					testName = new TestName(testCase);
 					session.save(testName);
@@ -697,12 +702,14 @@ public class QueryManager {
 				session.save(mutationCoverage);
 				saves++;
 			}
-			if (saves >= 20) {
+			if (saves > 20) {
 				// 20, same as the JDBC batch size
 				// flush a batch of inserts and release memory:
 				// see
 				// http://www.hibernate.org/hib_docs/reference/en/html/batch.html
-				logger.debug("Temporary flush " + flushs + " -  Saves" + saves);
+				logger.debug(DurationFormatUtils.formatDurationHMS(stopWatch
+						.getTime())
+						+ "Temporary flush " + flushs + " -  Saves" + saves);
 				saves = 0;
 				long startFlush = System.currentTimeMillis();
 				flushs++;
@@ -711,7 +718,16 @@ public class QueryManager {
 				long timeFlush = System.currentTimeMillis() - startFlush;
 				logger.debug("Flush took: "
 						+ Formater.formatMilliseconds(timeFlush));
-				System.out.print('.');
+				if (count > 500) {
+					allcount += count;
+					count = 0;
+					String message = String.format("%3.2f percent saved",
+							((allcount * 100.) / coverageData.size()));
+					logger.info(message);
+				}
+				// Does not work for ant
+				// System.out.print('.');
+				// System.out.flush();
 			}
 		}
 		tx.commit();
@@ -769,17 +785,50 @@ public class QueryManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void deleteCoverageResult(List<Long> ids) {
+		if (ids.size() <= 0) {
+			return;
+		}
+		logger.info("Deleting coverage information for " + ids.size()
+				+ " mutations");
 		Session session = openSession();
 		Transaction tx = session.beginTransaction();
-		Query query = session
-				.createQuery("from MutationCoverage as m where m.mutationID IN (:mutation_ids)");
-		query.setParameterList("mutation_ids", ids);
-		List<MutationCoverage> mcs = query.list();
-		for (MutationCoverage mc : mcs) {
-			session.delete(mc);
+		List<List<Long>> split = split(ids);
+		for (List<Long> list : split) {
+
+			Query query = session
+					.createQuery("from MutationCoverage as m where m.mutationID IN (:mutation_ids)");
+			query.setParameterList("mutation_ids", list);
+
+			List<MutationCoverage> mcs = query.list();
+			int deletes = 0;
+			for (MutationCoverage mc : mcs) {
+				session.delete(mc);
+				deletes++;
+				if (deletes % 20 == 0) {
+					// http://www.hibernate.org/hib_docs/reference/en/html/batch.html
+					deletes = 0;
+					session.flush();
+					session.clear();
+				}
+			}
 		}
 		tx.commit();
 		session.close();
+	}
+
+	private static List<List<Long>> split(List<Long> ids) {
+		List<List<Long>> idSplit = new ArrayList<List<Long>>();
+		List<Long> actualList = null;
+		int count = 0;
+		for (Long id : ids) {
+			if (count % 1000 == 0) {
+				actualList = new ArrayList<Long>();
+				idSplit.add(actualList);
+			}
+			actualList.add(id);
+			count++;
+		}
+		return idSplit;
 	}
 
 	public static void deleteCoverageResultByMutaiton(List<Mutation> mutations) {

@@ -268,9 +268,14 @@ public class MutationForRun {
 	}
 
 	/**
-	 * @return true, if one or more mutations do not hav a result.
+	 * @return true, if one or more mutations do not have a result.
 	 */
 	public static boolean hasMutationsWithoutResults() {
-		return getInstance().getMutations().size() > 0;
+		for (Mutation m : getInstance().getMutations()) {
+			if (m.getMutationResult() == null) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

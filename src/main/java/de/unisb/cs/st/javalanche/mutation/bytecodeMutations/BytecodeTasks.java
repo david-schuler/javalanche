@@ -1,8 +1,11 @@
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations;
 
+import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
 /**
@@ -12,6 +15,8 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
  *
  */
 public class BytecodeTasks {
+
+	private static Logger logger = Logger.getLogger(BytecodeTasks.class);
 
 	/**
 	 * When set true, System.println statements will be inserted that signalize
@@ -52,7 +57,12 @@ public class BytecodeTasks {
 			// insertPrintStatements(mv, "Mutation touched: " +
 			// mutation.getId());
 			insertMutationTouchedCode(mv, mutation);
-			mutationCode.insertCodeBlock(mv);
+			if (!MutationProperties.INSERT_ORIGINAL_INSTEAD_OF_MUTATION) {
+				mutationCode.insertCodeBlock(mv);
+			} else {
+				logger.warn("Debug mode: not inserting mutated statement");
+				unMutated.insertCodeBlock(mv);
+			}
 			mv.visitJumpInsn(Opcodes.GOTO, endLabel);
 			mv.visitLabel(l1);
 		}

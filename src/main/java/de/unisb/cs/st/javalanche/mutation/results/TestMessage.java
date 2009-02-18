@@ -9,6 +9,8 @@ import javax.persistence.Lob;
 
 import org.apache.log4j.Logger;
 
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+
 /**
  *
  * Class that holds the result of one single TestCase.
@@ -58,7 +60,9 @@ public class TestMessage  implements Serializable{
 		this.id = new Long(0);
 		this.testCaseName = testMessage.testCaseName;
 		this.hasTouched = testMessage.hasTouched;
+		if(!MutationProperties.IGNORE_MESSAGES){
 		this.message = testMessage.message;
+		}
 		this.duration = 0;
 		// this.duration = testMessage.duration;
 	}
