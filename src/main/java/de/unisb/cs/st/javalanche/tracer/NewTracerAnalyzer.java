@@ -49,7 +49,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			mc.mutationForLine = m.getMutationForLine();
 			mc.mutationType = m.getMutationType().toString();
 			mc.mutationResult = m.getMutationResult() != null ? m
-					.getMutationResult().toShortString() : TracerConstants.NO_RESULT;
+					.getMutationResult().toShortString()
+					: TracerConstants.NO_RESULT;
 			return mc;
 		}
 	}
@@ -73,7 +74,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		// The number of tests
 		public double testsTotal = 0;
 		public double testsExecuted = 0;
-		
+
 		// THe number of data
 		public double dataTotal = 0;
 		public double dataModified = 0;
@@ -100,7 +101,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 	private HashMap<Integer, String> loadIdMap(long mutation_id) {
 		HashMap<Integer, String> idMap = new HashMap<Integer, String>();
 		if (mutation_id != 0) {
-			File tmp = new File(TracerConstants.TRACE_RESULT_DIR + mutation_id + "-" + TracerConstants.TRACE_CLASS_IDFILE);
+			File tmp = new File(TracerConstants.TRACE_RESULT_DIR + mutation_id
+					+ "-" + TracerConstants.TRACE_CLASS_IDFILE);
 			if (!tmp.exists()) {
 				mutation_id = 0;
 			}
@@ -111,15 +113,18 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				return null;
 			}
 		}
-		
+
 		ObjectInputStream ois = null;
 		try {
-			if (mutation_id == 0 ) {
-			ois = new ObjectInputStream(new BufferedInputStream(
-					new FileInputStream(TracerConstants.TRACE_CLASS_MASTERIDS)));
+			if (mutation_id == 0) {
+				ois = new ObjectInputStream(new BufferedInputStream(
+						new FileInputStream(
+								TracerConstants.TRACE_CLASS_MASTERIDS)));
 			} else {
 				ois = new ObjectInputStream(new BufferedInputStream(
-					new FileInputStream(TracerConstants.TRACE_RESULT_DIR + mutation_id + "-" + TracerConstants.TRACE_CLASS_IDFILE)));
+						new FileInputStream(TracerConstants.TRACE_RESULT_DIR
+								+ mutation_id + "-"
+								+ TracerConstants.TRACE_CLASS_IDFILE)));
 			}
 			int numIds = ois.readInt();
 			idMap = new HashMap<Integer, String>();
@@ -134,17 +139,18 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		}
 		return idMap;
 	}
-	
+
 	private void loadOriginalTraces() {
 		originalLineCoverageMaps = loadLineCoverageTrace(0);
 		originalDataCoverageMaps = loadDataCoverageTrace(0);
 	}
-	
-	private HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadTrace(String path, long mutation_id) {
+
+	private HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadTrace(
+			String path, long mutation_id) {
 		ObjectInputStream ois = null;
 		path += mutation_id + "/";
 
-		File dir = new File(path );
+		File dir = new File(path);
 		String[] originalTests = dir.list();
 
 		int numClasses, numLines;
@@ -152,7 +158,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 		HashMap<String, HashMap<String, HashMap<Integer, Integer>>> map = new HashMap<String, HashMap<String, HashMap<Integer, Integer>>>();
 		HashMap<String, HashMap<Integer, Integer>> classMap;
-		//HashMap<Integer, String> idMap = loadIdMap(0);
+		// HashMap<Integer, String> idMap = loadIdMap(0);
 		HashMap<Integer, Integer> lineMap;
 
 		for (String test : originalTests) {
@@ -169,7 +175,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 						lineMap.put(ois.readInt(), ois.readInt());
 					}
 					classMap.put(className, lineMap);
-					
+
 				}
 				map.put(test, classMap);
 				ois.close();
@@ -179,15 +185,16 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		}
 		return map;
 	}
-	
-	private HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadLineCoverageTrace(long mutation_id) {
+
+	private HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadLineCoverageTrace(
+			long mutation_id) {
 		return loadTrace(TracerConstants.TRACE_RESULT_LINE_DIR, mutation_id);
 	}
 
-	private HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadDataCoverageTrace(long mutation_id) {
+	private HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadDataCoverageTrace(
+			long mutation_id) {
 		return loadTrace(TracerConstants.TRACE_RESULT_DATA_DIR, mutation_id);
 	}
-
 
 	private synchronized void writeOut(MutationCache mutation,
 			TracerResult results) {
@@ -209,8 +216,9 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		}
 
 		logger.info("ID: " + mutation.id + "\tKilled: " + mutation.killed
-				+ "\tValue: " + (results.methodsModified + results.dataModified) + " (" + mutation.mutationType
-				+ ")");
+				+ "\tValue: "
+				+ (results.methodsModified + results.dataModified) + " ("
+				+ mutation.mutationType + ")");
 		out.println(mutation.id + ";" + mutation.killed + ";"
 				+ dec2.format(results.result) + ";"
 				+ dec2.format(results.classesTotal) + ";"
@@ -229,10 +237,10 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 	}
 
-	private void processTestLineCoverage (
+	private void processTestLineCoverage(
 			HashMap<String, HashMap<Integer, Integer>> classMap,
-			HashMap<Integer, String> idMap,
-			ObjectInputStream ois, TracerResult results,
+			HashMap<Integer, String> idMap, ObjectInputStream ois,
+			TracerResult results,
 			HashMap<String, HashMap<Integer, Boolean>> modified)
 			throws IOException {
 		int numClasses, numLines;
@@ -260,7 +268,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		// process Classes
 		doneClasses = new HashSet<String>();
 		for (int i = 0; i < numClasses; i++) {
-			//className = idMap.get(ois.readInt());
+			// className = idMap.get(ois.readInt());
 			className = ois.readUTF();
 			doneClasses.add(className);
 
@@ -348,10 +356,10 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		results.result += (result / maxresult);
 	}
 
-	private void processTestDataCoverage (
+	private void processTestDataCoverage(
 			HashMap<String, HashMap<Integer, Integer>> classMap,
-			HashMap<Integer, String> idMap,
-			ObjectInputStream ois, TracerResult results,
+			HashMap<Integer, String> idMap, ObjectInputStream ois,
+			TracerResult results,
 			HashMap<String, HashMap<Integer, Boolean>> modified)
 			throws IOException {
 
@@ -456,8 +464,6 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		}
 	}
 
-	
-	
 	private void processMutation() {
 		MutationCache mutation;
 		while ((mutation = lbq.poll()) != null) {
@@ -468,7 +474,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		}
 	}
 
-	private void processMutationLineCoverage(MutationCache mutation, TracerResult results) {
+	private void processMutationLineCoverage(MutationCache mutation,
+			TracerResult results) {
 		ObjectInputStream ois = null;
 
 		String path = TracerConstants.TRACE_RESULT_LINE_DIR + mutation.id + "/";
@@ -486,10 +493,12 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				ois = new ObjectInputStream(new BufferedInputStream(
 						new FileInputStream(path + test)));
 				if (originalLineCoverageMaps.containsKey(test)) {
-					processTestLineCoverage(originalLineCoverageMaps.get(test), idMap, ois, results,
-							modified);
+					processTestLineCoverage(originalLineCoverageMaps.get(test),
+							idMap, ois, results, modified);
 				} else {
-					logger.warn("Got no coverage data of unmutated run for test: " + test);
+					logger
+							.warn("Got no coverage data of unmutated run for test: "
+									+ test);
 				}
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -562,9 +571,10 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		results.classesModified += (double) classesModifiedHash.size();
 	}
 
-	private void processMutationDataCoverage(MutationCache mutation, TracerResult results) {
+	private void processMutationDataCoverage(MutationCache mutation,
+			TracerResult results) {
 		ObjectInputStream ois = null;
-		
+
 		String path = TracerConstants.TRACE_RESULT_DATA_DIR + mutation.id + "/";
 		File dir = new File(path);
 		if (!dir.exists()) {
@@ -580,10 +590,12 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				ois = new ObjectInputStream(new BufferedInputStream(
 						new FileInputStream(path + test)));
 				if (originalDataCoverageMaps.containsKey(test)) {
-					processTestDataCoverage(originalDataCoverageMaps.get(test), idMap, ois, results,
-							modified);
+					processTestDataCoverage(originalDataCoverageMaps.get(test),
+							idMap, ois, results, modified);
 				} else {
-					logger.warn("Got no coverage data of unmutated run for test: " + test);
+					logger
+							.warn("Got no coverage data of unmutated run for test: "
+									+ test);
 				}
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -634,7 +646,6 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		results.dataModified += (double) dataModified;
 	}
 
-	
 	public void writeShortResults(int counter, double epsilon) {
 		sb.append("Mutations processed: " + counter + "\n");
 		sb.append("\tEpsilon:        " + epsilon + "\n");

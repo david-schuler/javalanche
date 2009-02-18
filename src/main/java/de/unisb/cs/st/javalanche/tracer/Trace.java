@@ -82,10 +82,52 @@ public class Trace {
 	 */
 	public void logIReturn(int value, String className, String methodName) {
 		logData(value, className, methodName);
-	}
+	}	
+
+	public void logLReturn(int value, String className, String methodName) {
+		logData(value, className, methodName);
+	}	
+
+	public void logDReturn(int value, String className, String methodName) {
+		logData(value, className, methodName);
+	}	
+
+	public void logFReturn(int value, String className, String methodName) {
+		logData(value, className, methodName);
+	}	
+
 	
 	public void logAReturn(Object value, String className, String methodName) {
-		//logData(value, className, methodName)
+		StringBuffer tmp = new StringBuffer(value.toString());
+		int index = 0;
+		int position = 0;
+		int address = 0;
+		boolean found = false;
+		boolean deleteAddresses = false;
+		
+		// quite fast method to detect memory addresses in Strings.
+		while ((position = tmp.indexOf("@", index)) > 0) {
+			try {
+				address = Integer.parseInt(tmp.substring(position + 1 , position + 9), 16);
+				found = true;
+			} catch (NumberFormatException e) {
+				found = false;
+			} catch (StringIndexOutOfBoundsException e) {
+				found = false;
+			}
+			if (found) {
+				if (deleteAddresses) {
+					tmp.delete(position, position+9);
+				} else {
+					break;
+				}
+			}
+			index += position + 1;
+		}
+		
+		if (deleteAddresses || !found) {
+			logData(tmp.toString().hashCode(), className, methodName);
+		}
 	}
 		
 	

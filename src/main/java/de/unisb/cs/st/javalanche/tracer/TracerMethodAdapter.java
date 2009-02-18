@@ -9,6 +9,9 @@ import org.objectweb.asm.Opcodes;
 public class TracerMethodAdapter extends MethodAdapter {
 
 	private String methodName, className, signature;
+	
+	// primitive data types
+	private enum PDType { LONG, INTEGER, FLOAT, DOUBLE };
 
 	public TracerMethodAdapter(MethodVisitor visitor, String className,	String methodName, String signature) {
 		super(visitor);
@@ -39,24 +42,29 @@ public class TracerMethodAdapter extends MethodAdapter {
 	public void visitInsn(int inst) {
 		if (!methodName.equals("<clinit>")) {
 			switch (inst) {
-			case Opcodes.IRETURN:				
-				this.visitInsn(Opcodes.DUP);
-				this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerConstants.TRACER_CLASS_NAME, "getInstance", "()L" + TracerConstants.TRACER_CLASS_NAME  +";");
-				this.visitInsn(Opcodes.SWAP);
-				this.visitLdcInsn(className);
-				this.visitLdcInsn(methodName);
-				this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TracerConstants.TRACER_CLASS_NAME, "logIReturn", "(ILjava/lang/String;Ljava/lang/String;)V");
+			case Opcodes.IRETURN:
+				callLogIReturn();
+				callEnd();
+				break;
 			case Opcodes.ARETURN:
+				callLogAReturn();
+				callEnd();
+				break;
 			case Opcodes.ATHROW:
 			case Opcodes.DRETURN:
+				callLogDReturn();
+				callEnd();
+				break;
 			case Opcodes.FRETURN:
+				callLogFReturn();
+				callEnd();
+				break;
 			case Opcodes.LRETURN:
+				callLogLReturn();
+				callEnd();
+				break;
 			case Opcodes.RETURN:
-				this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerConstants.TRACER_CLASS_NAME, "getInstance", "()L" + TracerConstants.TRACER_CLASS_NAME +";");
-				this.visitLdcInsn(className);
-				this.visitLdcInsn(methodName);
-				
-				this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TracerConstants.TRACER_CLASS_NAME, "end", "(Ljava/lang/String;Ljava/lang/String;)V");
+				callEnd();
 				break;
 			default:
 				break;
@@ -79,4 +87,63 @@ public class TracerMethodAdapter extends MethodAdapter {
 		}
 		super.visitLineNumber(line, start);
 	 }
+
+	private void callLogPrototype(String name, PDType type) {
+		if (type != PDType.LONG && type != PDType.DOUBLE) {
+			this.visitInsn(Opcodes.DUP);
+			if (type == PDType.FLOAT) {
+				this.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Float", "floatToRawIntBits", "(F)I");
+			}
+		} else {
+			this.visitInsn(Opcodes.DUP2);
+			if (type == PDType.DOUBLE) {
+				this.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Double", "doubleToRawLongBits", "(D)J");
+			}
+			this.visitInsn(Opcodes.DUP2);
+			this.visitIntInsn(Opcodes.BIPUSH, 32);
+			this.visitInsn(Opcodes.LSHR);
+			this.visitInsn(Opcodes.LXOR);
+			this.visitInsn(Opcodes.L2I);	
+		}
+						
+		this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerConstants.TRACER_CLASS_NAME, "getInstance", "()L" + TracerConstants.TRACER_CLASS_NAME  +";");
+		this.visitInsn(Opcodes.SWAP);
+		this.visitLdcInsn(className);
+		this.visitLdcInsn(methodName);
+		this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TracerConstants.TRACER_CLASS_NAME, name, "(ILjava/lang/String;Ljava/lang/String;)V");				
+	}
+	
+	private void callLogIReturn() {
+		callLogPrototype("logIReturn", PDType.INTEGER);
+	}
+
+	private void callLogAReturn() {
+		this.visitInsn(Opcodes.DUP);
+		this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerConstants.TRACER_CLASS_NAME, "getInstance", "()L" + TracerConstants.TRACER_CLASS_NAME  +";");
+		this.visitInsn(Opcodes.SWAP);
+		this.visitLdcInsn(className);
+		this.visitLdcInsn(methodName);
+		this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TracerConstants.TRACER_CLASS_NAME, "logAReturn", "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V");
+	}
+
+	
+	private void callLogLReturn() {
+		callLogPrototype("logLReturn", PDType.LONG);
+	}
+
+	private void callLogDReturn() {
+		callLogPrototype("logDReturn", PDType.DOUBLE);
+	}
+
+	private void callLogFReturn() {
+		callLogPrototype("logFReturn", PDType.FLOAT);
+	}
+	
+	
+	private void callEnd() {
+		this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerConstants.TRACER_CLASS_NAME, "getInstance", "()L" + TracerConstants.TRACER_CLASS_NAME +";");
+		this.visitLdcInsn(className);
+		this.visitLdcInsn(methodName);		
+		this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TracerConstants.TRACER_CLASS_NAME, "end", "(Ljava/lang/String;Ljava/lang/String;)V");
+	}
 }

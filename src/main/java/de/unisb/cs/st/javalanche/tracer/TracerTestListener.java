@@ -1,4 +1,4 @@
-package de.unisb.cs.st.javalanche.tracer;
+ package de.unisb.cs.st.javalanche.tracer;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -250,7 +250,6 @@ public class TracerTestListener implements MutationTestListener {
 	}
 
 	private void serializeIdMap(long mutation_id) {
-		System.out.println("bin hier! " + mutation_id);
 		if (idMap.size() == idMapMasterSize) {
 			return;
 		} 
