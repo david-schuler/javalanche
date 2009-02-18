@@ -152,6 +152,15 @@
 		</java>
 	</target>
 	
+	<target name="scanForTests" description="* Scan in all subdirectories for tests">
+		<mkdir dir="${javalanche.mutation.output.dir}"/>
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.TestDetector" maxmemory="${javalanche.maxmemory}" fork="true">
+			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
 	
 	
 	<target name="runMutations" description="* run a given mutation task">
