@@ -1,4 +1,4 @@
-package de.unisb.cs.st.javalanche.mutation.util;
+package de.unisb.cs.st.javalanche.mutation.testDetector;
 
 import java.io.File;
 import java.io.IOException;
