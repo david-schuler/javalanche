@@ -126,7 +126,7 @@
 	  	<not>
 			<isset property="javalanche.fixed.number.of.tasks"/>
 	  	</not>
-	</condition>
+	  </condition>
 
 		<mkdir dir="${javalanche.mutation.output.dir}"/>
 		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="${javalanche.maxmemory}" fork="true">
@@ -152,10 +152,17 @@
 		</java>
 	</target>
 	
-	<target name="scanForTests" description="* Scan in all subdirectories for tests">
+	<target name="scanForTests" description="* Scan in all subdirectories for tests. A different directroy can be supplied with the property -Djavalanche.test.base.dir=">
 		<mkdir dir="${javalanche.mutation.output.dir}"/>
-		<java classname="de.unisb.cs.st.javalanche.mutation.util.TestDetector" maxmemory="${javalanche.maxmemory}" fork="true">
+		<condition property="javalanche.test.base.dir" value=".">
+	  	<not>
+			<isset property="javalanche.test.base.dir"/>
+	  	</not>
+		</condition>
+	  
+		<java classname="de.unisb.cs.st.javalanche.mutation.testDetector.TestDetector" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
+			<sysproperty key="javalanche.test.base.dir" value="${javalanche.test.base.dir}" />
 			<classpath>
 				<path refid="mutation.classpath" />
 			</classpath>

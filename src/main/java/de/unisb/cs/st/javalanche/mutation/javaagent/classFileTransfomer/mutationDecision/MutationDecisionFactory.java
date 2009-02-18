@@ -4,9 +4,11 @@ import java.util.Collection;
 
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.testDetector.TestInfo;
 
 public class MutationDecisionFactory {
 
+	//Hack for unit testing
 	private static String TEST_PACKAGE = ".testclasses";
 
 	public static final MutationDecision SCAN_DECISION = new MutationDecision() {
@@ -21,11 +23,10 @@ public class MutationDecisionFactory {
 					|| classNameWithDots.startsWith("org.mozilla.javascript.gen.c")) {
 				return false;
 			}
-			if (classNameWithDots.contains(TEST_PACKAGE)
-					&& !classNameWithDots.endsWith("Test") ) {
+			if (classNameWithDots.contains(TEST_PACKAGE)) {
 				return false;
 			}
-			if (classNameWithDots.contains(".test.") || classNameWithDots.contains("Test")) {
+			if (TestInfo.isTest(classNameWithDots)) {
 				return false;
 			}
 			if (classNameWithDots.startsWith(MutationProperties.PROJECT_PREFIX)) {
@@ -48,7 +49,7 @@ public class MutationDecisionFactory {
 				}
 				if (classNameWithDots.contains(TEST_PACKAGE)
 						&& !classNameWithDots.endsWith("Test")) {
-					// Hack for unittesting //TODO ??? return false
+					// Hack for unittesting
 					return true;
 				}
 				return false;
