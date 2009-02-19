@@ -6,7 +6,7 @@ public class Trace {
 	private static Trace trace = null;
 	private HashMap<String, HashMap<Integer, Integer>> classMap = null;
 	private HashMap<String, HashMap<Integer, Integer>> valueMap = null;
-	private HashMap<String, Integer> idMap = null;
+	//private HashMap<String, Integer> idMap = null;
 
 	private boolean isLineCoverageDeactivated = false;
 	private boolean isDataCoverageDeactivated = false;
@@ -21,9 +21,11 @@ public class Trace {
 		if (valueMap == null) {
 			valueMap = TracerTestListener.getValueMap();
 		}
+		/*
 		if (idMap == null) {
 			idMap = TracerTestListener.getIdMap();
 		}
+		*/
 
 	}
 
@@ -104,30 +106,27 @@ public class Trace {
 		StringBuffer tmp = new StringBuffer(value.toString());
 		int index = 0;
 		int position = 0;
-		int address = 0;
 		boolean found = false;
 		boolean deleteAddresses = false;
-
+		char c = ' ';
 		// quite fast method to detect memory addresses in Strings.
 		while ((position = tmp.indexOf("@", index)) > 0) {
-			try {
-				address = Integer.parseInt(tmp.substring(position + 1 , position + 9), 16);
-				found = true;
-			} catch (NumberFormatException e) {
-				found = false;
-			} catch (StringIndexOutOfBoundsException e) {
-				found = false;
-			}
-			if (found) {
-				if (deleteAddresses) {
-					tmp.delete(position, position+9);
+			for (index = position + 1; index < position + 17; index++) {
+				c = tmp.charAt(index);
+				
+				if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')) {
+					found = true;
+					if (!deleteAddresses) {
+						break;
+					}
 				} else {
 					break;
 				}
 			}
-			index += position + 1;
+			if (deleteAddresses && found) {
+				tmp.delete(position + 1, index);
+			}
 		}
-
 		if (deleteAddresses || !found) {
 			logData(tmp.toString().hashCode(), className, methodName);
 		}
@@ -153,7 +152,7 @@ public class Trace {
 
 		isLineCoverageDeactivated = false;
 	}
-
+	/*
 	private Integer getId(String key) {
 		if (idMap.containsKey(key)) {
 			return idMap.get(key);
@@ -163,5 +162,6 @@ public class Trace {
 			return id;
 		}
 	}
-
+	*/
+	
 }

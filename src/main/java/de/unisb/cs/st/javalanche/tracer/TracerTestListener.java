@@ -29,8 +29,8 @@ public class TracerTestListener implements MutationTestListener {
 
 	private static HashMap<String, HashMap<Integer, Integer>> valueMap = new HashMap<String, HashMap<Integer, Integer>>();
 
-	private static HashMap<String, Integer> idMap = new HashMap<String, Integer>();
-	private static int idMapMasterSize = 0;
+	//private static HashMap<String, Integer> idMap = new HashMap<String, Integer>();
+	//private static int idMapMasterSize = 0;
 	
 	public static HashMap<String, HashMap<Integer, Integer>> getLineCoverageMap() {
 		return classMap;
@@ -40,9 +40,11 @@ public class TracerTestListener implements MutationTestListener {
 		return valueMap;
 	}
 
+	/*
 	public static HashMap<String, Integer> getIdMap() {
 		return idMap;
 	}
+	*/
 	
 	public TracerTestListener() {
 		File dir = new File(TracerConstants.TRACE_RESULT_DIR);
@@ -83,7 +85,7 @@ public class TracerTestListener implements MutationTestListener {
 	}
 
 	public void end() {
-		serializeIdMap(mutation_id);
+		//serializeIdMap(mutation_id);
 		System.out.println("TracerTestListener.end()");		
 		classMap.clear();
 		valueMap.clear();
@@ -108,9 +110,11 @@ public class TracerTestListener implements MutationTestListener {
 
 	public void mutationStart(Mutation mutation) {
 		this.mutation_id = mutation.getId();
+		/*
 		idMap.clear();
 		loadIdMap(0);
 		loadIdMap(mutation_id);
+		*/
 		classMap.clear();
 		valueMap.clear();
 		createMutationDir();
@@ -118,12 +122,13 @@ public class TracerTestListener implements MutationTestListener {
 	}
 
 	public void mutationEnd(Mutation mutation) {
-		serializeIdMap(mutation_id);
+		//serializeIdMap(mutation_id);
 		classMap.clear();
 		valueMap.clear();
 		saveFiles = false;
 	}
 	
+	/*
 	private void loadIdMap(long mutation_id) {
 		if (mutation_id != 0) {
 			File tmp = new File(TracerConstants.TRACE_RESULT_DIR + mutation_id + "-" + TracerConstants.TRACE_CLASS_IDFILE);
@@ -160,6 +165,7 @@ public class TracerTestListener implements MutationTestListener {
 			idMapMasterSize = idMap.size();
 		}
 	}
+	*/
 	
 	private void serializeHashMap() {
 		if (!saveFiles) {
@@ -212,6 +218,7 @@ public class TracerTestListener implements MutationTestListener {
 		}
 		try {
 			FileOutputStream fos = new FileOutputStream(TracerConstants.TRACE_RESULT_DATA_DIR + mutation_id + "/" + testName);
+			//GZIPOutputStream gos = new GZIPOutputStream();
 		    BufferedOutputStream bos = new BufferedOutputStream(fos);
 		    ObjectOutputStream oos = new ObjectOutputStream(bos);
 
@@ -249,6 +256,7 @@ public class TracerTestListener implements MutationTestListener {
 		}
 	}
 
+	/*
 	private void serializeIdMap(long mutation_id) {
 		if (idMap.size() == idMapMasterSize) {
 			return;
@@ -280,5 +288,5 @@ public class TracerTestListener implements MutationTestListener {
 			e.printStackTrace();
 		}
 	}
-	
+	*/
 }

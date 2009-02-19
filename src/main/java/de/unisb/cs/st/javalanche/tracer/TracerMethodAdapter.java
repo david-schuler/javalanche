@@ -51,7 +51,7 @@ public class TracerMethodAdapter extends MethodAdapter {
 				callEnd();
 				break;
 			case Opcodes.ATHROW:
-//				callEnd();
+				callEnd();
 				break;
 			case Opcodes.DRETURN:
 				callLogDReturn();
@@ -143,9 +143,11 @@ public class TracerMethodAdapter extends MethodAdapter {
 
 
 	private void callEnd() {
+		/*
 		this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerConstants.TRACER_CLASS_NAME, "getInstance", "()L" + TracerConstants.TRACER_CLASS_NAME +";");
 		this.visitLdcInsn(className);
 		this.visitLdcInsn(methodName);
 		this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TracerConstants.TRACER_CLASS_NAME, "end", "(Ljava/lang/String;Ljava/lang/String;)V");
+		*/
 	}
 }
