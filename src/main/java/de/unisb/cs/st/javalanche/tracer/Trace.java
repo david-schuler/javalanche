@@ -3,17 +3,17 @@ package de.unisb.cs.st.javalanche.tracer;
 import java.util.HashMap;
 
 public class Trace {
-	private static Trace trace = null; 
+	private static Trace trace = null;
 	private HashMap<String, HashMap<Integer, Integer>> classMap = null;
 	private HashMap<String, HashMap<Integer, Integer>> valueMap = null;
 	private HashMap<String, Integer> idMap = null;
-	
+
 	private boolean isLineCoverageDeactivated = false;
 	private boolean isDataCoverageDeactivated = false;
-	
+
 	private Trace() {
 	}
-		
+
 	private void setMap() {
 		if (classMap == null) {
 			classMap = TracerTestListener.getLineCoverageMap();
@@ -26,7 +26,7 @@ public class Trace {
 		}
 
 	}
-	
+
 	public static Trace getInstance() {
 		if (trace == null) {
 			trace = new Trace();
@@ -34,7 +34,7 @@ public class Trace {
 		}
 		return trace;
 	}
-	
+
 	/*
 	 * This code is executed at the beginning of a method
 	 */
@@ -44,20 +44,20 @@ public class Trace {
 		if (!classMap.containsKey(key)) {
 			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>((int)(1024 * 1.33));
 			classMap.put(key, lineMap);
-			
-		} 
+
+		}
 		if (!valueMap.containsKey(key)) {
 			valueMap.put(key, new HashMap<Integer, Integer>());
 		}
 	}
-	
+
 	/*
 	 * This code is executed at the end of a method
 	 */
-	public synchronized void end(String className, String methodName) {
+	public void end(String className, String methodName) {
 		//System.out.println("end called: "+ className + "@" + methodName);
 	}
-	
+
 	/*
 	 * This function is executed for every LineNumber
 	 */
@@ -74,37 +74,40 @@ public class Trace {
 		} else {
 			lineMap.put(intline, 1 + lineMap.get(intline));
 		}
-	
+
 	}
-	
+
 	/*
 	 * This code is executed at the end of a method
 	 */
 	public void logIReturn(int value, String className, String methodName) {
 		logData(value, className, methodName);
-	}	
+	}
 
 	public void logLReturn(int value, String className, String methodName) {
 		logData(value, className, methodName);
-	}	
+	}
 
 	public void logDReturn(int value, String className, String methodName) {
 		logData(value, className, methodName);
-	}	
+	}
 
 	public void logFReturn(int value, String className, String methodName) {
 		logData(value, className, methodName);
-	}	
+	}
 
-	
+
 	public void logAReturn(Object value, String className, String methodName) {
+		if(value == null){
+			return; // TODO handle nulls
+		}
 		StringBuffer tmp = new StringBuffer(value.toString());
 		int index = 0;
 		int position = 0;
 		int address = 0;
 		boolean found = false;
 		boolean deleteAddresses = false;
-		
+
 		// quite fast method to detect memory addresses in Strings.
 		while ((position = tmp.indexOf("@", index)) > 0) {
 			try {
@@ -124,20 +127,20 @@ public class Trace {
 			}
 			index += position + 1;
 		}
-		
+
 		if (deleteAddresses || !found) {
 			logData(tmp.toString().hashCode(), className, methodName);
 		}
 	}
-		
-	
-	
+
+
+
 	private synchronized void logData(int value, String className, String methodName) {
 		if (isDataCoverageDeactivated) {
 			return;
 		}
 		isLineCoverageDeactivated = true;
-		
+
 		//Integer key = getId(className + "@" + methodName);
 		String key = className + "@" + methodName;
 		HashMap<Integer, Integer> tmpMap = valueMap.get(key);
@@ -147,10 +150,10 @@ public class Trace {
 		} else {
 			tmpMap.put(intvalue, 1 + tmpMap.get(intvalue));
 		}
-		
+
 		isLineCoverageDeactivated = false;
 	}
-	
+
 	private Integer getId(String key) {
 		if (idMap.containsKey(key)) {
 			return idMap.get(key);
@@ -160,5 +163,5 @@ public class Trace {
 			return id;
 		}
 	}
-	
+
 }
