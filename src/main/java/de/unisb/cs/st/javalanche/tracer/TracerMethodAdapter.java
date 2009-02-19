@@ -2,7 +2,9 @@ package de.unisb.cs.st.javalanche.tracer;
 
 import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
 import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode.*;
+import static de.unisb.cs.st.javalanche.tracer.TracerConstants.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,7 +31,7 @@ public class TracerMethodAdapter extends MethodAdapter {
 	private enum PDType { LONG, INTEGER, FLOAT, DOUBLE };
 
 	@SuppressWarnings("unchecked")
-	private static Map<String, Long> profilerMap =  (Map<String, Long>) (RUN_MODE != CREATE_COVERAGE ? XmlIo.get(TracerConstants.TRACE_PROFILER_FILE) : null);
+	private static Map<String, Long> profilerMap =  (Map<String, Long>) (new File(TRACE_PROFILER_FILE).exists() ? XmlIo.get(TRACE_PROFILER_FILE) : null);
 
 
 	private static final long PERCENT_BOUND = percentBound();
@@ -37,7 +39,7 @@ public class TracerMethodAdapter extends MethodAdapter {
 
 
 	private static long percentBound() {
-		if(RUN_MODE == CREATE_COVERAGE ||TracerConstants.TRACE_PROFILER_PERCENT >= 100){
+		if(profilerMap == null ||TracerConstants.TRACE_PROFILER_PERCENT >= 100){
 			return Long.MAX_VALUE;
 		}
 		try{
