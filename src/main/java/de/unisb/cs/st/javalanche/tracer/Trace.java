@@ -6,6 +6,7 @@ public class Trace {
 	private static Trace trace = null;
 	private HashMap<String, HashMap<Integer, Integer>> classMap = null;
 	private HashMap<String, HashMap<Integer, Integer>> valueMap = null;
+	private HashMap<String, Long> profilerMap = null;
 	//private HashMap<String, Integer> idMap = null;
 
 	private boolean isLineCoverageDeactivated = false;
@@ -21,6 +22,10 @@ public class Trace {
 		if (valueMap == null) {
 			valueMap = TracerTestListener.getValueMap();
 		}
+		if (profilerMap == null) {
+			profilerMap = TracerTestListener.getProfilerMap();
+		}
+
 		/*
 		if (idMap == null) {
 			idMap = TracerTestListener.getIdMap();
@@ -50,6 +55,14 @@ public class Trace {
 		}
 		if (!valueMap.containsKey(key)) {
 			valueMap.put(key, new HashMap<Integer, Integer>());
+		}
+		
+		if (TracerTestListener.getMutationId() == 0) {
+			if (!profilerMap.containsKey(key)) {
+				profilerMap.put(key, 1L);
+			} else {
+				profilerMap.put(key, 1L + profilerMap.get(key));
+			}
 		}
 	}
 

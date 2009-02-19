@@ -1,26 +1,49 @@
  package de.unisb.cs.st.javalanche.tracer;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintStream;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
+
 public class TracerTestListener implements MutationTestListener {
+
+	
+	private static class ValueComparator implements Comparator {
+		private Map  _data = null;
+		public ValueComparator(Map data) {
+			super();
+			_data = data;
+		}
+
+         public int compare(Object o1, Object o2) {
+        	 Long e1 = (Long) _data.get(o1);
+             Long e2 = (Long) _data.get(o2);
+             int c = e2.compareTo(e1);
+             if (c != 0) {
+            	 return c;
+             }
+        	 Integer h1 = o1.hashCode(), h2 = o2.hashCode();
+        	 return h2.compareTo(h1);
+         }
+	}
 	
 	private static Logger logger = Logger.getLogger(TracerTestListener.class);
 
-	private Long mutation_id = new Long(0);
+	private static Long mutation_id = new Long(-1);
 	private String testName = null;
 	
 	private boolean saveFiles = false;
@@ -28,6 +51,8 @@ public class TracerTestListener implements MutationTestListener {
 	private static HashMap<String, HashMap<Integer, Integer>> classMap = new HashMap<String, HashMap<Integer, Integer>>((int)(2048 * 1.33));
 
 	private static HashMap<String, HashMap<Integer, Integer>> valueMap = new HashMap<String, HashMap<Integer, Integer>>();
+	
+	private static HashMap<String, Long> profilerMap = new HashMap<String, Long>();
 
 	//private static HashMap<String, Integer> idMap = new HashMap<String, Integer>();
 	//private static int idMapMasterSize = 0;
@@ -39,6 +64,15 @@ public class TracerTestListener implements MutationTestListener {
 	public static HashMap<String, HashMap<Integer, Integer>> getValueMap() {
 		return valueMap;
 	}
+	
+	public static HashMap<String, Long> getProfilerMap() {
+		return profilerMap;
+	}
+	
+	public static Long getMutationId() {
+		return mutation_id;
+	}
+
 
 	/*
 	public static HashMap<String, Integer> getIdMap() {
@@ -86,6 +120,7 @@ public class TracerTestListener implements MutationTestListener {
 
 	public void end() {
 		//serializeIdMap(mutation_id);
+		writeProfilingData();
 		System.out.println("TracerTestListener.end()");		
 		classMap.clear();
 		valueMap.clear();
@@ -127,6 +162,40 @@ public class TracerTestListener implements MutationTestListener {
 		valueMap.clear();
 		saveFiles = false;
 	}
+	
+	private void writeProfilingData() {
+		if (mutation_id != 0) {
+			return;
+		}
+		SortedMap<String, Long> sortedData = new TreeMap<String, Long>(new ValueComparator(profilerMap));
+		sortedData.putAll(profilerMap);
+		System.out.println(sortedData);
+		PrintStream out = null;
+		
+		String key = null;
+		Long value = null;
+		int countFunctions = 0;
+		int size = sortedData.size();
+		try {
+			out = new PrintStream(TracerConstants.TRACE_PROFILER_FILE);
+			Iterator<String> it = sortedData.keySet().iterator();
+			while (it.hasNext()) {
+				countFunctions ++;
+				key = it.next();
+				value = sortedData.get(key);
+				if (value >= TracerConstants.TRACE_PROFILER_MAX_CALLS && ((float)countFunctions / (float)size * 100) <= TracerConstants.TRACE_PROFILER_PERCENT) {
+					out.println(key);
+				}
+			}
+			
+		} catch (Exception e) {
+			logger.warn("Can't write to profiling file.");
+		} finally {
+			out.close();
+		}
+		
+	}
+	
 	
 	/*
 	private void loadIdMap(long mutation_id) {
