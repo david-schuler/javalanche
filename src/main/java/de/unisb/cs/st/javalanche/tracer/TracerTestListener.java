@@ -15,23 +15,24 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
+import de.unisb.cs.st.ds.util.io.XmlIo;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
 
 public class TracerTestListener implements MutationTestListener {
 
-	
+
 	private static class ValueComparator implements Comparator {
-		private Map  _data = null;
-		public ValueComparator(Map data) {
+		private Map<String, Long>  _data = null;
+		public ValueComparator(Map<String, Long> data) {
 			super();
 			_data = data;
 		}
 
          public int compare(Object o1, Object o2) {
-        	 Long e1 = (Long) _data.get(o1);
-             Long e2 = (Long) _data.get(o2);
+        	 Long e1 = _data.get(o1);
+             Long e2 = _data.get(o2);
              int c = e2.compareTo(e1);
              if (c != 0) {
             	 return c;
@@ -40,23 +41,23 @@ public class TracerTestListener implements MutationTestListener {
         	 return h2.compareTo(h1);
          }
 	}
-	
+
 	private static Logger logger = Logger.getLogger(TracerTestListener.class);
 
 	private static Long mutation_id = new Long(-1);
 	private String testName = null;
-	
+
 	private boolean saveFiles = false;
 
 	private static HashMap<String, HashMap<Integer, Integer>> classMap = new HashMap<String, HashMap<Integer, Integer>>((int)(2048 * 1.33));
 
 	private static HashMap<String, HashMap<Integer, Integer>> valueMap = new HashMap<String, HashMap<Integer, Integer>>();
-	
+
 	private static HashMap<String, Long> profilerMap = new HashMap<String, Long>();
 
 	//private static HashMap<String, Integer> idMap = new HashMap<String, Integer>();
 	//private static int idMapMasterSize = 0;
-	
+
 	public static HashMap<String, HashMap<Integer, Integer>> getLineCoverageMap() {
 		return classMap;
 	}
@@ -64,11 +65,11 @@ public class TracerTestListener implements MutationTestListener {
 	public static HashMap<String, HashMap<Integer, Integer>> getValueMap() {
 		return valueMap;
 	}
-	
+
 	public static HashMap<String, Long> getProfilerMap() {
 		return profilerMap;
 	}
-	
+
 	public static Long getMutationId() {
 		return mutation_id;
 	}
@@ -79,7 +80,7 @@ public class TracerTestListener implements MutationTestListener {
 		return idMap;
 	}
 	*/
-	
+
 	public TracerTestListener() {
 		File dir = new File(TracerConstants.TRACE_RESULT_DIR);
 		if (!dir.exists()) {
@@ -90,7 +91,7 @@ public class TracerTestListener implements MutationTestListener {
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
-		
+
 		dir = new File(TracerConstants.TRACE_RESULT_LINE_DIR);
 		if (!dir.exists()) {
 			dir.mkdir();
@@ -102,14 +103,14 @@ public class TracerTestListener implements MutationTestListener {
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
-		
+
 		dir = new File(TracerConstants.TRACE_RESULT_LINE_DIR + mutation_id);
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
 	}
 
-	public void start() {		
+	public void start() {
 		System.out.println("TracerTestListener.start()");
 		mutation_id = new Long(0);
 		classMap.clear();
@@ -121,7 +122,7 @@ public class TracerTestListener implements MutationTestListener {
 	public void end() {
 		//serializeIdMap(mutation_id);
 		writeProfilingData();
-		System.out.println("TracerTestListener.end()");		
+		System.out.println("TracerTestListener.end()");
 		classMap.clear();
 		valueMap.clear();
 		saveFiles = false;
@@ -162,41 +163,15 @@ public class TracerTestListener implements MutationTestListener {
 		valueMap.clear();
 		saveFiles = false;
 	}
-	
+
 	private void writeProfilingData() {
 		if (mutation_id != 0) {
 			return;
 		}
-		SortedMap<String, Long> sortedData = new TreeMap<String, Long>(new ValueComparator(profilerMap));
-		sortedData.putAll(profilerMap);
-		System.out.println(sortedData);
-		PrintStream out = null;
-		
-		String key = null;
-		Long value = null;
-		int countFunctions = 0;
-		int size = sortedData.size();
-		try {
-			out = new PrintStream(TracerConstants.TRACE_PROFILER_FILE);
-			Iterator<String> it = sortedData.keySet().iterator();
-			while (it.hasNext()) {
-				countFunctions ++;
-				key = it.next();
-				value = sortedData.get(key);
-				if (value >= TracerConstants.TRACE_PROFILER_MAX_CALLS && ((float)countFunctions / (float)size * 100) <= TracerConstants.TRACE_PROFILER_PERCENT) {
-					out.println(key);
-				}
-			}
-			
-		} catch (Exception e) {
-			logger.warn("Can't write to profiling file.");
-		} finally {
-			out.close();
-		}
-		
+		XmlIo.toXML(profilerMap, TracerConstants.TRACE_PROFILER_FILE);
 	}
-	
-	
+
+
 	/*
 	private void loadIdMap(long mutation_id) {
 		if (mutation_id != 0) {
@@ -235,7 +210,7 @@ public class TracerTestListener implements MutationTestListener {
 		}
 	}
 	*/
-	
+
 	private void serializeHashMap() {
 		if (!saveFiles) {
 			logger.warn("Double Call to serializeHashMap");
@@ -254,7 +229,7 @@ public class TracerTestListener implements MutationTestListener {
 			Set<Integer> ks2;
 			Iterator<Integer> it2;
 			Integer i;
-						
+
 			oos.writeInt(classMap.size());
 			//System.out.print(testName+":");
 			while (it.hasNext()) {
@@ -299,7 +274,7 @@ public class TracerTestListener implements MutationTestListener {
 			Set<Integer> ks2;
 			Iterator<Integer> it2;
 			Integer i;
-						
+
 			oos.writeInt(valueMap.size());
 			//System.out.print(testName+":");
 			while (it.hasNext()) {
@@ -329,7 +304,7 @@ public class TracerTestListener implements MutationTestListener {
 	private void serializeIdMap(long mutation_id) {
 		if (idMap.size() == idMapMasterSize) {
 			return;
-		} 
+		}
 		try {
 			FileOutputStream fos;
 			if (mutation_id == 0) {
@@ -342,9 +317,9 @@ public class TracerTestListener implements MutationTestListener {
 		    Set<String> ks = idMap.keySet();
 		    Iterator<String> it = ks.iterator();
 		    oos.writeInt(idMap.size());
-		    
+
 		    String s = "";
-		    
+
 		    while (it.hasNext()) {
 		    	s = it.next();
 				oos.writeUTF(s);
@@ -352,7 +327,7 @@ public class TracerTestListener implements MutationTestListener {
 		    }
 			oos.close();
 			bos.close();
-			fos.close();		    
+			fos.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -1,60 +1,82 @@
 package de.unisb.cs.st.javalanche.tracer;
 
-import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RUN_MODE;
-import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode.CREATE_COVERAGE;
+import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
+import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode.*;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import de.unisb.cs.st.ds.util.io.XmlIo;
+
 public class TracerMethodAdapter extends MethodAdapter {
 
+	private static Logger logger = Logger.getLogger(TracerMethodAdapter.class);
+
 	private String methodName, className, signature;
-	
+
 	private boolean instrument = true;
 
 	// primitive data types
 	private enum PDType { LONG, INTEGER, FLOAT, DOUBLE };
-	
+
+	@SuppressWarnings("unchecked")
+	private static Map<String, Long> profilerMap =  (Map<String, Long>) (RUN_MODE != CREATE_COVERAGE ? XmlIo.get(TracerConstants.TRACE_PROFILER_FILE) : null);
+
+
+	private static final long PERCENT_BOUND = percentBound();
+
+
+
+	private static long percentBound() {
+		if(RUN_MODE == CREATE_COVERAGE ||TracerConstants.TRACE_PROFILER_PERCENT >= 100){
+			return Long.MAX_VALUE;
+		}
+		try{
+			List<Long> values = new ArrayList<Long>(profilerMap.values());
+			Collections.sort(values);
+			int boundPos = (int) ( values.size() * ( TracerConstants.TRACE_PROFILER_PERCENT / 100. ));
+			if(boundPos < values.size()){
+				long bound = values.get(boundPos);
+				logger.info("Bound for "+ TracerConstants.TRACE_PROFILER_PERCENT + " percent:  " + bound   + " at position " + boundPos + " of " + values.size());
+				return bound;
+			}
+		}catch(Throwable t){
+			t.printStackTrace();
+		}
+		return 0l;
+	}
+
 	public TracerMethodAdapter(MethodVisitor visitor, String className,	String methodName, String signature) {
 		super(visitor);
 		this.className = className.replace('/', '.');
 		this.methodName = methodName;
 		this.signature = signature;
-		
+
 		if (RUN_MODE != CREATE_COVERAGE) {
-			try {
-				BufferedReader fr = new BufferedReader(new FileReader(TracerConstants.TRACE_PROFILER_FILE));
-				String input = null;
-				while ((input = fr.readLine()) != null) {
-					if (input.equals(this.className + "@" + this.methodName)) {
-						instrument = false;
-					}
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+			Long calls = profilerMap.get(className + "@" + methodName);
+			if (calls >= TracerConstants.TRACE_PROFILER_MAX_CALLS  && calls >= PERCENT_BOUND){
+				instrument = false;
 			}
-		} else {
-			instrument = true;
 		}
-		
 	}
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see org.objectweb.asm.MethodAdapter#visitCode()
 	 */
 	public void visitCode() {
 		if (!methodName.equals("<clinit>") && instrument) {
-			//System.out.println(className + "." + methodName);
+			// System.out.println(className + "." + methodName);
 			this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerConstants.TRACER_CLASS_NAME, "getInstance", "()L"+ TracerConstants.TRACER_CLASS_NAME + ";");
 			this.visitLdcInsn(className);
 			this.visitLdcInsn(methodName);
@@ -65,6 +87,7 @@ public class TracerMethodAdapter extends MethodAdapter {
 
 	/*
 	 * (non-Javadoc)
+	 *
 	 * @see org.objectweb.asm.MethodAdapter#visitInsn(int)
 	 */
 	public void visitInsn(int inst) {
@@ -105,7 +128,9 @@ public class TracerMethodAdapter extends MethodAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.objectweb.asm.MethodAdapter#visitLineNumber(int, org.objectweb.asm.Label)
+	 *
+	 * @see org.objectweb.asm.MethodAdapter#visitLineNumber(int,
+	 *      org.objectweb.asm.Label)
 	 */
 	public void visitLineNumber(int line, Label start) {
 		if (!methodName.equals("<clinit>") && instrument) {
@@ -172,10 +197,13 @@ public class TracerMethodAdapter extends MethodAdapter {
 
 	private void callEnd() {
 		/*
-		this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerConstants.TRACER_CLASS_NAME, "getInstance", "()L" + TracerConstants.TRACER_CLASS_NAME +";");
-		this.visitLdcInsn(className);
-		this.visitLdcInsn(methodName);
-		this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TracerConstants.TRACER_CLASS_NAME, "end", "(Ljava/lang/String;Ljava/lang/String;)V");
-		*/
+		 * this.visitMethodInsn(Opcodes.INVOKESTATIC,
+		 * TracerConstants.TRACER_CLASS_NAME, "getInstance", "()L" +
+		 * TracerConstants.TRACER_CLASS_NAME +";");
+		 * this.visitLdcInsn(className); this.visitLdcInsn(methodName);
+		 * this.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
+		 * TracerConstants.TRACER_CLASS_NAME, "end",
+		 * "(Ljava/lang/String;Ljava/lang/String;)V");
+		 */
 	}
 }
