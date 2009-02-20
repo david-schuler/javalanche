@@ -13,6 +13,7 @@ import org.objectweb.asm.util.TraceClassVisitor;
 
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.testDetector.TestInfo;
 
 public class TraceTransformer implements ClassFileTransformer {
 
@@ -39,7 +40,7 @@ public class TraceTransformer implements ClassFileTransformer {
 
 		// blacklist: can't trace yourself and don't instrument tests (better performance)
 
-		if (className.contains("/test/") || className.contains("/tests/")) {
+		if (TestInfo.isTest(className.replace('/','.'))) {
 			//System.err.println("Blacklisted: " + className);
 			return classfileBuffer;
 		}

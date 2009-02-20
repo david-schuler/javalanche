@@ -65,7 +65,7 @@ public class TracerMethodAdapter extends MethodAdapter {
 
 		if (RUN_MODE != CREATE_COVERAGE) {
 			Long calls = profilerMap.get(className + "@" + methodName);
-			if (calls >= TracerConstants.TRACE_PROFILER_MAX_CALLS  && calls >= PERCENT_BOUND){
+			if (calls >= TracerConstants.TRACE_PROFILER_MAX_CALLS || calls >= PERCENT_BOUND){
 				instrument = false;
 			}
 		}
