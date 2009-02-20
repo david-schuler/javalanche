@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.log4j.Logger;
 
@@ -98,6 +99,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 	LinkedBlockingQueue<MutationCache> lbq = new LinkedBlockingQueue<MutationCache>();
 
+	/*
 	private HashMap<Integer, String> loadIdMap(long mutation_id) {
 		HashMap<Integer, String> idMap = new HashMap<Integer, String>();
 		if (mutation_id != 0) {
@@ -139,6 +141,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		}
 		return idMap;
 	}
+	*/
 
 	private void loadOriginalTraces() {
 		originalLineCoverageMaps = loadLineCoverageTrace(0);
@@ -163,8 +166,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 		for (String test : originalTests) {
 			try {
-				ois = new ObjectInputStream(new BufferedInputStream(
-						new FileInputStream(path + test)));
+				ois = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(
+						new FileInputStream(path + test))));
 				numClasses = ois.readInt();
 				classMap = new HashMap<String, HashMap<Integer, Integer>>();
 				for (int i = 0; i < numClasses; i++) {
@@ -487,14 +490,14 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		String[] mutatedTests = dir.list();
 
 		HashMap<String, HashMap<Integer, Boolean>> modified = new HashMap<String, HashMap<Integer, Boolean>>();
-		HashMap<Integer, String> idMap = loadIdMap(mutation.id);
+		//HashMap<Integer, String> idMap = loadIdMap(mutation.id);
 		for (String test : mutatedTests) {
 			try {
-				ois = new ObjectInputStream(new BufferedInputStream(
-						new FileInputStream(path + test)));
+				ois = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(
+						new FileInputStream(path + test))));
 				if (originalLineCoverageMaps.containsKey(test)) {
 					processTestLineCoverage(originalLineCoverageMaps.get(test),
-							idMap, ois, results, modified);
+							null, ois, results, modified);
 				} else {
 					logger
 							.warn("Got no coverage data of unmutated run for test: "
@@ -584,14 +587,14 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		String[] mutatedTests = dir.list();
 
 		HashMap<String, HashMap<Integer, Boolean>> modified = new HashMap<String, HashMap<Integer, Boolean>>();
-		HashMap<Integer, String> idMap = loadIdMap(mutation.id);
+		//HashMap<Integer, String> idMap = loadIdMap(mutation.id);
 		for (String test : mutatedTests) {
 			try {
-				ois = new ObjectInputStream(new BufferedInputStream(
-						new FileInputStream(path + test)));
+				ois = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(
+						new FileInputStream(path + test))));
 				if (originalDataCoverageMaps.containsKey(test)) {
 					processTestDataCoverage(originalDataCoverageMaps.get(test),
-							idMap, ois, results, modified);
+							null, ois, results, modified);
 				} else {
 					logger
 							.warn("Got no coverage data of unmutated run for test: "
@@ -631,7 +634,6 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 			Iterator<Integer> itLineSet = lineSet.keySet().iterator();
 
-			boolean first = true;
 			while (itLineSet.hasNext()) {
 				Integer line = itLineSet.next();
 				Boolean b = lineSet.get(line);
