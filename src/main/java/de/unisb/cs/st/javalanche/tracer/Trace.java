@@ -45,15 +45,15 @@ public class Trace {
 	/*
 	 * This code is executed at the beginning of a method
 	 */
-	public synchronized void begin(String className, String methodName) {
+	public synchronized void begin(String className, String methodName, boolean instrumentLine, boolean instrumentData) {
 		//Integer key = getId(className + "@" + methodName);
 		String key = className + "@" + methodName;
-		if (!classMap.containsKey(key)) {
+		if (instrumentLine && !classMap.containsKey(key)) {
 			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>((int)(1024 * 1.33));
 			classMap.put(key, lineMap);
 
 		}
-		if (!valueMap.containsKey(key)) {
+		if (instrumentData && !valueMap.containsKey(key)) {
 			valueMap.put(key, new HashMap<Integer, Integer>());
 		}
 		
@@ -156,6 +156,12 @@ public class Trace {
 		//Integer key = getId(className + "@" + methodName);
 		String key = className + "@" + methodName;
 		HashMap<Integer, Integer> tmpMap = valueMap.get(key);
+		
+		// safety - test if the value is there
+		if (tmpMap == null) {
+			return;
+		}
+		
 		Integer intvalue = new Integer(value);
 		if (!valueMap.containsKey(intvalue)) {
 			tmpMap.put(intvalue, 1);

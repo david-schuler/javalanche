@@ -1,13 +1,12 @@
 package de.unisb.cs.st.javalanche.tracer;
 
-import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
-import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode.*;
-import static de.unisb.cs.st.javalanche.tracer.TracerConstants.*;
+import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RUN_MODE;
+import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode.CREATE_COVERAGE;
+import static de.unisb.cs.st.javalanche.tracer.TracerConstants.TRACE_PROFILER_FILE;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +24,8 @@ public class TracerMethodAdapter extends MethodAdapter {
 
 	private String methodName, className, signature;
 
-	private boolean instrument = true;
+	private boolean instrumentData = true;
+	private boolean instrumentLine = true;
 
 	// primitive data types
 	private enum PDType { LONG, INTEGER, FLOAT, DOUBLE };
@@ -57,18 +57,29 @@ public class TracerMethodAdapter extends MethodAdapter {
 		return 0l;
 	}
 
-	public TracerMethodAdapter(MethodVisitor visitor, String className,	String methodName, String signature) {
+	public TracerMethodAdapter(MethodVisitor visitor, String className,	String methodName, String signature, int classAccess, int methodAccess) {
 		super(visitor);
 		this.className = className.replace('/', '.');
 		this.methodName = methodName;
 		this.signature = signature;
-
+		
+		// don't instrument private classes / methods for data coverage
+		if ((classAccess & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE || (methodAccess & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE) {
+			logger.info("not instrumenting method " + this.className + "@" + this.methodName + " (cause: only private access)");
+			instrumentData = false;
+		}
+		
+		/*
+		// FIXME there is some bug (empty coverage files) in this function.
+		// don't instrument some classes for data coverage
 		if (RUN_MODE != CREATE_COVERAGE) {
 			Long calls = profilerMap.get(className + "@" + methodName);
-			if (calls >= TracerConstants.TRACE_PROFILER_MAX_CALLS || calls >= PERCENT_BOUND){
-				instrument = false;
+			if (calls >= TracerConstants.TRACE_PROFILER_MAX_CALLS  || calls >= PERCENT_BOUND) {
+				logger.info("not instrumenting method " + this.className + "@" + this.methodName + " (cause: too much calls to it)");
+				instrumentData = false;
 			}
 		}
+		*/
 	}
 
 	/*
@@ -77,12 +88,14 @@ public class TracerMethodAdapter extends MethodAdapter {
 	 * @see org.objectweb.asm.MethodAdapter#visitCode()
 	 */
 	public void visitCode() {
-		if (!methodName.equals("<clinit>") && instrument) {
+		if (!methodName.equals("<clinit>") && (instrumentLine || instrumentData)) {
 			// System.out.println(className + "." + methodName);
 			this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerConstants.TRACER_CLASS_NAME, "getInstance", "()L"+ TracerConstants.TRACER_CLASS_NAME + ";");
 			this.visitLdcInsn(className);
 			this.visitLdcInsn(methodName);
-			this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TracerConstants.TRACER_CLASS_NAME, "begin", "(Ljava/lang/String;Ljava/lang/String;)V");
+			this.visitLdcInsn(instrumentLine);
+			this.visitLdcInsn(instrumentData);
+			this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TracerConstants.TRACER_CLASS_NAME, "begin", "(Ljava/lang/String;Ljava/lang/String;ZZ)V");
 		}
 		super.visitCode();
 	}
@@ -93,7 +106,7 @@ public class TracerMethodAdapter extends MethodAdapter {
 	 * @see org.objectweb.asm.MethodAdapter#visitInsn(int)
 	 */
 	public void visitInsn(int inst) {
-		if (!methodName.equals("<clinit>") && instrument) {
+		if (!methodName.equals("<clinit>") && instrumentData) {
 			switch (inst) {
 			case Opcodes.IRETURN:
 				callLogIReturn();
@@ -135,7 +148,7 @@ public class TracerMethodAdapter extends MethodAdapter {
 	 *      org.objectweb.asm.Label)
 	 */
 	public void visitLineNumber(int line, Label start) {
-		if (!methodName.equals("<clinit>") && instrument) {
+		if (!methodName.equals("<clinit>") && instrumentLine) {
 			this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerConstants.TRACER_CLASS_NAME, "getInstance", "()L" + TracerConstants.TRACER_CLASS_NAME +";");
 			this.visitLdcInsn(line);
 			this.visitLdcInsn(className);

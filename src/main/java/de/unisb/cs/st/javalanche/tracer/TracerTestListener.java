@@ -22,26 +22,6 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListene
 
 public class TracerTestListener implements MutationTestListener {
 
-
-	private static class ValueComparator implements Comparator {
-		private Map<String, Long>  _data = null;
-		public ValueComparator(Map<String, Long> data) {
-			super();
-			_data = data;
-		}
-
-         public int compare(Object o1, Object o2) {
-        	 Long e1 = _data.get(o1);
-             Long e2 = _data.get(o2);
-             int c = e2.compareTo(e1);
-             if (c != 0) {
-            	 return c;
-             }
-        	 Integer h1 = o1.hashCode(), h2 = o2.hashCode();
-        	 return h2.compareTo(h1);
-         }
-	}
-
 	private static Logger logger = Logger.getLogger(TracerTestListener.class);
 
 	private static Long mutation_id = new Long(-1);
