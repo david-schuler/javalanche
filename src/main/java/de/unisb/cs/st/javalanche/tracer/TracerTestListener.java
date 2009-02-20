@@ -4,14 +4,10 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintStream;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.log4j.Logger;
 
@@ -197,9 +193,10 @@ public class TracerTestListener implements MutationTestListener {
 			return;
 		}
 		try {
-			FileOutputStream fos = new FileOutputStream(TracerConstants.TRACE_RESULT_LINE_DIR + mutation_id + "/" + testName);
-		    BufferedOutputStream bos = new BufferedOutputStream(fos);
-		    ObjectOutputStream oos = new ObjectOutputStream(bos);
+			FileOutputStream fos = new FileOutputStream(TracerConstants.TRACE_RESULT_LINE_DIR + mutation_id + "/" + testName + ".gz");
+			GZIPOutputStream gos = new GZIPOutputStream(fos);
+		    BufferedOutputStream bos = new BufferedOutputStream(gos);
+		    ObjectOutputStream oos = new ObjectOutputStream(gos);
 
 		    HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
 
@@ -229,6 +226,7 @@ public class TracerTestListener implements MutationTestListener {
 			}
 			oos.close();
 			bos.close();
+			gos.close();
 			fos.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -241,9 +239,9 @@ public class TracerTestListener implements MutationTestListener {
 			return;
 		}
 		try {
-			FileOutputStream fos = new FileOutputStream(TracerConstants.TRACE_RESULT_DATA_DIR + mutation_id + "/" + testName);
-			//GZIPOutputStream gos = new GZIPOutputStream();
-		    BufferedOutputStream bos = new BufferedOutputStream(fos);
+			FileOutputStream fos = new FileOutputStream(TracerConstants.TRACE_RESULT_DATA_DIR + mutation_id + "/" + testName + ".gz");
+			GZIPOutputStream gos = new GZIPOutputStream(fos);
+		    BufferedOutputStream bos = new BufferedOutputStream(gos);
 		    ObjectOutputStream oos = new ObjectOutputStream(bos);
 
 		    HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
@@ -274,6 +272,7 @@ public class TracerTestListener implements MutationTestListener {
 			}
 			oos.close();
 			bos.close();
+			gos.close();
 			fos.close();
 		} catch (Exception e) {
 			e.printStackTrace();

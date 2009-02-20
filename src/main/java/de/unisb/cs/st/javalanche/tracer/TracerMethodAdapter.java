@@ -67,19 +67,29 @@ public class TracerMethodAdapter extends MethodAdapter {
 		if ((classAccess & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE || (methodAccess & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE) {
 			logger.info("not instrumenting method " + this.className + "@" + this.methodName + " (cause: only private access)");
 			instrumentData = false;
+			//instrumentLine = false;
 		}
 		
-		/*
-		// FIXME there is some bug (empty coverage files) in this function.
+		
+		
 		// don't instrument some classes for data coverage
+		try {
 		if (RUN_MODE != CREATE_COVERAGE) {
-			Long calls = profilerMap.get(className + "@" + methodName);
-			if (calls >= TracerConstants.TRACE_PROFILER_MAX_CALLS  || calls >= PERCENT_BOUND) {
-				logger.info("not instrumenting method " + this.className + "@" + this.methodName + " (cause: too much calls to it)");
-				instrumentData = false;
+			Long calls = profilerMap.get(this.className + "@" + methodName);
+			if (calls != null) { 
+				if (calls >= TracerConstants.TRACE_PROFILER_MAX_CALLS  || calls >= PERCENT_BOUND) {
+					logger.info("not instrumenting method " + this.className + "@" + this.methodName + " (cause: too much calls to it)");
+					instrumentData = false;
+					//instrumentLine = false;
+				}
+			} else {
+				logger.info("method " + this.className + "@" + this.methodName + " not in profiler map");
 			}
 		}
-		*/
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		
 	}
 
 	/*
