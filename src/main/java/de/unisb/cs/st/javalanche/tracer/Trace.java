@@ -2,7 +2,11 @@ package de.unisb.cs.st.javalanche.tracer;
 
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 public class Trace {
+	private static Logger logger = Logger.getLogger(Trace.class);
+
 	private static Trace trace = null;
 	private HashMap<String, HashMap<Integer, Integer>> classMap = null;
 	private HashMap<String, HashMap<Integer, Integer>> valueMap = null;
@@ -11,6 +15,7 @@ public class Trace {
 
 	private boolean isLineCoverageDeactivated = false;
 	private boolean isDataCoverageDeactivated = false;
+
 
 	private Trace() {
 	}
@@ -56,7 +61,7 @@ public class Trace {
 		if (instrumentData && !valueMap.containsKey(key)) {
 			valueMap.put(key, new HashMap<Integer, Integer>());
 		}
-		
+
 		if (TracerTestListener.getMutationId() == 0) {
 			if (!profilerMap.containsKey(key)) {
 				profilerMap.put(key, 1L);
@@ -116,7 +121,13 @@ public class Trace {
 		if(value == null){
 			return; // TODO handle nulls
 		}
-		StringBuffer tmp = new StringBuffer(value.toString());
+		StringBuffer tmp = null;
+		try{
+		tmp = new StringBuffer(value.toString());
+		}catch(Throwable t){
+			logger.warn("To string for return object throws an exception. Class: " + className  + " MethodName: " + methodName,t);
+			return;
+		}
 		int index = 0;
 		int position = 0;
 		boolean found = false;
@@ -126,7 +137,7 @@ public class Trace {
 		while ((position = tmp.indexOf("@", index)) > 0) {
 			for (index = position + 1; index < position + 17; index++) {
 				c = tmp.charAt(index);
-				
+
 				if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')) {
 					found = true;
 					if (!deleteAddresses) {
@@ -156,12 +167,12 @@ public class Trace {
 		//Integer key = getId(className + "@" + methodName);
 		String key = className + "@" + methodName;
 		HashMap<Integer, Integer> tmpMap = valueMap.get(key);
-		
+
 		// safety - test if the value is there
 		if (tmpMap == null) {
 			return;
 		}
-		
+
 		Integer intvalue = new Integer(value);
 		if (!valueMap.containsKey(intvalue)) {
 			tmpMap.put(intvalue, 1);
@@ -182,5 +193,5 @@ public class Trace {
 		}
 	}
 	*/
-	
+
 }
