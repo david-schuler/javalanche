@@ -1,6 +1,8 @@
 package de.unisb.cs.st.javalanche.tracer;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -15,6 +17,8 @@ public class Trace {
 
 	private boolean isLineCoverageDeactivated = false;
 	private boolean isDataCoverageDeactivated = false;
+
+	private Set<String> exceptionsSeen = new HashSet<String>();
 
 
 	private Trace() {
@@ -118,13 +122,14 @@ public class Trace {
 
 
 	public void logAReturn(Object value, String className, String methodName) {
-		if(value == null){
+		if(value == null || exceptionsSeen.contains(className+methodName)){
 			return; // TODO handle nulls
 		}
 		StringBuffer tmp = null;
 		try{
 		tmp = new StringBuffer(value.toString());
 		}catch(Throwable t){
+			exceptionsSeen.add(className+methodName);
 			logger.warn("To string for return object throws an exception. Class: " + className  + " MethodName: " + methodName,t);
 			return;
 		}
