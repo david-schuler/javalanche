@@ -5,6 +5,7 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
+import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -16,6 +17,8 @@ import de.unisb.cs.st.javalanche.mutation.testDetector.TestInfo;
 
 public class TraceTransformer implements ClassFileTransformer {
 
+	private static Logger logger = Logger.getLogger(TraceTransformer.class);
+
 	public TraceTransformer() {
 		super();
 		Runtime.getRuntime().addShutdownHook(new Thread(){
@@ -26,6 +29,7 @@ public class TraceTransformer implements ClassFileTransformer {
 	}
 
 	public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+	try{
 		if (loader != ClassLoader.getSystemClassLoader()) {
 			return classfileBuffer;
 		}
@@ -58,6 +62,14 @@ public class TraceTransformer implements ClassFileTransformer {
 		result = writer.toByteArray();
 
 		return result;
+		}catch(Throwable t){
+			t.printStackTrace();
+			String message="Exception thrown during instrumentation";
+			logger.error(message , t);
+			System.err.println(message);
+			System.exit(1);
+		}
+		throw new RuntimeException("Should not be reached");
 	}
 
 	private void shutdown() {
