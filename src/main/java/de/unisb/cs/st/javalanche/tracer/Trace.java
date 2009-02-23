@@ -122,12 +122,12 @@ public class Trace {
 
 
 	public void logAReturn(Object value, String className, String methodName) {
-		if(value == null || exceptionsSeen.contains(className+methodName)){
+		if( value == null || exceptionsSeen.contains(className+methodName)){
 			return; // TODO handle nulls
 		}
 		StringBuffer tmp = null;
 		try{
-		tmp = new StringBuffer(value.toString());
+			tmp = new StringBuffer(value.toString());
 		}catch(Throwable t){
 			exceptionsSeen.add(className+methodName);
 			logger.warn("To string for return object throws an exception. Class: " + className  + " MethodName: " + methodName,t);
@@ -140,7 +140,7 @@ public class Trace {
 		char c = ' ';
 		// quite fast method to detect memory addresses in Strings.
 		while ((position = tmp.indexOf("@", index)) > 0) {
-			for (index = position + 1; index < position + 17; index++) {
+			for (index = position + 1; index < position + 17 && index < tmp.length(); index++) {
 				c = tmp.charAt(index);
 
 				if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')) {
