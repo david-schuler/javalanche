@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
@@ -33,7 +34,10 @@ public class TracerMethodAdapter extends MethodAdapter {
 	@SuppressWarnings("unchecked")
 	private static Map<String, Long> profilerMap =  (Map<String, Long>) (new File(TRACE_PROFILER_FILE).exists() ? XmlIo.get(TRACE_PROFILER_FILE) : null);
 
+	@SuppressWarnings("unchecked")
+	private static Set<String> dontInstrumentSet =  (Set<String>) (new File(TracerConstants.TRACE_DONT_INSTRUMENT_FILE).exists() ? XmlIo.get(TracerConstants.TRACE_DONT_INSTRUMENT_FILE) : null);
 
+	
 	private static final long PERCENT_BOUND = percentBound();
 
 
@@ -70,22 +74,25 @@ public class TracerMethodAdapter extends MethodAdapter {
 			//instrumentLine = false;
 		}
 		
-		
+		// don't instrument classes for data coverage that throw an exception
+		if (dontInstrumentSet != null && dontInstrumentSet.contains(this.className + "@" + this.methodName)) {
+			instrumentData = false;
+		}
 		
 		// don't instrument some classes for data coverage
 		try {
-		if (RUN_MODE != CREATE_COVERAGE) {
-			Long calls = profilerMap.get(this.className + "@" + methodName);
-			if (calls != null) { 
-				if (calls >= TracerConstants.TRACE_PROFILER_MAX_CALLS  || calls >= PERCENT_BOUND) {
-					logger.info("not instrumenting method " + this.className + "@" + this.methodName + " (cause: too much calls to it)");
-					instrumentData = false;
-					//instrumentLine = false;
+			if (profilerMap != null /*RUN_MODE != CREATE_COVERAGE*/) {
+				Long calls = profilerMap.get(this.className + "@" + methodName);
+				if (calls != null) { 
+					if (calls >= TracerConstants.TRACE_PROFILER_MAX_CALLS  || calls >= PERCENT_BOUND) {
+						logger.info("not instrumenting method " + this.className + "@" + this.methodName + " (cause: too much calls to it)");
+						instrumentData = false;
+						//instrumentLine = false;
+					}
+				} else {
+					logger.info("method " + this.className + "@" + this.methodName + " not in profiler map");
 				}
-			} else {
-				logger.info("method " + this.className + "@" + this.methodName + " not in profiler map");
 			}
-		}
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}

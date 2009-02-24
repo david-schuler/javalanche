@@ -1,11 +1,15 @@
  package de.unisb.cs.st.javalanche.tracer;
 
+import static de.unisb.cs.st.javalanche.tracer.TracerConstants.TRACE_PROFILER_FILE;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
@@ -30,6 +34,8 @@ public class TracerTestListener implements MutationTestListener {
 	private static HashMap<String, HashMap<Integer, Integer>> valueMap = new HashMap<String, HashMap<Integer, Integer>>();
 
 	private static HashMap<String, Long> profilerMap = new HashMap<String, Long>();
+	
+	private static HashSet<String> dontInstrumentSet = new HashSet<String>();
 
 	//private static HashMap<String, Integer> idMap = new HashMap<String, Integer>();
 	//private static int idMapMasterSize = 0;
@@ -46,6 +52,11 @@ public class TracerTestListener implements MutationTestListener {
 		return profilerMap;
 	}
 
+	public static HashSet<String> getDontInstrumentSet() {
+		return dontInstrumentSet;
+	}
+
+	
 	public static Long getMutationId() {
 		return mutation_id;
 	}
@@ -89,6 +100,7 @@ public class TracerTestListener implements MutationTestListener {
 	public void start() {
 		System.out.println("TracerTestListener.start()");
 		mutation_id = new Long(0);
+		loadDontInstrument();
 		classMap.clear();
 		valueMap.clear();
 		createMutationDir();
@@ -98,6 +110,7 @@ public class TracerTestListener implements MutationTestListener {
 	public void end() {
 		//serializeIdMap(mutation_id);
 		writeProfilingData();
+		writeDontInstrument();
 		System.out.println("TracerTestListener.end()");
 		classMap.clear();
 		valueMap.clear();
@@ -121,7 +134,7 @@ public class TracerTestListener implements MutationTestListener {
 	}
 
 	public void mutationStart(Mutation mutation) {
-		this.mutation_id = mutation.getId();
+		mutation_id = mutation.getId();
 		/*
 		idMap.clear();
 		loadIdMap(0);
@@ -145,6 +158,21 @@ public class TracerTestListener implements MutationTestListener {
 			return;
 		}
 		XmlIo.toXML(profilerMap, TracerConstants.TRACE_PROFILER_FILE);
+	}
+	
+	private void loadDontInstrument() {
+		if (new File(TracerConstants.TRACE_DONT_INSTRUMENT_FILE).exists()) {
+			dontInstrumentSet =  XmlIo.get(TracerConstants.TRACE_DONT_INSTRUMENT_FILE);
+		}
+	}
+	
+	
+	private void writeDontInstrument() {
+		if (mutation_id != 0) {
+			return;
+		}
+		XmlIo.toXML(dontInstrumentSet, TracerConstants.TRACE_DONT_INSTRUMENT_FILE);
+
 	}
 
 
