@@ -35,6 +35,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		public boolean classInit;
 		public String shortString;
 		public String className;
+		public String methodName;
 		public int lineNumber;
 		public int mutationForLine;
 		public String mutationType;
@@ -59,6 +60,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 	private static class TracerResult {
 		// The summarized number of classes called by the run/mutation
+		// only line coverage for the modified value!
 		public int classesTotal = 0;
 		public int classesModified = 0;
 
@@ -68,7 +70,13 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		public int methodsModifiedData = 0;
 		public int methodsModifiedAll = 0;
 
+		// The same as above but without self (W/O Self)
+		public int methodsModifiedLineWOS = 0;
+		public int methodsModifiedDataWOS = 0;
+		public int methodsModifiedAllWOS = 0;
+
 		// The summarized number of lines called by the run/mutation
+		// only line coverage for the modified value!
 		public int linesTotal = 0;
 		public int linesModified = 0;
 
@@ -76,7 +84,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		public int testsTotal = 0;
 		public int testsExecuted = 0;
 
-		// THe number of data
+		// The number of data
 		public int dataTotal = 0;
 		public int dataModified = 0;
 	}
@@ -198,11 +206,13 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		if (firstCallToWriteOut) {
 			out.println("ID;KILLED;" 
 					+ "CLASSES_TOTAL;CLASSES_MODIFIED;"
-					+ "METHODS_TOTAL;METHODS_MODIFIED_LINE;METHODS_MODIFIED_DATA;METHODS_MODIFIED_ALL;"
+					+ "METHODS_TOTAL;"
+					+ "METHODS_MODIFIED_LINE;METHODS_MODIFIED_DATA;METHODS_MODIFIED_ALL;"
+					+ "METHODS_MODIFIED_LINE_WOS;METHODS_MODIFIED_DATA_WOS;METHODS_MODIFIED_ALL_WOS;"
 					+ "LINES_TOTAL;LINES_MODIFIED;"
 					+ "DATA_TOTAL;DATA_MODIFIED;"
 					+ "TESTS_TOTAL;TESTS_EXECUTED;"
-					+ "MUTATION_TYPE;CLASS_NAME;LINE_NUMBER;MUTATION_FOR_LINE;"
+					+ "MUTATION_TYPE;CLASS_NAME;METHOD_NAME;LINE_NUMBER;MUTATION_FOR_LINE;"
 					+ "CLASS_INIT;MUTATION_RESULT");
 			firstCallToWriteOut = false;
 		}
@@ -218,6 +228,9 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				+ results.methodsModifiedLine + ";"
 				+ results.methodsModifiedData + ";"
 				+ results.methodsModifiedAll + ";"
+				+ results.methodsModifiedLineWOS + ";"
+				+ results.methodsModifiedDataWOS + ";"
+				+ results.methodsModifiedAllWOS + ";"
 				+ results.linesTotal + ";"
 				+ results.linesModified + ";"
 				+ results.dataTotal + ";"
@@ -225,6 +238,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				+ results.testsTotal + ";"
 				+ results.testsExecuted + ";"
 				+ mutation.mutationType + ";" + mutation.className + ";"
+				+ mutation.methodName + ";"
 				+ mutation.lineNumber + ";" + mutation.mutationForLine + ";"
 				+ mutation.classInit + ";" + mutation.mutationResult);
 
@@ -453,7 +467,29 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			modified.put(tmpS, lineSet);
 		}
 	}
-
+	/* *************************************************************************
+	 * Helper method to find the mutated method given a line number in some class.
+	 */
+	private String findMutatedMethod(MutationCache mutation) {
+		Iterator<String> it = originalLineCoverageMaps.keySet().iterator();
+		while(it.hasNext()) {
+			String testName = it.next();
+			HashMap<String, HashMap<Integer, Integer>> classes = originalLineCoverageMaps.get(testName);
+			Iterator<String> it2 = classes.keySet().iterator();
+			while(it2.hasNext()) {
+				String name = it2.next();
+				if (name.startsWith(mutation.className)) {
+					HashMap<Integer, Integer> lines = classes.get(name);
+					if (lines.containsKey(mutation.lineNumber)) {
+						int pos = name.indexOf('@') + 1;
+						mutation.methodName=name.substring(pos);
+						return name;
+					}
+				}
+			}
+		}
+		return "";
+	}
 	
 	/* *************************************************************************
 	 * General that gets a mutation out of the queue and runs two helper methods
@@ -462,13 +498,20 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 	private void processMutation() {
 		MutationCache mutation;
 		while ((mutation = lbq.poll()) != null) {
+			String ignoredMethod = findMutatedMethod(mutation);
 			TracerResult results = new TracerResult();
 			HashSet<String> modifiedMethods = new HashSet<String>();
-			processMutationLineCoverage(mutation, results, modifiedMethods);
-			processMutationDataCoverage(mutation, results, modifiedMethods);
+			processMutationLineCoverage(mutation, results, modifiedMethods, ignoredMethod);
+			processMutationDataCoverage(mutation, results, modifiedMethods, ignoredMethod);
 			
-			System.out.println("modifiedMethodsAll: " + modifiedMethods);
+			//System.out.println("modifiedMethodsAll: " + modifiedMethods);
 			results.methodsModifiedAll = modifiedMethods.size();
+			results.methodsModifiedAllWOS = modifiedMethods.size();
+			
+			if (modifiedMethods.contains(ignoredMethod)) {
+				results.methodsModifiedAllWOS = modifiedMethods.size() - 1;
+			}
+			
 			writeOut(mutation, results);
 		}
 	}
@@ -477,7 +520,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 	 * Helper method that processes a single mutation for line coverage data.   
 	 */
 	private void processMutationLineCoverage(MutationCache mutation,
-			TracerResult results, HashSet<String> modifiedMethodsSet) {
+			TracerResult results, HashSet<String> modifiedMethodsSet, String ignoredMethod) {
 		ObjectInputStream ois = null;
 
 		String path = TracerConstants.TRACE_RESULT_LINE_DIR + mutation.id + "/";
@@ -525,8 +568,13 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		HashSet<String> classesModifiedHash = new HashSet<String>();
 
 		Iterator<String> itModified = modified.keySet().iterator();
+		boolean foundSelf = false;
+		
 		while (itModified.hasNext()) {
 			String name = itModified.next();
+			if (ignoredMethod.equals(name)) {
+				foundSelf = true;
+			}
 			int index = name.indexOf('@');
 			String className = null;
 			if (index > 0) {
@@ -541,6 +589,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			Iterator<Integer> itLineSet = lineSet.keySet().iterator();
 
 			boolean first = true;
+			
+			
 			while (itLineSet.hasNext()) {
 				Integer line = itLineSet.next();
 				Boolean b = lineSet.get(line);
@@ -568,7 +618,15 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		results.linesTotal += linesTotal;
 		results.linesModified += linesModified;
 		results.methodsTotal += methodsTotal;
+		
 		results.methodsModifiedLine += methodsModified;
+		
+		if (foundSelf && methodsModified > 0) {
+			results.methodsModifiedLineWOS += (methodsModified - 1);
+		} else {
+			results.methodsModifiedLineWOS += methodsModified;
+		}
+		
 		results.classesTotal += classesTotalHash.size();
 		results.classesModified += classesModifiedHash.size();
 	}
@@ -577,7 +635,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 	 * Helper method that processes a single mutation for data coverage data.   
 	 */
 	private void processMutationDataCoverage(MutationCache mutation,
-			TracerResult results, HashSet<String> modifiedMethodsSet) {
+			TracerResult results, HashSet<String> modifiedMethodsSet, String ignoredMethod) {
 		ObjectInputStream ois = null;
 
 		String path = TracerConstants.TRACE_RESULT_DATA_DIR + mutation.id + "/";
@@ -623,17 +681,15 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		HashSet<String> countModified = new HashSet<String>();
 
 		Iterator<String> itModified = modified.keySet().iterator();
+		
+		boolean foundSelf = false;
 		while (itModified.hasNext()) {
 			String name = itModified.next();
-			int index = name.indexOf('@');
-			String className = null;
-			if (index > 0) {
-				className = name.substring(0, name.indexOf('@'));
-			} else {
-				throw new RuntimeException(
-						"Expected that name contains an @ character. Name: "
-								+ name);
+			
+			if (ignoredMethod.equals(name)) {
+				foundSelf = true;
 			}
+
 			HashMap<Integer, Boolean> lineSet = modified.get(name);
 
 			Iterator<Integer> itLineSet = lineSet.keySet().iterator();
@@ -651,6 +707,11 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		}
 		
 		results.methodsModifiedData += countModified.size();
+		if (foundSelf && countModified.size() > 0) {
+			results.methodsModifiedDataWOS += (countModified.size() - 1);
+		} else {
+			results.methodsModifiedDataWOS += countModified.size();
+		}
 		results.dataTotal += dataTotal;
 		results.dataModified += dataModified;
 	}
