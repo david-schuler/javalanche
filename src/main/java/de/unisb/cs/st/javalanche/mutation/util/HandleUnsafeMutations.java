@@ -30,12 +30,23 @@ public class HandleUnsafeMutations {
 		{
 
 			add(new Mutation(
+					"xcom.thoughtworks.xstream.converters.reflection.Sun14ReflectionProvider ",
+					111, 0, REMOVE_CALL, false));
+			add(new Mutation(
+					"xcom.thoughtworks.xstream.converters.reflection.Sun14ReflectionProvider ",
+					109, 0, REMOVE_CALL, false));
+
+
+			add(new Mutation(
 					"com.thoughtworks.xstream.converters.reflection.Sun14ReflectionProvider ",
 					111, 0, REMOVE_CALL, false));
 			add(new Mutation(
 					"com.thoughtworks.xstream.converters.reflection.Sun14ReflectionProvider ",
 					109, 0, REMOVE_CALL, false));
+
+
 		}
+
 	};
 
 	private static Logger logger = Logger

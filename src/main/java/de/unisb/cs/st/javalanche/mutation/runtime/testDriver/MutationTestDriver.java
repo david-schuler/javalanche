@@ -30,6 +30,7 @@ import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationObserver;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationSwitcher;
 import de.unisb.cs.st.javalanche.mutation.runtime.ResultReporter;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestCheckListener;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestListener;
 import de.unisb.cs.st.javalanche.tracer.TracerTestListener;
 
@@ -137,7 +138,7 @@ public abstract class MutationTestDriver {
 		} else if (MutationProperties.RUN_MODE == RunMode.SCAN) {
 			scanTests();
 		} else if (MutationProperties.RUN_MODE == RunMode.CHECK_INVARIANTS_PER_TEST) {
-			addMutationTestListener(new InvariantPerTestListener());
+			addMutationTestListener(new InvariantPerTestCheckListener());
 			runNormalTests();
 		} else if (MutationProperties.RUN_MODE == RunMode.CREATE_COVERAGE) {
 			addMutationTestListener(new TracerTestListener());

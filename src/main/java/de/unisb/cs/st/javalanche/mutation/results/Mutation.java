@@ -295,8 +295,7 @@ public class Mutation implements Serializable {
 
 	public boolean isKilled() {
 		return mutationResult != null
-				&& mutationResult.getNumberOfErrors()
-						+ mutationResult.getNumberOfFailures() > 0;
+				&& (mutationResult.getNumberOfErrors() > 0 || mutationResult.getNumberOfFailures() > 0);
 	}
 
 	public void loadAll() {

@@ -1,5 +1,8 @@
 package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,16 +34,23 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 	private static Logger logger = Logger
 			.getLogger(Junit3MutationTestDriver.class);
 
-	private final class SingleTestListener implements TestListener {
+	private final static class SingleTestListener implements TestListener {
 
 		private String message;
 
 		public void addError(Test test, Throwable t) {
-			message = "Error: " + test + " - " + t;
+			message = "Error: " + test + " - " + t + " - " + getStackTrace(t);
 		}
 
 		public void addFailure(Test test, AssertionFailedError t) {
-			message = "Failure: " + test + " - " + t;
+			message = "Failure: " + test + " - " + t + " - " + getStackTrace(t);
+		}
+
+		public static String getStackTrace(Throwable t) {
+			final Writer result = new StringWriter();
+			final PrintWriter printWriter = new PrintWriter(result);
+			t.printStackTrace(printWriter);
+			return result.toString();
 		}
 
 		public void endTest(Test test) {

@@ -2,8 +2,6 @@ package de.unisb.cs.st.javalanche.mutation.results;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -43,12 +41,12 @@ public class MutationInvariantResultTest {
 
 	@Test
 	public void testStoreInvariantAddResult() {
-		Collection<Integer> list = new ArrayList<Integer>();
+		Set<Integer> list = new HashSet<Integer>();
 		Random r = new Random();
 		for (int i = 0; i < 20; i++) {
 			list.add(r.nextInt());
 		}
-		Map<String, Collection<Integer>> map = new HashMap<String, Collection<Integer>>();
+		Map<String, Set<Integer>> map = new HashMap<String, Set<Integer>>();
 		map.put("key", list);
 		InvariantAddResult invariantAddResult = new InvariantAddResult(map);
 		assertEquals(1, invariantAddResult.getViolationsPerTest().size());
@@ -67,12 +65,12 @@ public class MutationInvariantResultTest {
 
 	@Test
 	public void testStoreMutationTestResult() {
-		Collection<Integer> list = new ArrayList<Integer>();
+		Set<Integer> list = new HashSet<Integer>();
 		Random r = new Random();
 		for (int i = 0; i < 20; i++) {
 			list.add(r.nextInt());
 		}
-		Map<String, Collection<Integer>> map = new HashMap<String, Collection<Integer>>();
+		Map<String, Set<Integer>> map = new HashMap<String, Set<Integer>>();
 		map.put("key", list);
 		InvariantAddResult invariantAddResult = new InvariantAddResult(map);
 		MutationTestResult mutationTestResult = new MutationTestResult();

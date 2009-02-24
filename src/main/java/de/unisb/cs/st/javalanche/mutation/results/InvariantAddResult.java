@@ -1,6 +1,5 @@
 package de.unisb.cs.st.javalanche.mutation.results;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -19,10 +18,10 @@ public class InvariantAddResult extends AddResult {
 	public InvariantAddResult() {
 	}
 
-	public InvariantAddResult(Map<String, Collection<Integer>> violationsPerTest) {
-		Set<Entry<String, Collection<Integer>>> entrySet = violationsPerTest
+	public InvariantAddResult(Map<String, Set<Integer>> violationsPerTest) {
+		Set<Entry<String, Set<Integer>>> entrySet = violationsPerTest
 				.entrySet();
-		for (Entry<String, Collection<Integer>> entry : entrySet) {
+		for (Entry<String, Set<Integer>> entry : entrySet) {
 			InvariantSet is = new InvariantSet();
 			is.setInvariants(entry.getValue());
 			this.violationsPerTest.put(entry.getKey(), is);

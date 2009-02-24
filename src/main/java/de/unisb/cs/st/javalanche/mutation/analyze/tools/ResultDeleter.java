@@ -2,12 +2,13 @@ package de.unisb.cs.st.javalanche.mutation.analyze.tools;
 
 import java.util.List;
 
+import org.apache.commons.lang.time.DurationFormatUtils;
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import de.unisb.cs.st.ds.util.Formater;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
@@ -56,6 +57,7 @@ public class ResultDeleter {
 		Query q = session.createQuery(query);
 		List<Mutation> mutations = q.list();
 		int deletes = 0, flushs = 0;
+		StopWatch stp = new StopWatch();
 		for (Mutation m : mutations) {
 			MutationTestResult result = m.getMutationResult();
 			if (result != null) {
@@ -68,17 +70,18 @@ public class ResultDeleter {
 				// flush a batch of inserts and release memory:
 				// see
 				// http://www.hibernate.org/hib_docs/reference/en/html/batch.html
-				long startFlush = System.currentTimeMillis();
+				stp.reset();
+				stp.start();
 				flushs++;
 				logger.info("Doing temporary flush " + flushs);
 				session.flush();
-				long timeFlush = System.currentTimeMillis() - startFlush;
+//				session.clear();
 				logger.info("Flush took: "
-						+ Formater.formatMilliseconds(timeFlush));
+						+ DurationFormatUtils.formatDurationHMS(stp.getTime()));
 				deletes = 0;
 			}
 		}
-		logger.info(String.format("Deleting %d mutation results", mutations
+		logger.info(String.format("Deleted %d mutation results", mutations
 				.size()));
 		tx.commit();
 		session.close();

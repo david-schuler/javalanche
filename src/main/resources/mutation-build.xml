@@ -7,8 +7,13 @@
 	<property name="mutation.jars.dir" value="${mutation.base.dir}/target/javalanche-mutation-0.1-dist.dir/lib/" />
 	<property name="javalanche.mutation.output.dir" value="${basedir}/mutation-files" />
 	
-	<property name="javalanche.maxmemory" value="2048m" />
 	
+	<condition property="javalanche.maxmemory" value="2048m">
+	  	<not>
+			<isset property="javalanche.maxmemory"/>
+	  	</not>
+	</condition>
+	  
 	<path id="mutation.classpath">
 		<pathelement location="${mutation.classes.dir}"/>
 		<pathelement location="${javalanche.projects.location}/util/target/classes" />
@@ -211,7 +216,7 @@
 		</path>
 			<!--${run.mutations.debug.verbose}-->
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value="  ${run.mutations.debug.mutation.javaagent} ${run.mutations.debug.memory} ${run.mutations.debug.mutation.run.mode} ${run.mutations.debug.javalanche.package.prefix} ${run.mutations.debug.javalanche.project.test.suite} ${run.mutations.debug.mutation.file} ${run.mutations.debug.mutation.result.file} ${run.mutations.debug.listener} ${run.mutations.debug.debug}" />
+			<param name="javalanche.arg.line" value="${run.mutations.debug.mutation.javaagent} ${run.mutations.debug.memory} ${run.mutations.debug.mutation.run.mode} ${run.mutations.debug.javalanche.package.prefix} ${run.mutations.debug.javalanche.project.test.suite} ${run.mutations.debug.mutation.file} ${run.mutations.debug.mutation.result.file} ${run.mutations.debug.listener} ${run.mutations.debug.debug}" />
 			<reference refid="run.mutations.debug.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>
@@ -297,13 +302,13 @@
 
 		<!--${run.mutations.verbose}-->
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value=" ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode}" />
+			<param name="javalanche.arg.line" value=" -verify ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode}" />
 			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>
 	
 	
-	<target name="createLineCoverageData" description="* Create coverage data for an original unmutated run" depends="mutationDir">
+	<target name="createCoverageData" description="* Create coverage data for an original unmutated run" depends="mutationDir">
 		<property name="create.coverage.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="create.coverage.memory" value="-Xmx1524m"/>
 		<property name="create.coverage.mutation.run.mode" value="-Dmutation.run.mode=create-coverage"/>
@@ -322,11 +327,19 @@
 			<reference refid="create.coverage.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>
-	              
+
+	<target name="createCoverageDataClean" description="* Create coverage data for an original unmutated run ,and deletes files" depends="mutationDir">
+		<delete file="mutation-files/tracer/profiler-map.xml"/>
+		<delete file="mutation-files/tracer/dont-instrument-set.xml"/>
+		<delete dir="mutation-files/tracer/line/0"/>
+		<delete dir="mutation-files/tracer/data/0"/>
+		<antcall target="createCoverageData"/>
+	</target>
+
 	
 	
 	         
-	<target name="checkInvariantPerTest" description="* check the invariants per test">
+	<target name="checkInvariantsPerTest" description="* check the invariants per test">
 		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="run.mutations.memory" value="-Xmx1524m"/>
 		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=check-per-test"/>
@@ -399,6 +412,7 @@
 	</target>
 
 	<target name="analyzeResults" description="* analyze the mutation test results.">
+	<echo> ${javalanche.maxmemory} </echo>
 		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.AnalyzeMain" maxmemory="${javalanche.maxmemory}" fork="true">
 			<jvmarg value="-Dmutation.package.prefix=${project.prefix}" />
 <!--						<jvmarg value="-Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.mutation.analyze.MutationPrioritizationAnalyzer" />-->

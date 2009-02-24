@@ -108,7 +108,7 @@ public class MutationSwitcher {
 			stopWatch.stop();
 			logger.info("Disabling mutation: "
 					+ actualMutation.getMutationVariable() + " Time needed "
-					+ DurationFormatUtils.formatDurationHMS(stopWatch.getTime()) + " Mutaiton detected: " + actualMutation.isKilled());
+					+ DurationFormatUtils.formatDurationHMS(stopWatch.getTime()) );
 			actualMutation = null;
 		}
 	}

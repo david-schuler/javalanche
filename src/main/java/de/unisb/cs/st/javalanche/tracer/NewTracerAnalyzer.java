@@ -22,7 +22,7 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
 /* TODO rewrite of processTest* and processMutation*
  * Maybe it is possible to merge both methods somehow.
- * Another trick would be to read the whole data in one step and analyze in 
+ * Another trick would be to read the whole data in one step and analyze in
  * a second step.
  */
 
@@ -42,7 +42,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		public static MutationCache create(Mutation m) {
 			MutationCache mc = new MutationCache();
 			mc.id = m.getId();
-			mc.shortString = m.toShortString();
+//			mc.shortString = m.toShortString();
 			mc.killed = m.isKilled();
 			mc.classInit = m.isClassInit();
 			mc.className = m.getClassName();

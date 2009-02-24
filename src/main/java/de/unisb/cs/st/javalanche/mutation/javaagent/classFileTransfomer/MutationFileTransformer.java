@@ -129,17 +129,6 @@ public class MutationFileTransformer implements ClassFileTransformer {
 					logger.info("Transforming: " + classNameWithDots);
 					byte[] transformedBytecode = null;
 					try {
-						// transformedBytecode = classfileBuffer;
-						ClassReader cr = new ClassReader(classfileBuffer);
-						ClassWriter cw = new ClassWriter(
-								ClassWriter.COMPUTE_MAXS);
-						ClassVisitor cv = cw;
-						if (MutationProperties.TRACE_BYTECODE) {
-							cv = new TraceClassVisitor(cv, new PrintWriter(
-									MutationPreMain.sysout));
-						}
-						cv = new MutationsClassAdapter(cv);
-						cr.accept(cv, 0);
 						transformedBytecode = mutationTransformer
 								.transformBytecode(classfileBuffer);
 					} catch (Exception e) {

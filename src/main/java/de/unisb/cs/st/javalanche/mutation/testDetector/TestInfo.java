@@ -33,7 +33,7 @@ public class TestInfo {
 			testNames = XmlIo.get(file);
 		} else {
 			throw new RuntimeException("Test name file does not exists " + file
-					+ "\nConsider creating it with $> ant");
+					+ "\nConsider creating it with $> ant scanForTests");
 		}
 		if (testNames == null || testNames.isEmpty()) {
 			throw new RuntimeException("Could not read map correctly. Map: "
