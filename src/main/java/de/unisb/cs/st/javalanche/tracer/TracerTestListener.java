@@ -1,7 +1,5 @@
  package de.unisb.cs.st.javalanche.tracer;
 
-import static de.unisb.cs.st.javalanche.tracer.TracerConstants.TRACE_PROFILER_FILE;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,7 +7,6 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
@@ -85,7 +82,7 @@ public class TracerTestListener implements MutationTestListener {
 		}
 	}
 
-	private void createMutationDir() {
+	private void createMutationDir() {		
 		File dir = new File(TracerConstants.TRACE_RESULT_DATA_DIR + mutation_id);
 		if (!dir.exists()) {
 			dir.mkdir();
@@ -100,6 +97,14 @@ public class TracerTestListener implements MutationTestListener {
 	public void start() {
 		System.out.println("TracerTestListener.start()");
 		mutation_id = new Long(0);
+		if (new File(TracerConstants.TRACE_RESULT_LINE_DIR + mutation_id).exists() &&
+			new File(TracerConstants.TRACE_RESULT_DATA_DIR + mutation_id).exists() &&
+			!(new File(TracerConstants.TRACE_RESULT_LINE_DIR + "-1").exists()) &&
+			!(new File(TracerConstants.TRACE_RESULT_DATA_DIR + "-1").exists())
+			) {
+			mutation_id = new Long(-1);
+		}
+		
 		loadDontInstrument();
 		classMap.clear();
 		valueMap.clear();
@@ -175,45 +180,6 @@ public class TracerTestListener implements MutationTestListener {
 
 	}
 
-
-	/*
-	private void loadIdMap(long mutation_id) {
-		if (mutation_id != 0) {
-			File tmp = new File(TracerConstants.TRACE_RESULT_DIR + mutation_id + "-" + TracerConstants.TRACE_CLASS_IDFILE);
-			if (!tmp.exists()) {
-				return;
-			}
-		} else {
-			File tmp = new File(TracerConstants.TRACE_CLASS_MASTERIDS);
-			if (!tmp.exists()) {
-				return;
-			}
-		}
-		ObjectInputStream ois = null;
-		try {
-			if (mutation_id == 0 ) {
-			ois = new ObjectInputStream(new BufferedInputStream(
-					new FileInputStream(TracerConstants.TRACE_CLASS_MASTERIDS)));
-			} else {
-				ois = new ObjectInputStream(new BufferedInputStream(
-					new FileInputStream(TracerConstants.TRACE_RESULT_DIR + mutation_id + "-" + TracerConstants.TRACE_CLASS_IDFILE)));
-			}
-			int numIds = ois.readInt();
-			idMap = new HashMap<String, Integer>();
-			for (int i = 0; i < numIds; i++) {
-				String className = ois.readUTF();
-				int id = ois.readInt();
-				idMap.put(className, id);
-			}
-			ois.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (mutation_id == 0) {
-			idMapMasterSize = idMap.size();
-		}
-	}
-	*/
 
 	private void serializeHashMap() {
 		if (!saveFiles) {
@@ -306,38 +272,4 @@ public class TracerTestListener implements MutationTestListener {
 			e.printStackTrace();
 		}
 	}
-
-	/*
-	private void serializeIdMap(long mutation_id) {
-		if (idMap.size() == idMapMasterSize) {
-			return;
-		}
-		try {
-			FileOutputStream fos;
-			if (mutation_id == 0) {
-				 fos = new FileOutputStream(TracerConstants.TRACE_CLASS_MASTERIDS);
-			} else {
-				fos = new FileOutputStream(TracerConstants.TRACE_RESULT_DIR + mutation_id + "-" + TracerConstants.TRACE_CLASS_IDFILE);
-			}
-		    BufferedOutputStream bos = new BufferedOutputStream(fos);
-		    ObjectOutputStream oos = new ObjectOutputStream(bos);
-		    Set<String> ks = idMap.keySet();
-		    Iterator<String> it = ks.iterator();
-		    oos.writeInt(idMap.size());
-
-		    String s = "";
-
-		    while (it.hasNext()) {
-		    	s = it.next();
-				oos.writeUTF(s);
-				oos.writeInt(idMap.get(s));
-		    }
-			oos.close();
-			bos.close();
-			fos.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	*/
 }

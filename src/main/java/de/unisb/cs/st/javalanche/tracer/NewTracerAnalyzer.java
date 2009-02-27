@@ -173,7 +173,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 	/* *************************************************************************
 	 * Helper method to load an arbitrary line coverage trace. 
 	 */
-	private HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadLineCoverageTrace(
+	protected HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadLineCoverageTrace(
 			long mutation_id) {
 		return loadTrace(TracerConstants.TRACE_RESULT_LINE_DIR, mutation_id);
 	}
@@ -181,7 +181,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 	/* *************************************************************************
 	 * Helper method to load an arbitrary data coverage trace. 
 	 */
-	private HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadDataCoverageTrace(
+	protected HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadDataCoverageTrace(
 			long mutation_id) {
 		return loadTrace(TracerConstants.TRACE_RESULT_DATA_DIR, mutation_id);
 	}

@@ -14,6 +14,7 @@ public final class TracerConstants {
 	public final static String TRACE_PROFILER_FILE = TRACE_RESULT_DIR + "profiler-map.xml";
 	
 	public final static String TRACE_DONT_INSTRUMENT_FILE = TRACE_RESULT_DIR  + "dont-instrument-set.xml";
+	public final static String TRACE_DIFFERENCES_FILE = TRACE_RESULT_DIR  + "differences-set.xml";
 	public final static int TRACE_PROFILER_PERCENT = 100;
 	public final static long TRACE_PROFILER_MAX_CALLS = Long.MAX_VALUE;
 }
