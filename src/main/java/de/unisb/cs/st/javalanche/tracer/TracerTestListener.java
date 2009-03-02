@@ -199,6 +199,12 @@ public class TracerTestListener implements MutationTestListener {
 		}
 		ObjectOutputStream oos = null;
 
+		HashMap<String, HashMap<Integer, Integer>> classMapCopy = null;
+		
+		synchronized (classMap) {
+			classMapCopy = new HashMap<String, HashMap<Integer, Integer>>(classMap);
+		}
+				
 		try {
 			oos = new ObjectOutputStream(new BufferedOutputStream(
 					new GZIPOutputStream(new FileOutputStream(
@@ -206,21 +212,22 @@ public class TracerTestListener implements MutationTestListener {
 									+ getMutationIdFileName() + "/" + testName
 									+ ".gz"))));
 
+			Set<String> ks = classMapCopy.keySet();
+			
 			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
 
-			Set<String> ks = classMap.keySet();
 			Iterator<String> it = ks.iterator();
 			String s;
 			Set<Integer> ks2;
 			Iterator<Integer> it2;
 			Integer i;
 
-			oos.writeInt(classMap.size());
+			oos.writeInt(classMapCopy.size());
 			// System.out.print(testName+":");
 			while (it.hasNext()) {
 				s = it.next();
 				oos.writeUTF(s);
-				lineMap = classMap.get(s);
+				lineMap = classMapCopy.get(s);
 				ks2 = lineMap.keySet();
 				it2 = ks2.iterator();
 				oos.writeInt(lineMap.size());
@@ -251,6 +258,12 @@ public class TracerTestListener implements MutationTestListener {
 			return;
 		}
 
+		HashMap<String, HashMap<Integer, Integer>> valueMapCopy = null;
+		
+		synchronized (valueMap) {
+			valueMapCopy = new HashMap<String, HashMap<Integer, Integer>>(valueMap);
+		}
+		
 		ObjectOutputStream oos = null;
 
 		try {
@@ -261,19 +274,19 @@ public class TracerTestListener implements MutationTestListener {
 									+ ".gz"))));
 			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
 
-			Set<String> ks = valueMap.keySet();
+			Set<String> ks = valueMapCopy.keySet();
 			Iterator<String> it = ks.iterator();
 			String s;
 			Set<Integer> ks2;
 			Iterator<Integer> it2;
 			Integer i;
 
-			oos.writeInt(valueMap.size());
+			oos.writeInt(valueMapCopy.size());
 			// System.out.print(testName+":");
 			while (it.hasNext()) {
 				s = it.next();
 				oos.writeUTF(s);
-				lineMap = valueMap.get(s);
+				lineMap = valueMapCopy.get(s);
 				ks2 = lineMap.keySet();
 				it2 = ks2.iterator();
 				oos.writeInt(lineMap.size());

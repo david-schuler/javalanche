@@ -546,8 +546,10 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 									+ test);
 				}
 			} catch (FileNotFoundException e) {
+				logger.info("File not found: " + (path + test));
 				e.printStackTrace();
 			} catch (IOException e) {
+				logger.info("IO Exception: " + (path + test));
 				e.printStackTrace();
 			} finally {
 				if (ois != null) {
@@ -661,8 +663,10 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 									+ test);
 				}
 			} catch (FileNotFoundException e) {
+				logger.info("File not found: " + path + test);
 				e.printStackTrace();
 			} catch (IOException e) {
+				logger.info("IO Exception: " + path + test);
 				e.printStackTrace();
 			} finally {
 				if (ois != null) {
