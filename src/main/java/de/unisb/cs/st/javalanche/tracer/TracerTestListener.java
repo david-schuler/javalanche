@@ -3,6 +3,7 @@
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -198,12 +199,18 @@ public class TracerTestListener implements MutationTestListener {
 			logger.warn("Double Call to serializeHashMap");
 			return;
 		}
+		ObjectOutputStream oos = null;  
+		
 		try {
-			FileOutputStream fos = new FileOutputStream(TracerConstants.TRACE_RESULT_LINE_DIR + getMutationIdFileName() + "/" + testName + ".gz");
-			GZIPOutputStream gos = new GZIPOutputStream(fos);
-		    BufferedOutputStream bos = new BufferedOutputStream(gos);
-		    ObjectOutputStream oos = new ObjectOutputStream(gos);
-
+			oos = new ObjectOutputStream(
+					new BufferedOutputStream(
+							new GZIPOutputStream(
+									new FileOutputStream(
+											TracerConstants.TRACE_RESULT_LINE_DIR + getMutationIdFileName() + "/" + testName + ".gz")
+									)
+							)
+					);
+			
 		    HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
 
 			Set<String> ks = classMap.keySet();
@@ -230,12 +237,14 @@ public class TracerTestListener implements MutationTestListener {
 					//System.out.println(i);
 				}
 			}
-			oos.close();
-			bos.close();
-			gos.close();
-			fos.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				oos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -244,12 +253,18 @@ public class TracerTestListener implements MutationTestListener {
 			logger.warn("Double Call to serializeValueMap");
 			return;
 		}
+		
+		ObjectOutputStream oos = null;
+		
 		try {
-			FileOutputStream fos = new FileOutputStream(TracerConstants.TRACE_RESULT_DATA_DIR + getMutationIdFileName() + "/" + testName + ".gz");
-			GZIPOutputStream gos = new GZIPOutputStream(fos);
-		    BufferedOutputStream bos = new BufferedOutputStream(gos);
-		    ObjectOutputStream oos = new ObjectOutputStream(bos);
-
+			oos = new ObjectOutputStream(
+					new BufferedOutputStream(
+							new GZIPOutputStream(
+									new FileOutputStream(
+											TracerConstants.TRACE_RESULT_DATA_DIR + getMutationIdFileName() + "/" + testName + ".gz")
+									)
+							)
+					);
 		    HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
 
 			Set<String> ks = valueMap.keySet();
@@ -276,12 +291,14 @@ public class TracerTestListener implements MutationTestListener {
 					//System.out.println(i);
 				}
 			}
-			oos.close();
-			bos.close();
-			gos.close();
-			fos.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				oos.close();
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
