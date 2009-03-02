@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import de.unisb.cs.st.ds.util.io.XmlIo;
 
 public class CompareTraces extends NewTracerAnalyzer {
-	
+
 	class FilenameFilterImpl implements FilenameFilter {
 		public boolean accept(File arg0, String arg1) {
 			if (arg1.startsWith("PERMUTATED_")) {
@@ -36,12 +36,12 @@ public class CompareTraces extends NewTracerAnalyzer {
 	public CompareTraces() {
 		this("both");
 	}
-	
+
 	public CompareTraces(String mode) {
 		File dir = new File(TracerConstants.TRACE_RESULT_LINE_DIR);
 		String[] files = dir.list(new FilenameFilterImpl());
-		HashSet<String> diffComplete = new HashSet<String>(); 
-		
+		HashSet<String> diffComplete = new HashSet<String>();
+
 		for (String file : files) {
 			calculateDifferences(mode, "0", file);
 			diffComplete.addAll(differences);
@@ -50,19 +50,19 @@ public class CompareTraces extends NewTracerAnalyzer {
 		System.out.println("Methods that have differences in at least on run:" + diffComplete);
 		XmlIo.toXML(diffComplete, TracerConstants.TRACE_DIFFERENCES_FILE);
 	}
-	
+
 	public CompareTraces(String mode, String id1, String id2) {
 		calculateDifferences(mode, id1, id2);
 	}
-	
-	private void calculateDifferences(String mode, String id1, String id2) {		
+
+	private void calculateDifferences(String mode, String id1, String id2) {
 		//if (new File(TracerConstants.TRACE_DIFFERENCES_FILE).exists()) {
 		//	differences =  (Set<String>) XmlIo.get(TracerConstants.TRACE_DIFFERENCES_FILE);
 		//}
-
+		differences  = new HashSet<String>();
 		mutation_dir1 = id1;
 		mutation_dir2 = id2;
-		
+
 		System.out.println(id1 + " VS. " + id2 + ": ");
 		if (mode.equals("line") || mode.equals("both")) {
 			logger.info("Comparing lines");
@@ -75,9 +75,6 @@ public class CompareTraces extends NewTracerAnalyzer {
 			logger.info("Differences " + differences.size());
 		}
 		System.out.println(differences);
-		
-		//
-		
 	}
 
 	protected void loadTraces(Mode mode) {
@@ -107,7 +104,7 @@ public class CompareTraces extends NewTracerAnalyzer {
 				Iterator<Integer> it3 = valueMap1.keySet().iterator();
 				if (valueMap2 == null && valueMap1 != null) {
 					foundDifference = true;
-					logger.info("Map2 is null for: "  + className);
+					logger.info("Map2 is null for test: " + testName + "  - "  + className);
 				} else {
 					foundDifference = false;
 				}
@@ -115,7 +112,7 @@ public class CompareTraces extends NewTracerAnalyzer {
 					Integer valueKey = it3.next();
 					if (!valueMap1.get(valueKey).equals(valueMap2.get(valueKey))) {
 						foundDifference = true;
-						logger.info("Difference for "  + className + " key " +  valueKey + " Value1: " + valueMap1.get(valueKey) +  " Value2:  " + valueMap2.get(valueKey)   );
+						logger.info("Difference for test "  + testName + "  "  + className + " key " +  valueKey + " Value1: " + valueMap1.get(valueKey) +  " Value2:  " + valueMap2.get(valueKey)   );
 					}
 				}
 				if (foundDifference) {
@@ -135,14 +132,14 @@ public class CompareTraces extends NewTracerAnalyzer {
 		boolean exit = false;
 		if (args.length < 1) {
 			exit = true;
-		}		
+		}
 		if (exit) {
 			System.out.println("Error - read help");
 		}
-		
+
 		StringTokenizer st = new StringTokenizer(args[0]);
 		CompareTraces ct = null;
-		
+
 		if (!args[0].contains("cmpid") && st.countTokens() >= 3) {
 			ct = new CompareTraces(st.nextToken(), st.nextToken(), st.nextToken());
 		} else if (!args[0].contains("cmpmode") && st.countTokens() >= 1) {

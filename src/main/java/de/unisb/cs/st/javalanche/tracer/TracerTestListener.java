@@ -1,4 +1,4 @@
- package de.unisb.cs.st.javalanche.tracer;
+package de.unisb.cs.st.javalanche.tracer;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -19,29 +19,30 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
-
 public class TracerTestListener implements MutationTestListener {
 
 	private static Logger logger = Logger.getLogger(TracerTestListener.class);
 
 	private static boolean isPermutated = false;
 	private static HashSet<String> seenTests = new HashSet<String>();
-	
+
 	private static Long mutation_id = new Long(-1);
 	private String testName = null;
 
 	private boolean saveFiles = false;
 
-	private static HashMap<String, HashMap<Integer, Integer>> classMap = new HashMap<String, HashMap<Integer, Integer>>((int)(2048 * 1.33));
+	private static HashMap<String, HashMap<Integer, Integer>> classMap = new HashMap<String, HashMap<Integer, Integer>>(
+			(int) (2048 * 1.33));
 
 	private static HashMap<String, HashMap<Integer, Integer>> valueMap = new HashMap<String, HashMap<Integer, Integer>>();
 
 	private static HashMap<String, Long> profilerMap = new HashMap<String, Long>();
-	
+
 	private static HashSet<String> dontInstrumentSet = new HashSet<String>();
 
-	//private static HashMap<String, Integer> idMap = new HashMap<String, Integer>();
-	//private static int idMapMasterSize = 0;
+	// private static HashMap<String, Integer> idMap = new HashMap<String,
+	// Integer>();
+	// private static int idMapMasterSize = 0;
 
 	public static HashMap<String, HashMap<Integer, Integer>> getLineCoverageMap() {
 		return classMap;
@@ -59,11 +60,10 @@ public class TracerTestListener implements MutationTestListener {
 		return dontInstrumentSet;
 	}
 
-	
 	public static Long getMutationId() {
 		return mutation_id;
 	}
-	
+
 	public static String getMutationIdFileName() {
 		if (mutation_id < 0) {
 			return "PERMUTATED_" + Math.abs(mutation_id);
@@ -72,12 +72,9 @@ public class TracerTestListener implements MutationTestListener {
 		}
 	}
 
-
 	/*
-	public static HashMap<String, Integer> getIdMap() {
-		return idMap;
-	}
-	*/
+	 * public static HashMap<String, Integer> getIdMap() { return idMap; }
+	 */
 
 	public TracerTestListener() {
 		File dir = new File(TracerConstants.TRACE_RESULT_DIR);
@@ -94,19 +91,21 @@ public class TracerTestListener implements MutationTestListener {
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
-		
+
 		if (MutationProperties.RUN_MODE == RunMode.TEST_PERMUTED) {
 			isPermutated = true;
 		}
 	}
 
-	private void createMutationDir() {		
-		File dir = new File(TracerConstants.TRACE_RESULT_DATA_DIR + getMutationIdFileName());
+	private void createMutationDir() {
+		File dir = new File(TracerConstants.TRACE_RESULT_DATA_DIR
+				+ getMutationIdFileName());
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
 
-		dir = new File(TracerConstants.TRACE_RESULT_LINE_DIR + getMutationIdFileName());
+		dir = new File(TracerConstants.TRACE_RESULT_LINE_DIR
+				+ getMutationIdFileName());
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
@@ -114,8 +113,8 @@ public class TracerTestListener implements MutationTestListener {
 
 	public void start() {
 		System.out.println("TracerTestListener.start()");
-		mutation_id = new Long(0);	
-		
+		mutation_id = new Long(0);
+
 		loadDontInstrument();
 		classMap.clear();
 		valueMap.clear();
@@ -123,7 +122,7 @@ public class TracerTestListener implements MutationTestListener {
 	}
 
 	public void end() {
-		//serializeIdMap(mutation_id);
+		// serializeIdMap(mutation_id);
 		writeProfilingData();
 		writeDontInstrument();
 		System.out.println("TracerTestListener.end()");
@@ -131,7 +130,6 @@ public class TracerTestListener implements MutationTestListener {
 		valueMap.clear();
 		saveFiles = false;
 	}
-
 
 	public void testStart(String testName) {
 		this.testName = testName;
@@ -165,7 +163,7 @@ public class TracerTestListener implements MutationTestListener {
 	}
 
 	public void mutationEnd(Mutation mutation) {
-		//serializeIdMap(mutation_id);
+		// serializeIdMap(mutation_id);
 		classMap.clear();
 		valueMap.clear();
 		saveFiles = false;
@@ -177,41 +175,38 @@ public class TracerTestListener implements MutationTestListener {
 		}
 		XmlIo.toXML(profilerMap, TracerConstants.TRACE_PROFILER_FILE);
 	}
-	
+
 	private void loadDontInstrument() {
 		if (new File(TracerConstants.TRACE_DONT_INSTRUMENT_FILE).exists()) {
-			dontInstrumentSet =  XmlIo.get(TracerConstants.TRACE_DONT_INSTRUMENT_FILE);
+			dontInstrumentSet = XmlIo
+					.get(TracerConstants.TRACE_DONT_INSTRUMENT_FILE);
 		}
 	}
-	
-	
+
 	private void writeDontInstrument() {
 		if (mutation_id != 0) {
 			return;
 		}
-		XmlIo.toXML(dontInstrumentSet, TracerConstants.TRACE_DONT_INSTRUMENT_FILE);
+		XmlIo.toXML(dontInstrumentSet,
+				TracerConstants.TRACE_DONT_INSTRUMENT_FILE);
 
 	}
-
 
 	private void serializeHashMap() {
 		if (!saveFiles) {
 			logger.warn("Double Call to serializeHashMap");
 			return;
 		}
-		ObjectOutputStream oos = null;  
-		
+		ObjectOutputStream oos = null;
+
 		try {
-			oos = new ObjectOutputStream(
-					new BufferedOutputStream(
-							new GZIPOutputStream(
-									new FileOutputStream(
-											TracerConstants.TRACE_RESULT_LINE_DIR + getMutationIdFileName() + "/" + testName + ".gz")
-									)
-							)
-					);
-			
-		    HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
+			oos = new ObjectOutputStream(new BufferedOutputStream(
+					new GZIPOutputStream(new FileOutputStream(
+							TracerConstants.TRACE_RESULT_LINE_DIR
+									+ getMutationIdFileName() + "/" + testName
+									+ ".gz"))));
+
+			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
 
 			Set<String> ks = classMap.keySet();
 			Iterator<String> it = ks.iterator();
@@ -221,7 +216,7 @@ public class TracerTestListener implements MutationTestListener {
 			Integer i;
 
 			oos.writeInt(classMap.size());
-			//System.out.print(testName+":");
+			// System.out.print(testName+":");
 			while (it.hasNext()) {
 				s = it.next();
 				oos.writeUTF(s);
@@ -229,21 +224,23 @@ public class TracerTestListener implements MutationTestListener {
 				ks2 = lineMap.keySet();
 				it2 = ks2.iterator();
 				oos.writeInt(lineMap.size());
-				//System.out.println(s);
+				// System.out.println(s);
 				while (it2.hasNext()) {
 					i = it2.next();
 					oos.writeInt(i);
 					oos.writeInt(lineMap.get(i));
-					//System.out.println(i);
+					// System.out.println(i);
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				oos.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+			if (oos != null) {
+				try {
+					oos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -253,19 +250,16 @@ public class TracerTestListener implements MutationTestListener {
 			logger.warn("Double Call to serializeValueMap");
 			return;
 		}
-		
+
 		ObjectOutputStream oos = null;
-		
+
 		try {
-			oos = new ObjectOutputStream(
-					new BufferedOutputStream(
-							new GZIPOutputStream(
-									new FileOutputStream(
-											TracerConstants.TRACE_RESULT_DATA_DIR + getMutationIdFileName() + "/" + testName + ".gz")
-									)
-							)
-					);
-		    HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
+			oos = new ObjectOutputStream(new BufferedOutputStream(
+					new GZIPOutputStream(new FileOutputStream(
+							TracerConstants.TRACE_RESULT_DATA_DIR
+									+ getMutationIdFileName() + "/" + testName
+									+ ".gz"))));
+			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
 
 			Set<String> ks = valueMap.keySet();
 			Iterator<String> it = ks.iterator();
@@ -275,7 +269,7 @@ public class TracerTestListener implements MutationTestListener {
 			Integer i;
 
 			oos.writeInt(valueMap.size());
-			//System.out.print(testName+":");
+			// System.out.print(testName+":");
 			while (it.hasNext()) {
 				s = it.next();
 				oos.writeUTF(s);
@@ -283,21 +277,23 @@ public class TracerTestListener implements MutationTestListener {
 				ks2 = lineMap.keySet();
 				it2 = ks2.iterator();
 				oos.writeInt(lineMap.size());
-				//System.out.println(s);
+				// System.out.println(s);
 				while (it2.hasNext()) {
 					i = it2.next();
 					oos.writeInt(i);
 					oos.writeInt(lineMap.get(i));
-					//System.out.println(i);
+					// System.out.println(i);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				oos.close();
-			} catch(IOException e) {
-				e.printStackTrace();
+			if (oos != null) {
+				try {
+					oos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
