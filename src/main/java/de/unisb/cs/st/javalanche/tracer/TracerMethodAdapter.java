@@ -1,7 +1,5 @@
 package de.unisb.cs.st.javalanche.tracer;
 
-import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RUN_MODE;
-import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode.CREATE_COVERAGE;
 import static de.unisb.cs.st.javalanche.tracer.TracerConstants.TRACE_PROFILER_FILE;
 
 import java.io.File;

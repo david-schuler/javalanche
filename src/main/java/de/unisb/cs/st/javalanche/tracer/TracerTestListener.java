@@ -13,6 +13,8 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
@@ -21,6 +23,9 @@ public class TracerTestListener implements MutationTestListener {
 
 	private static Logger logger = Logger.getLogger(TracerTestListener.class);
 
+	private static boolean isPermutated = false;
+	private static HashSet<String> seenTests = new HashSet<String>();
+	
 	private static Long mutation_id = new Long(-1);
 	private String testName = null;
 
@@ -57,6 +62,14 @@ public class TracerTestListener implements MutationTestListener {
 	public static Long getMutationId() {
 		return mutation_id;
 	}
+	
+	public static String getMutationIdFileName() {
+		if (mutation_id < 0) {
+			return "PERMUTATED_" + Math.abs(mutation_id);
+		} else {
+			return mutation_id.toString();
+		}
+	}
 
 
 	/*
@@ -80,15 +93,19 @@ public class TracerTestListener implements MutationTestListener {
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
+		
+		if (MutationProperties.RUN_MODE == RunMode.TEST_PERMUTED) {
+			isPermutated = true;
+		}
 	}
 
 	private void createMutationDir() {		
-		File dir = new File(TracerConstants.TRACE_RESULT_DATA_DIR + mutation_id);
+		File dir = new File(TracerConstants.TRACE_RESULT_DATA_DIR + getMutationIdFileName());
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
 
-		dir = new File(TracerConstants.TRACE_RESULT_LINE_DIR + mutation_id);
+		dir = new File(TracerConstants.TRACE_RESULT_LINE_DIR + getMutationIdFileName());
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
@@ -96,19 +113,11 @@ public class TracerTestListener implements MutationTestListener {
 
 	public void start() {
 		System.out.println("TracerTestListener.start()");
-		mutation_id = new Long(0);
-		if (new File(TracerConstants.TRACE_RESULT_LINE_DIR + mutation_id).exists() &&
-			new File(TracerConstants.TRACE_RESULT_DATA_DIR + mutation_id).exists() &&
-			!(new File(TracerConstants.TRACE_RESULT_LINE_DIR + "-1").exists()) &&
-			!(new File(TracerConstants.TRACE_RESULT_DATA_DIR + "-1").exists())
-			) {
-			mutation_id = new Long(-1);
-		}
+		mutation_id = new Long(0);	
 		
 		loadDontInstrument();
 		classMap.clear();
 		valueMap.clear();
-		createMutationDir();
 		saveFiles = true;
 	}
 
@@ -125,12 +134,20 @@ public class TracerTestListener implements MutationTestListener {
 
 	public void testStart(String testName) {
 		this.testName = testName;
+		if (isPermutated) {
+			if (seenTests.contains(testName)) {
+				seenTests.clear();
+				mutation_id--;
+			}
+			seenTests.add(testName);
+		}
 		classMap.clear();
 		valueMap.clear();
 		saveFiles = true;
 	}
 
 	public void testEnd(String testName) {
+		createMutationDir();
 		serializeHashMap();
 		serializeValueMap();
 		classMap.clear();
@@ -140,11 +157,6 @@ public class TracerTestListener implements MutationTestListener {
 
 	public void mutationStart(Mutation mutation) {
 		mutation_id = mutation.getId();
-		/*
-		idMap.clear();
-		loadIdMap(0);
-		loadIdMap(mutation_id);
-		*/
 		classMap.clear();
 		valueMap.clear();
 		createMutationDir();
@@ -187,7 +199,7 @@ public class TracerTestListener implements MutationTestListener {
 			return;
 		}
 		try {
-			FileOutputStream fos = new FileOutputStream(TracerConstants.TRACE_RESULT_LINE_DIR + mutation_id + "/" + testName + ".gz");
+			FileOutputStream fos = new FileOutputStream(TracerConstants.TRACE_RESULT_LINE_DIR + getMutationIdFileName() + "/" + testName + ".gz");
 			GZIPOutputStream gos = new GZIPOutputStream(fos);
 		    BufferedOutputStream bos = new BufferedOutputStream(gos);
 		    ObjectOutputStream oos = new ObjectOutputStream(gos);
@@ -233,7 +245,7 @@ public class TracerTestListener implements MutationTestListener {
 			return;
 		}
 		try {
-			FileOutputStream fos = new FileOutputStream(TracerConstants.TRACE_RESULT_DATA_DIR + mutation_id + "/" + testName + ".gz");
+			FileOutputStream fos = new FileOutputStream(TracerConstants.TRACE_RESULT_DATA_DIR + getMutationIdFileName() + "/" + testName + ".gz");
 			GZIPOutputStream gos = new GZIPOutputStream(fos);
 		    BufferedOutputStream bos = new BufferedOutputStream(gos);
 		    ObjectOutputStream oos = new ObjectOutputStream(bos);

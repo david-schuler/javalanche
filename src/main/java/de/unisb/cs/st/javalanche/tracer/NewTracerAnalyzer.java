@@ -122,17 +122,17 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 	 * Helper method to load the original (id=0) line and data coverage traces.
 	 */
 	private void loadOriginalTraces() {
-		originalLineCoverageMaps = loadLineCoverageTrace(0);
-		originalDataCoverageMaps = loadDataCoverageTrace(0);
+		originalLineCoverageMaps = loadLineCoverageTrace("0");
+		originalDataCoverageMaps = loadDataCoverageTrace("0");
 	}
 
 	/* *************************************************************************
 	 * Helper method to load an arbitrary trace (line or data coverage)
 	 */
 	private HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadTrace(
-			String path, long mutation_id) {
+			String path, String mutation_dir) {
 		ObjectInputStream ois = null;
-		path += mutation_id + "/";
+		path += mutation_dir + "/";
 
 		File dir = new File(path);
 		String[] originalTests = dir.list();
@@ -174,16 +174,16 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 	 * Helper method to load an arbitrary line coverage trace. 
 	 */
 	protected HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadLineCoverageTrace(
-			long mutation_id) {
-		return loadTrace(TracerConstants.TRACE_RESULT_LINE_DIR, mutation_id);
+			String mutation_dir) {
+		return loadTrace(TracerConstants.TRACE_RESULT_LINE_DIR, mutation_dir);
 	}
 
 	/* *************************************************************************
 	 * Helper method to load an arbitrary data coverage trace. 
 	 */
 	protected HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadDataCoverageTrace(
-			long mutation_id) {
-		return loadTrace(TracerConstants.TRACE_RESULT_DATA_DIR, mutation_id);
+			String mutation_dir) {
+		return loadTrace(TracerConstants.TRACE_RESULT_DATA_DIR, mutation_dir);
 	}
 
 	/* *************************************************************************
