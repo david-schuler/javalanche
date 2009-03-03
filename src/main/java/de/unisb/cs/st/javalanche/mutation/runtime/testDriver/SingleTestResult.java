@@ -65,16 +65,16 @@ public class SingleTestResult {
 		List<TestMessage> failing = new ArrayList<TestMessage>();
 		List<TestMessage> errors = new ArrayList<TestMessage>();
 		boolean touched = false;
-		for (SingleTestResult tsr : testResults) {
-			if (tsr.testMessage.isHasTouched()) {
-				touched = tsr.testMessage.isHasTouched();
+		for (SingleTestResult str : testResults) {
+			if (str.testMessage.isTouched()) {
+				touched = str.testMessage.isTouched();
 			}
-			if (tsr.outcome == TestOutcome.PASS) {
-				passing.add(tsr.testMessage);
-			} else if (tsr.outcome == TestOutcome.ERROR) {
-				errors.add(tsr.testMessage);
+			if (str.outcome == TestOutcome.PASS) {
+				passing.add(str.testMessage);
+			} else if (str.outcome == TestOutcome.ERROR) {
+				errors.add(str.testMessage);
 			} else {
-				failing.add(tsr.testMessage);
+				failing.add(str.testMessage);
 			}
 		}
 		MutationTestResult r = new MutationTestResult(passing, failing, errors,
@@ -89,7 +89,7 @@ public class SingleTestResult {
 	 *            signals whether the mutation was touched by this test
 	 */
 	public void setTouched(boolean b) {
-		testMessage.setHasTouched(b);
+		testMessage.setTouched(b);
 	}
 
 	/**

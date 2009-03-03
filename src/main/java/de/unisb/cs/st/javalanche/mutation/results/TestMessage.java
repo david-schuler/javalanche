@@ -138,7 +138,7 @@ public class TestMessage  implements Serializable{
 	/**
 	 * @return the hasTouched
 	 */
-	public boolean isHasTouched() {
+	public boolean isTouched() {
 		return hasTouched;
 	}
 
@@ -146,7 +146,7 @@ public class TestMessage  implements Serializable{
 	 * @param hasTouched
 	 *            the hasTouched to set
 	 */
-	public void setHasTouched(boolean hasTouched) {
+	public void setTouched(boolean hasTouched) {
 		this.hasTouched = hasTouched;
 	}
 

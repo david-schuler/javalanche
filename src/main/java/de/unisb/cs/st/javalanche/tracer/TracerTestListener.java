@@ -38,7 +38,7 @@ public class TracerTestListener implements MutationTestListener {
 
 	private static HashMap<String, Long> profilerMap = new HashMap<String, Long>();
 
-	private static HashSet<String> dontInstrumentSet = new HashSet<String>();
+	private static final HashSet<String> dontInstrumentSet = loadDontInstrument();
 
 	// private static HashMap<String, Integer> idMap = new HashMap<String,
 	// Integer>();
@@ -176,11 +176,11 @@ public class TracerTestListener implements MutationTestListener {
 		XmlIo.toXML(profilerMap, TracerConstants.TRACE_PROFILER_FILE);
 	}
 
-	private void loadDontInstrument() {
+	private static HashSet<String> loadDontInstrument() {
 		if (new File(TracerConstants.TRACE_DONT_INSTRUMENT_FILE).exists()) {
-			dontInstrumentSet = XmlIo
-					.get(TracerConstants.TRACE_DONT_INSTRUMENT_FILE);
+			return XmlIo.get(TracerConstants.TRACE_DONT_INSTRUMENT_FILE);
 		}
+		return new HashSet<String>();
 	}
 
 	private void writeDontInstrument() {
@@ -200,11 +200,12 @@ public class TracerTestListener implements MutationTestListener {
 		ObjectOutputStream oos = null;
 
 		HashMap<String, HashMap<Integer, Integer>> classMapCopy = null;
-		
+
 		synchronized (classMap) {
-			classMapCopy = new HashMap<String, HashMap<Integer, Integer>>(classMap);
+			classMapCopy = new HashMap<String, HashMap<Integer, Integer>>(
+					classMap);
 		}
-				
+
 		try {
 			oos = new ObjectOutputStream(new BufferedOutputStream(
 					new GZIPOutputStream(new FileOutputStream(
@@ -213,7 +214,7 @@ public class TracerTestListener implements MutationTestListener {
 									+ ".gz"))));
 
 			Set<String> ks = classMapCopy.keySet();
-			
+
 			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
 
 			Iterator<String> it = ks.iterator();
@@ -259,11 +260,12 @@ public class TracerTestListener implements MutationTestListener {
 		}
 
 		HashMap<String, HashMap<Integer, Integer>> valueMapCopy = null;
-		
+
 		synchronized (valueMap) {
-			valueMapCopy = new HashMap<String, HashMap<Integer, Integer>>(valueMap);
+			valueMapCopy = new HashMap<String, HashMap<Integer, Integer>>(
+					valueMap);
 		}
-		
+
 		ObjectOutputStream oos = null;
 
 		try {

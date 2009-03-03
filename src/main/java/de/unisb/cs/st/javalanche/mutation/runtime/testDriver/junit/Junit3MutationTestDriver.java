@@ -111,6 +111,12 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 				try {
 					stopWatch.start();
 					Test actualtest = allTests.get(testName);
+					if(actualtest == null){
+						String message =  "Test not found in: " + testName +  "\n All Tests:"  + allTests;
+						System.out.println(message);
+						logger.warn(message);
+						System.exit(0);
+					}
 					result.addListener(listener);
 					actualtest.run(result);
 				} catch (Exception e) {

@@ -14,7 +14,7 @@ public class HibernateServerUtil {
 	public static enum Server {
 		LOCALHOST("localhost")
 		, KUBRICK("kubrick.cs.uni-saarland.de")
-		//,HOBEL("hobel.cs.uni-sb.de")
+		,HOBEL("hobel.cs.uni-sb.de")
 ;
 
 		Server(String name) {

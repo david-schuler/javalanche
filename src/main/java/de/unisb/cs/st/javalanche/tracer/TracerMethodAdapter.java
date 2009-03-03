@@ -35,7 +35,7 @@ public class TracerMethodAdapter extends MethodAdapter {
 	@SuppressWarnings("unchecked")
 	private static Set<String> dontInstrumentSet =  (Set<String>) (new File(TracerConstants.TRACE_DONT_INSTRUMENT_FILE).exists() ? XmlIo.get(TracerConstants.TRACE_DONT_INSTRUMENT_FILE) : null);
 
-	
+
 	private static final long PERCENT_BOUND = percentBound();
 
 
@@ -64,37 +64,37 @@ public class TracerMethodAdapter extends MethodAdapter {
 		this.className = className.replace('/', '.');
 		this.methodName = methodName;
 		this.signature = signature;
-		
+
 		// don't instrument private classes / methods for data coverage
 		if ((classAccess & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE || (methodAccess & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE) {
-			logger.info("not instrumenting method " + this.className + "@" + this.methodName + " (cause: only private access)");
+			logger.debug("not instrumenting method " + this.className + "@" + this.methodName + " (cause: only private access)");
 			instrumentData = false;
 			//instrumentLine = false;
 		}
-		
+
 		// don't instrument classes for data coverage that throw an exception
 		if (dontInstrumentSet != null && dontInstrumentSet.contains(this.className + "@" + this.methodName)) {
 			instrumentData = false;
 		}
-		
+
 		// don't instrument some classes for data coverage
 		try {
 			if (profilerMap != null /*RUN_MODE != CREATE_COVERAGE*/) {
 				Long calls = profilerMap.get(this.className + "@" + methodName);
-				if (calls != null) { 
+				if (calls != null) {
 					if (calls >= TracerConstants.TRACE_PROFILER_MAX_CALLS  || calls >= PERCENT_BOUND) {
-						logger.info("not instrumenting method " + this.className + "@" + this.methodName + " (cause: too much calls to it)");
+						logger.debug("not instrumenting method " + this.className + "@" + this.methodName + " (cause: too much calls to it)");
 						instrumentData = false;
 						//instrumentLine = false;
 					}
 				} else {
-					logger.info("method " + this.className + "@" + this.methodName + " not in profiler map");
+					logger.debug("method " + this.className + "@" + this.methodName + " not in profiler map");
 				}
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
-		
+
 	}
 
 	/*

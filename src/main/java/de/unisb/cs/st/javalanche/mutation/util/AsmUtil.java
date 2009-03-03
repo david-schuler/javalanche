@@ -96,7 +96,6 @@ public class AsmUtil {
 	}
 
 	public static void main(String[] args) throws ClassNotFoundException {
-System.out.println( Class.forName("org.jaxen.pattern.PatternParser"));
 		String className = System.getProperty("class.name");
 		System.out.println("Getting bytecode for class: " + className);
 		System.out.println(classToString(className));

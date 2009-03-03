@@ -38,7 +38,7 @@ public class Trace {
 		if (exceptionsSeen == null) {
 			exceptionsSeen = TracerTestListener.getDontInstrumentSet();
 		}
-		
+
 		/*
 		if (idMap == null) {
 			idMap = TracerTestListener.getIdMap();

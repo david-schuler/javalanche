@@ -9,7 +9,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import de.unisb.cs.st.javalanche.mutation.analyze.invariant.TempInvariantAnalyzer;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
@@ -36,6 +35,7 @@ public class AnalyzeMain {
 //					new TempInvariantAnalyzer(),
 //					new MutationResultAnalyzer(),
 //					new CheckAnalyzer()
+//					new NotToucheAnalyzer()//
 					new NewTracerAnalyzer()
 					//new InvariantSplitAnalyzer()
 					/*
@@ -60,6 +60,7 @@ public class AnalyzeMain {
 			String[] split = property.split(",");
 			for (String analyzer : split) {
 				try {
+					analyzer = analyzer.trim();
 					Class<? extends MutationAnalyzer> analyzerClass = (Class<? extends MutationAnalyzer>) Class
 							.forName(analyzer);
 					MutationAnalyzer analyzerInstance = analyzerClass

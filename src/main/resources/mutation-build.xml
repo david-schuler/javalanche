@@ -54,6 +54,26 @@
 		</antcall>
 	</target>
 	
+	<target name="createCoverageDataMult" description="* create coverageData for multiple permuted runs">
+		<property name="test.task.3.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="test.task.3.memory" value="-Xmx1524m"/>
+		<property name="test.task.3.mutation.run.mode" value="-Dmutation.run.mode=test3"/>
+		<property name="test.task.3.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="test.task.3.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="test.task.3.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.tracer.TracerTestListener"/>
+		
+		
+		<path id="test.task.3.classpath.add">
+			<path refid="mutation.classpath"/>
+		</path>
+		
+		<antcall target="test-javalanche">
+			<param name="javalanche.arg.line" value="  ${test.task.3.mutation.javaagent} ${test.task.3.memory} ${test.task.3.mutation.run.mode} ${test.task.3.javalanche.package.prefix} ${test.task.3.javalanche.project.test.suite} ${test.task.3.listener} " />
+			<reference refid="test.task.3.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>
+	
+	
 	<target name="testTask2" description="* ">
 		<property name="test.task.2.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="test.task.2.memory" value="-Xmx1524m"/>
@@ -412,10 +432,16 @@
 	</target>
 
 	<target name="analyzeResults" description="* analyze the mutation test results.">
-	<echo> ${javalanche.maxmemory} </echo>
+	<echo> Using ${javalanche.maxmemory} memory </echo>
+		<!--jvmarg value="-Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.mutation.analyze.MutationPrioritizationAnalyzer" />-->
+	
+	<condition property="analyze.add" value="-Djavalanche.mutation.analyzers=${javalanche.mutation.analyzers}" else="">
+		<isset property="javalanche.mutation.analyzers"/>
+	</condition>
+	  
 		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.AnalyzeMain" maxmemory="${javalanche.maxmemory}" fork="true">
 			<jvmarg value="-Dmutation.package.prefix=${project.prefix}" />
-<!--						<jvmarg value="-Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.mutation.analyze.MutationPrioritizationAnalyzer" />-->
+			<jvmarg line="${analyze.add}" />
 			<classpath>
 				<path refid="mutation.classpath" />
 			</classpath>
@@ -499,6 +525,24 @@ Additional Stuff
 			<classpath>
 				<path refid="mutation.classpath" />
 			</classpath>
+		</java>
+	</target>
+	
+	<target name="testFilePerformance" description="* ">
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.FilePerformanceTest" maxmemory="${javalanche.maxmemory}" fork="true">
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="compareTraces" description="* compare two traces (property -Dcmpmode= -Dcmpid1= -Dcmpid2=) ">
+		<echo> Compare ${cmpmode} traces: ${cmpid1} vs. ${cmpid2}</echo>
+		<java classname="de.unisb.cs.st.javalanche.tracer.CompareTraces" maxmemory="${javalanche.maxmemory}" fork="true">
+				<classpath>
+						<path refid="mutation.classpath" />
+				</classpath>
+				<arg value="${cmpmode} ${cmpid1} ${cmpid2}"/>
 		</java>
 	</target>
 	

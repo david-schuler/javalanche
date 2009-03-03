@@ -180,6 +180,8 @@ public class MutationMxClient {
 				.createQuery("from Mutation WHERE mutationResult != null AND className LIKE '"
 						+ MutationProperties.PROJECT_PREFIX + "%' ");
 		List<Mutation> list = query.list();
+		System.out.printf("Already executed mutations for project %s:  %d. \n",
+				MutationProperties.PROJECT_PREFIX, list.size());
 		RunInfo r = getRunInfo(list);
 		transaction.commit();
 		session.close();

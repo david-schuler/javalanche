@@ -20,7 +20,7 @@ public class ShowMutation {
 		if (args.length < 1) {
 			System.out.println("Usage: <mutationID> [<mutationID>]*");
 			System.out.println("Showing one default mutation");
-			showMutation(48930);
+			showMutation(818519);
 		}
 		for (int i = 0; i < args.length; i++) {
 			long mutationID = Long.parseLong(args[i]);
@@ -41,7 +41,7 @@ public class ShowMutation {
 	private static void showMutation(long id) {
 
 		SessionFactory sessionFactory = HibernateServerUtil
-				.getSessionFactory(HibernateServerUtil.Server.KUBRICK);
+				.getSessionFactory(HibernateServerUtil.Server.HOBEL);
 		QueryManager.setSessionFactory(sessionFactory);
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();

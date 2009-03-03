@@ -36,14 +36,15 @@ public class HandleUnsafeMutations {
 					"xcom.thoughtworks.xstream.converters.reflection.Sun14ReflectionProvider ",
 					109, 0, REMOVE_CALL, false));
 
-
 			add(new Mutation(
 					"com.thoughtworks.xstream.converters.reflection.Sun14ReflectionProvider ",
 					111, 0, REMOVE_CALL, false));
 			add(new Mutation(
 					"com.thoughtworks.xstream.converters.reflection.Sun14ReflectionProvider ",
 					109, 0, REMOVE_CALL, false));
-
+//			add(new Mutation(
+//					"xcom.thoughtworks.xstream.mapper.PackageAliasingMapper",
+//					67, 0, ARITHMETIC_REPLACE, false));
 
 		}
 

@@ -41,7 +41,7 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 @SuppressWarnings("unchecked")
 public class QueryManager {
 
-	private static final String TEST_CASE_NO_INFO = "NO INFO";
+	public static final String TEST_CASE_NO_INFO = "NO INFO";
 
 	private static Logger logger = Logger.getLogger(QueryManager.class);
 

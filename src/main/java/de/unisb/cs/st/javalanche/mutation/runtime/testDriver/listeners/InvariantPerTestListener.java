@@ -81,7 +81,7 @@ public class InvariantPerTestListener implements MutationTestListener {
 						.getViolatedInvariants();
 				logger.info("violatedInvariants " + violatedInvariants.size());
 				Set<Integer> unMutatedViolations = InvariantUtils
-						.getTestViolations(testName);
+						.getUnmutatedViolations(testName);
 				Set<Integer> addViolations = new HashSet<Integer>(
 						violatedInvariants);
 				addViolations.removeAll(unMutatedViolations);
