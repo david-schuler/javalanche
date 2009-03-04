@@ -74,6 +74,7 @@ public class CompareTraces extends NewTracerAnalyzer {
 			compare(Mode.DATA);
 			logger.info("Differences " + differences.size());
 		}
+		XmlIo.toXML(differences, TracerConstants.TRACE_DIFFERENCES_FILE);
 		System.out.println(differences);
 	}
 

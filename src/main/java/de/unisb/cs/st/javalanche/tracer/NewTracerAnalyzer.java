@@ -18,6 +18,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.log4j.Logger;
 
+import de.unisb.cs.st.ds.util.io.XmlIo;
 import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
@@ -117,6 +118,29 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 	LinkedBlockingQueue<MutationCache> lbq = new LinkedBlockingQueue<MutationCache>();
 
+	
+	/* 
+	 * Theses two Sets contain excluded method names. So those methods don't
+	 * change the impact even if their traces are different. 
+	 */
+
+	HashSet<String> dontInstrumentSet = loadDontInstrument();
+	HashSet<String> differencesSet = loadDifferences();
+	
+	private static HashSet<String> loadDontInstrument() {
+		if (new File(TracerConstants.TRACE_DONT_INSTRUMENT_FILE).exists()) {
+			return XmlIo.get(TracerConstants.TRACE_DONT_INSTRUMENT_FILE);
+		}
+		return new HashSet<String>();
+	}
+	
+	private static HashSet<String> loadDifferences() {
+		if (new File(TracerConstants.TRACE_DIFFERENCES_FILE).exists()) {
+			return XmlIo.get(TracerConstants.TRACE_DIFFERENCES_FILE);
+		}
+		return new HashSet<String>();
+	}
+	
 
 	/* *************************************************************************
 	 * Helper method to load the original (id=0) line and data coverage traces.
@@ -574,6 +598,12 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 		while (itModified.hasNext()) {
 			String name = itModified.next();
+			
+			// don't analyze methods contained in the differencesSet
+			if (differencesSet.contains(name)) {
+				continue;
+			}
+
 			if (ignoredMethod.equals(name)) {
 				foundSelf = true;
 			}
@@ -690,6 +720,15 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		while (itModified.hasNext()) {
 			String name = itModified.next();
 
+			// don't analyze methods contained in the differencesSet
+			if (differencesSet.contains(name)) {
+				continue;
+			}
+			// don't analyze methods contained in the dontInstrumentSet
+			if (dontInstrumentSet.contains(name)) {
+				continue;
+			}
+			
 			if (ignoredMethod.equals(name)) {
 				foundSelf = true;
 			}

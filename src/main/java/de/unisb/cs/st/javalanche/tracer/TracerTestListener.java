@@ -114,15 +114,12 @@ public class TracerTestListener implements MutationTestListener {
 	public void start() {
 		System.out.println("TracerTestListener.start()");
 		mutation_id = new Long(0);
-
-		loadDontInstrument();
 		classMap.clear();
 		valueMap.clear();
 		saveFiles = true;
 	}
 
 	public void end() {
-		// serializeIdMap(mutation_id);
 		writeProfilingData();
 		writeDontInstrument();
 		System.out.println("TracerTestListener.end()");
