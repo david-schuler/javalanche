@@ -95,6 +95,10 @@ public class Trace {
 		}
 		//Integer key = getId(className + "@" + methodName);
 		String key = className + "@" + methodName;
+		if(!classMap.containsKey(key)) {
+			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>((int)(1024 * 1.33));
+			classMap.put(key, lineMap);
+		}
 		HashMap<Integer, Integer> lineMap = classMap.get(key);
 		Integer intline = new Integer(line);
 		if (!lineMap.containsKey(intline)) {
@@ -202,5 +206,21 @@ public class Trace {
 		}
 	}
 	*/
+
+	 boolean isLineCoverageDeactivated() {
+		return isLineCoverageDeactivated;
+	}
+
+	 boolean isDataCoverageDeactivated() {
+		return isDataCoverageDeactivated;
+	}
+
+	 void setLineCoverageDeactivated(boolean isLineCoverageDeactivated) {
+		this.isLineCoverageDeactivated = isLineCoverageDeactivated;
+	}
+
+	 void setDataCoverageDeactivated(boolean isDataCoverageDeactivated) {
+		this.isDataCoverageDeactivated = isDataCoverageDeactivated;
+	}
 
 }

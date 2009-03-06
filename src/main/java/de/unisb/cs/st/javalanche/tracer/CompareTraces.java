@@ -41,10 +41,16 @@ public class CompareTraces extends NewTracerAnalyzer {
 		File dir = new File(TracerConstants.TRACE_RESULT_LINE_DIR);
 		String[] files = dir.list(new FilenameFilterImpl());
 		HashSet<String> diffComplete = new HashSet<String>();
-
+		int count =0;
 		for (String file : files) {
 			calculateDifferences(mode, "0", file);
+			count++;
+			int preValue = diffComplete.size();
 			diffComplete.addAll(differences);
+			logger.info("Added " + (diffComplete.size() - preValue) + " methods. Total methods now: " + diffComplete.size());
+			if(count %10 == 0){
+				XmlIo.toXML(diffComplete, TracerConstants.TRACE_DIFFERENCES_FILE + count);
+			}
 			differences.clear();
 		}
 		System.out.println("Methods that have differences in at least on run:" + diffComplete);
@@ -125,7 +131,9 @@ public class CompareTraces extends NewTracerAnalyzer {
 
 	protected void compare(Mode mode) {
 		loadTraces(mode);
+		logger.info("Run 1");
 		iterate(trace1, trace2);
+		logger.info("Run 2");
 		iterate(trace2, trace1);
 	}
 

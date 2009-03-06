@@ -133,10 +133,17 @@ public class TracerTestListener implements MutationTestListener {
 		if (isPermutated) {
 			if (seenTests.contains(testName)) {
 				seenTests.clear();
-				mutation_id--;
+				long i = 1;
+				File dir = new File(TracerConstants.TRACE_RESULT_DATA_DIR + "PERMUTATED_" + i);
+				while (dir.exists()) {
+					i++;
+					dir = new File(TracerConstants.TRACE_RESULT_DATA_DIR + "PERMUTATED_" + i);
+				}
+				mutation_id = -i;
 			}
 			seenTests.add(testName);
 		}
+
 		classMap.clear();
 		valueMap.clear();
 		saveFiles = true;
@@ -144,10 +151,15 @@ public class TracerTestListener implements MutationTestListener {
 
 	public void testEnd(String testName) {
 		createMutationDir();
+
+		Trace.getInstance().setDataCoverageDeactivated(true);
+		Trace.getInstance().setLineCoverageDeactivated(true);
 		serializeHashMap();
 		serializeValueMap();
 		classMap.clear();
 		valueMap.clear();
+		Trace.getInstance().setDataCoverageDeactivated(false);
+		Trace.getInstance().setLineCoverageDeactivated(false);;
 		saveFiles = false;
 	}
 
@@ -201,6 +213,9 @@ public class TracerTestListener implements MutationTestListener {
 		synchronized (classMap) {
 			classMapCopy = new HashMap<String, HashMap<Integer, Integer>>(
 					classMap);
+		}
+		if(classMapCopy.size() == 0){
+			logger.warn("Empty coverage map");
 		}
 
 		try {
@@ -261,8 +276,11 @@ public class TracerTestListener implements MutationTestListener {
 		synchronized (valueMap) {
 			valueMapCopy = new HashMap<String, HashMap<Integer, Integer>>(
 					valueMap);
-		}
 
+		}
+		if(valueMapCopy.size() == 0){
+			logger.warn("Empty value map");
+		}
 		ObjectOutputStream oos = null;
 
 		try {

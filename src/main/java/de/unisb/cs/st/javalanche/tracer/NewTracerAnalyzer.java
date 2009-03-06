@@ -118,29 +118,29 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 	LinkedBlockingQueue<MutationCache> lbq = new LinkedBlockingQueue<MutationCache>();
 
-	
-	/* 
+
+	/*
 	 * Theses two Sets contain excluded method names. So those methods don't
-	 * change the impact even if their traces are different. 
+	 * change the impact even if their traces are different.
 	 */
 
 	HashSet<String> dontInstrumentSet = loadDontInstrument();
 	HashSet<String> differencesSet = loadDifferences();
-	
+
 	private static HashSet<String> loadDontInstrument() {
 		if (new File(TracerConstants.TRACE_DONT_INSTRUMENT_FILE).exists()) {
 			return XmlIo.get(TracerConstants.TRACE_DONT_INSTRUMENT_FILE);
 		}
 		return new HashSet<String>();
 	}
-	
+
 	private static HashSet<String> loadDifferences() {
 		if (new File(TracerConstants.TRACE_DIFFERENCES_FILE).exists()) {
 			return XmlIo.get(TracerConstants.TRACE_DIFFERENCES_FILE);
 		}
 		return new HashSet<String>();
 	}
-	
+
 
 	/* *************************************************************************
 	 * Helper method to load the original (id=0) line and data coverage traces.
@@ -556,7 +556,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		HashMap<String, HashMap<Integer, Boolean>> modifiedTmp = null;
 		boolean commit = true;
 		for (String test : mutatedTests) {
-			
+
 			// TRANSACTION START: copy modified to modifiedTmp
 			modifiedTmp = modified;
 			commit = true;
@@ -597,7 +597,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				logger.info("Line Coverage Test '" + test +"' for Mutation "+  mutation.id + " excluded.");
 			}
 		}
-		
+
 
 		// Count the number of modified lines/methods/classes;
 		int linesTotal = 0, linesModified = 0;
@@ -611,7 +611,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 		while (itModified.hasNext()) {
 			String name = itModified.next();
-			
+
 			// don't analyze methods contained in the differencesSet
 			if (differencesSet.contains(name)) {
 				continue;
@@ -757,7 +757,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			if (dontInstrumentSet.contains(name)) {
 				continue;
 			}
-			
+
 			if (ignoredMethod.equals(name)) {
 				foundSelf = true;
 			}
@@ -876,7 +876,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			}
 		};
 
-		Thread[] innerThread = new Thread[1];
+		Thread[] innerThread = new Thread[8];
 		for (int i = 0; i < innerThread.length; i++) {
 			innerThread[i] = new Thread(r);
 			innerThread[i].start();
