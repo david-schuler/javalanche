@@ -166,7 +166,6 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 		HashMap<String, HashMap<String, HashMap<Integer, Integer>>> map = new HashMap<String, HashMap<String, HashMap<Integer, Integer>>>();
 		HashMap<String, HashMap<Integer, Integer>> classMap;
-		// HashMap<Integer, String> idMap = loadIdMap(0);
 		HashMap<Integer, Integer> lineMap;
 
 		for (String test : originalTests) {
@@ -274,8 +273,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 	 */
 	private void processTestLineCoverage(
 			HashMap<String, HashMap<Integer, Integer>> classMap,
-			HashMap<Integer, String> idMap, ObjectInputStream ois,
-			TracerResult results,
+			ObjectInputStream ois,
 			HashMap<String, HashMap<Integer, Boolean>> modified)
 			throws IOException {
 		int numClasses, numLines;
@@ -300,7 +298,6 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		// process Classes
 		doneClasses = new HashSet<String>();
 		for (int i = 0; i < numClasses; i++) {
-			// className = idMap.get(ois.readInt());
 			className = ois.readUTF();
 			doneClasses.add(className);
 
@@ -386,8 +383,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 	 */
 	private void processTestDataCoverage(
 			HashMap<String, HashMap<Integer, Integer>> classMap,
-			HashMap<Integer, String> idMap, ObjectInputStream ois,
-			TracerResult results,
+			ObjectInputStream ois,
 			HashMap<String, HashMap<Integer, Boolean>> modified)
 			throws IOException {
 
@@ -556,23 +552,33 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		String[] mutatedTests = dir.list();
 
 		HashMap<String, HashMap<Integer, Boolean>> modified = new HashMap<String, HashMap<Integer, Boolean>>();
-		//HashMap<Integer, String> idMap = loadIdMap(mutation.id);
+
+		HashMap<String, HashMap<Integer, Boolean>> modifiedTmp = null;
+		boolean commit = true;
 		for (String test : mutatedTests) {
+			
+			// TRANSACTION START: copy modified to modifiedTmp
+			modifiedTmp = modified;
+			commit = true;
 			try {
 				ois = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(
 						new FileInputStream(path + test))));
 				if (originalLineCoverageMaps.containsKey(test)) {
 					processTestLineCoverage(originalLineCoverageMaps.get(test),
-							null, ois, results, modified);
+							ois, modifiedTmp);
 				} else {
 					logger
 							.warn("Got no coverage data of unmutated run for test: "
 									+ test);
 				}
 			} catch (FileNotFoundException e) {
+				// TRANSACTION FAIL
+				commit = false;
 				logger.info("File not found: " + (path + test));
 				e.printStackTrace();
 			} catch (IOException e) {
+				// TRANSACTION FAIL
+				commit = false;
 				logger.info("IO Exception: " + (path + test));
 				e.printStackTrace();
 			} finally {
@@ -584,7 +590,14 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 					}
 				}
 			}
+			// TRANSACTION COMMIT
+			if (commit) {
+				modified = modifiedTmp;
+			} else {
+				logger.info("Line Coverage Test '" + test +"' for Mutation "+  mutation.id + " excluded.");
+			}
 		}
+		
 
 		// Count the number of modified lines/methods/classes;
 		int linesTotal = 0, linesModified = 0;
@@ -679,23 +692,33 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		String[] mutatedTests = dir.list();
 
 		HashMap<String, HashMap<Integer, Boolean>> modified = new HashMap<String, HashMap<Integer, Boolean>>();
-		//HashMap<Integer, String> idMap = loadIdMap(mutation.id);
+
+		HashMap<String, HashMap<Integer, Boolean>> modifiedTmp = null;
+		boolean commit = true;
 		for (String test : mutatedTests) {
+
+			// TRANSACTION START: copy modified to modifiedTmp
+			modifiedTmp = modified;
+			commit = true;
 			try {
 				ois = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(
 						new FileInputStream(path + test))));
 				if (originalDataCoverageMaps.containsKey(test)) {
 					processTestDataCoverage(originalDataCoverageMaps.get(test),
-							null, ois, results, modified);
+							ois, modified);
 				} else {
 					logger
 							.warn("Got no coverage data of unmutated run for test: "
 									+ test);
 				}
 			} catch (FileNotFoundException e) {
+				// TRANSACTION FAIL
+				commit = false;
 				logger.info("File not found: " + path + test);
 				e.printStackTrace();
 			} catch (IOException e) {
+				// TRANSACTION FAIL
+				commit = false;
 				logger.info("IO Exception: " + path + test);
 				e.printStackTrace();
 			} finally {
@@ -706,6 +729,12 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 						e.printStackTrace();
 					}
 				}
+			}
+			// TRANSACTION COMMIT
+			if (commit) {
+				modified = modifiedTmp;
+			} else {
+				logger.info("Data Coverage Test '" + test +"' for Mutation "+  mutation.id + " excluded.");
 			}
 		}
 
