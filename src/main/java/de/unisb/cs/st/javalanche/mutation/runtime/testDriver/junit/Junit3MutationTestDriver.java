@@ -111,8 +111,9 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 				try {
 					stopWatch.start();
 					Test actualtest = allTests.get(testName);
-					if(actualtest == null){
-						String message =  "Test not found in: " + testName +  "\n All Tests:"  + allTests;
+					if (actualtest == null) {
+						String message = "Test not found in: " + testName
+								+ "\n All Tests:" + allTests;
 						System.out.println(message);
 						logger.warn(message);
 						System.exit(0);
@@ -150,11 +151,9 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 				return res;
 			}
 
-			public void setFailed(boolean failed) {
-				TimeoutException timeoutException = new TimeoutException(
-						"Test took to long " + stopWatch.getTime() + " ms");
-				result.addError(allTests.get(testName), timeoutException);
-				listener.addError(allTests.get(testName), timeoutException);
+			public void setFailed(String message) {
+				Exception e = new Exception(message);
+				result.addError(allTests.get(testName), e);
 			}
 
 		};

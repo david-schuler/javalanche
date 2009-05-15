@@ -28,9 +28,13 @@ public class ReplaceMap {
 			{ Opcodes.LUSHR, Opcodes.LSHR }, { Opcodes.IAND, Opcodes.IOR },
 			{ Opcodes.LAND, Opcodes.LOR }, { Opcodes.IOR, Opcodes.IAND },
 			{ Opcodes.LOR, Opcodes.LAND }, { Opcodes.IXOR, Opcodes.IOR },
-			{ Opcodes.LXOR, Opcodes.LOR }, { Opcodes.FCMPL, Opcodes.FCMPG },
-			{ Opcodes.FCMPG, Opcodes.FCMPL }, { Opcodes.DCMPL, Opcodes.DCMPG },
-			{ Opcodes.DCMPG, Opcodes.DCMPL } };
+			{ Opcodes.LXOR, Opcodes.LOR }
+
+			/* The following  operators only differ in their treatment of NoN, and there would be no source code equivalent for this mutation */
+//			, { Opcodes.FCMPL, Opcodes.FCMPG },
+//			{ Opcodes.FCMPG, Opcodes.FCMPL }, { Opcodes.DCMPL, Opcodes.DCMPG },
+//			{ Opcodes.DCMPG, Opcodes.DCMPL }
+	};
 
 	private static Map<Integer, Integer> replaceMap;
 

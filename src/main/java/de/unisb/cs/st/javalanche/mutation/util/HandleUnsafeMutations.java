@@ -61,15 +61,15 @@ public class HandleUnsafeMutations {
 	public static void handleUnsafeMutations(SessionFactory sessionFactory) {
 		Session s = sessionFactory.openSession();
 		Transaction tx = s.beginTransaction();
-		MutationTestResult defaultResult = new MutationTestResult();
 		for (Mutation m : unsafes) {
 			Mutation dbMutation = QueryManager.getMutationOrNull(m, s, tx);
 			if (dbMutation != null) {
-				if (dbMutation.getMutationResult() == null) {
+//				if (dbMutation.getMutationResult() == null) {
 					logger.info("Setting default result for mutation "
 							+ dbMutation.getId());
+					MutationTestResult defaultResult = new MutationTestResult();
 					dbMutation.setMutationResult(defaultResult);
-				}
+//				}
 				System.out.println(dbMutation);
 			}
 		}

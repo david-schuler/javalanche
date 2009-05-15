@@ -18,6 +18,7 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.Util;
+import de.unisb.cs.st.ds.util.io.XmlIo;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode;
@@ -131,9 +132,9 @@ public abstract class MutationTestDriver {
 			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) {
 				addMutationTestListener(new InvariantPerTestListener());
 			}
-			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_COVERAGE) {
-				addMutationTestListener(new TracerTestListener());
-			}
+//			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_COVERAGE) {
+//				addMutationTestListener(new TracerTestListener());
+//			}
 			listeners.addLast(new ResultReporter());
 			runMutations();
 		} else if (MutationProperties.RUN_MODE == RunMode.SCAN) {
@@ -209,6 +210,7 @@ public abstract class MutationTestDriver {
 				logger.warn(str.getTestMessage().getTestCaseName() + ": "
 						+ str.getTestMessage());
 			}
+			XmlIo.toXML(failing, "failed-tests.xml");
 
 		}
 	}
@@ -517,14 +519,15 @@ public abstract class MutationTestDriver {
 	 */
 	protected long runWithTimeout(MutationTestRunnable r) {
 
-//		ArrayList<Thread> threadsPre = ThreadUtil.getThreads();
+		// ArrayList<Thread> threadsPre = ThreadUtil.getThreads();
 		ExecutorService service = Executors.newSingleThreadExecutor();
 		Future<?> future = service.submit(r);
 		logger.debug("Start timed test: ");
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		service.shutdown();
-		boolean exception = false;
+		String exceptionMessage = null;
+		Throwable capturedThrowable = null;
 		try {
 			boolean terminated = service.awaitTermination(timeout,
 					TimeUnit.SECONDS);
@@ -542,52 +545,38 @@ public abstract class MutationTestDriver {
 			future.cancel(true);
 
 		} catch (InterruptedException e) {
-			e.printStackTrace();
-			exception = true;
-			logger.error("Exception thrown", e);
+			capturedThrowable = e;
 		} catch (ExecutionException e) {
-			exception = true;
-			e.printStackTrace();
-			logger.error("Exception thrown", e);
+			capturedThrowable = e;
 		} catch (TimeoutException e) {
-			exception = true;
-			e.printStackTrace();
-			logger.error("Exception thrown", e);
+			exceptionMessage = "Mutation causes test timeout";
+			capturedThrowable = e;
 		} catch (Throwable t) {
-			exception = true;
-			t.printStackTrace();
-			logger.error("Exception thrown", t);
+			capturedThrowable = t;
 		} finally {
-			if (exception) {
-				r.setFailed(true);
+			if (capturedThrowable != null) {
+				// capturedThrowable.printStackTrace();
+				// logger.error("Exception thrown", t);
+				if (exceptionMessage == null) {
+					exceptionMessage = "Exception caught during test execution.";
+				}
+//				TestMessage tm = new TestMessage(currentTestName,
+//						exceptionMessage  +  " - " + capturedThrowable, stopWatch.getTime());
+//				boolean touched = MutationObserver.getTouchingTestCases().contains(
+//						currentTestName);
+//				tm.setTouched(touched);
+//				setTestMessage(tm);
+				r.setFailed(exceptionMessage   + " - " + capturedThrowable);
 			}
 		}
 		if (!future.isDone()) {
-			r.setFailed(true);
+			r.setFailed("Mutated Thread is still running after timeout.");
 			switchOfMutation(future);
 		}
 		stopWatch.stop();
-//		ArrayList<Thread> threadsPost = ThreadUtil.getThreads();
-//		if(threadsPost.size() != threadsPre.size()){
-//			logger.info("Different thread sizes "  + threadsPost.size() + "  " + threadsPre.size() );
-//		}
-//		threadsPost.removeAll(threadsPre);
-//		if(threadsPost.size() > 0){
-//			for (Thread thread : threadsPost) {
-//				logger.info("Thread still exisiting : " + thread.getName());
-//				logger.info("Active : " + thread.isAlive());
-//				StackTraceElement[] stackTrace = thread.getStackTrace();
-//				if (stackTrace != null) {
-//					for (StackTraceElement stackTraceElement : stackTrace) {
-//						System.out.println(stackTraceElement);
-//						logger.info(stackTraceElement);
-//					}
-//				}
-//			}
-//		}
 
 		if (!r.hasFinished()) {
-			r.setFailed(true);
+			r.setFailed("Mutated Thread is still running after mutation is switched of.");
 			if (shutDownThread != null) {
 				Runtime.getRuntime().removeShutdownHook(shutDownThread);
 			}
@@ -600,25 +589,26 @@ public abstract class MutationTestDriver {
 			setTestMessage(tm);
 
 			String m;
-//			if (threadsPost.size() != threadsPre.size()) {
-//
-//				m = "There are threads running that were not running befor the test: "
-//						+ threadsPost;
-//				logger.info("Difference in thread size " );
-//				for (Thread thread : threadsPost) {
-//					logger.info("Thread name: " + thread.getName());
-//					StackTraceElement[] stackTrace = thread.getStackTrace();
-//					if (stackTrace != null) {
-//						for (StackTraceElement stackTraceElement : stackTrace) {
-//							System.out.println(stackTraceElement);
-//							logger.info(stackTraceElement);
-//						}
-//					}
-//				}
-//			} else {
+			// if (threadsPost.size() != threadsPre.size()) {
+			//
+			// m = "There are threads running that were not running befor the
+			// test: "
+			// + threadsPost;
+			// logger.info("Difference in thread size " );
+			// for (Thread thread : threadsPost) {
+			// logger.info("Thread name: " + thread.getName());
+			// StackTraceElement[] stackTrace = thread.getStackTrace();
+			// if (stackTrace != null) {
+			// for (StackTraceElement stackTraceElement : stackTrace) {
+			// System.out.println(stackTraceElement);
+			// logger.info(stackTraceElement);
+			// }
+			// }
+			// }
+			// } else {
 
-				m = "Mutated Thread is still running";
-//		}
+			m = "Mutated Thread is still running";
+			// }
 			logger.warn(m);
 			testEnd(currentTestName);
 			if (currentMutation != null) {

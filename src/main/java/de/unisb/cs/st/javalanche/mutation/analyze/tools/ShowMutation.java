@@ -1,5 +1,7 @@
 package de.unisb.cs.st.javalanche.mutation.analyze.tools;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -19,9 +21,23 @@ public class ShowMutation {
 	public static void main(String[] args) {
 		if (args.length < 1) {
 			System.out.println("Usage: <mutationID> [<mutationID>]*");
-			System.out.println("Showing one default mutation");
-			showMutation(818519);
+			System.out.println("Showing one default mutation".length());
+//			showMutation(1424030);
+//			showMutation(1454789);
+			showMutation(1449387);
 		}
+
+		int length = "".split("\n").length;
+		PrintStream outBack = System.out;
+		PrintStream errBack = System.err;
+		ByteArrayOutputStream  outCapt = new ByteArrayOutputStream();
+		ByteArrayOutputStream  errCapt = new ByteArrayOutputStream();
+		System.setOut(new PrintStream(outCapt));
+		System.setErr(new PrintStream(errCapt));
+		System.setOut(outBack);
+		System.setErr(errBack);
+		System.out.println("TEST OUT" + outCapt.toString());
+		System.out.println("TEST ERR" + errCapt.toString());
 		for (int i = 0; i < args.length; i++) {
 			long mutationID = Long.parseLong(args[i]);
 			showMutation(mutationID);
