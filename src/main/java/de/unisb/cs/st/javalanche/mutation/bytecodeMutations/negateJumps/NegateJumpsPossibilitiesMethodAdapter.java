@@ -10,7 +10,7 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
 
 public class NegateJumpsPossibilitiesMethodAdapter extends
-		AbstractNegateJumpAdapter {
+		AbstractNegateJumpsAdapter {
 
 	private MutationPossibilityCollector mpc;
 

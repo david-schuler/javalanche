@@ -8,12 +8,12 @@ import org.objectweb.asm.MethodVisitor;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.AbstractMutationAdapter;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
-public abstract class AbstractNegateJumpAdapter extends AbstractMutationAdapter {
+public abstract class AbstractNegateJumpsAdapter extends AbstractMutationAdapter {
 
 	protected static Map<Integer, Integer> jumpReplacementMap = JumpReplacements
 			.getReplacementMap();
 
-	public AbstractNegateJumpAdapter(MethodVisitor mv, String className,
+	public AbstractNegateJumpsAdapter(MethodVisitor mv, String className,
 			String methodName, Map<Integer, Integer> possibilities) {
 		super(mv, className, methodName, possibilities);
 

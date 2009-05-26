@@ -12,7 +12,7 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
-public class NegateJumpsMethodAdapter extends AbstractNegateJumpAdapter {
+public class NegateJumpsMethodAdapter extends AbstractNegateJumpsAdapter {
 
 	private static Logger logger = Logger
 			.getLogger(NegateJumpsMethodAdapter.class);
