@@ -430,11 +430,17 @@
 			<arg line="${prog.arg}"/>
 		</java>
 	</target>
+	
+	
+		<property name="invariant.dir" value="invariant-files/" />
+	<property name="field.file" value="${invariant.dir}/field-results.ser" />
+	<property name="invariant.checker.file" value="${invariant.dir}/${project.prefix}-invariant-checkers.ser" />
+
 
 	<target name="analyzeResults" description="* analyze the mutation test results.">
 	<echo> Using ${javalanche.maxmemory} memory </echo>
 		<!--jvmarg value="-Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.mutation.analyze.MutationPrioritizationAnalyzer" />-->
-	
+	<echo> Test: ${javalanche.mutation.analyzers} </echo>
 	<condition property="analyze.add" value="-Djavalanche.mutation.analyzers=${javalanche.mutation.analyzers}" else="">
 		<isset property="javalanche.mutation.analyzers"/>
 	</condition>
@@ -445,6 +451,8 @@
 			<classpath>
 				<path refid="mutation.classpath" />
 			</classpath>
+			<jvmarg line="-Dinvariant.checker.file=${invariant.checker.file}"/>
+	
 		</java>
 	</target>
 

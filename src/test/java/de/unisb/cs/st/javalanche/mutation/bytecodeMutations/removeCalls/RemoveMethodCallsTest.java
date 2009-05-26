@@ -1,7 +1,11 @@
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -16,15 +20,19 @@ import org.objectweb.asm.ClassWriter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.CollectorByteCodeTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.testclasses.MethodCalls;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.testclasses.MethodCallsTest;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
+import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.MutationTestSuite;
 
 public class RemoveMethodCallsTest {
 
 	// -javaagent:./target/javaagent.jar -Dinvariant.mode=OFF
-	// -Dmutation.run.mode=mutation-no-invariant
+	// -Dmutation.run.mode=mutation
 	// -Dmutation.coverage.information=false
+
 	private static class RemoveMethodCallsTransformer extends
 			CollectorByteCodeTransformer {
 
@@ -47,7 +55,7 @@ public class RemoveMethodCallsTest {
 
 	private static final String TEST_CLASS_NAME = TEST_CLASS.getName();
 
-	private static final String UNITTEST_CLASS_NAME = MethodCalls.class
+	private static final String UNITTEST_CLASS_NAME = MethodCallsTest.class
 			.getName();
 
 	private static String[] testCaseNames = ByteCodeTestUtils
@@ -69,24 +77,24 @@ public class RemoveMethodCallsTest {
 	}
 
 	@Test
-	public void testMakeMavenHappy() {
+	public void runTests() {
 
+		System.setProperty(MutationProperties.RESULT_FILE_KEY,
+				"target/unittestResults.xml");
+		ByteCodeTestUtils.redefineMutations(TEST_CLASS_NAME);
+		MutationTestSuite selectiveTestSuite = new MutationTestSuite();
+		TestSuite suite = new TestSuite(MethodCallsTest.class);
+		selectiveTestSuite.addTest(suite);
+		@SuppressWarnings("unused")
+		MethodCalls methodCalls = new MethodCalls(); // ensure that class is
+		// loaded
+		selectiveTestSuite.run(new TestResult());
+		testResults(TEST_CLASS_NAME);
 	}
-
-//	@Test
-//	public void runTests() {
-//		MutationTestSuite selectiveTestSuite = new MutationTestSuite();
-//		TestSuite suite = new TestSuite(MethodCallsTest.class);
-//		selectiveTestSuite.addTest(suite);
-//		@SuppressWarnings("unused")
-//		MethodCalls methodCalls = new MethodCalls();
-//		selectiveTestSuite.run(new TestResult());
-//		testResults(TEST_CLASS_NAME);
-//	}
 
 	/**
 	 * Tests if exactly one testMethod failed because of the mutation.
-	 *
+	 * 
 	 * @param testClassName
 	 *            The class that test the mutated class.
 	 */
@@ -99,16 +107,22 @@ public class RemoveMethodCallsTest {
 		query.setString("clname", testClassName);
 		List<Mutation> mList = query.list();
 		int nonNulls = 0;
+
+		List<Integer> expectOneError = Arrays.asList(7, 19, 31);
+		List<Integer> expectNoError = Arrays.asList(44);
+
 		for (Mutation m : mList) {
 			MutationTestResult singleTestResult = m.getMutationResult();
 			if (singleTestResult != null) {
 				nonNulls++;
-				if (m.getMutationType() != Mutation.MutationType.NO_MUTATION
-						&& m.getLineNumber() != 44) {
-					Assert.assertEquals("Mutation: " + m, 1, singleTestResult
-							.getNumberOfErrors()
-							+ singleTestResult.getNumberOfFailures());
+				int expectedErrors = 1;
+				if (expectNoError.contains(m.getLineNumber())) {
+					expectedErrors = 0;
 				}
+				Assert.assertEquals("Mutation: " + m, expectedErrors,
+						singleTestResult
+						.getNumberOfErrors()
+						+ singleTestResult.getNumberOfFailures());
 			} else {
 				System.out.println(m);
 			}

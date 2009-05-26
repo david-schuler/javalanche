@@ -202,4 +202,9 @@ public final class RhinoTestRunnable implements MutationTestRunnable {
 		boolean failed = b;
 	}
 
+	public void setFailed(String message) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

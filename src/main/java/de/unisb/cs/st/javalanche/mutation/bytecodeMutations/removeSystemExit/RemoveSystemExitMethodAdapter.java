@@ -19,7 +19,7 @@ public class RemoveSystemExitMethodAdapter extends MethodAdapter {
 	@Override
 	public void visitMethodInsn(int opcode, String owner, String name,
 			String desc) {
-		if (name.equals("exit") && owner.equals("java/lang/System")) {
+		if (name.equals("exita") && owner.equals("java/lang/System")) {
 			logger.info("Replacing System.exit ");
 
 			Label mutationStartLabel = new Label();

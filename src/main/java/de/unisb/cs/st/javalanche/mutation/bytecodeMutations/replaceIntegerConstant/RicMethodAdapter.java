@@ -414,14 +414,6 @@ getPossibilityForLine(), isClassInit);
 		}
 	}
 
-	// private void insertPrintStatements(String message) {
-	// insertPrintStatements(mv, message);
-	// }
-
-	@Override
-	public void visitLineNumber(int line, Label start) {
-		super.visitLineNumber(line, start);
-	}
 
 	@Override
 	public void visitIntInsn(int opcode, int operand) {

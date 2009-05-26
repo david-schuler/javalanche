@@ -73,10 +73,9 @@ public class ResultDeleter {
 				stp.reset();
 				stp.start();
 				flushs++;
-				logger.info("Doing temporary flush " + flushs);
 				session.flush();
 //				session.clear();
-				logger.info("Flush took: "
+				logger.info("Did flush. It took: "
 						+ DurationFormatUtils.formatDurationHMS(stp.getTime()));
 				deletes = 0;
 			}

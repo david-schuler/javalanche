@@ -60,9 +60,6 @@ public class RemoveSystemExitTest {
 	public void runTests() {
 		MutationTestSuite selectiveTestSuite = new MutationTestSuite();
 		TestSuite suite = new TestSuite(SysExitTest.class);
-		// selectiveTestSuite.addTest(suite);
-		// @SuppressWarnings("unused")
-		// SysExit loadClass = new SysExit();
 		TestResult testResult = new TestResult();
 		suite.run(testResult);
 		Enumeration<junit.framework.Test> tests = suite.tests();
@@ -70,6 +67,7 @@ public class RemoveSystemExitTest {
 			System.out.println(tests.nextElement());
 		}
 		assertEquals(testResult.runCount(), suite.countTestCases());
+		System.out.println("TEST PASSED");
 	}
 
 }

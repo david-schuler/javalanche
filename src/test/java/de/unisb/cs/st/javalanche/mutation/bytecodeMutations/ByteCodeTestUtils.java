@@ -9,6 +9,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Assert;
+
+import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
@@ -19,8 +21,6 @@ import de.unisb.cs.st.javalanche.mutation.results.TestName;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-
-import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
 
 /**
@@ -71,6 +71,7 @@ public class ByteCodeTestUtils {
 		ft.process(collectorTransformer);
 		mpc.toDB();
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	public static void deleteTestMutationResult(String className) {

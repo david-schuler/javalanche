@@ -127,6 +127,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 	HashSet<String> dontInstrumentSet = loadDontInstrument();
 	HashSet<String> differencesSet = loadDifferences();
 
+	private int outcount;
+
 	private static HashSet<String> loadDontInstrument() {
 		if (new File(TracerConstants.TRACE_DONT_INSTRUMENT_FILE).exists()) {
 			return XmlIo.get(TracerConstants.TRACE_DONT_INSTRUMENT_FILE);
@@ -239,11 +241,14 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 					+ "CLASS_INIT;MUTATION_RESULT");
 			firstCallToWriteOut = false;
 		}
-
-		logger.info("ID: " + mutation.id + "\tKilled: " + mutation.killed
+		logger.debug("ID: " + mutation.id + "\tKilled: " + mutation.killed
 				+ "\tValue: "
 				+ (results.methodsModifiedAll) + " ("
 				+ mutation.mutationType + ")");
+		outcount++;
+		if(outcount % 500 == 0){
+			logger.info("Written results for "  + outcount + " mutations");
+		}
 		out.println(mutation.id + ";" + mutation.killed + ";"
 				+ results.classesTotal + ";"
 				+ results.classesModified + ";"
@@ -866,6 +871,9 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			MutationCache mc = MutationCache.create(m);
 			if (!mc.mutationResult.equals(TracerConstants.NO_RESULT)) {
 				counter++;
+				if(counter%500== 0){
+					logger.info("Added " + counter +  " mutations to queue");
+				}
 				lbq.offer(mc);
 			}
 		}

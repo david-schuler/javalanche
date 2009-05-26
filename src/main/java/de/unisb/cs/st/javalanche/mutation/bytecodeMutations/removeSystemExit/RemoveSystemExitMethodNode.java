@@ -21,7 +21,7 @@ public class RemoveSystemExitMethodNode extends MethodAdapter {
 	private static Logger logger = Logger
 			.getLogger(RemoveSystemExitMethodNode.class);
 
-	MethodVisitor next;
+	private MethodVisitor next;
 
 	public RemoveSystemExitMethodNode(int access, String name, String desc,
 			String signature, String[] exceptions, MethodVisitor mv) {
@@ -29,12 +29,13 @@ public class RemoveSystemExitMethodNode extends MethodAdapter {
 		next = mv;
 	}
 
+	// TODO Scan for System exit
 	@SuppressWarnings("unchecked")
 	// Call to pre 1.5 Code
 	@Override
 	public void visitEnd() {
 		MethodNode mn = (MethodNode) mv;
-		InsnList insns= mn.instructions;
+		InsnList insns = mn.instructions;
 		Iterator i = insns.iterator();
 		AbstractInsnNode prev = null;
 		InsnList newInstrucionList = new InsnList();
@@ -76,14 +77,11 @@ public class RemoveSystemExitMethodNode extends MethodAdapter {
 				} catch (Exception e) {
 					logger.error(e);
 				}
-				// newInstrucionList.add(new InsnNode(Opcodes.ICONST_5));
+
 			}
 			prev = i1;
 		}
 		mn.instructions = newInstrucionList;
-
-		// logger.error("new Imstruction List:" + newInstrucionList.size() + " "
-		// + insns.size() + " " + mn.instructions.size());
 		mn.accept(next);
 	}
 }

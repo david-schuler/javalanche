@@ -16,7 +16,7 @@ import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 public class ArtihmeticPossibilitiesTest {
 
 	@Test
-	public void testNegateJumps() {
+	public void testPossibilities() {
 		InputStream is = MissedMutationTest.class.getClassLoader()
 				.getResourceAsStream(TestProperties.ADVICE_CLAZZ);
 		System.out.println(is);
