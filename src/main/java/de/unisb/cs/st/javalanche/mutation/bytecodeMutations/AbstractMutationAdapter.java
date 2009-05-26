@@ -7,6 +7,14 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 
+/**
+ * Abstract Method adapter that provides functionality that is common for all
+ * mutation operators, e.g. keeping track of the current line number and the
+ * number of mutations that can be applied in each line.
+ * 
+ * @author David Schuler
+ * 
+ */
 public abstract class AbstractMutationAdapter extends MethodAdapter {
 
 	private static final Logger logger = Logger
@@ -42,12 +50,13 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 	}
 
 	protected int getLineNumber() {
-//		if (lineNumber < 0) {
-			//  rhino produces classses with no linenumber information. AspectJ also produces such files
-//			throw new RuntimeException(String.format(
-//					"Line number not available for class: %s method: %s",
-//					className, methodName));
-//		}
+		// if (lineNumber < 0) {
+		// rhino produces classes with no line number information. AspectJ also
+		// produces such files
+		// throw new RuntimeException(String.format(
+		// "Line number not available for class: %s method: %s",
+		// className, methodName));
+		// }
 		return lineNumber;
 	}
 
@@ -64,7 +73,7 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 	}
 
 	protected void addPossibilityForLine() {
-//		logger.info(lineNumber  +  "    " + Util.getStackTraceString());
+		// logger.info(lineNumber + "    " + Util.getStackTraceString());
 		if (possibilities.containsKey(lineNumber)) {
 			int pos = possibilities.get(lineNumber);
 			possibilities.put(lineNumber, pos + 1);

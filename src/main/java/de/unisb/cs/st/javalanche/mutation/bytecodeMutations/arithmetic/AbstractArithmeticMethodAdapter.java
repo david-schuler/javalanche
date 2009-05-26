@@ -48,7 +48,6 @@ public abstract class AbstractArithmeticMethodAdapter extends AbstractMutationAd
 				Mutation.MutationType.ARITHMETIC_REPLACE, isClassInit);
 		addPossibilityForLine();
 		handleMutation(mutation, opcode);
-		
 	}
 
 	protected abstract void handleMutation(Mutation mutation, int opcode);
