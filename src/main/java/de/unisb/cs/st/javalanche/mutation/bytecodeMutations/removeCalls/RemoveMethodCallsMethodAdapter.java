@@ -8,14 +8,88 @@ import org.apache.log4j.Logger;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.AbstractMutationAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationCode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
-public class RemoveMethodCallsMethodAdapter extends AbstractMutationAdapter {
+public class RemoveMethodCallsMethodAdapter extends AbstractRemoveCallsAdapter {
+
+	private static final class RemoveCall extends MutationCode {
+		private final String name;
+		private final String desc;
+		private final int opcode;
+
+		private RemoveCall(Mutation mutation, String name, String desc,
+				int opcode) {
+			super(mutation);
+			this.name = name;
+			this.desc = desc;
+			this.opcode = opcode;
+		}
+
+		@Override
+		public void insertCodeBlock(MethodVisitor mv) {
+			if (name.equals("<init>")) {
+				mv.visitInsn(POP);
+				mv.visitInsn(POP);
+				mv.visitInsn(ACONST_NULL);
+			} else {
+				popArguments(desc, mv);
+				popThisReference(opcode, mv);
+				pushDefaultValue(desc, mv, name);
+			}
+		}
+
+		private void pushDefaultValue(final String desc, MethodVisitor mv,
+				String name) {
+			Type returnType = Type.getReturnType(desc);
+			if (returnType.equals(Type.BOOLEAN_TYPE)) {
+				mv.visitInsn(ICONST_0);
+			} else if (returnType.equals(Type.BYTE_TYPE)) {
+				mv.visitInsn(ICONST_0);
+			} else if (returnType.equals(Type.CHAR_TYPE)) {
+				mv.visitInsn(ICONST_0);
+			} else if (returnType.equals(Type.DOUBLE_TYPE)) {
+				mv.visitInsn(DCONST_0);
+			} else if (returnType.equals(Type.FLOAT_TYPE)) {
+				mv.visitInsn(FCONST_0);
+			} else if (returnType.equals(Type.INT_TYPE)) {
+				mv.visitInsn(ICONST_0);
+			} else if (returnType.equals(Type.LONG_TYPE)) {
+				mv.visitInsn(LCONST_0);
+			} else if (returnType.equals(Type.SHORT_TYPE)) {
+				mv.visitInsn(ICONST_0);
+			} else if (returnType.equals(Type.VOID_TYPE)) {
+			} else {
+				mv.visitInsn(ACONST_NULL);
+			}
+		}
+
+		private void popThisReference(final int opcode, MethodVisitor mv) {
+			if (!isStaticCall(opcode)) {
+				mv.visitInsn(POP);
+			}
+		}
+
+		private static boolean isStaticCall(int opcode) {
+			return opcode == INVOKESTATIC;
+		}
+
+		private void popArguments(final String desc, MethodVisitor mv) {
+			Type[] argumentsTypes = Type.getArgumentTypes(desc);
+			for (int i = argumentsTypes.length - 1; i >= 0; i--) {
+				Type argumentType = argumentsTypes[i];
+
+				if (argumentType.getSize() == 1) {
+					mv.visitInsn(POP);
+				} else {
+					mv.visitInsn(POP2);
+				}
+			}
+		}
+	}
 
 	private static Logger logger = Logger
 			.getLogger(RemoveMethodCallsMethodAdapter.class);
@@ -25,109 +99,27 @@ public class RemoveMethodCallsMethodAdapter extends AbstractMutationAdapter {
 		super(mv, className, methodName, possibilities);
 	}
 
-	private static boolean isStaticCall(int opcode) {
-		return opcode == INVOKESTATIC;
 
-	}
-
-	// TODO Ignore Strinbuilder StringBuffer.
-
-	//
 	@Override
-	public void visitMethodInsn(final int opcode, final String owner,
-			final String name, final String desc) {
-		if (name.equals("<init>")) {
-			logger.debug("Ignoring constructor calls");
-			mv.visitMethodInsn(opcode, owner, name, desc);
+	protected void handleMutation(Mutation mutation, final int opcode,
+			final String owner, final String name, final String desc) {
+		if (MutationManager.shouldApplyMutation(mutation)) {
+			Mutation dbMutation = QueryManager.getMutation(mutation);
+			MutationCode unMutated = new MutationCode(null) {
+				@Override
+				public void insertCodeBlock(MethodVisitor mv) {
+					mv.visitMethodInsn(opcode, owner, name, desc);
+				}
+
+			};
+			MutationCode mutated = new RemoveCall(dbMutation, name, desc,
+					opcode);
+			BytecodeTasks.insertIfElse(mv, unMutated,
+					new MutationCode[] { mutated });
 		} else {
-
-			Mutation queryMutation = new Mutation(className, getLineNumber(),
-					getPossibilityForLine(), Mutation.MutationType.REMOVE_CALL,
-					isClassInit);
-			logger.debug("Found possibility for line " + getLineNumber());
-			addPossibilityForLine();
-			if (MutationManager.shouldApplyMutation(queryMutation)) {
-				Mutation mutationFromDB = QueryManager
-						.getMutation(queryMutation);
-				MutationCode unMutated = new MutationCode(null) {
-					@Override
-					public void insertCodeBlock(MethodVisitor mv) {
-						mv.visitMethodInsn(opcode, owner, name, desc);
-					}
-
-				};
-
-				MutationCode mutated = new MutationCode(mutationFromDB) {
-					@Override
-					public void insertCodeBlock(MethodVisitor mv) {
-						if (name.equals("<init>")) {
-							mv.visitInsn(POP);
-							mv.visitInsn(POP);
-							mv.visitInsn(ACONST_NULL);
-						} else {
-							popArguments(desc, mv);
-							popThisReference(opcode, mv);
-							pushDefaultValue(desc, mv, name);
-						}
-					}
-
-					private void pushDefaultValue(final String desc,
-							MethodVisitor mv, String name) {
-						Type returnType = Type.getReturnType(desc);
-						if (returnType.equals(Type.BOOLEAN_TYPE)) {
-							mv.visitInsn(ICONST_0);
-						} else if (returnType.equals(Type.BYTE_TYPE)) {
-							mv.visitInsn(ICONST_0);
-						} else if (returnType.equals(Type.CHAR_TYPE)) {
-							mv.visitInsn(ICONST_0);
-						} else if (returnType.equals(Type.DOUBLE_TYPE)) {
-							mv.visitInsn(DCONST_0);
-						} else if (returnType.equals(Type.FLOAT_TYPE)) {
-							mv.visitInsn(FCONST_0);
-						} else if (returnType.equals(Type.INT_TYPE)) {
-							mv.visitInsn(ICONST_0);
-						} else if (returnType.equals(Type.LONG_TYPE)) {
-							mv.visitInsn(LCONST_0);
-						} else if (returnType.equals(Type.SHORT_TYPE)) {
-							mv.visitInsn(ICONST_0);
-						} else if (returnType.equals(Type.VOID_TYPE)) {
-							// System.out.println("VOID METHOD: " + name);
-						} else {
-							mv.visitInsn(ACONST_NULL);
-						}
-					}
-
-					private void popThisReference(final int opcode,
-							MethodVisitor mv) {
-						if (!isStaticCall(opcode)) {
-							mv.visitInsn(POP);
-						}
-					}
-
-					private void popArguments(final String desc,
-							MethodVisitor mv) {
-						Type[] argumentsTypes = Type.getArgumentTypes(desc);
-						for (int i = argumentsTypes.length - 1; i >= 0; i--) {
-							Type argumentType = argumentsTypes[i];
-
-							if (argumentType.getSize() == 1) {
-								mv.visitInsn(POP);
-							} else {
-								mv.visitInsn(POP2);
-							}
-						}
-					}
-				};
-				BytecodeTasks.insertIfElse(mv, unMutated,
-						new MutationCode[] { mutated });
-			} else {
-				logger.debug("Not applying mutation");
-				mv.visitMethodInsn(opcode, owner, name, desc);
-			}
+			logger.debug("Not applying mutation");
+			mv.visitMethodInsn(opcode, owner, name, desc);
 		}
-
 	}
-
-
 
 }

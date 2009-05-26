@@ -2,20 +2,15 @@ package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.AbstractMutationAdapter;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
 
 public final class RemoveCallsPossibilitiesMethodAdapter extends
-		AbstractMutationAdapter {
-
-	private static Logger logger = Logger
-			.getLogger(RemoveCallsPossibilitiesMethodAdapter.class);
+		AbstractRemoveCallsAdapter {
 
 	private final MutationPossibilityCollector mpc;
+
 	private MyAdviceAdapter myAdviceAdapter;
 
 	public RemoveCallsPossibilitiesMethodAdapter(MyAdviceAdapter mv,
@@ -27,27 +22,15 @@ public final class RemoveCallsPossibilitiesMethodAdapter extends
 		this.mpc = mpc;
 	}
 
-
-
-	public void visitMethodInsn(final int opcode, final String owner,
-			final String name, final String desc) {
-		if (name.equals("<init>")) {
-			logger.debug("Ignoring constructor calls");
-		} else {
-			logger.debug("Found possibility: " + methodName);
-			if (myAdviceAdapter.isSuperCallSeen()) {
-				logger.debug("Adding possibility");
-				Mutation m = new Mutation(className, getLineNumber(),
-						getPossibilityForLine(),
-						Mutation.MutationType.REMOVE_CALL, isClassInit);
-				mpc.addPossibility(m);
-				addPossibilityForLine();
-				if (insertCoverageCalls) {
-					CoverageDataUtil.insertCoverageCalls(mv, m);
-				}
+	@Override
+	protected void handleMutation(Mutation mutation, int opcode, String owner,
+			String name, String desc) {
+		if (myAdviceAdapter.superCallSeen()) {
+			mpc.addPossibility(mutation);
+			if (insertCoverageCalls) {
+				CoverageDataUtil.insertCoverageCalls(mv, mutation);
 			}
 		}
-		super.visitMethodInsn(opcode, owner, name, desc);
 	}
 
 }

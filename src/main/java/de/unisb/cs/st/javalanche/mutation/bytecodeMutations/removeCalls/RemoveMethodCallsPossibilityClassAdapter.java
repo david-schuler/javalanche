@@ -2,7 +2,6 @@ package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -10,9 +9,6 @@ import org.objectweb.asm.MethodVisitor;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 
 public class RemoveMethodCallsPossibilityClassAdapter extends ClassAdapter {
-
-	private static Logger logger = Logger
-			.getLogger(RemoveMethodCallsPossibilityClassAdapter.class);
 
 	private String className;
 

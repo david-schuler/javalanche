@@ -41,7 +41,7 @@ public class MyAdviceAdapter extends AdviceAdapter {
 	 * @return true, if the super call for this constructor was already
 	 *         processed.
 	 */
-	boolean isSuperCallSeen() {
+	boolean superCallSeen() {
 		return superCallSeen;
 	}
 
