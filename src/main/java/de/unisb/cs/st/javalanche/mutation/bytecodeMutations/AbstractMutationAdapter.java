@@ -43,12 +43,21 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 		this.isClassInit = methodName.equals("<clinit>");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.objectweb.asm.MethodAdapter#visitLineNumber(int,
+	 * org.objectweb.asm.Label)
+	 */
 	@Override
 	public void visitLineNumber(int line, Label start) {
 		super.visitLineNumber(line, start);
 		lineNumber = line;
 	}
 
+	/**
+	 * @return the current line number.
+	 */
 	protected int getLineNumber() {
 		// if (lineNumber < 0) {
 		// rhino produces classes with no line number information. AspectJ also
@@ -60,6 +69,11 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 		return lineNumber;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.objectweb.asm.MethodAdapter#visitLabel(org.objectweb.asm.Label)
+	 */
 	@Override
 	public void visitLabel(Label label) {
 		super.visitLabel(label);
@@ -72,8 +86,10 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 		}
 	}
 
+	/**
+	 * Adds a mutation possibility for the current line.
+	 */
 	protected void addPossibilityForLine() {
-		// logger.info(lineNumber + "    " + Util.getStackTraceString());
 		if (possibilities.containsKey(lineNumber)) {
 			int pos = possibilities.get(lineNumber);
 			possibilities.put(lineNumber, pos + 1);
@@ -81,6 +97,10 @@ public abstract class AbstractMutationAdapter extends MethodAdapter {
 			possibilities.put(lineNumber, 1);
 	}
 
+	/**
+	 * @return the mutation possibilities for the current line found up to this
+	 *         point.
+	 */
 	protected int getPossibilityForLine() {
 		int pos = 0;
 		if (possibilities.containsKey(lineNumber)) {

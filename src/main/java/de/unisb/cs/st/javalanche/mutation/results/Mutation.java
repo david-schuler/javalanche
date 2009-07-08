@@ -57,6 +57,7 @@ public class Mutation implements Serializable {
 
 	private boolean classInit;
 
+
 	/**
 	 * Default constructor needed by Hibernate.
 	 */

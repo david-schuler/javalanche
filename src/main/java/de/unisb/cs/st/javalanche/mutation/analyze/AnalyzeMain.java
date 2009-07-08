@@ -32,9 +32,10 @@ public class AnalyzeMain {
 			analyzeMutations(analyzers);
 		} else {
 			analyzeMutations(new MutationAnalyzer[] {
-					new DebugAnalyzer(),
+			 new DebugAnalyzer(),
 //					new TempInvariantAnalyzer(),
-//					new MutationResultAnalyzer(),
+			new MutationResultAnalyzer(),
+			new NewTracerAnalyzer(),
 //					new CheckAnalyzer()
 //					new NotToucheAnalyzer()//
 //					new NewTracerAnalyzer()

@@ -31,6 +31,7 @@ public final class RemoveCallsPossibilitiesMethodAdapter extends
 				CoverageDataUtil.insertCoverageCalls(mv, mutation);
 			}
 		}
+		mv.visitMethodInsn(opcode, owner, name, desc);
 	}
 
 }

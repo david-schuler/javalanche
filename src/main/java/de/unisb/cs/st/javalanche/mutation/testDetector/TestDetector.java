@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
@@ -14,19 +16,18 @@ import com.google.common.base.Join;
 import de.unisb.cs.st.ds.util.io.DirectoryFileSource;
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.ds.util.io.XmlIo;
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.Excludes;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 
 /**
  * Class that scans all subdirectories for JUnit tests using several heuristics.
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class TestDetector {
 
 	private static final String JAVALANCHE_TEST_BASE_DIR = "javalanche.test.base.dir";
-
-	static final String TEST_MAP_FILENAME = "testname-map.xml";
 
 	private static Logger logger = Logger.getLogger(TestDetector.class);
 
@@ -83,18 +84,29 @@ public class TestDetector {
 			if (matches > 0) {
 				String name = getClassName(file);
 				map.put(name, matches);
-				// logger.info(name + " " + matches);
 			}
 		}
 		logger.info("Found " + map.size() + " test files");
-		XmlIo.toXML(map, new File(TEST_MAP_FILENAME));
+		updateExcludeFiel(map);
+		// XmlIo.toXML(map, MutationProperties.TEST_MAP_FILE);
+	}
+
+	private static void updateExcludeFiel(Map<String, Integer> map) {
+		Set<Entry<String, Integer>> entrySet = map.entrySet();
+		for (Entry<String, Integer> entry : entrySet) {
+			if (entry.getValue() > 0) {
+				String testClass = entry.getKey();
+				Excludes.getInstance().exclude(testClass);
+			}
+		}
+		Excludes.getInstance().writeFile();
 	}
 
 	private static String getClassName(File file) {
 		String fileName = file.getAbsolutePath();
 		try {
 			fileName = file.getCanonicalPath();
-			logger.info(file.getCanonicalPath());
+			logger.debug("Filename " + file.getCanonicalPath());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -107,7 +119,7 @@ public class TestDetector {
 			name = fileName.substring(fileName.lastIndexOf('/') + 1, fileName
 					.length() - 5);
 		}
-		logger.info(name);
+		logger.debug(name);
 		return name;
 	}
 

@@ -1,4 +1,3 @@
-
 <project name="Mutation Test" default="" basedir=".">
 
 	<!-- Classpath declaration -->
@@ -19,9 +18,9 @@
 
 	<property name="proj.shortname" value="jvl-mu"/>
 
-	<!-- Hibernate Tools import -->
+	<!-- Hibernate Tools import TODO 
 	<taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" classpathref="project.classpath" />
-
+-->
 	<!-- Export the database schema -->
 	<target name="schemaexport" depends="" description="Exports a generated schema to DB and file">
 		<hibernatetool destdir="${basedir}">
@@ -167,6 +166,16 @@
 	
 	
 	
+
+		
+	<target name="createBootclasspathJar" description="Create the jar that has to be put on the bootclasspath">
+		<echo message="creating javaagent from ant" />
+		<jar destfile="target/javalanche-mutation-bootclasspath.jar" >
+			<fileset dir="target/classes" includes="**/java/lang/*.class" />
+		</jar>
+	</target>
+	
+	
 	<target name="testDBPerformance" description="test the databases performance">
 		<property name="db.perf.dir" value="target/db-performance" />
 		<mkdir dir="${db.perf.dir}"/>
@@ -180,13 +189,5 @@
 			</classpath>
 		</java>
 	</target>
-		
-	<target name="createBootclasspathJar" description="Create the jar that has to be put on the bootclasspath">
-		<echo message="creating javaagent from ant" />
-		<jar destfile="target/javalanche-mutation-bootclasspath.jar" >
-			<fileset dir="target/classes" includes="**/java/lang/*.class" />
-		</jar>
-	</target>
-	
 
 </project>

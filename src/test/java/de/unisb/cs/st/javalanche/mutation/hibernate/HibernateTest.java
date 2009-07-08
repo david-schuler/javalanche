@@ -3,6 +3,7 @@ package de.unisb.cs.st.javalanche.mutation.hibernate;
 import static org.junit.Assert.*;
 
 import java.util.List;
+import java.util.Random;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -22,8 +23,8 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 // Because of lists returned by hibernate
 public class HibernateTest {
 
-	private static Mutation testMutation = new Mutation("testClass", 21, 0,
-			MutationType.RIC_PLUS_1, false);
+	private static Mutation testMutation = new Mutation("testClass",
+			new Random().nextInt(5000), 0, MutationType.RIC_PLUS_1, false);
 
 	@BeforeClass
 	public static void hibernateSave() {
@@ -35,7 +36,7 @@ public class HibernateTest {
 		session.close();
 	}
 
-	@AfterClass
+	// @AfterClass
 	public static void hibernateDelete() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -50,7 +51,7 @@ public class HibernateTest {
 		session.close();
 	}
 
-	@Test
+	// @Test
 	public void testReatach() {
 		assertEquals(0, testMutation.getMutationForLine());
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -77,6 +78,8 @@ public class HibernateTest {
 		int count = 0;
 		for (Object o : results) {
 			Assert.assertTrue(o instanceof Mutation);
+			Mutation m = (Mutation) o;
+			System.out.println(m.getId());
 			count++;
 
 		}
@@ -86,7 +89,7 @@ public class HibernateTest {
 		session.close();
 	}
 
-	@Test(timeout = 5000)
+	// @Test(timeout = 5000)
 	public void hibernateQueryByType() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -95,7 +98,10 @@ public class HibernateTest {
 		query.setMaxResults(100);
 		List results = query.list();
 		for (Object o : results) {
+
 			if (o instanceof Mutation) {
+				Mutation m = (Mutation) o;
+
 			} else {
 				throw new RuntimeException("Expected other Type. Was: "
 						+ o.getClass() + " Expected: " + Mutation.class);
@@ -105,6 +111,24 @@ public class HibernateTest {
 				.assertTrue("expected at least one result for mutationtype "
 						+ testMutation.getMutationType().toString(), results
 						.size() > 0);
+
+		tx.commit();
+		session.close();
+	}
+
+	@Test
+	public void testQueryBoolean() {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		String projectPrefix = "triangle";
+		boolean classInit = true;
+		Query query = session
+				.createQuery("SELECT count(*) FROM Mutation WHERE className LIKE '"
+						+ projectPrefix + "%' AND classInit=" + classInit);
+		List results = query.list();
+		for (Object object : results) {
+			System.out.println("OBJECT " + object);
+		}
 		tx.commit();
 		session.close();
 	}

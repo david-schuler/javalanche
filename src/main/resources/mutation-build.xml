@@ -1,7 +1,7 @@
 <project  name="mutation-include" default="">
 <!--name=" Javalanche Mutation Include - File to include from a projects ant build file to enable mutation testing"-->	
 	
-	<property name="mutation.base.dir" value="${javalanche.projects.location}/mutationTest/" />
+	<property name="mutation.base.dir" value="${javalanche.location}" />
 	<property name="javalanche.mutation.javaagent" value="${mutation.base.dir}/target/javaagent.jar" />
 	<property name="mutation.classes.dir" value="${mutation.base.dir}/target/classes" />
 	<property name="mutation.jars.dir" value="${mutation.base.dir}/target/javalanche-mutation-0.1-dist.dir/lib/" />
@@ -16,11 +16,11 @@
 	  
 	<path id="mutation.classpath">
 		<pathelement location="${mutation.classes.dir}"/>
-		<pathelement location="${javalanche.projects.location}/util/target/classes" />
+		<pathelement location="${mutation.base.dir}/../util/target/classes" />
 		<fileset dir="${mutation.jars.dir}" includes="*.jar"/>
 	</path>
 	
-	<target name="testTask" description="* test the javalanche task (should behave in the same way as the regular test task)">
+	<target name="testTask1" description="* Test the javalanche task. The task should behave in the same way as a regular test task">
 		<path id="testTask.javalanche.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
@@ -32,16 +32,33 @@
 	</target>
 
 	
-	<target name="testTask3" description="* ">
+	<target name="testTask2" description="* Test the javalanche test runner without any bytecode modifications. All tests should pass in the Javalanche Test Runner">
+		<property name="test.task.2.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="test.task.2.memory" value="-Xmx1524m"/>
+		<property name="test.task.2.mutation.run.mode" value="-Dmutation.run.mode=test1"/>
+		<property name="test.task.2.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="test.task.2.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="test.task.2.verbose" value="-verbose"/>
+		
+		<path id="test.task.2.classpath.add">
+			<path refid="mutation.classpath"/>
+		</path>
+		
+		<antcall target="test-javalanche">
+			<!--${test.task.2.verbose}-->
+			<param name="javalanche.arg.line" value="  ${test.task.2.mutation.javaagent} ${test.task.2.memory} ${test.task.2.mutation.run.mode} ${test.task.2.javalanche.package.prefix} ${test.task.2.javalanche.project.test.suite} " />
+			<reference refid="test.task.2.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>                              
+	
+	
+	<target name="testTask3" description="* Run the tests multiple times in different order. The outcome of the tests should not depend on the execution order.">
 		<property name="test.task.3.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="test.task.3.memory" value="-Xmx1524m"/>
 		<property name="test.task.3.mutation.run.mode" value="-Dmutation.run.mode=test3"/>
 		<property name="test.task.3.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="test.task.3.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
 		<property name="test.task.3.verbose" value="-verbose"/>
-		
-
-		
 		
 		<path id="test.task.3.classpath.add">
 			<path refid="mutation.classpath"/>
@@ -53,7 +70,50 @@
 			<reference refid="test.task.3.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>
+
+	<target name="scanProject" depends="scanProjectNoDep,scanForTests" description="* Scan this project for classes to mutate and tests, that are not mutated. Produces an exclude file: mutation-files/exclude.txt">
 	
+	</target>
+	<target name="scanProjectNoDep">
+		<property name="scan.project.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="scan.project.memory" value="-Xmx1524m"/>
+		<property name="scan.project.mutation.run.mode" value="-Dmutation.run.mode=scan-project"/>
+		<property name="scan.project.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="scan.project.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="scan.project.verbose" value="-verbose"/>
+		
+		<path id="scan.project.classpath.add">
+			<path refid="mutation.classpath"/>
+		</path>
+		
+		<antcall target="test-javalanche">
+			<!--${scan.project.verbose}-->
+			<param name="javalanche.arg.line" value="  ${scan.project.mutation.javaagent} ${scan.project.memory} ${scan.project.mutation.run.mode} ${scan.project.javalanche.package.prefix} ${scan.project.javalanche.project.test.suite} " />
+			<reference refid="scan.project.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>
+	
+	<target name="scanForTests" description="* Scan in all subdirectories for tests ajdnd updates the excludes file. A different directroy can be supplied with the property -Djavalanche.test.base.dir=">
+		<mkdir dir="${javalanche.mutation.output.dir}"/>
+		<condition property="javalanche.test.base.dir" value=".">
+	  	<not>
+			<isset property="javalanche.test.base.dir"/>
+	  	</not>
+		</condition>
+	  
+		<java classname="de.unisb.cs.st.javalanche.mutation.testDetector.TestDetector" maxmemory="${javalanche.maxmemory}" fork="true">
+			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
+			<sysproperty key="javalanche.test.base.dir" value="${javalanche.test.base.dir}" />
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="cleanJavalancheMutation" description="* delete all files produced by javalanche mutation testing">
+		<delete dir="${javalanche.mutation.output.dir}"/>
+	</target>	
+
 	<target name="createCoverageDataMult" description="* create coverageData for multiple permuted runs">
 		<property name="test.task.3.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="test.task.3.memory" value="-Xmx1524m"/>
@@ -73,33 +133,7 @@
 		</antcall>
 	</target>
 	
-	
-	<target name="testTask2" description="* ">
-		<property name="test.task.2.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
-		<property name="test.task.2.memory" value="-Xmx1524m"/>
-		<property name="test.task.2.mutation.run.mode" value="-Dmutation.run.mode=test1"/>
-		<property name="test.task.2.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
-		<property name="test.task.2.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
-		<property name="test.task.2.verbose" value="-verbose"/>
-		
 
-		
-		
-		<path id="test.task.2.classpath.add">
-			<path refid="mutation.classpath"/>
-		</path>
-		
-		<antcall target="test-javalanche">
-			<!--${test.task.2.verbose}-->
-			<param name="javalanche.arg.line" value="  ${test.task.2.mutation.javaagent} ${test.task.2.memory} ${test.task.2.mutation.run.mode} ${test.task.2.javalanche.package.prefix} ${test.task.2.javalanche.project.test.suite} " />
-			<reference refid="test.task.2.classpath.add" torefid="javalanche.classpath.add"/>
-		</antcall>
-	</target>
-	
-
-	<target name="cleanJavalancheMutation" description="* delete all files produced by javalanche mutation testing">
-		<delete dir="${javalanche.mutation.output.dir}"/>
-	</target>
 	
 	<target name="runMake">
 		<exec executable="make" spawn="false">
@@ -116,7 +150,7 @@
 		<property name="scan.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
 		<!--property name="scan.bootclasspath" value="-Xbootclasspath/a:${mutation.classes.dir}:${mutation.jars.dir}/adabu2-core-0.4-SNAPSHOT.jar:${mutation.jars.dir}/adabu2-hoare-0.4-SNAPSHOT.jar:${mutation.jars.dir}/antlr-2.7.6.jar:${mutation.jars.dir}/asm-3.0.jar:${mutation.jars.dir}/asm-all-3.0.jar:${mutation.jars.dir}/asm-analysis-2.2.1.jar:${mutation.jars.dir}/asm-commons-2.2.1.jar:${mutation.jars.dir}/asm-tree-2.2.1.jar:${mutation.jars.dir}/asm-util-2.2.1.jar:${mutation.jars.dir}/bytecodeTransformer-1.0-SNAPSHOT.jar:${mutation.jars.dir}/c3p0-0.9.1.1.jar:${mutation.jars.dir}/cglib-2.1_3.jar:${mutation.jars.dir}/commons-collections-2.1.1.jar:${mutation.jars.dir}/commons-io-1.3.jar:${mutation.jars.dir}/commons-lang-2.4.jar:${mutation.jars.dir}/daikon-local.jar:${mutation.jars.dir}/dom4j-1.6.1.jar:${mutation.jars.dir}/ds-util-0.1.jar:${mutation.jars.dir}/ehcache-1.2.3.jar:${mutation.jars.dir}/freemarker-2.3.4.jar:${mutation.jars.dir}/google-collect-snapshot-20080530.jar:${mutation.jars.dir}/hibernate-3.2.2.ga.jar:${mutation.jars.dir}/hibernate-annotations-3.3.0.ga.jar:${mutation.jars.dir}/hibernate-commons-annotations-3.3.0.ga.jar:${mutation.jars.dir}/hibernate-tools-3.2.0.beta9a.jar:${mutation.jars.dir}/hsqldb-1.8.0.1.jar:${mutation.jars.dir}/invariants-0.1.jar:${mutation.jars.dir}/jcommon-1.0.0.jar:${mutation.jars.dir}/jfreechart-1.0.0.jar:${mutation.jars.dir}/jta-1.0.1B.jar:${mutation.jars.dir}/jtidy-r8-20060801.jar:${mutation.jars.dir}/junit-4.1.jar:${mutation.jars.dir}/log4j-1.2.9.jar:${mutation.jars.dir}/mysql-connector-java-nightly.jar:${mutation.jars.dir}/persistence-api-1.0.jar:${mutation.jars.dir}/prefuse-beta-20060220.jar:${mutation.jars.dir}/sibrelib-local.jar:${mutation.jars.dir}/util-0.1.jar:${mutation.jars.dir}/xpp3_min-1.1.3.4.O.jar:${mutation.jars.dir}/xstream-1.2.jar:/scratch/commons-logging-1.1.jar"/>
 		-->
-		<property name="scan.bootclasspath" value="-Xbootclasspath/a:${javalanche.projects.location}/mutationTest/target/javalanche-mutation-bootclasspath.jar"/>
+		<property name="scan.bootclasspath" value="-Xbootclasspath/a:${mutation.base.dir}/target/javalanche-mutation-bootclasspath.jar"/>
 		<path id="scan.javalanche.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
@@ -177,22 +211,7 @@
 		</java>
 	</target>
 	
-	<target name="scanForTests" description="* Scan in all subdirectories for tests. A different directroy can be supplied with the property -Djavalanche.test.base.dir=">
-		<mkdir dir="${javalanche.mutation.output.dir}"/>
-		<condition property="javalanche.test.base.dir" value=".">
-	  	<not>
-			<isset property="javalanche.test.base.dir"/>
-	  	</not>
-		</condition>
-	  
-		<java classname="de.unisb.cs.st.javalanche.mutation.testDetector.TestDetector" maxmemory="${javalanche.maxmemory}" fork="true">
-			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
-			<sysproperty key="javalanche.test.base.dir" value="${javalanche.test.base.dir}" />
-			<classpath>
-				<path refid="mutation.classpath" />
-			</classpath>
-		</java>
-	</target>
+	
 	
 	
 	<target name="runMutations" description="* run a given mutation task">
@@ -430,9 +449,9 @@
 			<arg line="${prog.arg}"/>
 		</java>
 	</target>
-	
-	
-		<property name="invariant.dir" value="invariant-files/" />
+
+
+	<property name="invariant.dir" value="invariant-files/" />
 	<property name="field.file" value="${invariant.dir}/field-results.ser" />
 	<property name="invariant.checker.file" value="${invariant.dir}/${project.prefix}-invariant-checkers.ser" />
 
@@ -481,7 +500,7 @@ Additional Stuff
 	</target>
 	
 		
-	<target name="showMutation" description="* delete result for single specified mutation (property -Dmutation.id=) ">
+	<target name="showMutation" description="* Show the mutation with given id (-Dmutation.id= ) and its results. ">
 		<echo> Display mutation with id: ${mutation.id} </echo>
 		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.tools.ShowMutation" maxmemory="${javalanche.maxmemory}" fork="true">
 			<classpath>
@@ -536,13 +555,17 @@ Additional Stuff
 		</java>
 	</target>
 	
-	<target name="testFilePerformance" description="* ">
+	<!--
+	Test the performance of file writing onthe current system.
+	-->
+	<target name="testFilePerformance">
 		<java classname="de.unisb.cs.st.javalanche.mutation.util.FilePerformanceTest" maxmemory="${javalanche.maxmemory}" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
 			</classpath>
 		</java>
 	</target>
+	
 	
 	<target name="compareTraces" description="* compare two traces (property -Dcmpmode= -Dcmpid1= -Dcmpid2=) ">
 		<echo> Compare ${cmpmode} traces: ${cmpid1} vs. ${cmpid2}</echo>
@@ -554,4 +577,4 @@ Additional Stuff
 		</java>
 	</target>
 	
-	</project>
+</project>

@@ -42,7 +42,8 @@ public class MutationProperties {
 		return properties;
 	}
 
-	public static final String OUTPUT_DIR = getProperty("javalanche.mutation.output.dir");
+	public static final String OUTPUT_DIR = getPropertyOrDefault(
+			"javalanche.mutation.output.dir", "mutation-files");
 
 	public static final String[] TEST_CLASSES_TO_INSTRUMENT = { "de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps" };
 
@@ -56,7 +57,7 @@ public class MutationProperties {
 				"mutation-invariant-per-test"), MUTATION_TEST_COVERAGE(
 				"mutation-coverage"), CREATE_COVERAGE("create-coverage"), OFF(
 				"off"), CHECK_INVARIANTS_PER_TEST("check-per-test"), TEST_PERMUTED(
-				"test3");
+				"test3"), SCAN_PROJECT("scan-project");
 
 		private String key;
 
@@ -121,10 +122,10 @@ public class MutationProperties {
 	public static final String MUTATIONS_CLASS_RESULT_XML = "mutations-class-result.xml";
 
 	/**
-	 *
+	 * 
 	 * The key for the system property that specifies the package prefix of the
 	 * project to mutate.
-	 *
+	 * 
 	 * -dmutation.package.prefix=org.aspectj
 	 */
 	public static final String PROJECT_PREFIX_KEY = "mutation.package.prefix";
@@ -132,10 +133,10 @@ public class MutationProperties {
 	public static String PROJECT_PREFIX = getPrefix();
 
 	/**
-	 *
+	 * 
 	 * The key for the system property that specifies the the testsuite which
 	 * should be modified
-	 *
+	 * 
 	 * -dmutation.test.suite=AllTests
 	 */
 	public static final String TEST_SUITE_KEY = "mutation.test.suite";
@@ -145,9 +146,9 @@ public class MutationProperties {
 	/**
 	 * The key for the system property that specifies if there is coverage
 	 * information in the db.
-	 *
+	 * 
 	 * -dmutation.coverage.information=false
-	 *
+	 * 
 	 */
 	public static final String COVERAGE_INFORMATION_KEY = "mutation.coverage.information";
 
@@ -217,7 +218,7 @@ public class MutationProperties {
 
 	public static final boolean STOP_AFTER_FIRST_FAIL = getPropertyOrDefault(
 
-	STOP_AFTER_FIRST_FAIL_KEY, false);
+	STOP_AFTER_FIRST_FAIL_KEY, true);
 
 	private static final String DEFAULT_TIMEOUT_IN_SECONDS_KEY = "mutation.default.timeout";
 	public static final int DEFAULT_TIMEOUT_IN_SECONDS = getPropertyOrDefault(
@@ -329,5 +330,11 @@ public class MutationProperties {
 					+ key);
 		}
 	}
+
+	public static final File TEST_MAP_FILE = new File(OUTPUT_DIR,
+			"testname-map.xml");
+
+	public static final File EXCLUDE_FILE = new File(OUTPUT_DIR,
+			"exclude.txt");
 
 }

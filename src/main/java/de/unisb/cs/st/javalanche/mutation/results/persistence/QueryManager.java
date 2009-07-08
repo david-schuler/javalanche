@@ -36,7 +36,7 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
  */
 /**
  * @author David Schuler
- *
+ * 
  */
 @SuppressWarnings("unchecked")
 public class QueryManager {
@@ -57,7 +57,7 @@ public class QueryManager {
 
 	/**
 	 * Get Mutation that corresponds to given mutation from the database.
-	 *
+	 * 
 	 * @throws RuntimeException
 	 *             if no Mutation was found in the db.
 	 * @param mutation
@@ -74,8 +74,8 @@ public class QueryManager {
 
 	/**
 	 * Get Mutation that corresponds to given mutation from the database.
-	 *
-	 *
+	 * 
+	 * 
 	 * @param mutation
 	 *            Mutation that is used to query.
 	 * @return The Mutation from the database or null if it is not contained.
@@ -109,8 +109,8 @@ public class QueryManager {
 
 	/**
 	 * Get Mutation that corresponds to given mutation from the database.
-	 *
-	 *
+	 * 
+	 * 
 	 * @param mutation
 	 *            Mutation that is used to query.
 	 * @return The Mutation from the database or null if it is not contained.
@@ -140,7 +140,7 @@ public class QueryManager {
 
 	/**
 	 * Set the result for the mutation and update the mutation in the database.
-	 *
+	 * 
 	 * @param mutation
 	 *            The Mutation to update.
 	 * @param mutationTestResult
@@ -200,7 +200,7 @@ public class QueryManager {
 	/**
 	 * Fetches the given number of Mutations from the database, if there are
 	 * that much.
-	 *
+	 * 
 	 * @param maxResults
 	 *            The number of Mutations to fetch.
 	 * @return The List of fetched Mutations.
@@ -223,7 +223,7 @@ public class QueryManager {
 
 	/**
 	 * Fetch all mutations for a given class from the database.
-	 *
+	 * 
 	 * @param className
 	 *            The name of the class in this form "java.lang.Object"
 	 * @return A list of Mutations for this class.
@@ -244,7 +244,7 @@ public class QueryManager {
 
 	/**
 	 * Saves given mutation in database if it is not already contained.
-	 *
+	 * 
 	 * @param mutation
 	 *            The mutation to save.
 	 */
@@ -263,7 +263,7 @@ public class QueryManager {
 
 	/**
 	 * Save an object to the database, no checking is performed.
-	 *
+	 * 
 	 * @param objectToSave
 	 *            The object to save.
 	 */
@@ -277,7 +277,7 @@ public class QueryManager {
 
 	/**
 	 * Checks if there are mutations for given class in the database.
-	 *
+	 * 
 	 * @param className
 	 *            Name of the class.
 	 * @return True, if there is on or more Mutation in the database.
@@ -327,6 +327,8 @@ public class QueryManager {
 				l = ((BigInteger) firstElement).longValue();
 			} else if (firstElement instanceof BigDecimal) {
 				l = ((BigDecimal) firstElement).longValue();
+			} else if (firstElement instanceof Integer) {
+				l = ((Integer) firstElement).longValue();
 			} else {
 				throw new RuntimeException("Expected a long result. Got:  "
 						+ firstElement.getClass());
@@ -339,7 +341,7 @@ public class QueryManager {
 
 	/**
 	 * Checks if the line of a given mutation is covered by a test case.
-	 *
+	 * 
 	 * @param mutation
 	 *            The mutation to check.
 	 * @return True, if the line of the mutation is at least covered by one test
@@ -352,7 +354,7 @@ public class QueryManager {
 
 	/**
 	 * Returns the number of mutations that have a result associated.
-	 *
+	 * 
 	 * @return The number of mutations that have a result associated.
 	 */
 	public static long getNumberOfMutationsWithResult() {
@@ -369,7 +371,7 @@ public class QueryManager {
 
 	/**
 	 * Query the database for mutations with the given ids.
-	 *
+	 * 
 	 * @param ids
 	 *            The ids that are used to query.
 	 * @return Return a list of mutations with the given ids.
@@ -402,7 +404,7 @@ public class QueryManager {
 
 	/**
 	 * Query the database for mutation with the given id.
-	 *
+	 * 
 	 * @param id
 	 *            The id that is used to query.
 	 * @return The mutation with the given id.
@@ -426,7 +428,7 @@ public class QueryManager {
 	 * Generates a mutation of type not mutated in the database, if there is
 	 * none in the db. The generated mutation or the one from the db is
 	 * returned.
-	 *
+	 * 
 	 * @param mutation
 	 *            Mutation to generate a mutation of type not mutated for.
 	 * @return The generated mutation or the mutation from the db.
@@ -516,14 +518,14 @@ public class QueryManager {
 
 	/**
 	 * Return the number of covered mutations with the set project prefix.
-	 *
+	 * 
 	 * @return the number of covered mutations with the set project prefix.
 	 */
 	public static long getNumberOfCoveredMutations() {
 		String prefix = MutationProperties.PROJECT_PREFIX;
 		Session session = openSession();
 		Transaction tx = session.beginTransaction();
-		String queryString = "SELECT count(DISTINCT mutationID) FROM MutationCoverage mc JOIN Mutation m ON mc.mutationID = m.id WHERE m.className LIKE '"
+		String queryString = "SELECT count(DISTINCT mutationID) FROM MutationCoverage mc JOIN Mutation m ON mc.mutationID = m.id WHERE NOT m.classInit AND m.className LIKE '"
 				+ prefix + "%'";
 		SQLQuery sqlQuery = session.createSQLQuery(queryString);
 		List results = sqlQuery.list();
@@ -555,7 +557,7 @@ public class QueryManager {
 	/**
 	 * Return a list of mutation ids that have coverage data associated but do
 	 * not have a result yet.
-	 *
+	 * 
 	 * @return a list of mutation ids.
 	 */
 	public static List<Long> getMutationsIdListFromDb(String prefix, int limit) {
@@ -593,7 +595,7 @@ public class QueryManager {
 
 	/**
 	 * Save the given coverage data to the database.
-	 *
+	 * 
 	 * @param coverageData
 	 *            a map that contains the collected coverage data
 	 */
@@ -663,7 +665,7 @@ public class QueryManager {
 		int saves = 0, flushs = 0;
 		System.out
 				.println("Writting coverage data to the database (This may take a while).");
-		int count = 0, allcount =0;
+		int count = 0, allcount = 0;
 		for (Map.Entry<Long, Set<String>> entry : coverageData.entrySet()) {
 			List<TestName> testNames = new ArrayList<TestName>();
 			Long mutationID = entry.getKey();
@@ -752,7 +754,7 @@ public class QueryManager {
 
 	/**
 	 * Returns the coverage data for given mutation id, or null if it has none.
-	 *
+	 * 
 	 * @param id
 	 *            the id of the mutation.
 	 * @return the coverage data or null
@@ -779,7 +781,7 @@ public class QueryManager {
 
 	/**
 	 * Delete Coverage data for given set of mutationids. rage data
-	 *
+	 * 
 	 * @param ids
 	 *            mutation ids that should be deleted.
 	 */
@@ -844,9 +846,9 @@ public class QueryManager {
 	}
 
 	/**
-	 *
+	 * 
 	 * Add testnames to the database although they did not cover any mutation.
-	 *
+	 * 
 	 * @param testsRun
 	 */
 	@SuppressWarnings("unchecked")
@@ -910,7 +912,7 @@ public class QueryManager {
 		Transaction tx = session.beginTransaction();
 		Query query = session
 				.createQuery("SELECT count(*) FROM Mutation WHERE className LIKE '"
-						+ projectPrefix + "%'");
+						+ projectPrefix + "%' AND classInit=false");
 		List results = query.list();
 		long l = getResultFromCountQuery(results);
 		tx.commit();
@@ -1019,7 +1021,7 @@ public class QueryManager {
 
 	/**
 	 * Return the object with given id and class from the database.
-	 *
+	 * 
 	 * @param id
 	 *            the id of the object
 	 * @param clazz
@@ -1038,7 +1040,7 @@ public class QueryManager {
 	/**
 	 * Return the object with given id and class from the database. If there is
 	 * no object with the given id in the database then null is returned.
-	 *
+	 * 
 	 * @param id
 	 *            the id of the object
 	 * @param clazz

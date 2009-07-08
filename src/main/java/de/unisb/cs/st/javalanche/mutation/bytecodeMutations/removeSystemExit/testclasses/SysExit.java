@@ -1,4 +1,4 @@
-package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.sysexit.testclasses;
+package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.testclasses;
 
 public class SysExit {
 
@@ -7,7 +7,7 @@ public class SysExit {
 	private int lastErrors;
 
 	public int method1() {
-		int i = 1;
+		int i = Integer.parseInt("1");
 		System.exit(0);
 		return i;
 	}

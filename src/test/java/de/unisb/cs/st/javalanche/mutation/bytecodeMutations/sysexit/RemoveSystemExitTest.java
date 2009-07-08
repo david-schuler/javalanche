@@ -12,14 +12,14 @@ import org.junit.Before;
 import org.junit.Test;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsCollectorTransformer;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.sysexit.testclasses.SysExit;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.sysexit.testclasses.SysExitTest;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.testclasses.SysExit;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.testclasses.SysExitTest;
 import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.MutationTestSuite;
 
 public class RemoveSystemExitTest {
 
 	static {
-		String classname = "de.unisb.cs.st.javalanche.mutation.bytecodeMutations.sysexit.testclasses.SysExit";
+		String classname = "de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.testclasses.SysExit";
 		ByteCodeTestUtils.deleteMutations(classname);
 		ByteCodeTestUtils.generateTestDataInDB(System.getProperty("user.dir")
 				+ "/target/classes/" + classname.replace('.', '/') + ".class",
@@ -58,7 +58,7 @@ public class RemoveSystemExitTest {
 
 	@Test
 	public void runTests() {
-		MutationTestSuite selectiveTestSuite = new MutationTestSuite();
+		// MutationTestSuite selectiveTestSuite = new MutationTestSuite();
 		TestSuite suite = new TestSuite(SysExitTest.class);
 		TestResult testResult = new TestResult();
 		suite.run(testResult);

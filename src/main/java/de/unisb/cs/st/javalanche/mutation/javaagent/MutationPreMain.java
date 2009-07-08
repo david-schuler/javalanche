@@ -11,7 +11,9 @@ import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.Integrat
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.IntegrateRandomPermutationTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationScanner;
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanProjectTransformer;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
@@ -21,9 +23,9 @@ import de.unisb.cs.st.javalanche.invariants.javaagent.InvariantTransformer;
 
 /**
  * Class that is used by the javaagent.
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class MutationPreMain {
 
@@ -43,6 +45,7 @@ public class MutationPreMain {
 
 	public static final PrintStream sysout = System.out;
 
+	
 	private static ClassFileTransformer classFileTransformer = null;
 
 	public static void premain(String agentArguments,
@@ -75,30 +78,42 @@ public class MutationPreMain {
 				return;
 
 			} else if (RUN_MODE == MUTATION_TEST_COVERAGE) {
+				System.out
+						.println("Run mutation tests with tracing of coverage data per test");
 				addClassFileTransformer(instrumentation,
 						new MutationFileTransformer());
 				addClassFileTransformer(instrumentation, new TraceTransformer());
+				return;
 			} else if (RUN_MODE == SCAN) {
 				System.out.println("Scanning for mutations");
 				addClassFileTransformer(instrumentation, new MutationScanner());
 				return;
-			} else if (RUN_MODE == TEST_TESTSUIT_FIRST || RUN_MODE == TEST_PERMUTED) {
+			} else if (RUN_MODE == TEST_TESTSUIT_FIRST
+					|| RUN_MODE == TEST_PERMUTED) {
 				System.out.println("Integrating RandomPermutationTestSuite");
 				addClassFileTransformer(instrumentation,
 						new IntegrateRandomPermutationTransformer());
-				//FIXME
-//				addClassFileTransformer(instrumentation, new TraceTransformer());
+				// FIXME
+				// addClassFileTransformer(instrumentation, new
+				// TraceTransformer());
 
 				return;
 			} else if (RUN_MODE == CREATE_COVERAGE) {
-				System.out.println("Getting line coverage data for unmutated run.");
+				System.out
+						.println("Getting line coverage data for unmutated run.");
 				addClassFileTransformer(instrumentation,
 						new IntegrateRandomPermutationTransformer());
 				addClassFileTransformer(instrumentation, new TraceTransformer());
+				return;
 			} else if (RUN_MODE == TEST_TESTSUITE_SECOND) {
 				System.out.println("Check test suite data in db");
 				addClassFileTransformer(instrumentation,
 						new IntegrateCheckNamesSuiteTransformer());
+				return;
+			} else if (RUN_MODE == SCAN_PROJECT) {
+				System.out.println("Scanning project for classes");
+				addClassFileTransformer(instrumentation,
+						new ScanProjectTransformer());
 				return;
 			}
 

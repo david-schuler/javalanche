@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 
 public class TestInfo {
 
@@ -17,10 +18,10 @@ public class TestInfo {
 		if (testNames == null) {
 			initTestNames();
 		}
-		String checkString  = classNameWithDots;
+		String checkString = classNameWithDots;
 		if (classNameWithDots.contains("$")) {
-			checkString = classNameWithDots.substring(0,
-					classNameWithDots.indexOf("$"));
+			checkString = classNameWithDots.substring(0, classNameWithDots
+					.indexOf("$"));
 		}
 		logger.debug("Checking test: " + classNameWithDots + " Contained "
 				+ testNames.containsKey(checkString));
@@ -28,7 +29,7 @@ public class TestInfo {
 	}
 
 	private static void initTestNames() {
-		File file = new File(TestDetector.TEST_MAP_FILENAME);
+		File file = MutationProperties.TEST_MAP_FILE;
 		if (file.exists()) {
 			testNames = XmlIo.get(file);
 		} else {

@@ -111,7 +111,8 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			try {
 				String classNameWithDots = className.replace('/', '.');
 				// logger.info(className + " is passed to transformer");
-				if (isSystemExitClass(classNameWithDots)) {
+				if (mutationDecision.shouldBeHandled(classNameWithDots)
+						|| isSystemExitClass(classNameWithDots)) {
 					logger.info("Removing calls to System.exit() from class: "
 							+ classNameWithDots);
 					classfileBuffer = systemExitTransformer

@@ -1,4 +1,4 @@
-package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.sysexit.testclasses;
+package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.testclasses;
 
 import org.junit.Ignore;
 import org.junit.Test;

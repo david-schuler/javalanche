@@ -29,6 +29,9 @@ public class MutationDecisionFactory {
 			if (TestInfo.isTest(classNameWithDots)) {
 				return false;
 			}
+			if (Excludes.getInstance().shouldExclude(classNameWithDots)) {
+				return false;
+			}
 			if (classNameWithDots.startsWith(MutationProperties.PROJECT_PREFIX)) {
 				if (QueryManager.hasMutationsforClass(classNameWithDots)) {
 					return false;

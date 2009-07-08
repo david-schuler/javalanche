@@ -10,7 +10,8 @@ import org.objectweb.asm.MethodVisitor;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.AbstractMutationAdapter;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
-public abstract class AbstractRemoveCallsAdapter extends AbstractMutationAdapter {
+public abstract class AbstractRemoveCallsAdapter extends
+		AbstractMutationAdapter {
 
 	private static Logger logger = Logger
 			.getLogger(AbstractRemoveCallsAdapter.class);
@@ -20,11 +21,12 @@ public abstract class AbstractRemoveCallsAdapter extends AbstractMutationAdapter
 		super(mv, className, methodName, possibilities);
 	}
 
-	// TODO Ignore StringBuilder StringBuffer?
+
 	@Override
 	public void visitMethodInsn(final int opcode, final String owner,
 			final String name, final String desc) {
-		if (mutationCode || name.equals("<init>")) {
+		if (mutationCode || name.equals("<init>")
+				|| (owner.equals("java/lang/System") && name.equals("exit"))) {
 			mv.visitMethodInsn(opcode, owner, name, desc);
 		} else {
 			mutate(opcode, owner, name, desc);
@@ -38,7 +40,7 @@ public abstract class AbstractRemoveCallsAdapter extends AbstractMutationAdapter
 				getPossibilityForLine(), REMOVE_CALL, isClassInit);
 		logger.debug("Found possibility for line " + getLineNumber());
 		addPossibilityForLine();
-		handleMutation(queryMutation, opcode, owner, name, desc);
+ 		handleMutation(queryMutation, opcode, owner, name, desc);
 	}
 
 	protected abstract void handleMutation(Mutation mutation, int opcode,

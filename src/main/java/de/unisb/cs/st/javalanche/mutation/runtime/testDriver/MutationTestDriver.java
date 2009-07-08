@@ -132,9 +132,9 @@ public abstract class MutationTestDriver {
 			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) {
 				addMutationTestListener(new InvariantPerTestListener());
 			}
-//			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_COVERAGE) {
-//				addMutationTestListener(new TracerTestListener());
-//			}
+			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_COVERAGE) {
+				addMutationTestListener(new TracerTestListener());
+			}
 			listeners.addLast(new ResultReporter());
 			runMutations();
 		} else if (MutationProperties.RUN_MODE == RunMode.SCAN) {
