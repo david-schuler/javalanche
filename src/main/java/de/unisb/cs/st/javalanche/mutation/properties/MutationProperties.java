@@ -337,4 +337,11 @@ public class MutationProperties {
 	public static final File EXCLUDE_FILE = new File(OUTPUT_DIR,
 			"exclude.txt");
 
+	public static final int BATCH_SIZE = 1;
+
+	private static final String SINGLE_TASK_MODE_KEY = "single.task.mode";
+
+	public static final boolean SINGLE_TASK_MODE = getPropertyOrDefault(
+			SINGLE_TASK_MODE_KEY, false);
+
 }

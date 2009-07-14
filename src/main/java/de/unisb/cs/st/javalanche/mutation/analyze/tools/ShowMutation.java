@@ -10,6 +10,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.util.HibernateServerUtil;
 
@@ -22,16 +23,16 @@ public class ShowMutation {
 		if (args.length < 1) {
 			System.out.println("Usage: <mutationID> [<mutationID>]*");
 			System.out.println("Showing one default mutation".length());
-//			showMutation(1424030);
-//			showMutation(1454789);
+			// showMutation(1424030);
+			// showMutation(1454789);
 			showMutation(1449387);
 		}
 
 		int length = "".split("\n").length;
 		PrintStream outBack = System.out;
 		PrintStream errBack = System.err;
-		ByteArrayOutputStream  outCapt = new ByteArrayOutputStream();
-		ByteArrayOutputStream  errCapt = new ByteArrayOutputStream();
+		ByteArrayOutputStream outCapt = new ByteArrayOutputStream();
+		ByteArrayOutputStream errCapt = new ByteArrayOutputStream();
 		System.setOut(new PrintStream(outCapt));
 		System.setErr(new PrintStream(errCapt));
 		System.setOut(outBack);
@@ -44,12 +45,9 @@ public class ShowMutation {
 		}
 	}
 
-
-
-
 	/**
 	 * Fetches one a mutation from the database an prints it to the console.
-	 *
+	 * 
 	 * @param id
 	 *            the id of the mutation to print
 	 */
@@ -67,11 +65,12 @@ public class ShowMutation {
 		List<Mutation> mutations = query.list();
 		int count = 0;
 		for (Mutation mutation : mutations) {
-			System.out.println((count++) +  "  "+mutation);
+			System.out.println((count++) + "  " + mutation);
 			System.out.println("TestCases for mutation: "
-					+ QueryManager.getTestsCollectedData(mutation));
+					+ MutationCoverageFile.getCoverageDataId(mutation.getId())
+							.size());
 			boolean coveredMutation = QueryManager.isCoveredMutation(mutation);
-			System.out.println("Is covered: "  + coveredMutation);
+			System.out.println("Is covered: " + coveredMutation);
 		}
 		tx.commit();
 		session.close();

@@ -7,24 +7,25 @@ import java.util.Set;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
+
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 
 /**
  * Class handles the activation and deactivation of the mutations during
  * runtime.
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class MutationSwitcher {
 
 	private static Logger logger = Logger.getLogger(MutationSwitcher.class);
 
 	/**
-	 * The mutations that are activated in this run
+	 * The mutations that get activated in this run
 	 */
 	private Collection<Mutation> mutations;
 
@@ -49,7 +50,7 @@ public class MutationSwitcher {
 
 	/**
 	 * Checks if there is a mutation to apply.
-	 *
+	 * 
 	 * @return True, if next() will return a mutation.
 	 */
 	public boolean hasNext() {
@@ -62,7 +63,7 @@ public class MutationSwitcher {
 	/**
 	 * Takes the next mutation without a result and sets it as the actual
 	 * mutation.
-	 *
+	 * 
 	 * @return The mutation that is now the actual mutation.
 	 */
 	public Mutation next() {
@@ -107,8 +108,10 @@ public class MutationSwitcher {
 			System.clearProperty(MutationProperties.ACTUAL_MUTATION_KEY);
 			stopWatch.stop();
 			logger.info("Disabling mutation: "
-					+ actualMutation.getMutationVariable() + " Time needed "
-					+ DurationFormatUtils.formatDurationHMS(stopWatch.getTime()) );
+					+ actualMutation.getMutationVariable()
+					+ " Time needed "
+					+ DurationFormatUtils
+							.formatDurationHMS(stopWatch.getTime()));
 			actualMutation = null;
 		}
 	}
@@ -117,6 +120,6 @@ public class MutationSwitcher {
 	 * @return The test cases that cover the actual activated mutation.
 	 */
 	public Set<String> getTests() {
-		return QueryManager.getTestsCollectedData(actualMutation);
+		return MutationCoverageFile.getCoverageDataId(actualMutation.getId());
 	}
 }

@@ -23,8 +23,6 @@ public class LongArrayTest {
 		System.out.println(testResult);
 		delete(testResult);
 
-
-
 	}
 
 	private void delete(MutationTestResult testResult) {

@@ -14,6 +14,7 @@ import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutation
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
@@ -57,12 +58,12 @@ public class MutationScanner implements ClassFileTransformer {
 			@Override
 			public void run() {
 				String message1 = String.format(
-						"Got %d mutation possibilities before run",
+						"Got %d mutation possibilities before run.",
 						mutationPossibilitiesPre);
 				final long mutationPossibilitiesPost = QueryManager
 						.getNumberOfMutationsWithPrefix(MutationProperties.PROJECT_PREFIX);
 				String message2 = String.format(
-						"Got %d mutation possibilities after run",
+						"Got %d mutation possibilities after run.",
 						mutationPossibilitiesPost);
 				String message3 = String.format(
 						"Added %d mutation possibilities.",
@@ -71,21 +72,21 @@ public class MutationScanner implements ClassFileTransformer {
 				long addedTests = QueryManager.getNumberOfTests()
 						- numberOfTestsPre;
 				String testMessage = String.format(
-						"Added %d tests. Tests for project %s : %d",
+						"Added %d tests. Total number of tests for project %s : %d",
 						addedTests, MutationProperties.PROJECT_PREFIX,
 						numberOfTests);
-				long coveredMutations = QueryManager
+				long coveredMutations = MutationCoverageFile
 						.getNumberOfCoveredMutations();
 				String coveredMessage = String
 						.format(
-								"%d mutations are covered by tests which is  %f percent",
+								"%d (%.2f %%) mutations are covered by tests.",
 								coveredMutations,
 								(((double) coveredMutations) / mutationPossibilitiesPost) * 100.);
-				logger.info(message1);
-				logger.info(message2);
-				logger.info(message3);
-				logger.info(testMessage);
-				logger.info(coveredMessage);
+				System.out.println(message1);
+				System.out.println(message2);
+				System.out.println(message3);
+				System.out.println(testMessage);
+				System.out.println(coveredMessage);
 			}
 		});
 	}

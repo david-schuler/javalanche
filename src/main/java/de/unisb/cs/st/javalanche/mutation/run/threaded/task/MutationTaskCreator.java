@@ -5,21 +5,23 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
 import quicktime.std.movies.media.HandlerInfo;
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.util.HandleUnsafeMutations;
 
 /**
  * Creates Mutation tasks that can later be executed on multiple JVMs
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class MutationTaskCreator {
 
@@ -68,12 +70,18 @@ public class MutationTaskCreator {
 		if (mutationsPerTaskProperty != null) {
 			mutationsPerTask = Integer.parseInt(mutationsPerTaskProperty);
 		}
-		String mutationTargetTasks = System.getProperty(MUTATION_FIXED_NUMBER_OF_TASKS_KEY);
+		String mutationTargetTasks = System
+				.getProperty(MUTATION_FIXED_NUMBER_OF_TASKS_KEY);
 
 		if (mutationTargetTasks != null) {
 			numberOfTasks = Integer.parseInt(mutationTargetTasks);
-			int size = QueryManager.getMutationsIdListFromDb(MutationProperties.PROJECT_PREFIX, 0).size();
-			mutationsPerTask = (int) Math.ceil(size  *1. / numberOfTasks);
+			Set<Long> coveredMutations = MutationCoverageFile
+					.getCoveredMutations();
+		
+			List<Long> mutationIds = QueryManager.getMutationsWithoutResult(
+					coveredMutations, 0);
+			int size = mutationIds.size();
+			mutationsPerTask = (int) Math.ceil(size * 1. / numberOfTasks);
 		}
 		createMutationTasks(numberOfTasks, mutationsPerTask);
 	}
@@ -117,7 +125,7 @@ public class MutationTaskCreator {
 	 * Generates given number of mutation task, where each task consists of a
 	 * given number of mutations. Note: The
 	 * {@link MutationProperties.PROJECT_PREFIX} variable has to be set.
-	 *
+	 * 
 	 * @param numberOfTasks
 	 *            number of tasks that should be created
 	 * @param mutationsPerTask
@@ -150,10 +158,13 @@ public class MutationTaskCreator {
 
 	}
 
-	private static List<Long> getMutations(String prefix, int numberOfIds) {
-		logger.info("Trying to fetch " + numberOfIds + " mutations");
-		List<Long> mutationIds = QueryManager.getMutationsIdListFromDb(
-				 prefix,numberOfIds);
+	private static List<Long> getMutations(String prefix, int limit) {
+		logger.info("Trying to fetch " + limit + " mutations");
+		Set<Long> covered = MutationCoverageFile.getCoveredMutations();
+		List<Long> mutationIds = QueryManager.getMutationsWithoutResult(
+				covered, limit);
+
+		logger.info("Covered Mutations " + covered.size());
 		logger.info("Got " + mutationIds.size() + " mutations");
 		return mutationIds;
 	}
@@ -172,7 +183,8 @@ public class MutationTaskCreator {
 
 	public static void main(String[] args) {
 		MutationProperties.checkProperty(MutationProperties.PROJECT_PREFIX_KEY);
-		HandleUnsafeMutations.handleUnsafeMutations(HibernateUtil.getSessionFactory());
+		HandleUnsafeMutations.handleUnsafeMutations(HibernateUtil
+				.getSessionFactory());
 		createMutationTasks();
 	}
 

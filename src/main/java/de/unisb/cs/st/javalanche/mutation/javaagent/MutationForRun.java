@@ -18,13 +18,14 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.util.MutationMakeFileGenerator;
 
 /**
  * Singleton class that holds all mutations that should be applied and executed
  * during a run.
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class MutationForRun {
 
@@ -86,7 +87,7 @@ public class MutationForRun {
 	 * The list of mutations for this run. This list will only contain mutations
 	 * without results, if they already have a result they will not be apllied
 	 * again.
-	 *
+	 * 
 	 * @return the list of mutations for this run.
 	 */
 	public List<Mutation> getMutations() {
@@ -97,12 +98,13 @@ public class MutationForRun {
 	 * Reads a list of mutation ids from a file and fetches the corresponding
 	 * mutations from the database. Mutations that already have a result are
 	 * filtered such that they get not applied again.
-	 *
+	 * 
 	 * @return a list of mutations for this run.
 	 */
 	private static List<Mutation> getMutationsForRun() {
 		List<Mutation> mutationsToReturn = new ArrayList<Mutation>();
-		if (MutationProperties.MUTATION_FILE_NAME != null) {
+		if (!MutationProperties.SINGLE_TASK_MODE
+				&& MutationProperties.MUTATION_FILE_NAME != null) {
 			logger.debug("Value of mutation file: "
 					+ MutationProperties.MUTATION_FILE_NAME);
 			File file = new File(MutationProperties.MUTATION_FILE_NAME);
@@ -111,10 +113,17 @@ public class MutationForRun {
 						+ file.getAbsolutePath());
 				mutationsToReturn = getMutationsByFile(file);
 			} else {
-				logger.info("Mutation file does not exist " + file);
+				logger.warn("Mutation file does not exist " + file);
+			}
+		} else if (MutationProperties.SINGLE_TASK_MODE) {
+			File[] taskFiles = MutationMakeFileGenerator.getTaskFiles();
+			if (taskFiles.length > 0) {
+				mutationsToReturn = getMutationsByFile(taskFiles[0]);
+			}else{
+				logger.warn("No task file found.");
 			}
 		} else {
-			logger.info("Property not found: "
+			logger.warn("Property not found: "
 					+ MutationProperties.MUTATION_FILE_KEY);
 		}
 		filterMutationsWithResult(mutationsToReturn);
@@ -124,7 +133,7 @@ public class MutationForRun {
 	/**
 	 * Removes the mutations that have a result from the given list of
 	 * mutations.
-	 *
+	 * 
 	 * @param mutations
 	 *            the list of mutations to be filtered.
 	 */
@@ -153,7 +162,7 @@ public class MutationForRun {
 	/**
 	 * Reads a list of mutation ids from a file and fetches the corresponding
 	 * mutations from the database.
-	 *
+	 * 
 	 * @param file
 	 *            the file to read from
 	 * @return a list of mutations read from the db.
@@ -180,7 +189,7 @@ public class MutationForRun {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param mutation
 	 *            the mutation to check
 	 * @return true, if the given mutation is a mutation for this run.
@@ -206,7 +215,7 @@ public class MutationForRun {
 	/**
 	 * Method that is called by the instrumentation classes to signalize that
 	 * the given mutation was applied.
-	 *
+	 * 
 	 * @param mutation
 	 *            the mutation that was applied.
 	 */

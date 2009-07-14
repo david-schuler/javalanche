@@ -48,7 +48,7 @@ public class MutationMakeFileGenerator {
 	private static boolean multiFileMode = MutationProperties.MULTIPLE_MAKEFILES;
 
 	private static String generateMakeFile(String scriptCommand, String add) {
-		File[] files = getTaskFiles(new File(MutationProperties.RESULT_DIR));
+		File[] files = getTaskFiles();
 		logger.info("Creating targets for " + files.length + " tasks");
 
 		StringBuilder sb = new StringBuilder();
@@ -106,7 +106,8 @@ public class MutationMakeFileGenerator {
 		return Integer.parseInt(number);
 	}
 
-	private static File[] getTaskFiles(File dir) {
+	public static File[] getTaskFiles() {
+		File dir = new File(MutationProperties.RESULT_DIR);
 		logger.info("Searching for files in directory" + dir);
 		logger.info("Seraching for files starting with: "
 				+ (MutationTaskCreator.MUTATION_TASK_PROJECT_FILE_PREFIX));
@@ -132,7 +133,7 @@ public class MutationMakeFileGenerator {
 	}
 
 	private static void writeMakefile(String add) {
-		String scriptName = "mutation.comand";
+		String scriptName = "mutation.command";
 
 		String scriptCommand = getScriptCommand(System.getProperty(scriptName));
 

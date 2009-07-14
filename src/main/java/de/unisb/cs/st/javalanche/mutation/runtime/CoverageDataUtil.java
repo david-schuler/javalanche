@@ -12,6 +12,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationMarker;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 public class CoverageDataUtil {
@@ -50,8 +51,9 @@ public class CoverageDataUtil {
 		Set<String> testsRun = CoverageDataRuntime.getTestsRun();
 		logger.info("Saving coverage data for " + coverageData.size()
 				+ " mutations");
-		QueryManager.saveCoverageResults(coverageData);
-		QueryManager.saveTestsWithNoCoverage(testsRun);
+		MutationCoverageFile.saveCoverageData(coverageData);
+		// QueryManager.saveCoverageResults(coverageData);
+		// QueryManager.saveTestsWithNoCoverage(testsRun);
 		// XmlIo.toXML(coverageData, "coverageData-" + saveCount + ".xml");
 		saveCount++;
 		coverageData = new HashMap<Long, Set<String>>();

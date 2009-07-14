@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverage;
+import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.TestName;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
@@ -31,99 +32,19 @@ public class CoverageDataTest {
 
 	@Before
 	@After
-	public void setup(){
+	public void setup() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		Query query = session.createQuery("delete FROM Mutation WHERE classname=:name");
+		Query query = session
+				.createQuery("delete FROM Mutation WHERE classname=:name");
 		query.setString("name", TESTCLASS_NAME);
 		query.executeUpdate();
 		tx.commit();
 		session.close();
 	}
 
-
-	// @Test
-	public void testSaveCoverageResult() {
-		Map<Long, Set<String>> coverageData = new HashMap<Long, Set<String>>();
-		List<String> testNames = getTestNames(150);
-		assertEquals(150, testNames.size());
-		List<Mutation> mutations = getMutations(1000);
-		QueryManager.saveMutations(mutations);
-		int i = 1;
-		for (Mutation mutation : mutations) {
-			Set<String> tests = new HashSet<String>(testNames.subList(0, Math
-					.min(i, testNames.size())));
-			coverageData.put(mutation.getId(), tests);
-			i++;
-		}
-		QueryManager.saveCoverageResults(coverageData);
-		MutationCoverage mc = QueryManager.getMutationCoverageData(mutations
-				.get(0).getId());
-		assertNotNull(mc);
-		assertNotNull(mc.getTestsNames());
-		assertEquals(1, mc.getTestsNames().size());
-		MutationCoverage mc200 = QueryManager.getMutationCoverageData(mutations
-				.get(200).getId());
-		assertNotNull(mc200);
-		assertNotNull(mc200.getTestsNames());
-		assertEquals(150, mc200.getTestsNames().size());
-
-		QueryManager.deleteCoverageResultByMutaiton(mutations);
-
-	}
-
 	@Test
-	public void testSaveCoverageResultWithNull() {
-		Map<Long, Set<String>> coverageData = new HashMap<Long, Set<String>>();
-		List<String> testNames = getTestNames(150);
-		assertEquals(150, testNames.size());
-		testNames.add(null);
-		testNames.add(null);
-		testNames.add(null);
-		List<Mutation> mutations = getMutations(200);
-		QueryManager.saveMutations(mutations);
-
-		int i = 1;
-		for (Mutation mutation : mutations) {
-			Set<String> tests = new HashSet<String>(testNames.subList(0, Math
-					.min(i, testNames.size())));
-			coverageData.put(mutation.getId(), tests);
-			i++;
-		}
-		QueryManager.saveCoverageResults(coverageData);
-
-		System.out.println(mutations
-				.get(160));
-		System.out.println(mutations
-				.get(160).getId());
-		MutationCoverage mc160 = QueryManager.getMutationCoverageData(mutations
-				.get(160).getId());
-		MutationCoverage mc161 = QueryManager.getMutationCoverageData(mutations
-				.get(161).getId());
-
-		Long nullId = Long.MIN_VALUE;
-		for (TestName testName : mc160.getTestsNames()) {
-			if (testName.getName() == null) {
-				logger.info("Found null. Id: " + testName.getId());
-				Long id = testName.getId();
-				if (nullId == Long.MIN_VALUE) {
-					nullId = id;
-				} else {
-					assertEquals("IDs for null value do not match", nullId, id);
-				}
-			}
-		}
-		for (TestName testName : mc161.getTestsNames()) {
-			if (testName.getName() == null) {
-				logger.info("Found null. Id: " + testName.getId());
-				Long id = testName.getId();
-				if (nullId == Long.MIN_VALUE) {
-					nullId = id;
-				} else {
-					assertEquals("IDs for null value do not match", nullId, id);
-				}
-			}
-		}
+	public void mavenTest() {
 
 	}
 

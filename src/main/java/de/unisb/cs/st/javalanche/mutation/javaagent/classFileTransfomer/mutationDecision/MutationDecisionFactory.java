@@ -26,9 +26,9 @@ public class MutationDecisionFactory {
 			if (classNameWithDots.contains(TEST_PACKAGE)) {
 				return false;
 			}
-			if (TestInfo.isTest(classNameWithDots)) {
-				return false;
-			}
+			// if (TestInfo.isTest(classNameWithDots)) {
+			// return false;
+			// }
 			if (Excludes.getInstance().shouldExclude(classNameWithDots)) {
 				return false;
 			}

@@ -22,7 +22,6 @@ public class ScanProjectTransformer implements ClassFileTransformer {
 	public ScanProjectTransformer() {
 		Runtime r = Runtime.getRuntime();
 		r.addShutdownHook(new Thread() {
-
 			public void run() {
 				Excludes.getInstance().addClasses(classes);
 				Excludes.getInstance().writeFile();
@@ -39,7 +38,6 @@ public class ScanProjectTransformer implements ClassFileTransformer {
 			classes.add(classNameWithDots);
 		}
 		return classfileBuffer;
-
 	}
 
 }

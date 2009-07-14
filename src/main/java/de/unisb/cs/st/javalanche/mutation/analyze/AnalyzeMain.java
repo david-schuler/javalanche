@@ -18,9 +18,9 @@ import de.unisb.cs.st.javalanche.tracer.NewTracerAnalyzer;
  * Analyzes the mutation results for a project. Either a list (comma separated)
  * of {@link MutationAnalyzer} is given via the property
  * "javalanche.mutation.analyzers" or a set of default analyzers is used.
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class AnalyzeMain {
 
@@ -31,26 +31,7 @@ public class AnalyzeMain {
 		if (analyzers != null && analyzers.length > 0) {
 			analyzeMutations(analyzers);
 		} else {
-			analyzeMutations(new MutationAnalyzer[] {
-			 new DebugAnalyzer(),
-//					new TempInvariantAnalyzer(),
-			new MutationResultAnalyzer(),
-			new NewTracerAnalyzer(),
-//					new CheckAnalyzer()
-//					new NotToucheAnalyzer()//
-//					new NewTracerAnalyzer()
-					//new InvariantSplitAnalyzer()
-					/*
-		 new KilledAnalyzer(),
-		 new InvariantAnalyzer(),
-		 new ManualAnalyzer()
-		*/
-		 /* , new AssertAnalyzer() */
-			/* , new AspectJAnalyzer() */
-			/* , new IdAnalyzer() */
-			// new CoverageAnalyzer()
-//			new DebugAnalyzer()
-		 });
+			analyzeMutations(new MutationAnalyzer[] { new MutationResultAnalyzer() });
 		}
 	}
 
@@ -81,9 +62,9 @@ public class AnalyzeMain {
 	}
 
 	/**
-	 *
+	 * 
 	 * Analyzes the mutation results for a project
-	 *
+	 * 
 	 * @param mutationResultAnalyzers
 	 *            the mutationAnalyzers to use
 	 */
@@ -97,12 +78,12 @@ public class AnalyzeMain {
 	}
 
 	/**
-	 *
+	 * 
 	 * Analyzes the mutation results for a project.
-	 *
+	 * 
 	 * @param mutationResultAnalyzers
 	 *            the mutationAnalyzers to use
-	 *
+	 * 
 	 * @param mutationAnalyzers
 	 * @param prefix
 	 *            the prefix for the mutations to analyze
@@ -111,7 +92,8 @@ public class AnalyzeMain {
 	private static void analyzeMutations(MutationAnalyzer[] mutationAnalyzers,
 			String prefix) {
 		Session session = HibernateUtil.openSession();
-//		Session session = HibernateServerUtil.getSessionFactory(Server.KUBRICK).openSession();
+		// Session session =
+		// HibernateServerUtil.getSessionFactory(Server.KUBRICK).openSession();
 		Transaction tx = session.beginTransaction();
 		Query query = session
 				.createQuery("FROM Mutation WHERE className LIKE '" + prefix
@@ -141,7 +123,7 @@ public class AnalyzeMain {
 
 	/**
 	 * Returns the number of mutations without a result.
-	 *
+	 * 
 	 * @param session
 	 *            the hibernate session to use
 	 * @param prefix

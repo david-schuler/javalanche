@@ -401,7 +401,7 @@ public abstract class MutationTestDriver {
 		checkMutations();
 		logger.info("Test Runs finished. Run " + totalTests + " tests for "
 				+ totalMutations + " mutations ");
-		logger.info("" + MutationObserver.summary(true));
+		System.out.println(MutationObserver.summary(true));
 		MutationForRun.getInstance().reportAppliedMutations();
 		Runtime.getRuntime().removeShutdownHook(shutDownThread);
 	}

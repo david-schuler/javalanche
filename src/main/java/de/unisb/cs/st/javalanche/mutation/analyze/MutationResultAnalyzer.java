@@ -81,9 +81,6 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 		sb.append(formatLine(
 				"Mutation score for mutations that were covered: ", AnalyzeUtil
 						.formatPercent(killed, touched)));
-		sb.append(formatLine(
-				"Mutations in static blocks (can not be killed): ", classInit,
-				AnalyzeUtil.formatPercent(classInit, total)));
 		return sb.toString();
 	}
 
