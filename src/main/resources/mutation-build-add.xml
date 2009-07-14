@@ -1,0 +1,284 @@
+<project name="mutation-include" default="">
+	
+	<import file="./mutation-build.xml" />
+	
+	<property name="invariant.dir" value="invariant-files/" />
+	<property name="field.file" value="${invariant.dir}/field-results.ser" />
+	<property name="invariant.checker.file" value="${invariant.dir}/${project.prefix}-invariant-checkers.ser" />
+
+	<target name="createCoverageDataMult" description="* create coverageData for multiple permuted runs">
+		<property name="test.task.3.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="test.task.3.memory" value="-Xmx1524m"/>
+		<property name="test.task.3.mutation.run.mode" value="-Dmutation.run.mode=test3"/>
+		<property name="test.task.3.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="test.task.3.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="test.task.3.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.tracer.TracerTestListener"/>
+		
+		
+		<path id="test.task.3.classpath.add">
+			<path refid="mutation.classpath"/>
+		</path>
+		
+		<antcall target="test-javalanche">
+			<param name="javalanche.arg.line" value=" ${test.task.3.mutation.javaagent} ${test.task.3.memory} ${test.task.3.mutation.run.mode} ${test.task.3.javalanche.package.prefix} ${test.task.3.javalanche.project.test.suite} ${test.task.3.listener} " />
+			<reference refid="test.task.3.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>
+	
+
+		
+	<!--
+	Test the performance of file writing onthe current system.
+	-->
+	<target name="testFilePerformance">
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.FilePerformanceTest" maxmemory="${javalanche.maxmemory}" fork="true">
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+	
+	
+	<target name="compareTraces" description="* compare two traces (property -Dcmpmode= -Dcmpid1= -Dcmpid2=) ">
+		<echo> Compare ${cmpmode} traces: ${cmpid1} vs. ${cmpid2}</echo>
+		<java classname="de.unisb.cs.st.javalanche.tracer.CompareTraces" maxmemory="${javalanche.maxmemory}" fork="true">
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+			<arg value="${cmpmode} ${cmpid1} ${cmpid2}"/>
+		</java>
+	</target>
+	
+	
+	
+	<target name="runMutationsDebug" description="* debug task that runs a given mutation task but inserts the orignial statement instead of the mutated statement">
+		<property name="run.mutations.debug.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="run.mutations.debug.memory" value="-Xmx1524m"/>
+		<property name="run.mutations.debug.mutation.run.mode" value="-Dmutation.run.mode=mutation"/>
+		<property name="run.mutations.debug.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="run.mutations.debug.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="run.mutations.debug.mutation.file" value="-Dmutation.file=${mutation.file}"/>
+		<property name="run.mutations.debug.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
+		<property name="run.mutations.debug.verbose" value="-verbose"/>
+		<property name="run.mutations.debug.debug" value="-Djavalanche.debug.insert.original.code=true"/>
+		<property name="run.mutations.debug.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.mutation.runtime.jmx.JmxMutationTestListener"/>
+		<path id="run.mutations.debug.classpath.add">
+			<path refid="mutation.classpath"/>
+		</path>
+			<!--${run.mutations.debug.verbose}-->
+		<antcall target="test-javalanche">
+			<param name="javalanche.arg.line" value="${run.mutations.debug.mutation.javaagent} ${run.mutations.debug.memory} ${run.mutations.debug.mutation.run.mode} ${run.mutations.debug.javalanche.package.prefix} ${run.mutations.debug.javalanche.project.test.suite} ${run.mutations.debug.mutation.file} ${run.mutations.debug.mutation.result.file} ${run.mutations.debug.listener} ${run.mutations.debug.debug}" />
+			<reference refid="run.mutations.debug.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>
+	
+	
+	<target name="runMutationsInvariant" description="* run a given mutation task wiht enabled invariant checkers (Javalanche invariants build file also has to be included)">
+		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="run.mutations.memory" value="-Xmx1524m"/>
+		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=mutation-invariant"/>
+		<property name="run.mutations.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="run.mutations.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="run.mutations.mutation.file" value="-Dmutation.file=${mutation.file}"/>
+		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
+		<property name="run.mutations.verbose" value="-verbose"/>
+		<property name="run.mutations.field.file.arg" value="-Djavalanche.invariant.field.file=${field.file}"/>
+		<property name="run.mutations.checker.file" value="-Dinvariant.checker.file=${invariant.checker.file}"/>
+		<property name="run.mutations.verbose.summary" value="-Dverbose.invariant.summary=false"/>
+		<property name="run.mutations.javalanche.invariant.mode" value="-Dinvariant.mode=INVARIANT"/>
+		<property name="run.mutations.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.mutation.runtime.jmx.JmxMutationTestListener"/>
+
+		<path id="check.invariant.javalanche.classpath.add">
+		</path>
+	
+		<path id="run.mutations.classpath.add">
+			<path refid="mutation.classpath"/>
+			<path refid="invariant.classpath"/>
+		</path>
+		<!--${run.mutations.verbose}-->
+		<antcall target="test-javalanche">
+			<param name="javalanche.arg.line" value=" ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode} ${run.mutations.listener} " />
+			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>
+	
+	<target name="runMutationsInvariantPerTest" description="* run a given mutation task with special invariant checkers for each test (Javalanche invariants build file also has to be included)">
+		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="run.mutations.memory" value="-Xmx1524m"/>
+		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=mutation-invariant-per-test"/>
+		<property name="run.mutations.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="run.mutations.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="run.mutations.mutation.file" value="-Dmutation.file=${mutation.file}"/>
+		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
+		<property name="run.mutations.verbose" value="-verbose"/>
+		<property name="run.mutations.field.file.arg" value="-Djavalanche.invariant.field.file=${field.file}"/>
+		<property name="run.mutations.checker.file" value="-Dinvariant.checker.file=${invariant.checker.file}"/>
+		<property name="run.mutations.verbose.summary" value="-Dverbose.invariant.summary=false"/>
+		<property name="run.mutations.javalanche.invariant.mode" value="-Dinvariant.mode=INVARIANT"/>
+		<property name="run.mutations.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.mutation.runtime.jmx.JmxMutationTestListener"/>
+
+		<path id="check.invariant.javalanche.classpath.add">
+		</path>
+	
+		<path id="run.mutations.classpath.add">
+			<path refid="mutation.classpath"/>
+			<path refid="invariant.classpath"/>
+		</path>
+		<!--${run.mutations.verbose}-->
+		<antcall target="test-javalanche">
+			<param name="javalanche.arg.line" value=" ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode} ${run.mutations.listener} " />
+			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>
+	
+	
+	
+	<target name="runMutationsCoverage" description="* run a given mutation tasks with line coverage tracing enabled">
+		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="run.mutations.memory" value="-Xmx1524m"/>
+		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=mutation-coverage"/>
+		<property name="run.mutations.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="run.mutations.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="run.mutations.mutation.file" value="-Dmutation.file=${mutation.file}"/>
+		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
+		<property name="run.mutations.verbose" value="-verbose"/>
+		<property name="run.mutations.field.file.arg" value="-Djavalanche.invariant.field.file=${field.file}"/>
+		<property name="run.mutations.checker.file" value="-Dinvariant.checker.file=${invariant.checker.file}"/>
+		<property name="run.mutations.verbose.summary" value="-Dverbose.invariant.summary=false"/>
+		<property name="run.mutations.javalanche.invariant.mode" value="-Dinvariant.mode=INVARIANT"/>
+
+		<path id="run.mutations.classpath.add">
+			<path refid="mutation.classpath"/>
+		</path>
+
+		<!--${run.mutations.verbose}-->
+		<antcall target="test-javalanche">
+			<param name="javalanche.arg.line" value=" -verify ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode}" />
+			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>
+	
+	
+	<target name="createCoverageData" description="* Create coverage data for an original unmutated run" depends="mutationDir">
+		<property name="create.coverage.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="create.coverage.memory" value="-Xmx1524m"/>
+		<property name="create.coverage.mutation.run.mode" value="-Dmutation.run.mode=create-coverage"/>
+		<property name="create.coverage.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="create.coverage.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="create.coverage.verbose" value="-verbose"/>
+		
+		
+		<path id="create.coverage.classpath.add">
+			<path refid="mutation.classpath"/>
+		</path>
+		
+		<antcall target="test-javalanche">
+			<!--${create.coverage.verbose}-->
+			<param name="javalanche.arg.line" value="  ${create.coverage.mutation.javaagent} ${create.coverage.memory} ${create.coverage.mutation.run.mode} ${create.coverage.javalanche.package.prefix} ${create.coverage.javalanche.project.test.suite} " />
+			<reference refid="create.coverage.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>
+
+	<target name="createCoverageDataClean" description="* Create coverage data for an original unmutated run ,and deletes files" depends="mutationDir">
+		<delete file="mutation-files/tracer/profiler-map.xml"/>
+		<delete file="mutation-files/tracer/dont-instrument-set.xml"/>
+		<delete dir="mutation-files/tracer/line/0"/>
+		<delete dir="mutation-files/tracer/data/0"/>
+		<antcall target="createCoverageData"/>
+	</target>
+
+	
+	
+	         
+	<target name="checkInvariantsPerTest" description="* check the invariants per test">
+		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="run.mutations.memory" value="-Xmx1524m"/>
+		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=check-per-test"/>
+		<property name="run.mutations.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="run.mutations.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="run.mutations.mutation.file" value="-Dmutation.file=${mutation.file}"/>
+		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
+		<property name="run.mutations.verbose" value="-verbose"/>
+		<property name="run.mutations.field.file.arg" value="-Djavalanche.invariant.field.file=${field.file}"/>
+		<property name="run.mutations.checker.file" value="-Dinvariant.checker.file=${invariant.checker.file}"/>
+		<property name="run.mutations.verbose.summary" value="-Dverbose.invariant.summary=false"/>
+		<property name="run.mutations.javalanche.invariant.mode" value="-Dinvariant.mode=INVARIANT"/>
+		<property name="run.mutations.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.mutation.runtime.jmx.JmxMutationTestListener"/>
+
+		<path id="check.invariant.javalanche.classpath.add">
+		</path>
+	
+		<path id="run.mutations.classpath.add">
+			<path refid="mutation.classpath"/>
+			<path refid="invariant.classpath"/>
+		</path>
+		<!--${run.mutations.verbose}-->
+		<antcall target="test-javalanche">
+			<param name="javalanche.arg.line" value=" ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode} ${run.mutations.listener} " />
+			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>
+	
+	
+
+	
+	
+	
+	
+	<target name="runMutationsInternal">
+		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="run.mutations.memory" value="-Xmx1524m"/>
+		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=${javalanche.mutaiton.runMode}"/>
+		<property name="run.mutations.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="run.mutations.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="run.mutations.mutation.file" value="-Dmutation.file=${mutation.file}"/>
+		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
+		<property name="run.mutations.verbose" value="-verbose"/>
+		
+		
+		<path id="run.mutations.classpath.add">
+			<path refid="mutation.classpath"/>
+		</path>
+		
+		<antcall target="test-javalanche">
+			<!--${run.mutations.verbose}-->
+			<param name="javalanche.arg.line" value="  ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} " />
+			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>
+
+		
+	
+	<target name="printBytecode" description="* print a classes bytecode (specified in property -Dclass.name=)">
+		<echo> Printing bytecode for class: ${class.name} </echo>
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.AsmUtil" fork="true">
+			<sysproperty key="class.name" value="${class.name}" />
+			<classpath>
+			         <path refid="build.classpath"></path>
+					 <path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="displayCoverageData" description="* display coverage data for this project">
+		<echo> Coverage data for project: ${project.prefix} </echo>
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.DisplayCoverageData" maxmemory="${javalanche.maxmemory}" fork="true">
+			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+
+	
+	<target name="startJmxClient" description="* start a jmx client that displays monitoring data for all mutation testsing processes">
+		<java classname="de.unisb.cs.st.javalanche.mutation.runtime.jmx.MutationMxClient" maxmemory="${javalanche.maxmemory}" fork="true">
+			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+
+
+</project>
