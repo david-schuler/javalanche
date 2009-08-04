@@ -26,18 +26,22 @@ public class MutationProperties {
 		Properties properties = new Properties();
 		InputStream is = MutationProperties.class.getClassLoader()
 				.getResourceAsStream(PROPERTIES_FILE);
-		try {
-			properties.load(is);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		if (is != null) {
+			try {
+				properties.load(is);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
-		if (properties != null) {
-			logger.debug("Got following properties from file. File: "
-					+ PROPERTIES_FILE + " Properties: " + properties.keySet());
-		}
-		if (properties == null) {
-			logger.warn("Could not read properties file:  " + PROPERTIES_FILE);
+			if (properties != null) {
+				logger.debug("Got following properties from file. File: "
+						+ PROPERTIES_FILE + " Properties: "
+						+ properties.keySet());
+			}
+			if (properties == null) {
+				logger.warn("Could not read properties file:  "
+						+ PROPERTIES_FILE);
+			}
 		}
 		return properties;
 	}
@@ -45,14 +49,12 @@ public class MutationProperties {
 	public static final String OUTPUT_DIR = getPropertyOrDefault(
 			"javalanche.mutation.output.dir", "mutation-files");
 
-	public static final String[] TEST_CLASSES_TO_INSTRUMENT = { "de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.forOwnClass.jumps.Jumps" };
-
 	/*
 	 * Different run modes.
 	 */
 
 	public enum RunMode {
-		SCAN("scan"), MUTATION_TEST("mutation"), TEST_TESTSUIT_FIRST("test1"), TEST_TESTSUITE_SECOND(
+		SCAN("scan"), MUTATION_TEST("mutation"), CHECK_TESTS("test1"), TEST_TESTSUITE_SECOND(
 				"test2"), MUTATION_TEST_INVARIANT("mutation-invariant"), MUTATION_TEST_INVARIANT_PER_TEST(
 				"mutation-invariant-per-test"), MUTATION_TEST_COVERAGE(
 				"mutation-coverage"), CREATE_COVERAGE("create-coverage"), OFF(
@@ -169,31 +171,9 @@ public class MutationProperties {
 
 	public static final String NOT_MUTATED = "notMutated";
 
-	public static final boolean OBSERVE_OBJECTS = false; // TODO read from
-	// property
-
-	public static final String NUMBER_OF_THREADS_KEY = "mutation.number.of.threads";
-
-	public static final int NUMBER_OF_THREADS = getPropertyOrDefault(
-			NUMBER_OF_THREADS_KEY, 2);
-
-	public static final String MAX_TIME_FOR_SUB_PROCESS_KEY = "mutation.max.time.for.subprocess";
-
-	public static final long MAX_TIME_FOR_SUB_PROCESS = getPropertyOrDefault(
-			MAX_TIME_FOR_SUB_PROCESS_KEY, 45 * 60 * 1000);
-
-	public static final String SCRIPT_COMMAND_KEY = "mutation.script.command";
-
-	public static final String SCRIPT_COMMAND = getProperty(SCRIPT_COMMAND_KEY);
-
 	public static final String TEST_TESTSUITE_KEY = "mutation.test.testsuite";
 
 	public static final String TEST_TESTSUITE = getProperty(TEST_TESTSUITE_KEY);
-
-	public static final String USE_EXTERNAL_COVERAGE_DATA_KEY = "mutation.external.coverage.data";
-
-	public static final boolean USE_EXTERNAL_COVERAGE_DATA = getPropertyOrDefault(
-			USE_EXTERNAL_COVERAGE_DATA_KEY, false);
 
 	public static final String TRACE_BYTECODE_KEY = "mutation.trace";
 
@@ -217,15 +197,15 @@ public class MutationProperties {
 	public static final String STOP_AFTER_FIRST_FAIL_KEY = "mutation.stop.after.first.fail";
 
 	public static final boolean STOP_AFTER_FIRST_FAIL = getPropertyOrDefault(
-
-	STOP_AFTER_FIRST_FAIL_KEY, true);
+			STOP_AFTER_FIRST_FAIL_KEY, true);
 
 	private static final String DEFAULT_TIMEOUT_IN_SECONDS_KEY = "mutation.default.timeout";
+
 	public static final int DEFAULT_TIMEOUT_IN_SECONDS = getPropertyOrDefault(
 			DEFAULT_TIMEOUT_IN_SECONDS_KEY, 10);
 
 	/**
-	 * The save intervall in which the mutation results are written to the
+	 * The save interval in which the mutation results are written to the
 	 * database.
 	 */
 	private static final String SAVE_INTERVAL_KEY = "mutation.save.interval";
@@ -334,8 +314,7 @@ public class MutationProperties {
 	public static final File TEST_MAP_FILE = new File(OUTPUT_DIR,
 			"testname-map.xml");
 
-	public static final File EXCLUDE_FILE = new File(OUTPUT_DIR,
-			"exclude.txt");
+	public static final File EXCLUDE_FILE = new File(OUTPUT_DIR, "exclude.txt");
 
 	public static final int BATCH_SIZE = 1;
 

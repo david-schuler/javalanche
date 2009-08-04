@@ -29,9 +29,8 @@ public class RemoveSystemExitMethodNode extends MethodAdapter {
 		next = mv;
 	}
 
-	// TODO Scan for System exit
 	@SuppressWarnings("unchecked")
-	// Call to pre 1.5 Code
+	// Call to pre-1.5 Code
 	@Override
 	public void visitEnd() {
 		MethodNode mn = (MethodNode) mv;

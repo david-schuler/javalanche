@@ -8,5 +8,16 @@
 			 />
 		</jar>
 	</target>
+	
+	
+	
+	
+		
+	<target name="createBootclasspathJar" description="Create the jar that has to be put on the bootclasspath">
+		<echo message="creating bootclasspath jar" />
+		<jar destfile="target/javalanche-mutation-bootclasspath.jar" >
+			<fileset dir="target/classes" includes="**/java/lang/*.class" />
+		</jar>
+	</target>
 
 </project>

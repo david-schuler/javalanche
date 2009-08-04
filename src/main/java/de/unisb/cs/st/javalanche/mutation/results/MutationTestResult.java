@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
@@ -61,10 +62,13 @@ public class MutationTestResult implements Serializable {
 	@IndexColumn(name = "passing_id")
 	private List<TestMessage> passing = new ArrayList<TestMessage>();
 
-	@OneToMany(cascade = CascadeType.ALL)
-	// // , fetch = FetchType.EAGER)
-	@JoinTable(name = "MutationTestResult_ViolatedInvariants", joinColumns = { @JoinColumn(name = "mutationTestResult_id") }, inverseJoinColumns = @JoinColumn(name = "invariant_id"))
-	@IndexColumn(name = "mapping_id")
+	// @OneToMany(cascade = CascadeType.ALL)
+	// // // , fetch = FetchType.EAGER)
+	// @JoinTable(name = "MutationTestResult_ViolatedInvariants", joinColumns =
+	// { @JoinColumn(name = "mutationTestResult_id") }, inverseJoinColumns =
+	// @JoinColumn(name = "invariant_id"))
+	// @IndexColumn(name = "mapping_id")
+	@Transient
 	private List<Invariant> invariants = new ArrayList<Invariant>();
 
 	// Temporal(TemporalType.TIME)
@@ -81,7 +85,7 @@ public class MutationTestResult implements Serializable {
 
 	private int totalViolations;
 
-	@OneToMany(cascade=CascadeType.ALL)
+	 @OneToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "MutationTestResult_AddResults")
 	private List<AddResult> addResults = new ArrayList<AddResult>();
 
@@ -363,23 +367,22 @@ public class MutationTestResult implements Serializable {
 		return addResults;
 	}
 
-	/**
-	 * @return the addResults
-	 */
+	
 	public void addResults(AddResult r) {
 		addResults.add(r);
 	}
 
 	/**
-	 * @param addResults the addResults to set
+	 * @param addResults
+	 *            the addResults to set
 	 */
 	public void setAddResults(List<AddResult> addResults) {
 		this.addResults = addResults;
 	}
 
 	public <T> T getAddResult(Class<T> clazz) {
-		for(AddResult addResult : addResults){
-			if(clazz.isInstance(addResult)){
+		for (AddResult addResult : addResults) {
+			if (clazz.isInstance(addResult)) {
 				return (T) addResult;
 			}
 		}

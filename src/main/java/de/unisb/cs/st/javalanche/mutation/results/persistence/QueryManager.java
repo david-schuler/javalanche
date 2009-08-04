@@ -210,7 +210,8 @@ public class QueryManager {
 	public static List<Mutation> getMutations(int maxResults) {
 		Session session = openSession();
 		Transaction tx = session.beginTransaction();
-		Query query = session.createQuery("from Mutation order by linenumber");
+		Query query = session
+				.createQuery("from Mutation WHERE classname LIKE 'org.aspectj%'");
 		query.setMaxResults(maxResults);
 		List l = query.list();
 		List<Mutation> mutations = new ArrayList<Mutation>();

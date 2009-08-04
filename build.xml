@@ -18,9 +18,9 @@
 
 	<property name="proj.shortname" value="jvl-mu"/>
 
-	<!-- Hibernate Tools import TODO 
+	<!-- Hibernate Tools import TODO -->
 	<taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" classpathref="project.classpath" />
--->
+
 	<!-- Export the database schema -->
 	<target name="schemaexport" depends="" description="Exports a generated schema to DB and file">
 		<hibernatetool destdir="${basedir}">
@@ -166,14 +166,6 @@
 	
 	
 	
-
-		
-	<target name="createBootclasspathJar" description="Create the jar that has to be put on the bootclasspath">
-		<echo message="creating javaagent from ant" />
-		<jar destfile="target/javalanche-mutation-bootclasspath.jar" >
-			<fileset dir="target/classes" includes="**/java/lang/*.class" />
-		</jar>
-	</target>
 	
 	
 	<target name="testDBPerformance" description="test the databases performance">
@@ -189,5 +181,21 @@
 			</classpath>
 		</java>
 	</target>
+	
+	
+	<target name="uberjar" depends="">
+    <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask"
+        classpath="jarjar-1.0.jar"/>
+    <jarjar jarfile="target/uber.jar">
+		<zipfileset>
+				 <fileset dir="target/javalanche-mutation-0.1-dist.dir/lib/">
+					<include name="**/*.jar" />
+					<include name="**/*.zip" />
+				</fileset>
+		</zipfileset>
+        <rule pattern="com**" result="de.javalanche@1"/>
+    </jarjar>
+	</target>
+
 
 </project>

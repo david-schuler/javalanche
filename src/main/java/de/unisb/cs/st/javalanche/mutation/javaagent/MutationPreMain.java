@@ -88,7 +88,7 @@ public class MutationPreMain {
 				System.out.println("Scanning for mutations");
 				addClassFileTransformer(instrumentation, new MutationScanner());
 				return;
-			} else if (RUN_MODE == TEST_TESTSUIT_FIRST
+			} else if (RUN_MODE == CHECK_TESTS
 					|| RUN_MODE == TEST_PERMUTED) {
 				System.out.println("Integrating RandomPermutationTestSuite");
 				addClassFileTransformer(instrumentation,

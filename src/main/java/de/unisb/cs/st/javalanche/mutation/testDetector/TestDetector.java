@@ -86,7 +86,9 @@ public class TestDetector {
 				map.put(name, matches);
 			}
 		}
-		logger.info("Found " + map.size() + " test files");
+		String message = "Found " + map.size() + " test files.";
+		logger.info(message);
+		System.out.println(message);
 		updateExcludeFiel(map);
 		// XmlIo.toXML(map, MutationProperties.TEST_MAP_FILE);
 	}

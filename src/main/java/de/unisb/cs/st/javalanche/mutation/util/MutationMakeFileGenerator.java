@@ -17,17 +17,17 @@ import de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator;
  * makefile consists of several target each executing a mutation task. If
  * multifile mode is activated 6 different makefiles are produced where the
  * mutation tasks are distributed over all makefiles.
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class MutationMakeFileGenerator {
 
 	/**
 	 * Represents one task in the makefile.
-	 *
+	 * 
 	 * @author David Schuler
-	 *
+	 * 
 	 */
 	private static class MakefileTask {
 		String targetName;
@@ -133,27 +133,21 @@ public class MutationMakeFileGenerator {
 	}
 
 	private static void writeMakefile(String add) {
-		String scriptName = "mutation.command";
+		String scriptNameKey = "mutation.command";
 
-		String scriptCommand = getScriptCommand(System.getProperty(scriptName));
-
+		String property = System.getProperty(scriptNameKey);
+		String scriptCommand = null;
+		if (property != null) {
+			scriptCommand = getScriptCommand(property);
+		}
 		if (scriptCommand == null) {
 			throw new RuntimeException("No command given. Expecting property "
-					+ scriptName + "to be set");
+					+ scriptNameKey + "to be set");
 		}
 		logger.info(scriptCommand);
 		logger.info(new File(".").getAbsoluteFile());
 		String generateMakeFile = generateMakeFile(scriptCommand, add);
 		Io.writeFile(generateMakeFile, new File("Makefile"));
-		// try {
-		// File file = new File("Makefile");
-		// BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-		// bw.write(generateMakeFile);
-		// bw.close();
-		// logger.info(file.getAbsoluteFile() + " written");
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
 	}
 
 	private static String getScriptCommand(String property) {

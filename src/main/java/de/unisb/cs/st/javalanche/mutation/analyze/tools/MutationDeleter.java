@@ -16,12 +16,12 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 /**
- *
+ * 
  * Class with a main method that deletes all mutation with a specified prefix
  * from the database.
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class MutationDeleter {
 
@@ -29,27 +29,28 @@ public class MutationDeleter {
 
 	/**
 	 * Deletes all mutation test results for classes with the specified
-	 * {@link MutationProperties.PROJECT_PREFIX}.
+	 * MutationProperties.PROJECT_PREFIX.
 	 */
 	public static void deleteAllWithPrefix() {
 		String prefix = MutationProperties.PROJECT_PREFIX;
-		String query = "FROM Mutation WHERE className LIKE '" + prefix+ "%'";
+		String query = "FROM Mutation WHERE className LIKE '" + prefix + "%'";
 		List<Long> idList = getIdList(query);
 		logger.info("Deleting Coverage Data");
 		QueryManager.deleteCoverageResult(idList);
 		deleteFromQuery(query);
-		String deleteTestsQuery = "FROM TestName WHERE project ='" + prefix + "'";
+		String deleteTestsQuery = "FROM TestName WHERE project ='" + prefix
+				+ "'";
 		deleteFromQuery(deleteTestsQuery);
 
 	}
 
 	private static List<Long> getIdList(String query) {
-		Session s= HibernateUtil.getSessionFactory().openSession();
+		Session s = HibernateUtil.getSessionFactory().openSession();
 		Transaction t = s.beginTransaction();
 		Query query2 = s.createQuery(query);
 		@SuppressWarnings("unchecked")
 		List<Mutation> list = query2.list();
-		List<Long> ids= new ArrayList<Long>();
+		List<Long> ids = new ArrayList<Long>();
 		for (Mutation mutation : list) {
 			ids.add(mutation.getId());
 		}
@@ -61,7 +62,7 @@ public class MutationDeleter {
 
 	/**
 	 * Deletes all mutations that match the given query.
-	 *
+	 * 
 	 * @param queryString
 	 *            query that is used to delete the mutations.
 	 */
@@ -76,7 +77,7 @@ public class MutationDeleter {
 		for (Object object : list) {
 			session.delete(object);
 			deletes++;
-			if (deletes%20==0) {
+			if (deletes % 20 == 0) {
 				// 20, same as the JDBC batch size
 				// flush a batch of inserts and release memory:
 				// see
@@ -87,7 +88,7 @@ public class MutationDeleter {
 				session.flush();
 			}
 		}
-//		int deleted = q.executeUpdate();
+		// int deleted = q.executeUpdate();
 		logger.info(String.format("Deleted %d entries", deletes));
 		tx.commit();
 		session.close();
@@ -95,7 +96,7 @@ public class MutationDeleter {
 
 	/**
 	 * Deletes all mutation with a specified prefix from the database.
-	 *
+	 * 
 	 * @param args
 	 *            ignored
 	 */

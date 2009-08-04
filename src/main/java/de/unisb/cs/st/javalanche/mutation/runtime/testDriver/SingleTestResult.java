@@ -35,13 +35,13 @@ public class SingleTestResult {
 
 	/**
 	 * Creates a new SingleTestResult with given parameters.
-	 *
+	 * 
 	 * @param testCaseName
 	 *            the name of the test case
 	 * @param message
 	 *            the message for this test
-	 * @param pass
-	 *            signals wheter the test passed or not
+	 * @param testOutcome
+	 *            the outcome of the test
 	 * @param duration
 	 *            the time the test took
 	 */

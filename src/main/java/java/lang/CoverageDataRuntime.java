@@ -6,21 +6,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-//import org.apache.log4j.Logger;
-
 /**
  * Class to compute coverage data for mutations.
- *
- * When this class is used by a testdriver the method following methods have to
+ * 
+ * When this class is used by a test driver the method following methods have to
  * be called:
  * <ul>
- * <li>setTestName() at the beginning of every test. </li>
- * <li>{@link unsetTestName()} at the end of every test. </li>
- * <li>endCoverage() when the test suite has finished. </li>
+ * <li>setTestName() at the beginning of every test.</li>
+ * <li>unsetTestName() at the end of every test.</li>
+ * <li>endCoverage() when the test suite has finished.</li>
  * </ul>
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class CoverageDataRuntime {
 
@@ -37,7 +35,6 @@ public class CoverageDataRuntime {
 
 	private Set<String> testsRun = new HashSet<String>();
 
-
 	private CoverageDataRuntime() {
 	}
 
@@ -47,19 +44,17 @@ public class CoverageDataRuntime {
 
 	static int call = 0;
 
-
 	public static void touch(long id) {
-
 		call++;
-		if (call % ((int) 1e6) == 0) {
-			System.out.println("CoverageDataRuntime.touch(): Touch called "
-					+ call + "times.  Test "
-					+ SingletonHolder.instance.getTestName()
-
-					+ " touched mutation " + id);
-		}
 		// Only for debugging puprosses. Impacts performance
-		// logger.info("Test " + SingletonHolder.instance.testName.get()
+		// if (call % ((int) 1e6) == 0) {
+		// System.out.println("CoverageDataRuntime.touch(): Touch called "
+		// + call + "times.  Test "
+		// + SingletonHolder.instance.getTestName()
+		// + " touched mutation " + id);
+		// }
+		// System.out.println("CoverageDataRuntime.touch()" +
+		// SingletonHolder.instance.testName.get());
 		// + " touched mutation " + id);
 		Set<String> coveredTests = SingletonHolder.instance.coverageData
 				.get(id);
@@ -136,7 +131,6 @@ public class CoverageDataRuntime {
 	public static void main(String[] args) {
 		touch(23454904540l);
 	}
-
 
 	public static Set<String> getTestsRun() {
 		return SingletonHolder.instance.testsRun;

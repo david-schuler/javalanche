@@ -5,6 +5,7 @@ public class TestProperties {
 	public static final String ADVICE_CLAZZ = "Advice.clazz";
 
 	public static final String SAMPLE_FILE = "./src/test/resources/Advice.clazz";
+	
 //		MutationProperties.ASPECTJ_DIR
 //			+ "/weaver/bin/"
 //			+ TestProperties.SAMPLE_FILE_CLASS_NAME.replace('.', '/')

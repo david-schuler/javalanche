@@ -5,8 +5,15 @@
 	<artifactId>javalanche-mutation</artifactId>
 	<packaging>jar</packaging>
 	<version>0.1</version>
-	<name>mutationTest</name>
-	<url>http://maven.apache.org</url>
+	<name>Javalanche</name>
+	<url>http://javalanche.org</url>
+	
+	<description> Javalanche is an open source framework for mutation testing 
+	Java programs with a special focus on automation, efficiency, and 
+	effectiveness. In particular, Javalanche assesses the impact of individual 
+	mutations to effectively weed out equivalent mutants
+	</description>
+	
 	<properties>
 		<maven.test.error.ignore>true</maven.test.error.ignore>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
@@ -41,14 +48,13 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<forkMode>pertest</forkMode>
-					<!--argLine>-javaagent:${user.home}/workspace/mutationTest/target/javaagent.jar -Dmutation.run.mode=mutation -D=invariant.mode=OFF</argLine-->
 					
-					<argLine>-javaagent:target/javaagent.jar -Dmutation.run.mode=mutation -D=invariant.mode=OFF</argLine>
-					
+					<argLine>-javaagent:./target/javaagent.jar -Dinvariant.mode=OFF -Dmutation.run.mode=mutation -Dmutation.coverage.information=false</argLine>
 					<useSystemClassLoader>true</useSystemClassLoader>
 					<excludes>
 						<exclude>**/TestProperties.java</exclude>
 						<exclude>**/TestUtil.java</exclude>
+						<exclude>**/CheckIntegration1ResultsTest.java</exclude>
 						<exclude>**/TestJtopasClass.java</exclude>
 						<exclude>**/TestLangUtil.java</exclude>
 						<exclude>**/TestLangUtil$TestClassLoader*</exclude>
@@ -144,6 +150,9 @@
 								<ant antfile="${basedir}/mavenAnt.xml" inheritRefs="true">
 									<target name="createJavaagent" />
 								</ant>
+								<ant antfile="${basedir}/mavenAnt.xml" inheritRefs="true">
+									<target name="createBootclasspathJar" />
+								</ant>
 							</tasks>
 						</configuration>
 						<goals>
@@ -222,6 +231,10 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			
+			
+			
 		</plugins>
 	
 	
@@ -229,20 +242,20 @@
 	
 	<reporting>
 		<plugins>
-			<!--plugin>
-				<groupId>org.codehaus.mojo</groupId>
+		<!--plugin>
+		<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
-			</plugin>
+			 </plugin-->
 		<plugin>
 			<artifactId>maven-javadoc-plugin</artifactId>
-		</plugin-->
-		<!--plugin>
+		</plugin>
+		<plugin>
 			<groupId>org.codehaus.mojo</groupId>
 			<artifactId>jxr-maven-plugin</artifactId>
-		</plugin-->
-			<plugin>
+		</plugin>
+		<!--plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-			</plugin>
+		</plugin-->
 		</plugins>
 	
 	</reporting>
@@ -374,13 +387,7 @@
 			<artifactId>google-collect</artifactId>
 			<version>snapshot-20080530</version>
 		</dependency>
-		
-		<dependency>
-			  <groupId>jfree</groupId> 
-			  <artifactId>jfreechart</artifactId> 
-			  <version>1.0.0</version> 
-		</dependency>
-		
+
 		<dependency>
 			<groupId>de.unisb.cs.st</groupId>
 			<artifactId>adabu2-tracer</artifactId>
@@ -390,8 +397,14 @@
 		<dependency>
 		  <groupId>log4j</groupId>
 		  <artifactId>log4j</artifactId>
-		  <version>1.2.9</version>
+		  <version>1.2.14</version>
 		</dependency>
 		
+		<!-- TODO dependncy needed by adabu -->
+		 <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+        </dependency>
 	</dependencies>
 </project>

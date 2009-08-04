@@ -7,11 +7,6 @@ import org.objectweb.asm.Opcodes;
 
 public class ReplaceMap {
 
-//	TODO {Opcodes.LCMP	{Opcodes.INEG,},
-//	{Opcodes.LNEG,},
-//	{Opcodes.FNEG,},
-//	{Opcodes.DNEG, SWAP
-
 	static int[][] replaceArray = new int[][] { { Opcodes.IADD, Opcodes.ISUB },
 			{ Opcodes.LADD, Opcodes.LSUB }, { Opcodes.FADD, Opcodes.FSUB },
 			{ Opcodes.DADD, Opcodes.DSUB }, { Opcodes.ISUB, Opcodes.IADD },
@@ -28,12 +23,18 @@ public class ReplaceMap {
 			{ Opcodes.LUSHR, Opcodes.LSHR }, { Opcodes.IAND, Opcodes.IOR },
 			{ Opcodes.LAND, Opcodes.LOR }, { Opcodes.IOR, Opcodes.IAND },
 			{ Opcodes.LOR, Opcodes.LAND }, { Opcodes.IXOR, Opcodes.IOR },
-			{ Opcodes.LXOR, Opcodes.LOR }
+			{ Opcodes.LXOR, Opcodes.LOR },
+			// Replace negation operators with no op.
+			{ Opcodes.INEG, Opcodes.NOP }, { Opcodes.LNEG, Opcodes.NOP },
+			{ Opcodes.FNEG, Opcodes.NOP }, { Opcodes.DNEG, Opcodes.NOP },
 
-			/* The following  operators only differ in their treatment of NoN, and there would be no source code equivalent for this mutation */
-//			, { Opcodes.FCMPL, Opcodes.FCMPG },
-//			{ Opcodes.FCMPG, Opcodes.FCMPL }, { Opcodes.DCMPL, Opcodes.DCMPG },
-//			{ Opcodes.DCMPG, Opcodes.DCMPL }
+	/*
+	 * The following operators only differ in their treatment of NoN, and there
+	 * would be no source code equivalent for this mutation
+	 */
+	// , Opcodes.LCMP { Opcodes.FCMPL, Opcodes.FCMPG },
+	// { Opcodes.FCMPG, Opcodes.FCMPL }, { Opcodes.DCMPL, Opcodes.DCMPG },
+	// { Opcodes.DCMPG, Opcodes.DCMPL }
 	};
 
 	private static Map<Integer, Integer> replaceMap;

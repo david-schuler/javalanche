@@ -4,10 +4,10 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
 /**
- * An example mutation listener that prints the events to {@link System.out}
- *
+ * An example mutation listener that prints the events to System.out.
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class PrintListener implements MutationTestListener {
 
@@ -19,8 +19,10 @@ public class PrintListener implements MutationTestListener {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#mutationStart(de.unisb.cs.st.javalanche.mutation.results.Mutation)
+	 * 
+	 * @see
+	 * de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener
+	 * #mutationStart(de.unisb.cs.st.javalanche.mutation.results.Mutation)
 	 */
 	public void mutationStart(Mutation mutation) {
 		print("mutation start - " + mutation.getId());
@@ -28,8 +30,10 @@ public class PrintListener implements MutationTestListener {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#mutationEnd(de.unisb.cs.st.javalanche.mutation.results.Mutation)
+	 * 
+	 * @see
+	 * de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener
+	 * #mutationEnd(de.unisb.cs.st.javalanche.mutation.results.Mutation)
 	 */
 	public void mutationEnd(Mutation mutation) {
 		print("mutation end - " + mutation.getId());
@@ -37,8 +41,10 @@ public class PrintListener implements MutationTestListener {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#testEnd(java.lang.String)
+	 * 
+	 * @see
+	 * de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener
+	 * #testEnd(java.lang.String)
 	 */
 	public void testEnd(String testName) {
 		print("test end - " + testName);
@@ -46,8 +52,10 @@ public class PrintListener implements MutationTestListener {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#testStart(java.lang.String)
+	 * 
+	 * @see
+	 * de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener
+	 * #testStart(java.lang.String)
 	 */
 	public void testStart(String testName) {
 		print("test start - " + testName);
@@ -55,7 +63,7 @@ public class PrintListener implements MutationTestListener {
 
 	/**
 	 * Prints given message to System.out.
-	 *
+	 * 
 	 * @param message
 	 *            the message to print
 	 */
@@ -65,8 +73,10 @@ public class PrintListener implements MutationTestListener {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#end()
+	 * 
+	 * @see
+	 * de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener
+	 * #end()
 	 */
 	public void end() {
 		print("Mutation test start");
@@ -74,8 +84,10 @@ public class PrintListener implements MutationTestListener {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener#start()
+	 * 
+	 * @see
+	 * de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener
+	 * #start()
 	 */
 	public void start() {
 		print("Mutation test end");

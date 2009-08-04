@@ -2,12 +2,11 @@
 <!--name=" Javalanche Mutation Include - File to include from a projects ant build file to enable mutation testing"-->	
 	
 	<property name="mutation.base.dir" value="${javalanche.location}" />
-	<property name="javalanche.mutation.javaagent" value="${mutation.base.dir}/target/javaagent.jar" />
-	<property name="mutation.classes.dir" value="${mutation.base.dir}/target/classes" />
-	<property name="mutation.jars.dir" value="${mutation.base.dir}/target/javalanche-mutation-0.1-dist.dir/lib/" />
+	<property name="javalanche.mutation.javaagent" value="${javalanche.dist.dir}/javaagent.jar" />
+	<property name="mutation.jars.dir" value="${javalanche.dist.dir}/lib/" />
 	<property name="javalanche.mutation.output.dir" value="${basedir}/mutation-files" />
-	
-	
+		
+		
 	<condition property="javalanche.maxmemory" value="2048m">
 	  	<not>
 			<isset property="javalanche.maxmemory"/>
@@ -15,8 +14,9 @@
 	</condition>
 	  
 	<path id="mutation.classpath">
-		<pathelement location="${mutation.classes.dir}"/>
-		<pathelement location="${mutation.base.dir}/../util/target/classes" />
+		<!--pathelement path="/Users/schuler/workspace/mutationTest/target/classes/" /-->
+		
+		<pathelement location="${mutation.jars.dir}/javalanche-mutation-0.1.jar" />
 		<fileset dir="${mutation.jars.dir}" includes="*.jar"/>
 	</path>
 	
@@ -42,7 +42,7 @@
 	
 	<target name="testTask2" description="* Test the Javalanche test runner without any bytecode modifications. All tests should pass in the Javalanche test runner.">
 		<property name="test.task.2.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
-		<property name="test.task.2.memory" value="-Xmx1524m"/>
+		<property name="test.task.2.memory" value="${javalanche.maxmemory}"/>
 		<property name="test.task.2.mutation.run.mode" value="-Dmutation.run.mode=test1"/>
 		<property name="test.task.2.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="test.task.2.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
@@ -62,7 +62,7 @@
 	
 	<target name="testTask3" description="* Run the tests multiple times in different order. The outcome of the tests should not depend on the execution order.">
 		<property name="test.task.3.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
-		<property name="test.task.3.memory" value="-Xmx1524m"/>
+		<property name="test.task.3.memory" value="${javalanche.maxmemory}"/>
 		<property name="test.task.3.mutation.run.mode" value="-Dmutation.run.mode=test3"/>
 		<property name="test.task.3.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="test.task.3.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
@@ -84,7 +84,7 @@
 	</target>
 	<target name="_scanProject">
 		<property name="scan.project.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
-		<property name="scan.project.memory" value="-Xmx1524m"/>
+		<property name="scan.project.memory" value="${javalanche.maxmemory}"/>
 		<property name="scan.project.mutation.run.mode" value="-Dmutation.run.mode=scan-project"/>
 		<property name="scan.project.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="scan.project.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
@@ -125,13 +125,12 @@
 	<target name="scan" description="* Scan the project for mutations.">
 		
 		<property name="scan.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
-		<property name="scan.memory" value="-Xmx1524m"/>
+		<property name="scan.memory" value="${javalanche.maxmemory}"/>
 		<property name="scan.mutation.run.mode" value="-Dmutation.run.mode=scan"/>
 		<property name="scan.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="scan.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
-		<!--property name="scan.bootclasspath" value="-Xbootclasspath/a:${mutation.classes.dir}:${mutation.jars.dir}/adabu2-core-0.4-SNAPSHOT.jar:${mutation.jars.dir}/adabu2-hoare-0.4-SNAPSHOT.jar:${mutation.jars.dir}/antlr-2.7.6.jar:${mutation.jars.dir}/asm-3.0.jar:${mutation.jars.dir}/asm-all-3.0.jar:${mutation.jars.dir}/asm-analysis-2.2.1.jar:${mutation.jars.dir}/asm-commons-2.2.1.jar:${mutation.jars.dir}/asm-tree-2.2.1.jar:${mutation.jars.dir}/asm-util-2.2.1.jar:${mutation.jars.dir}/bytecodeTransformer-1.0-SNAPSHOT.jar:${mutation.jars.dir}/c3p0-0.9.1.1.jar:${mutation.jars.dir}/cglib-2.1_3.jar:${mutation.jars.dir}/commons-collections-2.1.1.jar:${mutation.jars.dir}/commons-io-1.3.jar:${mutation.jars.dir}/commons-lang-2.4.jar:${mutation.jars.dir}/daikon-local.jar:${mutation.jars.dir}/dom4j-1.6.1.jar:${mutation.jars.dir}/ds-util-0.1.jar:${mutation.jars.dir}/ehcache-1.2.3.jar:${mutation.jars.dir}/freemarker-2.3.4.jar:${mutation.jars.dir}/google-collect-snapshot-20080530.jar:${mutation.jars.dir}/hibernate-3.2.2.ga.jar:${mutation.jars.dir}/hibernate-annotations-3.3.0.ga.jar:${mutation.jars.dir}/hibernate-commons-annotations-3.3.0.ga.jar:${mutation.jars.dir}/hibernate-tools-3.2.0.beta9a.jar:${mutation.jars.dir}/hsqldb-1.8.0.1.jar:${mutation.jars.dir}/invariants-0.1.jar:${mutation.jars.dir}/jcommon-1.0.0.jar:${mutation.jars.dir}/jfreechart-1.0.0.jar:${mutation.jars.dir}/jta-1.0.1B.jar:${mutation.jars.dir}/jtidy-r8-20060801.jar:${mutation.jars.dir}/junit-4.1.jar:${mutation.jars.dir}/log4j-1.2.9.jar:${mutation.jars.dir}/mysql-connector-java-nightly.jar:${mutation.jars.dir}/persistence-api-1.0.jar:${mutation.jars.dir}/prefuse-beta-20060220.jar:${mutation.jars.dir}/sibrelib-local.jar:${mutation.jars.dir}/util-0.1.jar:${mutation.jars.dir}/xpp3_min-1.1.3.4.O.jar:${mutation.jars.dir}/xstream-1.2.jar:/scratch/commons-logging-1.1.jar"/>
-		-->
-		<property name="scan.bootclasspath" value="-Xbootclasspath/a:${mutation.base.dir}/target/javalanche-mutation-bootclasspath.jar"/>
+
+		<property name="scan.bootclasspath" value="-Xbootclasspath/a:${javalanche.dist.dir}/javalanche-mutation-bootclasspath.jar"/>
 		<path id="scan.javalanche.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
@@ -199,7 +198,7 @@
 		
 		
 		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
-		<property name="run.mutations.memory" value="-Xmx1524m"/>
+		<property name="run.mutations.memory" value="${javalanche.maxmemory}"/>
 		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=mutation"/>
 		<property name="run.mutations.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="run.mutations.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
@@ -228,7 +227,7 @@
 	<java dir="${basedir}" fork="true" classname="de.unisb.cs.st.javalanche.mutation.util.MutationMakeFileGenerator">
 			<classpath refid="mutation.classpath"/>
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}"/>
-			<sysproperty key="mutation.comand" value="runMutations.sh"/>
+			<sysproperty key="mutation.command" value="runMutations.sh"/>
 			<sysproperty key="javalanche.mutation.output.dir" value="${javalanche.mutation.output.dir}" />
 			<arg line="${prog.arg}"/>
 		</java>

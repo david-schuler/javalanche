@@ -26,7 +26,7 @@ public class ResultDeleter {
 
 	/**
 	 * Deletes all mutation test results for classes with the specified
-	 * {@link MutationProperties.PROJECT_PREFIX}.
+	 * MutationProperties.PROJECT_PREFIX.
 	 */
 	public static void deleteAllWithPrefix() {
 		String prefix = MutationProperties.PROJECT_PREFIX;

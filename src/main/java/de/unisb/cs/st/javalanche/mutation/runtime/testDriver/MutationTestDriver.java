@@ -31,19 +31,19 @@ import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationObserver;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationSwitcher;
 import de.unisb.cs.st.javalanche.mutation.runtime.ResultReporter;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit3MutationTestDriver;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestCheckListener;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestListener;
-import de.unisb.cs.st.javalanche.mutation.util.ThreadUtil;
 import de.unisb.cs.st.javalanche.tracer.TracerTestListener;
 
 /**
  * Abstract class that drives the mutation test process. Driver for specific
  * test architectures must subclass this class.
- *
+ * 
  * @see Junit3MutationTestDriver
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public abstract class MutationTestDriver {
 
@@ -103,9 +103,9 @@ public abstract class MutationTestDriver {
 	}
 
 	/**
-	 * Instanciate a MutationTestDriver from a property (mutation.test.driver).
-	 * And uses this driver to un the mutation tests
-	 *
+	 * Instantiate a MutationTestDriver from a property (mutation.test.driver).
+	 * And uses this driver to do the mutation tests.
+	 * 
 	 * @throws ClassNotFoundException
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
@@ -121,8 +121,8 @@ public abstract class MutationTestDriver {
 	}
 
 	/**
-	 * Runs the mutation testing. Depending on
-	 * {@link MutationProperties.RUN_MODE} the corresponding method is called.
+	 * Runs the mutation testing. Depending on MutationProperties.RUN_MODE the
+	 * corresponding method is called.
 	 */
 	public final void run() {
 		if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST
@@ -148,8 +148,6 @@ public abstract class MutationTestDriver {
 		} else if (MutationProperties.RUN_MODE == RunMode.TEST_PERMUTED) {
 			runPermutedTests();
 		} else {
-			System.out.println("MutationTestDriver.run()"
-					+ MutationProperties.RUN_MODE);
 			runNormalTests();
 		}
 
@@ -203,7 +201,9 @@ public abstract class MutationTestDriver {
 		}
 		testsEnd();
 		if (allPass) {
-			logger.info("All " + allTests.size() + " tests passed ");
+			String message = "All " + allTests.size() + " tests passed ";
+			System.out.println(message);
+			logger.info(message);
 		} else {
 			logger.warn("Not all tests passed");
 			for (SingleTestResult str : failing) {
@@ -211,7 +211,6 @@ public abstract class MutationTestDriver {
 						+ str.getTestMessage());
 			}
 			XmlIo.toXML(failing, "failed-tests.xml");
-
 		}
 	}
 
@@ -238,8 +237,10 @@ public abstract class MutationTestDriver {
 		}
 		testsEnd();
 		if (allFailingTests.size() == 0) {
-			logger.info("All " + allTests.size() + " tests passed for "
-					+ permutations + " permutations");
+			String message = "All " + allTests.size() + " tests passed for "
+					+ permutations + " permutations.";
+			System.out.println(message);
+			logger.info(message);
 		} else {
 			logger.warn("Not all tests passed");
 			for (SingleTestResult str : allFailingTests) {
@@ -278,7 +279,7 @@ public abstract class MutationTestDriver {
 
 	/**
 	 * Method that runs the tests to scan for mutation possibilities.
-	 *
+	 * 
 	 */
 	@SuppressWarnings("unchecked")
 	public void scanTests() {
@@ -313,7 +314,7 @@ public abstract class MutationTestDriver {
 	/**
 	 * Runs the given list of tests whitout any special modifications. This has
 	 * the purpose to get all classes loaded that are involved in the testsing.
-	 *
+	 * 
 	 * @param allTests
 	 *            the tests to run
 	 * @return true if all tests passed
@@ -383,9 +384,9 @@ public abstract class MutationTestDriver {
 				// report(currentMutation);
 				continue;
 			}
-			logger.info("Applying " + totalMutations + "th mutation with id "
-					+ currentMutation.getId() + ". Running "
-					+ testsForThisRun.size() + " tests");
+			System.out.println("Applying " + totalMutations
+					+ "th mutation with id " + currentMutation.getId()
+					+ ". Running " + testsForThisRun.size() + " tests");
 			// Do the mutation test
 			mutationSwitcher.switchOn();
 			mutationStart(currentMutation);
@@ -422,7 +423,7 @@ public abstract class MutationTestDriver {
 	/**
 	 * Check if class of given mutation is on the classpath. When this is not
 	 * the case an exception is thrown.
-	 *
+	 * 
 	 * @param mutation
 	 *            the mutation that should be checked
 	 */
@@ -440,7 +441,7 @@ public abstract class MutationTestDriver {
 
 	/**
 	 * Run all the given tests
-	 *
+	 * 
 	 * @param testsForThisRun
 	 *            a set of tests to be run
 	 * @return a mutaiton test result that sumarizes the outcome of the tests
@@ -493,7 +494,7 @@ public abstract class MutationTestDriver {
 
 	/**
 	 * Return runnable that executes the given test.
-	 *
+	 * 
 	 * @param testName
 	 *            the test to create the runnable for
 	 * @return a runnable that executes the given test
@@ -502,7 +503,7 @@ public abstract class MutationTestDriver {
 
 	/**
 	 * Return all tests that are availble to this test suite
-	 *
+	 * 
 	 * @return a list of all tests
 	 */
 	protected abstract List<String> getAllTests();
@@ -510,12 +511,10 @@ public abstract class MutationTestDriver {
 	/**
 	 * Runs given test in a new thread with specified timeout
 	 * (DEFAULT_TIMEOUT_IN_SECONDS) and stores the results in given testResult.
-	 *
-	 * @param test
-	 *            TestCase that is run.
-	 * @param testResult
-	 *            TestResult that is used to store the results.
-	 *
+	 * 
+	 * @param r
+	 *            the test to be run
+	 * @return the time needed for executing the test
 	 */
 	protected long runWithTimeout(MutationTestRunnable r) {
 
@@ -560,13 +559,15 @@ public abstract class MutationTestDriver {
 				if (exceptionMessage == null) {
 					exceptionMessage = "Exception caught during test execution.";
 				}
-//				TestMessage tm = new TestMessage(currentTestName,
-//						exceptionMessage  +  " - " + capturedThrowable, stopWatch.getTime());
-//				boolean touched = MutationObserver.getTouchingTestCases().contains(
-//						currentTestName);
-//				tm.setTouched(touched);
-//				setTestMessage(tm);
-				r.setFailed(exceptionMessage   + " - " + capturedThrowable);
+				// TestMessage tm = new TestMessage(currentTestName,
+				// exceptionMessage + " - " + capturedThrowable,
+				// stopWatch.getTime());
+				// boolean touched =
+				// MutationObserver.getTouchingTestCases().contains(
+				// currentTestName);
+				// tm.setTouched(touched);
+				// setTestMessage(tm);
+				r.setFailed(exceptionMessage + " - " + capturedThrowable);
 			}
 		}
 		if (!future.isDone()) {
@@ -576,7 +577,8 @@ public abstract class MutationTestDriver {
 		stopWatch.stop();
 
 		if (!r.hasFinished()) {
-			r.setFailed("Mutated Thread is still running after mutation is switched of.");
+			r
+					.setFailed("Mutated Thread is still running after mutation is switched of.");
 			if (shutDownThread != null) {
 				Runtime.getRuntime().removeShutdownHook(shutDownThread);
 			}
@@ -627,7 +629,7 @@ public abstract class MutationTestDriver {
 	 * This method tries to stop a thread by disabling the current mutation.
 	 * This method is called when a thread that executes a mutation does not
 	 * return, e.g it is stuck in an endless loop.
-	 *
+	 * 
 	 * @param future
 	 *            the future that executes the mutation
 	 */
@@ -687,7 +689,7 @@ public abstract class MutationTestDriver {
 
 	/**
 	 * Adds a mutation listener.
-	 *
+	 * 
 	 */
 	public void addMutationTestListener(MutationTestListener listener) {
 		listeners.addFirst(listener);
@@ -702,7 +704,7 @@ public abstract class MutationTestDriver {
 
 	/**
 	 * Inform all listeners that the tests for a mutation start.
-	 *
+	 * 
 	 * @param m
 	 *            the mutation that is now applied
 	 */
@@ -714,7 +716,7 @@ public abstract class MutationTestDriver {
 
 	/**
 	 * Inform all listeners that the tests for a mutation have ended.
-	 *
+	 * 
 	 * @param m
 	 *            the mutation that has ended
 	 */
@@ -726,7 +728,7 @@ public abstract class MutationTestDriver {
 
 	/**
 	 * Inform all listeners that a test starts.
-	 *
+	 * 
 	 * @param testName
 	 *            the test that starts
 	 */
@@ -738,7 +740,7 @@ public abstract class MutationTestDriver {
 
 	/**
 	 * Inform all listeners that a test has ended.
-	 *
+	 * 
 	 * @param testName
 	 *            the test that ends
 	 */

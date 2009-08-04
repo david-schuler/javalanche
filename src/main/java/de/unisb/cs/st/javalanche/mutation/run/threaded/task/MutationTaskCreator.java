@@ -2,6 +2,7 @@ package de.unisb.cs.st.javalanche.mutation.run.threaded.task;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -77,7 +78,7 @@ public class MutationTaskCreator {
 			numberOfTasks = Integer.parseInt(mutationTargetTasks);
 			Set<Long> coveredMutations = MutationCoverageFile
 					.getCoveredMutations();
-		
+
 			List<Long> mutationIds = QueryManager.getMutationsWithoutResult(
 					coveredMutations, 0);
 			int size = mutationIds.size();
@@ -123,8 +124,8 @@ public class MutationTaskCreator {
 
 	/**
 	 * Generates given number of mutation task, where each task consists of a
-	 * given number of mutations. Note: The
-	 * {@link MutationProperties.PROJECT_PREFIX} variable has to be set.
+	 * given number of mutations. Note: The MutationProperties.PROJECT_PREFIX
+	 * variable has to be set.
 	 * 
 	 * @param numberOfTasks
 	 *            number of tasks that should be created
@@ -137,7 +138,8 @@ public class MutationTaskCreator {
 		int numberOfIds = numberOfTasks * mutationsPerTask;
 		List<Long> mutationIds = getMutations(prefix, numberOfIds);
 		Collections.shuffle(mutationIds);
-		for (int i = 1; i <= numberOfTasks; i++) {
+		int i = 1;
+		for (; i <= numberOfTasks; i++) {
 			List<Long> idsForTask = new ArrayList<Long>();
 			if (mutationIds.size() >= mutationsPerTask) {
 				idsForTask.addAll(mutationIds.subList(0, mutationsPerTask));
@@ -151,11 +153,11 @@ public class MutationTaskCreator {
 			} else {
 				logger.info("No more mutations. Finishing after file "
 						+ (i - 1));
+				i = i - 1;
 				break;
-
 			}
 		}
-
+		System.out.println("Created " + i + " mutation tasks");
 	}
 
 	private static List<Long> getMutations(String prefix, int limit) {
@@ -178,6 +180,12 @@ public class MutationTaskCreator {
 			sb.append("\n");
 		}
 		Io.writeFile(sb.toString(), resultFile);
+		try {
+			System.out
+					.println("Task created: " + resultFile.getCanonicalPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return resultFile;
 	}
 

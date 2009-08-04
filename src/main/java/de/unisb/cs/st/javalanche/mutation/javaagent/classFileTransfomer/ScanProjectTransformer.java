@@ -25,15 +25,18 @@ public class ScanProjectTransformer implements ClassFileTransformer {
 			public void run() {
 				Excludes.getInstance().addClasses(classes);
 				Excludes.getInstance().writeFile();
+				System.out.println("Got " + classes.size()
+						+ " classes with prefix: "
+						+ MutationProperties.PROJECT_PREFIX);
 			}
 		});
 	}
 
+	private static int count = 0; 
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
 		String classNameWithDots = className.replace('/', '.');
-
 		if (classNameWithDots.startsWith(MutationProperties.PROJECT_PREFIX)) {
 			classes.add(classNameWithDots);
 		}

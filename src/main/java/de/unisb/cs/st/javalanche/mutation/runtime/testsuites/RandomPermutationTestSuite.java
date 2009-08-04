@@ -27,20 +27,20 @@ import de.unisb.cs.st.ds.util.io.XmlIo;
 /**
  * Executes the tests in a random order multiple times. In order to see if they
  * are independent of each other (e.g. produce the same results when executed
- * multiple times {@see limit).
- *
+ * multiple times).
+ * 
  * For a run three files are produced:
  * <ul>
- * <li> A file that contains all failing tests </li>
- * <li> A file that contains all passing tests </li>
- * <li> A file that contains all tests that had a different result for multiple
+ * <li>A file that contains all failing tests</li>
+ * <li>A file that contains all passing tests</li>
+ * <li>A file that contains all tests that had a different result for multiple
  * runs</li>
- * <li> A file that contains all tests that had a the same result for multiple
+ * <li>A file that contains all tests that had a the same result for multiple
  * runs</li>
  * </ul>
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class RandomPermutationTestSuite extends TestSuite {
 
