@@ -42,7 +42,7 @@
 	
 	<target name="testTask2" description="* Test the Javalanche test runner without any bytecode modifications. All tests should pass in the Javalanche test runner.">
 		<property name="test.task.2.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
-		<property name="test.task.2.memory" value="${javalanche.maxmemory}"/>
+		<property name="test.task.2.memory" value="-Xmx${javalanche.maxmemory}"/>
 		<property name="test.task.2.mutation.run.mode" value="-Dmutation.run.mode=test1"/>
 		<property name="test.task.2.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="test.task.2.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
@@ -62,7 +62,7 @@
 	
 	<target name="testTask3" description="* Run the tests multiple times in different order. The outcome of the tests should not depend on the execution order.">
 		<property name="test.task.3.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
-		<property name="test.task.3.memory" value="${javalanche.maxmemory}"/>
+		<property name="test.task.3.memory" value="-Xmx${javalanche.maxmemory}"/>
 		<property name="test.task.3.mutation.run.mode" value="-Dmutation.run.mode=test3"/>
 		<property name="test.task.3.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="test.task.3.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
@@ -84,7 +84,7 @@
 	</target>
 	<target name="_scanProject">
 		<property name="scan.project.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
-		<property name="scan.project.memory" value="${javalanche.maxmemory}"/>
+		<property name="scan.project.memory" value="-Xmx${javalanche.maxmemory}"/>
 		<property name="scan.project.mutation.run.mode" value="-Dmutation.run.mode=scan-project"/>
 		<property name="scan.project.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="scan.project.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
@@ -125,7 +125,7 @@
 	<target name="scan" description="* Scan the project for mutations.">
 		
 		<property name="scan.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
-		<property name="scan.memory" value="${javalanche.maxmemory}"/>
+		<property name="scan.memory" value="-Xmx${javalanche.maxmemory}"/>
 		<property name="scan.mutation.run.mode" value="-Dmutation.run.mode=scan"/>
 		<property name="scan.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="scan.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
@@ -198,7 +198,7 @@
 		
 		
 		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
-		<property name="run.mutations.memory" value="${javalanche.maxmemory}"/>
+		<property name="run.mutations.memory" value="-Xmx${javalanche.maxmemory}"/>
 		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=mutation"/>
 		<property name="run.mutations.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="run.mutations.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
@@ -220,7 +220,7 @@
 	
 	
 	
-	<target name="generateMutationMakefile" description="* Create a Makefile for the mutation tasks.">
+	<target name="createMutationMakefile" description="* Create a Makefile for the mutation tasks.">
 	<condition property="prog.arg" value="${makefile.add}" else="">
 	<isset property="makefile.add"/>
 	</condition>

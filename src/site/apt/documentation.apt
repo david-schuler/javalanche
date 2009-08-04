@@ -25,7 +25,7 @@ Documentation
 * Running Javalanche
 
  In order to run Javalanche, you first need to copy the file
- <<<mutationTest.xml>>> from the Javalanche distribution to the root directory of
+ <<<javalanche.xml>>> from the Javalanche distribution to the root directory of
  project that you want to test. This file makes the different tasks of Javalanche
  available.When running Javalanche, these four properties have to be defined:
  
@@ -47,7 +47,7 @@ Documentation
  
  These properties have to specified for all following steps.
  They can either be set on the command
- line or in <<<mutationTest.xml>>>.
+ line or in <<<javalanche.xml>>>.
  
  The following sections describe the steps during mutation testing.
  Examples for these steps can be found {{{examples.html}here}}.
@@ -143,7 +143,7 @@ Documentation
 ** Running tasks in parallel
 	
  Instead of running the several task sequentally, they can also be run in parallel
- Therfore, first a script (default name: runMutations.sh) has to be generated 
+ Therfore, first a script (default name: runMutations.sh) has to be created 
  that calls the runMutations task with its argument.
  
  This script gets three inputs:
@@ -167,16 +167,16 @@ fi
 while  ! grep -q ALL_RESULTS ${OUTPUTFILE}
 do
 	echo "Task ${2} not completed - starting again"
-	nice -10 ant -f mutationTest.xml runMutations ${3} -Dmutation.file=${1}  2>&1 | tee -a $OUTPUTFILE 
+	nice -10 ant -f javalanche.xml runMutations ${3} -Dmutation.file=${1}  2>&1 | tee -a $OUTPUTFILE 
 	sleep 1
 done
 +-------------------------------+
 
-	The task <<<generateMutationMakefile>>> then creates a makefile with different
+	The task <<<createMutationMakefile>>> then creates a makefile with different
 	targets (one for each task file) that call this script.
 
 +-------------------------------+
-ant -f mutationTest.xml generateMutationMakefile
+ant -f javalanche.xml createMutationMakefile
 +-------------------------------+
 
 	In order to run multiple tasks in parallel, make has to be called with the

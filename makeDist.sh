@@ -9,6 +9,7 @@ cp import.xml ${DIST}/
 mkdir -p ${DIST}/src/main/resources/
 cp src/main/resources/mutation-build.xml ${DIST}/src/main/resources/
 cp src/main/resources/hibernate.cfg.xml ${DIST}/src/main/resources/
+cp ../adabu2-check-invariants/src/main/resources/invariant-build.xml  ${DIST}/src/main/resources/
 
 mkdir -p ${DIST}/examples/triangle
 cp ../Triangle/build.xml ${DIST}/examples/triangle/

@@ -1,5 +1,15 @@
 <project name="Mutation Tester">
 	
+
+<!-- Properties can either be supplied on the comand line or specified here -->
+<!--
+	<property name="prefix" value=""/>
+	<property name="testsuite" value=""/>
+	<property name="javalanche" value=""/>
+	<property name="cp" value=""/>
+-->
+<!-- Nothing need to be changed after this line -->
+
 	<property name="project.prefix" value="${prefix}"/>
 	<property name="project.test.suite" value="${testsuite}"/>
 	
@@ -13,6 +23,7 @@
 		
 	<import file="${javalanche.location}/import.xml"/>
 	<import file="${javalanche.location}/src/main/resources/mutation-build.xml" />
+	<import file="${javalanche.location}/src/main/resources/invariant-build.xml" />
 	
 	
 	<!-- 
