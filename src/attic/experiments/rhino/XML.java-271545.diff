@@ -1,0 +1,14 @@
+--- output/277935/post-fix/mozilla/js/rhino/xmlimplsrc/org/mozilla/javascript/xmlimpl/XML.java	2008-11-24 11:23:15.000000000 +0100
++++ output/277935/post-fix/mozilla/js/rhino/xmlimplsrc/org/mozilla/javascript/xmlimpl/XML.java-bug-271545	2008-11-24 11:23:05.000000000 +0100
+@@ -3040,7 +3040,10 @@
+                                    Object[] args)
+     {
+         if (args.length == 0) {
+-			return createFromJS(lib, "");
++			// This will enable bug 271545
++		    return createEmptyXML(lib);
++			// orginal behaviour: 
++			// return createFromJS(lib, "");
+         } else {
+             Object arg0 = args[0];
+             if (!inNewExpr && arg0 instanceof XML) {

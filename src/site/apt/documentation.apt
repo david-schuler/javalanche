@@ -1,0 +1,191 @@
+            ------
+            Documentation
+            ------
+            David Schuler
+            ------
+            Date
+
+
+Documentation
+
+ Javalanche allows mutation testing of Java projects that come with a JUnit 3
+ test suite. Below you will find a description of the several task of 
+ Javalanche.
+ 
+
+
+* Installing Javalanche
+ 
+ You need to download an unpack the latest release (see
+ {{{download.html}Downloads}}). The Release contains Javalanche and all its 
+ dependencies.
+ In order to run Javalanche, you will also need {{{http://ant.apache.org/}
+ ant}}, which is not included in the release.
+ 
+* Running Javalanche
+
+ In order to run Javalanche, you first need to copy the file
+ <<<mutationTest.xml>>> from the Javalanche distribution to the root directory of
+ project that you want to test. This file makes the different tasks of Javalanche
+ available.When running Javalanche, these four properties have to be defined:
+ 
+ [[1]] Test Suite (<<<-Dtestsuite>>>) The name of a JUnit test suite that should
+       be used for mutation testing.
+ 
+ [[1]] Classpath (<<<-Dcp>>>) The classpath needed to execute the test suite. 
+ Note: If there is already an ant task defined that executes the test suite, the
+ <<<-v>>> switch also prints out the classpath.
+ 
+ [[1]] Prefix (<<<-Dprefix>>>) The package prefix of the project. This prefix is
+ used to distinguish classes from the project from library classes. Only classes
+ in packages starting with this prefix are mutated.
+
+ [[1]] Javalanche Location (<<<-Djavalanche>>>). The directory were Javalanche 
+ is installed.
+ 
+ []
+ 
+ These properties have to specified for all following steps.
+ They can either be set on the command
+ line or in <<<mutationTest.xml>>>.
+ 
+ The following sections describe the steps during mutation testing.
+ Examples for these steps can be found {{{examples.html}here}}.
+ 
+** Setting Up
+ 
+ First the database that stores the mutations has to be set up. This 
+ is done via the <<<startHsql>>> task. 
+ 
+ Then the database schema has to be set. This is done via the <<<schemaexport>>>
+ task. Note that the schema usually only needs to be set once. If you set it
+ again this will delete all entries in the database.
+ 
+ The database can be shutdown with the <<<stopHsql>>> task.
+ 
+ Note: 
+ If you want to check the your configuration, you can run the
+ <<<testParameters>>> task. This task simply prints out the parameters as they
+ will be used for the following steps. 
+ 
+** Checking Tests
+
+  Before mutation testing it should be checked if all tests can be executed by
+  Javalanche without a failure.
+  In order to check this, there are 3 test tasks:
+ 
+ [[1]] <<<testTask1>>> simply runs the test suite. This task should behave like
+ a normal ant test task and all tests should pass.
+ 
+ [[1]] <<<testTask2>>> uses the Javalanche test driver. Javalanche either
+ reports that all tests passed, or it reports the tests that failed.
+ 
+ [[1]] <<<testTask3>>> uses the Javalanche test driver and executes the tests
+ multiple times in different order. This is done because the tests should not
+ depend on order or frequency of execution. Javalanche either reports that all
+ tests passed, or it reports the tests that failed. 
+ 
+** Scanning Project
+
+ When all tests pass for a project, it is ready for mutation testing. 
+ In a first step all classes that can be mutated are determined.
+ This includes all classes of the project that are executed by the test suite
+ and excludes all test cases. The task <<<scanProject>>> scans for classes 
+ in the project and produces an exclude file (<<<./mutation-files/exclude.txt>>>).
+ 
+ The exclude file contains all classes of this project that were executed by the
+ test suite. All classes that Javalanche identified as tests are not prefixed
+ with a <<<#>>>, and are excluded (not mutated). To exclude further classes or 
+ include misclasified classes simply modify the <<<#>>> in their entry.
+ 
+ In a next step all classes are scanned for possible mutations with the 
+ <<<scan>>> task. In this task all mutation possibilities for classes, which
+ match the given prefix and are not excluded, are written to the database. 
+ Furthermore, this tasks collects coverage data (which mutaitons are executed by
+ wich test)
+ 
+** Executing Mutations
+ 
+ In order to test the mutations, tasks have to be created. A task is a text file
+ that contains one mutation id per line. 
+ The ant task <<<createTasks>>> creates different mutation tasks for all 
+ mutations that are covered by tests and do not have results yet.
+	
+ The task <<<runMutations>>> executes the mutations. The task file has to be
+ specified in an additional parameter (<<<-Dmutation.task>>>). 
+ 
+** Analyzing Results
+
+ The results of the mutations can be analyzed with <<<analyzeResults>>>. This
+ shows the mutation score and the number of mutations that are detected by the
+ test suite as well as the mutation score for the executed mutations. 
+ 
+ With the parameter (<<<-Djavalanche.mutation.analyzers>>>) own mutation 
+ analyzers can be supplied. These analyzers have to implement the Interface 
+ <<<de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer>>> and must be 
+ on the classpath.
+ 
+ 
+** Cleaning Up
+
+ There are two tasks that clean up the database and one that cleans up all 
+ produced files.
+  
+ [[1]] <<<deleteResults>>> Deletes all mutation test results from the database.
+ 
+ [[1]] <<<deleteMutations>>> Deletes all data of this project from the database.
+
+ [[1]] <<<cleanJavalanche>>> Deletes all produced files. 
+
+ Note: If you run deleteMutations you should also run cleanJavalanche and vice 
+ versa.
+ 
+** Running tasks in parallel
+	
+ Instead of running the several task sequentally, they can also be run in parallel
+ Therfore, first a script (default name: runMutations.sh) has to be generated 
+ that calls the runMutations task with its argument.
+ 
+ This script gets three inputs:
+
+ [[1]] A mutation task file.
+
+ [[2]] The number of the task file.
+ 
+ [[3]] Any additional inputs.
+ 
+ A sample script looks as follows:
+ 
++-------------------------------+
+#!/bin/sh
+OUTPUTFILE=mutation-files/output-runMutationDaikon-${2}.txt
+BACKOUTPUTFILE=mutation-files/back-output-runMutationDaikon-${2}.txt
+if [ -e $OUTPUTFILE ]
+then
+	mv $OUTPUTFILE ${BACKOUTPUTFILE}
+fi
+while  ! grep -q ALL_RESULTS ${OUTPUTFILE}
+do
+	echo "Task ${2} not completed - starting again"
+	nice -10 ant -f mutationTest.xml runMutations ${3} -Dmutation.file=${1}  2>&1 | tee -a $OUTPUTFILE 
+	sleep 1
+done
++-------------------------------+
+
+	The task <<<generateMutationMakefile>>> then creates a makefile with different
+	targets (one for each task file) that call this script.
+
++-------------------------------+
+ant -f mutationTest.xml generateMutationMakefile
++-------------------------------+
+
+	In order to run multiple tasks in parallel, make has to be called with the
+	<<<-j>>> switch.
+	
++-------------------------------+
+make -j4
++-------------------------------+
+	
+	This task, for example, runs the four task in parallel. 
+
+

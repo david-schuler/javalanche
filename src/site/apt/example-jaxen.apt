@@ -1,0 +1,176 @@
+            ------
+            Jaxen Example
+            ------
+            David Schuler
+            ------
+            Date
+
+
+Jaxen
+	
+ Below you will find the steps for mutation testing Jaxen, an open source XPath
+ library.
+* Obtaining and Building
+
+ First we check out Jaxen from the svn (we use revision 1342 in this example).
+
++-------------------------------+
+svn co -r1342 https://svn.codehaus.org/jaxen/trunk/jaxen/jaxen jaxen
++-------------------------------+
+
+ Then we compile Jaxen and run the tests using maven 1.1
+
++-------------------------------+
+maven java:compile
+maven test
++-------------------------------+
+
+* Setting Up
+
+
+ After we compiled the project, we copy <<<mutationTest.xml>>> to this directory.
+
++-------------------------------+
+$cp ../../mutationTest.xml .
++-------------------------------+
+
+ Then we start the database:
+
++-------------------------------+
+ant -f mutationTest.xml  startHsql
++-------------------------------+
+
+ and export the database schema:
+
++-------------------------------+
+ant -f mutationTest.xml schemaexport
++-------------------------------+
+
+
+ In order to obtain the classpath used to run the tests, we run maven with the -X
+ switch.
+
++-------------------------------+
+maven test -X
++-------------------------------+
+
+ Among other output this will also give the classpath used to run the tests.
++-------------------------------+
+'-classpath'
+'/scratch/schuler/tmp/releaseTest/jaxen/target/test-classes:/scratch/schuler/tmp/releaseTest/jaxen/target/classes:/Users/schuler/.maven/repository/dom4j/jars/dom4j-1.6.1.jar:/Users/schuler/.maven/repository/jdom/jars/jdom-1.0.jar:/Users/schuler/.maven/repository/xml-apis/jars/xml-apis-1.3.02.jar:/Users/schuler/.maven/repository/xerces/jars/xercesImpl-2.6.2.jar:/Users/schuler/.maven/repository/xom/jars/xom-1.0.jar:/Users/schuler/.maven/repository/junit/jars/junit-3.8.2.jar:/Users/schuler/.maven/repository/xml-apis/jars/xml-apis-1.3.03.jar:/Users/schuler/.maven/repository/xerces/jars/xercesImpl-2.8.0.jar:/Users/schuler/.maven/repository/xml-resolver/jars/xml-resolver-1.1.jar:/scratch/schuler/tmp/releaseTest/jaxen/maven-1.1/lib/ant-launcher-1.6.5.jar:/scratch/schuler/tmp/releaseTest/jaxen/maven-1.1/lib/ant-1.6.5.jar:/scratch/schuler/tmp/releaseTest/jaxen/maven-1.1/lib/ant-junit-1.6.5.jar'
++-------------------------------+
+
+ From this output we take every entry, except of the jars that begin with <<<ant->>>.
+
+ The name of the test suite for this project is <<<org.jaxen.test.JaxenTests>>>
+ and the common package prefix is <<<org.jaxen>>>.
+ 
+ We can specify this information at the top of the <<<mutation.xml>>> file, such 
+ that we do not have to provide it in every step.
+ 
++-------------------------------+
+<property name="cp" value="/scratch/schuler/tmp/releaseTest/jaxen/target/test-classes:/scratch/schuler/tmp/releaseTest/jaxen/target/classes:/Users/schuler/.maven/repository/dom4j/jars/dom4j-1.6.1.jar:/Users/schuler/.maven/repository/jdom/jars/jdom-1.0.jar:/Users/schuler/.maven/repository/xml-apis/jars/xml-apis-1.3.02.jar:/Users/schuler/.maven/repository/xerces/jars/xercesImpl-2.6.2.jar:/Users/schuler/.maven/repository/xom/jars/xom-1.0.jar:/Users/schuler/.maven/repository/junit/jars/junit-3.8.2.jar:/Users/schuler/.maven/repository/xml-apis/jars/xml-apis-1.3.03.jar:/Users/schuler/.maven/repository/xerces/jars/xercesImpl-2.8.0.jar:/Users/schuler/.maven/repository/xml-resolver/jars/xml-resolver-1.1.jar" />
+<property name="prefix" value="org.jaxen"/>
+<property name="javalanche" value="/Users/schuler/workspace/mutationTest/javalanche-0.1" />
+<property name="testsuite" value="org.jaxen.test.JaxenTests"/>	
+
++-------------------------------+
+
+
+* Checking Tests
+
+ Using the modified <<<mutationTest.xml>>> file we can check the tests.
+ 
++-------------------------------+
+ant  -f mutationTest.xml testTask1
++-------------------------------+
+
+  This task shows us that 689 tests were executed and all passed. Thus we can 
+  proceed checking the tests.
+
++-------------------------------+
+ant  -f mutationTest.xml testTask2
++-------------------------------+
+
+ This task reports that a test case failed, namely <<<org.jaxen.test.SingleObjectIteratorTest.testNoInfiniteLoops>>>
+ When we look at the source code of this class, we see that this test case 
+ only works once. When it is executed twice it fails. Thus we apply the 
+ following fix to the test:
+ 
++-------------------------------+
+Index: src/java/test/org/jaxen/test/SingleObjectIteratorTest.java
+===================================================================
+--- src/java/test/org/jaxen/test/SingleObjectIteratorTest.java	(revision 1342)
++++ src/java/test/org/jaxen/test/SingleObjectIteratorTest.java	(working copy)
+@@ -54,8 +54,13 @@
+ 
+ public class SingleObjectIteratorTest extends TestCase {
+ 
+-    private Iterator iterator = new SingleObjectIterator(new Object());
+-    
++	
++    private Iterator iterator;
++	
++	public void setUp(){
++		iterator = new SingleObjectIterator(new Object());
++    }
++	
+     public void testNoInfiniteLoops() {
+      
+         iterator.next();
++-------------------------------+
+
+ Then we compile the tests again:
+
++-------------------------------+
+maven test:compile
++-------------------------------+
+
+ and run <<<testTask2>>> again, which now reports no error.
+
+ Finally we run the last check of the test suite, that should also pass.
+ 
+ 
++-------------------------------+
+ant -f mutationTest.xml testTask3
++-------------------------------+
+
+* Scanning the Project
+
+ Now we can scan the project for tests and possible mutations:
+ 
++-------------------------------+
+ant -f mutationTest.xml scanProject
++-------------------------------+
+
++-------------------------------+
+ant -f mutationTest.xml scan
++-------------------------------+
+
+
+* Executing Mutations
+
+ First the tasks have to be created:
+
++-------------------------------+
+ant -f mutationTest.xml createTasks
++-------------------------------+
+
+ Then these task can be executed:
+
++-------------------------------+
+ant -f mutationTest.xml runMutations runMutations -Dmutation.file=mutation-files/mutation-task-org_jaxen-01.txt 
++-------------------------------+
+
+* Excuting tasks in parallel
+ 
+  Using the make tool, the tasks can also be executed in parallel.
+  See {{./parallel.html}}
+	  
+
+* Analyzing Results
+ After the mutations have been executed the results can be analyzed:
++-------------------------------+
+ ant -f mutationTest.xml  analyzeResults
++-------------------------------+
+

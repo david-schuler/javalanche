@@ -1,0 +1,15 @@
+--- /scratch/schuler/subjects/ibugs_rhino-0.1/output/277935/post-fix/mozilla/js/rhino/src/org/mozilla/javascript/Parser.java	2008-11-24 15:49:05.000000000 +0100
++++ /scratch/schuler/subjects/ibugs_rhino-0.1/output/277935/post-fix/mozilla/js/rhino/src/org/mozilla/javascript/Parser.java-bug-210682	2008-11-24 15:48:45.000000000 +0100
+@@ -913,7 +913,11 @@
+ 			Node loop;
+ 			// matchJumpLabelName only matches if there is one
+ 			Node label = matchJumpLabelName();
+-			
++			//Bug 210682 Start
++			if(peekTokenOrEOL() == Token.EOL){
++				currentFlaggedToken = Token.EOL;				
++			}
++			//Bug 210682 End
+ 			if (label == null) {
+ 				if (loopSet == null || loopSet.size() == 0) {
+ 					reportError("msg.continue.outside");

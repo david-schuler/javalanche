@@ -1,0 +1,306 @@
+            ------
+            Triangle Example
+            ------
+            David Schuler
+            ------
+            Date
+
+
+Triangle
+
+ The triangle project is a simple project that classifies triangles and has a
+ JUnit test suite. 
+ The triangle example is located in the <<<examples/triangle>>> folder of the
+ Javalanche distribution.
+
+* Compiling the project
+
+ Before we start mutation testing the project, we need to compile it. 
+ To this end we use the <<<test>>> task of the project.
+ 
++-------------------------------+
+ant test
++-------------------------------+
+ 
+ Which produces the following output:
+
++-------------------------------+
+Buildfile: build.xml
+
+compile:
+    [mkdir] Created dir: /Users/schuler/workspace/mutationTest/javalanche-0.1/examples/triangle/target/classes
+    [javac] Compiling 6 source files to /Users/schuler/workspace/mutationTest/javalanche-0.1/examples/triangle/target/classes
+
+test:
+    [mkdir] Created dir: /Users/schuler/workspace/mutationTest/javalanche-0.1/examples/triangle/target/test-reports
+    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] Tests run: 18, Failures: 0, Errors: 0, Time elapsed: 0.02 sec
+
+BUILD SUCCESSFUL
+Total time: 2 seconds
++-------------------------------+
+
+
+* Setting Up
+
+ After we compiled the project, we copy <<<mutationTest.xml>>> to this directory.
+
++-------------------------------+
+$cp ../../mutationTest.xml .
++-------------------------------+
+
+ Then we start the database:
+
++-------------------------------+
+ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  startHsql
++-------------------------------+
+
+ and export the database schema:
+
++-------------------------------+
+ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  schemaexport
++-------------------------------+
+
+
+* Mutation Testing in one Step
+ 
+ After we compiled the project and copied the XML file, we can run the mutation
+ testing in one step:
+ 
++-------------------------------+
+ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  mutationTest
++-------------------------------+
+
+ This command executes all steps that are necessary. And displays the results.
+ The following sections describe the single steps in detail.
+ 
+* Checking Tests
+
+ After we setup Javalanche we can test if the test suite behaves as expected
+
++-------------------------------+
+ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask1
++-------------------------------+
+
+ Output:
+
++-------------------------------+
+Buildfile: mutationTest.xml
+
+testTask1:
+
+test-javalanche:
+    [mkdir] Created dir: /Users/schuler/workspace/mutationTest/javalanche-0.1/examples/triangle/mutation-files/junit-reports
+    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] Tests run: 18, Failures: 0, Errors: 0, Time elapsed: 0.108 sec
+
+BUILD SUCCESSFUL
+Total time: 1 second
+
++-------------------------------+
+
+ The output tells us that all 18 tests passed using the Javalanche test task, 
+ and we can test the Javalanche test runner.
+
++-------------------------------+
+ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask2
++-------------------------------+
+
+ Output:
+
++-------------------------------+
+Buildfile: mutationTest.xml
+
+testTask2:
+
+test-javalanche:
+    [junit] Integrating RandomPermutationTestSuite
+    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] All 18 tests passed 
+    [junit] Tests run: 0, Failures: 0, Errors: 0, Time elapsed: 0.08 sec
+
+BUILD SUCCESSFUL
+Total time: 4 seconds
+
++-------------------------------+
+
+
+ Now we can check if the tests are independent of execution frequency and
+ execution order
+
++-------------------------------+
+ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask3
++-------------------------------+
+
+ Output: 
+
+
++-------------------------------+
+Buildfile: mutationTest.xml
+
+testTask3:
+
+test-javalanche:
+    [junit] Integrating RandomPermutationTestSuite
+    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] All 18 tests passed for 10 permutations
+    [junit] Tests run: 0, Failures: 0, Errors: 0, Time elapsed: 0.537 sec
+
+BUILD SUCCESSFUL
+Total time: 4 seconds
++-------------------------------+
+
+
+* Scanning Project
+
+ As all of the tests are working we can scan the project:
+ 
++-------------------------------+
+ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  scanProject
++-------------------------------+
+
+ Output:
+
++-------------------------------+
+Buildfile: mutationTest.xml
+
+_scanProject:
+
+test-javalanche:
+    [junit] Scanning project for classes
+    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] Tests run: 18, Failures: 0, Errors: 0, Time elapsed: 0.08 sec
+    [junit] Got 6 classes with prefix: triangle
+
+_scanForTests:
+     [java] Found 4 test files.
+
+scanProject:
+
+BUILD SUCCESSFUL
+Total time: 4 seconds
++-------------------------------+
+
+ Before scanning for mutations, we have a look at the excludes file (<<<mutation-files/exclude.txt>>>).
+
++-------------------------------+
+# triangle.Triangle
+# triangle.TriangleType
+triangle.tests.Triangle1Test
+triangle.tests.Triangle2Test
+triangle.tests.Triangle3Test
+triangle.tests.TriangleTestSuite
++-------------------------------+
+
+ There are two classes that are not excluded. Since TriangleType is a simple Enum, we also exclude
+ it from mutation testing by removing the <<<# >>>.
+
++-------------------------------+
+ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  scan
++-------------------------------+
+
+ Output:
+
++-------------------------------+
+Buildfile: mutationTest.xml
+
+scan:
+
+test-javalanche:
+    [junit] Scanning for mutations
+    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] Tests run: 0, Failures: 0, Errors: 0, Time elapsed: 0.915 sec
+    [junit] Got 0 mutation possibilities before run.
+    [junit] Got 49 mutation possibilities after run.
+    [junit] Added 49 mutation possibilities.
+    [junit] Added 18 tests. Total number of tests for project triangle : 18
+    [junit] 49 (100.00 %) mutations are covered by tests.
+
+BUILD SUCCESSFUL
+Total time: 5 seconds
++-------------------------------+
+
+
+
+* Executing Mutations
+ 
+ Before executing the mutations we have to create a task:
+ 
+ 
++-------------------------------+
+ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  createTasks
++-------------------------------+
+
+ Output:
+
++-------------------------------+
+Buildfile: mutationTest.xml
+
+createTasks:
+     [java] Task created: /Users/schuler/workspace/mutationTest/javalanche-0.1/examples/triangle/mutation-files/mutation-task-triangle-01.txt
+     [java] Created 1 mutation tasks
+
+BUILD SUCCESSFUL
+Total time: 4 seconds
++-------------------------------+
+
+ Using the produced task we can execute the mutations.
+
++-------------------------------+
+ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  runMutations  -Dmutation.file=./mutation-files/mutation-task-triangle-01.txt
++-------------------------------+
+
+ Output:
+
++-------------------------------+
+Buildfile: mutationTest.xml
+
+runMutations:
+
+test-javalanche:
+    [junit] Run mutation tests (without invariant checks)
+    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] ALL_RESULTS
+    [junit] All mutations have results - this means they have already been aplied and executed
+    [junit] 49 mutations were applied. 49 Mutation results were recorded. 49 Mutations where actually touched.
+    [junit] Tests run: 0, Failures: 0, Errors: 0, Time elapsed: 1.671 sec
+
+
++-------------------------------+
+
+
+ 
+* Analyzing Results
+
+ Since all mutations are executed, we can analyze the mutation testing 
+ results.
+ 
++-------------------------------+
+ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  analyzeResults
++-------------------------------+
+ 
+ 
++-------------------------------+
+Buildfile: mutationTest.xml
+
+analyzeResults:
+     [echo]  Using 2048m memory 
+     [java] Analyzed Results for mutations with prefix: triangle
+     [java] No results for 0 mutations
+     [java] --------------------------------------------------------------------------------
+     [java] Results from class de.unisb.cs.st.javalanche.mutation.analyze.MutationResultAnalyzer
+     [java] Total mutations:                                                49 
+     [java] Touched mutations:                                              49 (100.00%)
+     [java] Not touched mutations:                                           0 ( 0.00%)
+     [java] Killed mutations:                                               45 (91.84%)
+     [java] Survived mutations:                                              4 ( 8.16%)
+     [java] Mutation score:                                             91.84% 
+     [java] Mutation score for mutations that were covered:             91.84% 
+     [java] 
+     [java] --------------------------------------------------------------------------------
+     [java] 
+
+BUILD SUCCESSFUL
+Total time: 3 seconds
++-------------------------------+
+

@@ -1,0 +1,11 @@
+1844c1844,1851
+< 			pn = expr(false);
+---
+> 			/* Enables bug 114491 */
+> 			if (peekToken() == Token.RP) {
+> 				pn = null;
+> 			} else {
+> 				pn = expr(false);
+> 			}
+> 			// Original Code:
+> 			//pn = expr(false);

@@ -1,0 +1,13 @@
+--- ./output/277935/post-fix/mozilla/js/rhino/src/org/mozilla/javascript/NativeScript.java-bug-220584	2008-11-24 12:29:51.000000000 +0100
++++ ./output/277935/post-fix/mozilla/js/rhino/src/org/mozilla/javascript/NativeScript.java	2008-11-24 12:29:56.000000000 +0100
+@@ -138,9 +138,7 @@
+                             : ScriptRuntime.toString(args[0]);
+             Script script = compile(cx, source);
+             NativeScript nscript = new NativeScript(script);
+-			// Bug 220584 Comment this line out
+-			// original line left in
+-//            ScriptRuntime.setObjectProtoAndParent(nscript, scope);
++            ScriptRuntime.setObjectProtoAndParent(nscript, scope);
+             return nscript;
+           }
+ 
