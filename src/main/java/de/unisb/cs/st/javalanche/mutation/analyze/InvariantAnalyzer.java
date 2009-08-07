@@ -42,8 +42,8 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 			total++;
 		}
 		StringBuilder sb = new StringBuilder();
-		// sb.append("Total Mutations: " + total);
-		// sb.append('\n');
+		sb.append("Total Mutations: " + total);
+		sb.append('\n');
 		sb.append("Killed mutations: " + killed + "\n");
 		sb
 				.append(String
@@ -56,30 +56,24 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 		sb
 				.append(String
 						.format(
-								"Mutations that violated invariants and were not detected: %d (%s relative to all mutations  / %s relative to mutations that where covered / %s relative to mutations that violated invariants/ %s relative to all covered and not detected mutations)",
+								"Mutations that violated invariants and were not detected: %d (%s relative to all mutations  / %s relative to mutations that where covered)",
 								violatedNotCaught, AnalyzeUtil.formatPercent(
 										violatedNotCaught, total), AnalyzeUtil
 										.formatPercent(violatedNotCaught,
-												withResult), AnalyzeUtil
-										.formatPercent(violatedNotCaught,
-												violated), AnalyzeUtil
-												.formatPercent(violatedNotCaught,
-														withResult-killed)));
+												withResult)));
 		sb.append('\n');
 		int violatedCaught = violated - violatedNotCaught;
 		sb
 				.append(String
 						.format(
-								"Mutations that violated invariants and were detected:  %d (%s relative to all mutations  / %s relative to mutations that where covered / %s relative to mutations that violated invariants / %s relative to all detected mutations)",
+								"Mutations that violated invariants and were detected:  %d (%s relative to all mutations  / %s relative to mutations that where covered)",
 								violatedCaught, AnalyzeUtil.formatPercent(
-										violatedCaught, total),
-								AnalyzeUtil.formatPercent(violatedCaught,
-										withResult), AnalyzeUtil.formatPercent(
-										violatedCaught, violated),AnalyzeUtil.formatPercent(
-												violatedCaught, killed)));
-		if (false) {
+										violatedCaught, total), AnalyzeUtil
+										.formatPercent(violatedCaught,
+												withResult)));
+		if (true) {
 			sb
-					.append("List of mutations that violated invariants and were not caught:\n");
+					.append("\n\nList of mutations that violated invariants and were not caught:\n\n");
 
 			Collections.sort(violatedNotCaughtList, new Comparator<Mutation>() {
 
@@ -93,15 +87,21 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 
 			});
 			for (Mutation mutation2 : violatedNotCaughtList) {
-				sb.append(mutation2.toShortString());
+				String add = "";
+				if (mutation2.getMutationForLine() != 0) {
+					add = " (" + mutation2.getMutationForLine() + ")";
+				}
+				sb.append(String.format("Class: %s Line: %d%s  Type: %s",
+						mutation2.getClassName(), mutation2.getLineNumber(),
+						add, mutation2.getMutationType().toString()));
 				sb.append('\n');
-				sb.append("Violated invariants ids: "
-						+ Arrays.toString(mutation2.getMutationResult()
-								.getViolatedInvariants()));
+				MutationTestResult mr = mutation2.getMutationResult();
+				sb.append(String.format("Violated invariants: %d (Ids: %s)", mr
+						.getDifferentViolatedInvariants(), Arrays.toString(mr
+						.getViolatedInvariants())));
 				sb.append('\n');
 			}
 		}
 		return sb.toString();
 	}
-
 }

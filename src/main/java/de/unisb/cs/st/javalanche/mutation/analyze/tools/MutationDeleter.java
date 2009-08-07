@@ -12,6 +12,7 @@ import org.hibernate.Transaction;
 import de.unisb.cs.st.ds.util.Formater;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
@@ -36,7 +37,8 @@ public class MutationDeleter {
 		String query = "FROM Mutation WHERE className LIKE '" + prefix + "%'";
 		List<Long> idList = getIdList(query);
 		logger.info("Deleting Coverage Data");
-		QueryManager.deleteCoverageResult(idList);
+		// QueryManager.deleteCoverageResult(idList);
+		MutationCoverageFile.deleteCoverageData();
 		deleteFromQuery(query);
 		String deleteTestsQuery = "FROM TestName WHERE project ='" + prefix
 				+ "'";

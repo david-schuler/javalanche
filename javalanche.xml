@@ -22,8 +22,8 @@
 	
 		
 	<import file="${javalanche.location}/import.xml"/>
-	<import file="${javalanche.location}/src/main/resources/mutation-build.xml" />
 	<import file="${javalanche.location}/src/main/resources/invariant-build.xml" />
+	<import file="${javalanche.location}/src/main/resources/mutation-build.xml" />
 	
 	
 	<!-- 

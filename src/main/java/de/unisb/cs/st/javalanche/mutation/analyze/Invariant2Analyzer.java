@@ -33,7 +33,6 @@ public class Invariant2Analyzer implements MutationAnalyzer {
 					survivedList.add(m);
 				}
 			}
-
 		}
 		Collections.sort(all, new InvariantComparator());
 		Collections.sort(survivedList, new InvariantComparator());

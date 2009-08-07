@@ -43,22 +43,22 @@ Total time: 2 seconds
 
 * Setting Up
 
- After we compiled the project, we copy <<<mutationTest.xml>>> to this directory.
+ After we compiled the project, we copy <<<javalanche.xml>>> to this directory.
 
 +-------------------------------+
-$cp ../../mutationTest.xml .
+$cp ../../javalanche.xml .
 +-------------------------------+
 
  Then we start the database:
 
 +-------------------------------+
-ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  startHsql
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  startHsql
 +-------------------------------+
 
  and export the database schema:
 
 +-------------------------------+
-ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  schemaexport
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  schemaexport
 +-------------------------------+
 
 
@@ -68,7 +68,7 @@ ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=trian
  testing in one step:
  
 +-------------------------------+
-ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  mutationTest
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  mutationTest
 +-------------------------------+
 
  This command executes all steps that are necessary. And displays the results.
@@ -79,13 +79,13 @@ ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=trian
  After we setup Javalanche we can test if the test suite behaves as expected
 
 +-------------------------------+
-ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask1
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask1
 +-------------------------------+
 
  Output:
 
 +-------------------------------+
-Buildfile: mutationTest.xml
+Buildfile: javalanche.xml
 
 testTask1:
 
@@ -103,13 +103,13 @@ Total time: 1 second
  and we can test the Javalanche test runner.
 
 +-------------------------------+
-ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask2
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask2
 +-------------------------------+
 
  Output:
 
 +-------------------------------+
-Buildfile: mutationTest.xml
+Buildfile: javalanche.xml
 
 testTask2:
 
@@ -129,14 +129,14 @@ Total time: 4 seconds
  execution order
 
 +-------------------------------+
-ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask3
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask3
 +-------------------------------+
 
  Output: 
 
 
 +-------------------------------+
-Buildfile: mutationTest.xml
+Buildfile: javalanche.xml
 
 testTask3:
 
@@ -156,13 +156,13 @@ Total time: 4 seconds
  As all of the tests are working we can scan the project:
  
 +-------------------------------+
-ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  scanProject
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  scanProject
 +-------------------------------+
 
  Output:
 
 +-------------------------------+
-Buildfile: mutationTest.xml
+Buildfile: javalanche.xml
 
 _scanProject:
 
@@ -196,13 +196,13 @@ triangle.tests.TriangleTestSuite
  it from mutation testing by removing the <<<# >>>.
 
 +-------------------------------+
-ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  scan
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  scan
 +-------------------------------+
 
  Output:
 
 +-------------------------------+
-Buildfile: mutationTest.xml
+Buildfile: javalanche.xml
 
 scan:
 
@@ -228,13 +228,13 @@ Total time: 5 seconds
  
  
 +-------------------------------+
-ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  createTasks
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  createTasks
 +-------------------------------+
 
  Output:
 
 +-------------------------------+
-Buildfile: mutationTest.xml
+Buildfile: javalanche.xml
 
 createTasks:
      [java] Task created: /Users/schuler/workspace/mutationTest/javalanche-0.1/examples/triangle/mutation-files/mutation-task-triangle-01.txt
@@ -247,13 +247,13 @@ Total time: 4 seconds
  Using the produced task we can execute the mutations.
 
 +-------------------------------+
-ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  runMutations  -Dmutation.file=./mutation-files/mutation-task-triangle-01.txt
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  runMutations  -Dmutation.file=./mutation-files/mutation-task-triangle-01.txt
 +-------------------------------+
 
  Output:
 
 +-------------------------------+
-Buildfile: mutationTest.xml
+Buildfile: javalanche.xml
 
 runMutations:
 
@@ -276,12 +276,12 @@ test-javalanche:
  results.
  
 +-------------------------------+
-ant -f mutationTest.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  analyzeResults
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  analyzeResults
 +-------------------------------+
  
  
 +-------------------------------+
-Buildfile: mutationTest.xml
+Buildfile: javalanche.xml
 
 analyzeResults:
      [echo]  Using 2048m memory 

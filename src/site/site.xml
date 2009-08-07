@@ -30,8 +30,10 @@ under the License.
 	
 	 <menu name="Documentation">
       <item name="Running Javalanche" href="documentation.html"/>
+      <item name="Invariant Checking" href="doc-invariants.html"/>
 	  <item name="Example I-Triangle" href="example-triangle.html"/>
 	  <item name="Example II-Jaxen" href="example-jaxen.html"/>
+	  <item name="Example III-Invariants" href="example-invariant.html"/>
     </menu>
 	
 	<menu ref="reports"/>

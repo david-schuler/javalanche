@@ -125,4 +125,8 @@ public class MutationCoverageFile {
 		}
 		return coveredMutations;
 	}
+
+	public static void deleteCoverageData() {
+		COVERAGE_DIR.delete();
+	}
 }
