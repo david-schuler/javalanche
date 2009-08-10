@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.EclipseScanner;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.IntegrateCheckNamesSuiteTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.IntegrateRandomPermutationTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
@@ -114,6 +115,12 @@ public class MutationPreMain {
 				System.out.println("Scanning project for classes");
 				addClassFileTransformer(instrumentation,
 						new ScanProjectTransformer());
+				return;
+			}
+			else if (RUN_MODE == SCAN_ECLIPSE) {
+				System.out.println("Scanning project from eclipse");
+				addClassFileTransformer(instrumentation,
+						new EclipseScanner());
 				return;
 			}
 

@@ -49,7 +49,7 @@ public class MutationScanner implements ClassFileTransformer {
 		addShutDownHook();
 	}
 
-	private void addShutDownHook() {
+	public static void addShutDownHook() {
 		Runtime runtime = Runtime.getRuntime();
 		final long mutationPossibilitiesPre = QueryManager
 				.getNumberOfMutationsWithPrefix(MutationProperties.PROJECT_PREFIX);

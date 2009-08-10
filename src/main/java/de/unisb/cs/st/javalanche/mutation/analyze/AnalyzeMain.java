@@ -9,6 +9,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlAnalyzer;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
@@ -31,7 +32,8 @@ public class AnalyzeMain {
 		if (analyzers != null && analyzers.length > 0) {
 			analyzeMutations(analyzers);
 		} else {
-			analyzeMutations(new MutationAnalyzer[] { new MutationResultAnalyzer() });
+			analyzeMutations(new MutationAnalyzer[] {
+					new MutationResultAnalyzer(), new HtmlAnalyzer() });
 		}
 	}
 

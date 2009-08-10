@@ -59,7 +59,8 @@ public class MutationProperties {
 				"mutation-invariant-per-test"), MUTATION_TEST_COVERAGE(
 				"mutation-coverage"), CREATE_COVERAGE("create-coverage"), OFF(
 				"off"), CHECK_INVARIANTS_PER_TEST("check-per-test"), TEST_PERMUTED(
-				"test3"), SCAN_PROJECT("scan-project");
+				"test3"), SCAN_PROJECT("scan-project"), SCAN_ECLIPSE(
+				"scan-eclipse");
 
 		private String key;
 
@@ -322,5 +323,7 @@ public class MutationProperties {
 
 	public static final boolean SINGLE_TASK_MODE = getPropertyOrDefault(
 			SINGLE_TASK_MODE_KEY, false);
+
+	public static final String CLASSES_TO_MUTATE_KEY = "javalanche.classes.to.mutate";
 
 }

@@ -1,0 +1,75 @@
+            ------
+            Documentation
+            ------
+            David Schuler
+            ------
+            Date
+
+			
+Mutation Testing with Invariant Checking
+
+ Mutation testing with invariant checking needs some additional steps
+ to the ones described in {{{http://groups.csail.mit.edu/pag/daikon/} Daikon}}
+ These steps are described below, and an example is described 
+ {{{example-invariant.html}here}}.
+
+* Tracing
+
+ Dynamic invariants for a program run are inferred from a trace. Thus, the
+ program has to be traced first. This is done with
+ {{{http://www.st.cs.uni-saarland.de/models/adabu2/} adabu2}} via the
+ <<<trace>>> task. This task produces a trace for each Junit test. For
+ efficiency reasons we do not produce one trace for the whole execution of the
+ test suite.
+ 
+ In order to be processed by {{{http://groups.csail.mit.edu/pag/daikon/} Daikon}}
+ the Adabu2 traces have to be converted into the daikon dtrace format.
+ This is done with the <<<createDaikonFiles>>> task.
+ 
+* Detect Dynamic Invariants
+	
+  {{{http://groups.csail.mit.edu/pag/daikon/} Daikon}} is used to detect dynamic invariants
+  for the run of the test suite. Therfore, a script  is generated that calls Daikon
+  with the appropiate arguments (task: <<<createDaikonScript>>>).
+  
+  In order to generate dynamic invariants for all traces a Makefile is generated 
+  that calls the script for every trace file (task: <<<createDaikonMakefile>>>).
+
+
+* Creating Invariant Checkers
+	
+ With invariant checkers, invariant violations can be detected at runtime.
+ The task <<<createInvariantCheckers>>> produces invariant checkers for
+ the invariants that were detected in the previous step.
+ 
+* Applying the Invariant Checkers
+ 
+ Before applying the invariant checkers, the types and visibilities of 
+ the fields have to be known. This information can be obtained with the 
+ <<<scanFields>>> task.
+ 
+ Since the invariants are derived per test, it need to be checked wich invariants
+ hold for the complete test suite. Therefore the invariant checkers are tested
+ on the unmodified test suite with the <<<checkInvariants>>> task.
+ If an invariant is violated it gets disabled.
+ This step needs to be repeated until no invariants are violated for a run. This
+ is indicated by the output:
+
++-------------------------------+
+No invariant violations:
+RUN_SUCCESSFULL
++-------------------------------+
+
+* Mutation Testing with Invariant Checking
+ 
+ Using the invariant checkers for invariants that hold for the whole test suite,
+ the invariant violations of the mutations can be checked. This is done with the
+ task <<<runMutationsInvariant>>> which works takes the same argument as 
+ the {{{documentation.html}<<<runMutations>>>}} task 
+ 
+* Analyze Results
+
+  After the mutations are executed the results can be analyzed. In order to 
+  get the impact of the mutations on the invariants a special analyzer 
+  (<<<-Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.mutation.analyze.InvariantAnalyzer>>>)
+  can be used for the task <<<analyzeResults>>>

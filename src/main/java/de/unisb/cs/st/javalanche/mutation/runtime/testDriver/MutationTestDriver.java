@@ -137,7 +137,8 @@ public abstract class MutationTestDriver {
 			}
 			listeners.addLast(new ResultReporter());
 			runMutations();
-		} else if (MutationProperties.RUN_MODE == RunMode.SCAN) {
+		} else if (MutationProperties.RUN_MODE == RunMode.SCAN
+				|| MutationProperties.RUN_MODE == RunMode.SCAN_ECLIPSE) {
 			scanTests();
 		} else if (MutationProperties.RUN_MODE == RunMode.CHECK_INVARIANTS_PER_TEST) {
 			addMutationTestListener(new InvariantPerTestCheckListener());

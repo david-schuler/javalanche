@@ -12,12 +12,12 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 /**
- *
+ * 
  * Class that stores a mutation. It stores its type, where it is (was) applied
  * and the results of the tests.
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "className",
@@ -38,13 +38,28 @@ public class Mutation implements Serializable {
 	static int mutionIdGenerator = 0;
 
 	public enum MutationType {
-		NO_MUTATION, RIC_PLUS_1, RIC_MINUS_1, RIC_ZERO, NEGATE_JUMP, ARITHMETIC_REPLACE, REMOVE_CALL
+		NO_MUTATION("No mutation"), RIC_PLUS_1("Constant +1"), RIC_MINUS_1(
+				"Constant -1"), RIC_ZERO("Replace Constant by 0"), NEGATE_JUMP(
+				"Negate jump condition"), ARITHMETIC_REPLACE(
+				"Replace arithmetic operator"), REMOVE_CALL(
+				"Remove method call");
+
+		private String desc;
+
+		MutationType(String desc) {
+			this.desc = desc;
+		}
+
+		public String getDesc() {
+			return desc;
+		}
 	};
 
 	private String className;
 
 	/**
-	 * The linenumber of the mutation, -1 is used when no linenumber is available.
+	 * The linenumber of the mutation, -1 is used when no linenumber is
+	 * available.
 	 */
 	private int lineNumber;
 
@@ -56,7 +71,6 @@ public class Mutation implements Serializable {
 	private MutationTestResult mutationResult;
 
 	private boolean classInit;
-
 
 	/**
 	 * Default constructor needed by Hibernate.
@@ -190,7 +204,7 @@ public class Mutation implements Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -211,7 +225,7 @@ public class Mutation implements Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -252,7 +266,7 @@ public class Mutation implements Serializable {
 
 	/**
 	 * Same behaviour as equals without checking for equal ids.
-	 *
+	 * 
 	 * @param comp
 	 *            Mutation to compare.
 	 * @return True, if both objects are equal except of their IDs.
@@ -296,7 +310,8 @@ public class Mutation implements Serializable {
 
 	public boolean isKilled() {
 		return mutationResult != null
-				&& (mutationResult.getNumberOfErrors() > 0 || mutationResult.getNumberOfFailures() > 0);
+				&& (mutationResult.getNumberOfErrors() > 0 || mutationResult
+						.getNumberOfFailures() > 0);
 	}
 
 	public void loadAll() {
@@ -304,7 +319,5 @@ public class Mutation implements Serializable {
 			mutationResult.loadAll();
 		}
 	}
-
-
 
 }

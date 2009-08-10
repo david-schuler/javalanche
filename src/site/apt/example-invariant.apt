@@ -1,0 +1,169 @@
+        	------
+            Invariant Example
+            ------
+            David Schuler
+            ------
+            Date
+
+
+Invariant Example
+
+ The invariant example is a simple project that shows invariant 
+ violations when mutations are executed.
+ The invariant example project is located in the <<<examples/>>> folder of the
+ Javalanche distribution.
+
+* Compiling the project
+	
+ First the project needs to be compiled and tested. This is done with the
+ <<<test>>> task
+
++-------------------------------+
+ant test
++-------------------------------+
+
+
+* Setting up
+
+ We copy the <<<javalanche.xml>>> file from the distribution into this directory
+ and  specify the corresponding properties in the this file:
+
++-------------------------------+
+<property name="prefix" value="invariant.example"/>
+<property name="testsuite" value="invariant.example.InvariantExampleTestSuite"/>
+<property name="javalanche" value="../../"/>
+<property name="cp" value="invariantExample.jar"/>
++-------------------------------+
+
+ If the database is not already running we start it with the following command:
+
++-------------------------------+
+ant -f javalanche.xml  startHsql
++-------------------------------+
+
+
+* Checking Tests
+
+ As for the other examples {{{example-triangle.html}1}},{{{example-jaxen.html}2}} 
+ we first check the test suite:
+
++-------------------------------+
+ant -f javalanche.xml testTask1
++-------------------------------+
+
++-------------------------------+
+ant -f javalanche.xml testTask2
++-------------------------------+
+
++-------------------------------+
+ant -f javalanche.xml testTask3
++-------------------------------+
+
+
+* Scanning the Project 
+ 
+ Now we can scan the project for tests and possible mutations:
+              
++-------------------------------+
+ant -f javalanche.xml scanProject
++-------------------------------+
+
++-------------------------------+
+ant -f javalanche.xml scan
++-------------------------------+
+
+
+* Tracing
+
+ In order to compute the invariants, the program needs to be traced first
+ 
++-------------------------------+
+ant -f javalanche.xml trace
++-------------------------------+
+
+* Detect Dynamic Invariants
+
+ First we convert the traces into the Daikon format:
+ 
++-------------------------------+
+ant -f javalanche.xml createDaikonFiles
++-------------------------------+
+
+
+ Then we generate a script that processes these files
+ 
++-------------------------------+
+ant -f javalanche.xml createDaikonScript
++-------------------------------+
+ 
+ and a Makefile that processes these scripts:
+
++-------------------------------+
+ant -f javalanche.xml createDaikonMakefile
++-------------------------------+
+
+ Now we run make to produce the invariants.
+
++-------------------------------+
+make 
++-------------------------------+
+
+* Creating Invariant Checkers
+
+ After the invariant files are created, we generate invariant checkers.
+
++-------------------------------+
+ant -f javalanche.xml createInvariantCheckers
++-------------------------------+
+
+* Applying the invariant checkers
+ 
+ Before we can apply the invariant checkers we need to get types and 
+ visibilities of the fields.
+
++-------------------------------+
+ant -f javalanche.xml scanFields
++-------------------------------+
+
+ Now we need to check whether the invariants hold for the complete run of the 
+ test suite.
+ 
++-------------------------------+
+ant -f javalanche.xml checkInvariants
++-------------------------------+
+
+ If we get the output
+
++-------------------------------+
+No invariant violations:
+RUN_SUCCESSFULL
++-------------------------------+
+ 
+ we can start with mutation testing otherwise we have to repeat the last step 
+ until we get this output.
+ 
+ 
+ 
+* Mutation Testing with Invariant Checking
+
+ For mutation testing we first have to create the mutation tasks. 
+ 
++-------------------------------+
+ant -f javalanche.xml createTasks
++-------------------------------+
+
+ The we can run this task and check for invariant violations of the mutations
+ 
++-------------------------------+
+ant -f javalanche.xml runMutationsInvariant -Dmutation.file=mutation-files/mutation-task-invariant_example-01.txt 
++-------------------------------+
+
+
+* Analyze Results
+
+ When the mutation testing is finished we can analyze the results
+ 
++-------------------------------+
+ant -f javalanche.xml -Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.mutation.analyze.InvariantAnalyzer analyzeResults
++-------------------------------+
+
