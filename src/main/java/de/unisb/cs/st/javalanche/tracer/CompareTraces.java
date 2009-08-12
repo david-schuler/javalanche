@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
 
-public class CompareTraces extends NewTracerAnalyzer {
+public class CompareTraces extends TraceAnalyzer {
 
 	class FilenameFilterImpl implements FilenameFilter {
 		public boolean accept(File arg0, String arg1) {

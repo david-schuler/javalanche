@@ -19,6 +19,10 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
+/**
+ * @author Bernhard Gruen
+ * 
+ */
 public class TracerTestListener implements MutationTestListener {
 
 	private static Logger logger = Logger.getLogger(TracerTestListener.class);

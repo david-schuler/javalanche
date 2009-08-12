@@ -1,11 +1,8 @@
 package de.unisb.cs.st.javalanche.tracer;
 
-import static de.unisb.cs.st.javalanche.tracer.TracerProperties.TRACE_PROFILER_FILE;
+import static de.unisb.cs.st.javalanche.tracer.TracerProperties.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,14 +14,18 @@ import org.objectweb.asm.Opcodes;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
 
+/**
+ * @author Bernhard Gruen
+ * 
+ */
 public class TracerMethodAdapter extends MethodAdapter {
 
 	private static Logger logger = Logger.getLogger(TracerMethodAdapter.class);
 
 	private String methodName, className;
 
-	private boolean instrumentData = true;
-	private boolean instrumentLine = true;
+	private boolean instrumentReturns = TracerProperties.TRACE_RETURNS;
+	private boolean instrumentLine = TracerProperties.TRACE_LINES;
 
 	// primitive data types
 	private enum PDType { LONG, INTEGER, FLOAT, DOUBLE };
@@ -47,13 +48,13 @@ public class TracerMethodAdapter extends MethodAdapter {
 		// don't instrument private classes / methods for data coverage
 		if ((classAccess & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE || (methodAccess & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE) {
 			logger.debug("not instrumenting method " + this.className + "@" + this.methodName + " (cause: only private access)");
-			instrumentData = false;
+			instrumentReturns = false;
 			// instrumentLine = false;
 		}
 
 		// don't instrument classes for data coverage that throw an exception
 		if (dontInstrumentSet != null && dontInstrumentSet.contains(this.className + "@" + this.methodName)) {
-			instrumentData = false;
+			instrumentReturns = false;
 		}
 
 	}
@@ -64,13 +65,14 @@ public class TracerMethodAdapter extends MethodAdapter {
 	 * @see org.objectweb.asm.MethodAdapter#visitCode()
 	 */
 	public void visitCode() {
-		if (!methodName.equals("<clinit>") && (instrumentLine || instrumentData)) {
+		if (!methodName.equals("<clinit>")
+				&& (instrumentLine || instrumentReturns)) {
 			// System.out.println(className + "." + methodName);
 			this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerProperties.TRACER_CLASS_NAME, "getInstance", "()L"+ TracerProperties.TRACER_CLASS_NAME + ";");
 			this.visitLdcInsn(className);
 			this.visitLdcInsn(methodName);
 			this.visitLdcInsn(instrumentLine);
-			this.visitLdcInsn(instrumentData);
+			this.visitLdcInsn(instrumentReturns);
 			this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TracerProperties.TRACER_CLASS_NAME, "begin", "(Ljava/lang/String;Ljava/lang/String;ZZ)V");
 		}
 		super.visitCode();
@@ -82,7 +84,7 @@ public class TracerMethodAdapter extends MethodAdapter {
 	 * @see org.objectweb.asm.MethodAdapter#visitInsn(int)
 	 */
 	public void visitInsn(int inst) {
-		if (!methodName.equals("<clinit>") && instrumentData) {
+		if (!methodName.equals("<clinit>") && instrumentReturns) {
 			switch (inst) {
 			case Opcodes.IRETURN:
 				callLogIReturn();

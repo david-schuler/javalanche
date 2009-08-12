@@ -27,4 +27,10 @@ public final class TracerProperties {
 	public final static String TRACE_DIFFERENCES_FILE = TRACE_RESULT_DIR
 			+ "differences-set.xml";
 
+
+	public static final boolean TRACE_RETURNS = false;
+
+	public static final boolean TRACE_LINES = true;
+
+	
 }

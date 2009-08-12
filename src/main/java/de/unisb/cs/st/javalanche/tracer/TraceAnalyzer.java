@@ -32,7 +32,7 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
  * @author Bernhard Gruen
  * 
  */
-public class NewTracerAnalyzer implements MutationAnalyzer {
+public class TraceAnalyzer implements MutationAnalyzer {
 
 	private static class MutationCache {
 		public long id;
@@ -95,7 +95,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 	}
 
 	private static final Logger logger = Logger
-			.getLogger(NewTracerAnalyzer.class);
+			.getLogger(TraceAnalyzer.class);
 
 	private static HashMap<String, HashMap<String, HashMap<Integer, Integer>>> originalLineCoverageMaps = null;
 	private static HashMap<String, HashMap<String, HashMap<Integer, Integer>>> originalDataCoverageMaps = null;
@@ -530,10 +530,14 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			String ignoredMethod = findMutatedMethod(mutation);
 			TracerResult results = new TracerResult();
 			HashSet<String> modifiedMethods = new HashSet<String>();
-			processMutationLineCoverage(mutation, results, modifiedMethods,
-					ignoredMethod);
-			processMutationDataCoverage(mutation, results, modifiedMethods,
-					ignoredMethod);
+			if (TracerProperties.TRACE_LINES) {
+				processMutationLineCoverage(mutation, results, modifiedMethods,
+						ignoredMethod);
+			}
+			if (TracerProperties.TRACE_RETURNS) {
+				processMutationDataCoverage(mutation, results, modifiedMethods,
+						ignoredMethod);
+			}
 
 			results.methodsModifiedAll = modifiedMethods.size();
 			results.methodsModifiedAllWOS = modifiedMethods.size();
@@ -555,7 +559,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			String ignoredMethod) {
 		ObjectInputStream ois = null;
 
-		String path = TracerProperties.TRACE_RESULT_LINE_DIR + mutation.id + "/";
+		String path = TracerProperties.TRACE_RESULT_LINE_DIR + mutation.id
+				+ "/";
 		File dir = new File(path);
 		if (!dir.exists()) {
 			logger.warn("No line coverage data found for mutation: "
@@ -697,7 +702,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			String ignoredMethod) {
 		ObjectInputStream ois = null;
 
-		String path = TracerProperties.TRACE_RESULT_DATA_DIR + mutation.id + "/";
+		String path = TracerProperties.TRACE_RESULT_DATA_DIR + mutation.id
+				+ "/";
 		File dir = new File(path);
 		if (!dir.exists()) {
 			System.out.println("NOT FOUND: " + mutation.shortString);
@@ -812,18 +818,24 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Mutations processed: " + counter + "\n");
 		sb.append("\tEpsilon:        " + epsilon + "\n");
+		if (TracerProperties.TRACE_LINES) {
 		sb.append("Results for line coverage traces:\n");
 		writeShortResultPercentHelper(sb, epsilon, killedLine, notKilledLine);
+		
+		}
+		if (TracerProperties.TRACE_RETURNS) {
 		sb.append("Results for data coverage traces:\n");
 		writeShortResultPercentHelper(sb, epsilon, killedData, notKilledData);
+		}
+		if (TracerProperties.TRACE_LINES && TracerProperties.TRACE_RETURNS) {
 		sb.append("Results for combined coverage traces:\n");
 		writeShortResultPercentHelper(sb, epsilon, killed, notKilled);
+		}
 		return sb.toString();
 	}
 
 	private void writeShortResultPercentHelper(StringBuilder sb,
-			double epsilon,
-			List<Number> killed, List<Number> notKilled) {
+			double epsilon, List<Number> killed, List<Number> notKilled) {
 		// killed
 		int over = 0, under = 0;
 		for (Number n : killed) {
