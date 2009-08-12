@@ -5,11 +5,14 @@ import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.cglib.transform.impl.AddStaticInitTransformer;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlAnalyzer;
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
@@ -32,8 +35,7 @@ public class AnalyzeMain {
 		if (analyzers != null && analyzers.length > 0) {
 			analyzeMutations(analyzers);
 		} else {
-			analyzeMutations(new MutationAnalyzer[] {
-					new MutationResultAnalyzer(), new HtmlAnalyzer() });
+			analyzeMutations(new MutationAnalyzer[] { new MutationResultAnalyzer() });
 		}
 	}
 
@@ -102,14 +104,18 @@ public class AnalyzeMain {
 						+ "%'");
 		@SuppressWarnings("unchecked")
 		List<Mutation> mutations = query.list();
+		HtmlReport report = new HtmlAnalyzer().analyze(mutations);
 		StringBuilder sb = new StringBuilder();
 		sb
 				.append("--------------------------------------------------------------------------------\n");
+
 		for (MutationAnalyzer mutationAnalyzer : mutationAnalyzers) {
 
-			String analyzeResult = mutationAnalyzer.analyze(mutations);
+			String analyzeResult = mutationAnalyzer.analyze(mutations, report);
 
-			sb.append("Results from " + mutationAnalyzer.getClass() + "\n");
+			String str = "Results from " + mutationAnalyzer.getClass() + "\n";
+			report.addSummary(str, analyzeResult);
+			sb.append(str);
 			sb.append(analyzeResult);
 			sb
 					.append("\n--------------------------------------------------------------------------------\n");
@@ -119,6 +125,7 @@ public class AnalyzeMain {
 				+ PROJECT_PREFIX);
 		System.out.println("No results for " + l + " mutations");
 		System.out.println(sb.toString());
+		report.report();
 		tx.commit();
 		session.close();
 	}

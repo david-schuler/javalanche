@@ -8,6 +8,7 @@ import java.util.List;
 import de.unisb.cs.st.javalanche.invariants.invariants.ClassInvariants;
 import de.unisb.cs.st.javalanche.invariants.invariants.checkers.InvariantChecker;
 import de.unisb.cs.st.javalanche.invariants.properties.InvariantProperties;
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 
@@ -15,7 +16,7 @@ public class DebugAnalyzer implements MutationAnalyzer {
 
 	private boolean verbose = true;
 
-	public String analyze(Iterable<Mutation> mutations) {
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		StringBuffer sb = new StringBuffer();
 		List<Mutation> invariantMutations = new ArrayList<Mutation>();
 		for (Mutation m : mutations) {

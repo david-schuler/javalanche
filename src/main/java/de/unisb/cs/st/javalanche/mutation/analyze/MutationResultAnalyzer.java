@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 
@@ -13,7 +14,7 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 
 	private static final boolean WRITE_FILES = false;
 
-	public String analyze(Iterable<Mutation> mutations) {
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		int touched = 0;
 		int notTouched = 0;
 		int classInit = 0;

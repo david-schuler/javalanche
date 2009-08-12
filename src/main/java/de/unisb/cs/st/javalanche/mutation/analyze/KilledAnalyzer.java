@@ -3,6 +3,7 @@ package de.unisb.cs.st.javalanche.mutation.analyze;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 
@@ -10,7 +11,7 @@ public class KilledAnalyzer implements MutationAnalyzer {
 
 	private static final String FORMAT = "%-55s %10d\n";
 
-	public String analyze(Iterable<Mutation> mutations) {
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		List<Mutation> killedByError = new ArrayList<Mutation>();
 		List<Mutation> killedByFailure = new ArrayList<Mutation>();
 		List<Mutation> killedExclusivelyByError = new ArrayList<Mutation>();
@@ -48,7 +49,5 @@ public class KilledAnalyzer implements MutationAnalyzer {
 		return sb.toString();
 	}
 
-	public static void main(String[] args) {
-		System.out.println(new KilledAnalyzer().analyze(new ArrayList<Mutation>()));
-	}
+	
 }

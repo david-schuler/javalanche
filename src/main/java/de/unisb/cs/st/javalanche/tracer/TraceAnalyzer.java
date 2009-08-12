@@ -20,6 +20,8 @@ import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
 import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
+import de.unisb.cs.st.javalanche.mutation.analyze.html.ClassReport;
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
 /* TODO rewrite of processTest* and processMutation*
@@ -33,6 +35,8 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
  * 
  */
 public class TraceAnalyzer implements MutationAnalyzer {
+
+	private static final String COLUMN_NAME = "Methods <br/> with <br/> Coverage <br/> Difference";
 
 	private static class MutationCache {
 		public long id;
@@ -115,6 +119,8 @@ public class TraceAnalyzer implements MutationAnalyzer {
 	ArrayList<Number> notKilledData = new ArrayList<Number>();
 
 	DecimalFormat dec = new DecimalFormat("###.##");
+
+	HtmlReport report;
 
 	LinkedBlockingQueue<MutationCache> lbq = new LinkedBlockingQueue<MutationCache>();
 
@@ -532,6 +538,11 @@ public class TraceAnalyzer implements MutationAnalyzer {
 			if (TracerProperties.TRACE_LINES) {
 				processMutationLineCoverage(mutation, results, modifiedMethods,
 						ignoredMethod);
+				ClassReport classReport = report
+						.getClassReport(mutation.className);
+				classReport.addColumn(COLUMN_NAME);
+				classReport.putEntry(mutation.id, COLUMN_NAME,
+						results.methodsModifiedLine + "");
 			}
 			if (TracerProperties.TRACE_RETURNS) {
 				processMutationDataCoverage(mutation, results, modifiedMethods,
@@ -879,7 +890,8 @@ public class TraceAnalyzer implements MutationAnalyzer {
 	 * After that the method starts several threads. Each thread then works on
 	 * the same queue and so processes mutations.
 	 */
-	public String analyze(Iterable<Mutation> mutations) {
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
+		this.report = report;
 		loadOriginalTraces();
 
 		int counter = 0;
@@ -934,6 +946,7 @@ public class TraceAnalyzer implements MutationAnalyzer {
 			}
 		}
 		String shortResults = getShortResults(counter, epsilon);
+
 		return shortResults;
 	}
 }

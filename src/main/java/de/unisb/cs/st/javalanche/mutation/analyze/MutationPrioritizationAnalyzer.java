@@ -13,6 +13,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
 import de.unisb.cs.st.ds.util.io.Io;
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
@@ -24,7 +25,7 @@ public class MutationPrioritizationAnalyzer implements MutationAnalyzer {
 	public static final File ADD_MUTATION_FILE = new File("additional-mutaiton.csv");
 	public static final File TOTAL_MUTATION_FILE = new File("total-mutaiton.csv");
 
-	public String analyze(Iterable<Mutation> mutations) {
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		SetMultimap<String, Long> detectTestMap = new HashMultimap<String, Long>();
 		SetMultimap<String, Long> invariantdetectTestMap = new HashMultimap<String, Long>();
 		StringBuilder sb = new StringBuilder();

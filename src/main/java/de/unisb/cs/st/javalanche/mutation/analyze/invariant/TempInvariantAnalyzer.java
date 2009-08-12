@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import de.unisb.cs.st.ds.util.io.SerializeIo;
 import de.unisb.cs.st.javalanche.mutation.analyze.AnalyzeUtil;
 import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantUtils;
 
@@ -73,7 +74,7 @@ public class TempInvariantAnalyzer implements MutationAnalyzer {
 		return ids;
 	}
 
-	public String analyze(Iterable<Mutation> mutations) {
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		int mutationsWithResult = 0;
 		int killed = 0;
 		int killedAndDifference = 0;

@@ -1,5 +1,6 @@
 package de.unisb.cs.st.javalanche.mutation.analyze;
 
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
 /**
@@ -20,5 +21,7 @@ public interface MutationAnalyzer {
 	 *
 	 * @return a String that summarizes the results.
 	 */
-	public String analyze(Iterable<Mutation> mutations);
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report);
+	
+	
 }

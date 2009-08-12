@@ -11,13 +11,14 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
 
 public class CheckAnalyzer implements MutationAnalyzer {
 
-	public String analyze(Iterable<Mutation> mutations) {
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 
 		List<Mutation> detected = new ArrayList<Mutation>();
 		Map<String, Integer> testDetectMap = new HashMap<String, Integer>();

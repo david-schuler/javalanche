@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import de.unisb.cs.st.ds.util.io.SerializeIo;
 import de.unisb.cs.st.ds.util.io.XmlIo;
 import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
@@ -24,7 +25,7 @@ public class ExperimentAnalyzer2 implements MutationAnalyzer {
 	 *
 	 * @see de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer#analyze(java.lang.Iterable)
 	 */
-	public String analyze(Iterable<Mutation> mutations) {
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		if (MutationProperties.EXPERIMENT_DATA_FILENAME == null
 				|| MutationProperties.EXPERIMENT_DATA_FILENAME.length() == 0) {
 			String message = "No filename given. It should be specified in property "

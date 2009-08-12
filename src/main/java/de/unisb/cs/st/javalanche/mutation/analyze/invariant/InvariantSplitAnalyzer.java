@@ -11,6 +11,7 @@ import java.util.TreeSet;
 
 import de.unisb.cs.st.javalanche.mutation.analyze.AnalyzeUtil;
 import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.InvariantAddResult;
 import de.unisb.cs.st.javalanche.mutation.results.InvariantSet;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
@@ -22,7 +23,7 @@ import de.unisb.cs.st.javalanche.mutation.util.InvariantFilesUtil;
 
 public class InvariantSplitAnalyzer implements MutationAnalyzer {
 
-	public String analyze(Iterable<Mutation> mutations) {
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		// List<TestName> tests = getAllTests();
 		int numberOfMutations = 0;
 		List<Mutation> violatingMutations = new ArrayList<Mutation>();

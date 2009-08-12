@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
@@ -29,7 +30,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 	 */
 	private Random r = new Random(1816052929);
 
-	public String analyze(Iterable<Mutation> mutations) {
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		StringBuilder sb = new StringBuilder();
 		List<Mutation> coveredNotKilledMutations = new ArrayList<Mutation>();
 		List<Mutation> coveredMutations = new ArrayList<Mutation>();

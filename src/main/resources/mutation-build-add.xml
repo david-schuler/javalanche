@@ -159,25 +159,6 @@
 	</target>
 	
 	
-	<target name="createCoverageData" description="* Create coverage data for an original unmutated run" depends="mutationDir">
-		<property name="create.coverage.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
-		<property name="create.coverage.memory" value="-Xmx1524m"/>
-		<property name="create.coverage.mutation.run.mode" value="-Dmutation.run.mode=create-coverage"/>
-		<property name="create.coverage.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
-		<property name="create.coverage.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
-		<property name="create.coverage.verbose" value="-verbose"/>
-		
-		
-		<path id="create.coverage.classpath.add">
-			<path refid="mutation.classpath"/>
-		</path>
-		
-		<antcall target="test-javalanche">
-			<!--${create.coverage.verbose}-->
-			<param name="javalanche.arg.line" value="  ${create.coverage.mutation.javaagent} ${create.coverage.memory} ${create.coverage.mutation.run.mode} ${create.coverage.javalanche.package.prefix} ${create.coverage.javalanche.project.test.suite} " />
-			<reference refid="create.coverage.classpath.add" torefid="javalanche.classpath.add"/>
-		</antcall>
-	</target>
 
 	<target name="createCoverageDataClean" description="* Create coverage data for an original unmutated run ,and deletes files" depends="mutationDir">
 		<delete file="mutation-files/tracer/profiler-map.xml"/>

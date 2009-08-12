@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import static de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType.*;
@@ -71,7 +72,7 @@ public class ManualAnalyzer implements MutationAnalyzer {
 		}
 	};
 
-	public String analyze(Iterable<Mutation> mutations) {
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		StringBuilder sb = new StringBuilder();
 		List<Long> equivalentIds = getIds(equivalents);
 		List<Long> nonEquivalentIds = getIds(nonEquivalents);

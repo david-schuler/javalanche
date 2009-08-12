@@ -9,6 +9,7 @@ import de.unisb.cs.st.javalanche.invariants.invariants.ClassInvariants;
 import de.unisb.cs.st.javalanche.invariants.invariants.checkers.InvariantChecker;
 import de.unisb.cs.st.javalanche.invariants.properties.InvariantProperties;
 
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 
@@ -23,7 +24,7 @@ public class Invariant2Analyzer implements MutationAnalyzer {
 		}
 	}
 
-	public String analyze(Iterable<Mutation> mutations) {
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		List<Mutation> all = new ArrayList<Mutation>();
 		List<Mutation> survivedList = new ArrayList<Mutation>();
 		for (Mutation m : mutations) {

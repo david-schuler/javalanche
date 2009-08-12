@@ -6,16 +6,20 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import de.unisb.cs.st.javalanche.mutation.analyze.html.ClassReport;
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 
 public class InvariantAnalyzer implements MutationAnalyzer {
 
+	private static final String COLUMN = "Invariant Impact";
+
 	protected static String formatPercent(double d) {
 		return null;
 	}
 
-	public String analyze(Iterable<Mutation> mutations) {
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		int total = 0;
 		int withResult = 0;
 		int violated = 0;
@@ -37,7 +41,11 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 			}
 			if (mutationResult != null) {
 				withResult++;
-
+				ClassReport classReport = report.getClassReport(mutation.getClassName());
+				classReport.addColumn(COLUMN);
+				classReport.putEntry(mutation.getId(), COLUMN, mutation
+						.getMutationResult().getDifferentViolatedInvariants()
+						+ "");
 			}
 			total++;
 		}

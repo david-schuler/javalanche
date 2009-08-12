@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
+import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 
@@ -21,7 +23,7 @@ public class AssertAnalyzer implements MutationAnalyzer {
 	 * 
 	 * @see de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer#analyze(java.lang.Iterable)
 	 */
-	public String analyze(Iterable<Mutation> mutations) {
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		List<Mutation> killedByError = new ArrayList<Mutation>();
 		List<Mutation> killedByFailure = new ArrayList<Mutation>();
 		List<Mutation> killedMutations = new ArrayList<Mutation>();
