@@ -94,8 +94,7 @@ public class TraceAnalyzer implements MutationAnalyzer {
 		public int dataModified = 0;
 	}
 
-	private static final Logger logger = Logger
-			.getLogger(TraceAnalyzer.class);
+	private static final Logger logger = Logger.getLogger(TraceAnalyzer.class);
 
 	private static HashMap<String, HashMap<String, HashMap<Integer, Integer>>> originalLineCoverageMaps = null;
 	private static HashMap<String, HashMap<String, HashMap<Integer, Integer>>> originalDataCoverageMaps = null;
@@ -819,17 +818,19 @@ public class TraceAnalyzer implements MutationAnalyzer {
 		sb.append("Mutations processed: " + counter + "\n");
 		sb.append("\tEpsilon:        " + epsilon + "\n");
 		if (TracerProperties.TRACE_LINES) {
-		sb.append("Results for line coverage traces:\n");
-		writeShortResultPercentHelper(sb, epsilon, killedLine, notKilledLine);
-		
+			sb.append("Results for line coverage traces:\n");
+			writeShortResultPercentHelper(sb, epsilon, killedLine,
+					notKilledLine);
+
 		}
 		if (TracerProperties.TRACE_RETURNS) {
-		sb.append("Results for data coverage traces:\n");
-		writeShortResultPercentHelper(sb, epsilon, killedData, notKilledData);
+			sb.append("Results for data coverage traces:\n");
+			writeShortResultPercentHelper(sb, epsilon, killedData,
+					notKilledData);
 		}
 		if (TracerProperties.TRACE_LINES && TracerProperties.TRACE_RETURNS) {
-		sb.append("Results for combined coverage traces:\n");
-		writeShortResultPercentHelper(sb, epsilon, killed, notKilled);
+			sb.append("Results for combined coverage traces:\n");
+			writeShortResultPercentHelper(sb, epsilon, killed, notKilled);
 		}
 		return sb.toString();
 	}

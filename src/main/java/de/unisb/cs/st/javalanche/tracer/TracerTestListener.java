@@ -138,10 +138,12 @@ public class TracerTestListener implements MutationTestListener {
 			if (seenTests.contains(testName)) {
 				seenTests.clear();
 				long i = 1;
-				File dir = new File(TracerProperties.TRACE_RESULT_DATA_DIR + "PERMUTATED_" + i);
+				File dir = new File(TracerProperties.TRACE_RESULT_DATA_DIR
+						+ "PERMUTATED_" + i);
 				while (dir.exists()) {
 					i++;
-					dir = new File(TracerProperties.TRACE_RESULT_DATA_DIR + "PERMUTATED_" + i);
+					dir = new File(TracerProperties.TRACE_RESULT_DATA_DIR
+							+ "PERMUTATED_" + i);
 				}
 				mutation_id = -i;
 			}
@@ -163,7 +165,8 @@ public class TracerTestListener implements MutationTestListener {
 		classMap.clear();
 		valueMap.clear();
 		Trace.getInstance().setDataCoverageDeactivated(false);
-		Trace.getInstance().setLineCoverageDeactivated(false);;
+		Trace.getInstance().setLineCoverageDeactivated(false);
+		;
 		saveFiles = false;
 	}
 
@@ -218,7 +221,7 @@ public class TracerTestListener implements MutationTestListener {
 			classMapCopy = new HashMap<String, HashMap<Integer, Integer>>(
 					classMap);
 		}
-		if(classMapCopy.size() == 0){
+		if (classMapCopy.size() == 0) {
 			logger.warn("Empty coverage map");
 		}
 
@@ -282,7 +285,7 @@ public class TracerTestListener implements MutationTestListener {
 					valueMap);
 
 		}
-		if(valueMapCopy.size() == 0){
+		if (valueMapCopy.size() == 0) {
 			logger.warn("Empty value map");
 		}
 		ObjectOutputStream oos = null;

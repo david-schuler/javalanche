@@ -16,6 +16,10 @@ import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutation
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.testDetector.TestInfo;
 
+/**
+ * @author Bernhard Gruen
+ * 
+ */
 public class TraceTransformer implements ClassFileTransformer {
 
 	private static Logger logger = Logger.getLogger(TraceTransformer.class);

@@ -4,7 +4,10 @@ import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
-
+/**
+ * @author Bernhard Gruen
+ * 
+ */
 public class TracerClassAdapter extends ClassAdapter {
 
 	private String className;

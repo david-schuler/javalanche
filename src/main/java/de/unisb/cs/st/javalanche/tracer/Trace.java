@@ -6,6 +6,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+/**
+ * @author Bernhard Gruen
+ * 
+ */
 public class Trace {
 	private static Logger logger = Logger.getLogger(Trace.class);
 
