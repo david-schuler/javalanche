@@ -12,6 +12,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.Excludes;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.testDetector.TestInfo;
 
@@ -19,6 +20,8 @@ public class TraceTransformer implements ClassFileTransformer {
 
 	private static Logger logger = Logger.getLogger(TraceTransformer.class);
 
+	private static final Excludes e = Excludes.getTestExcludesInstance(); 
+	
 	public TraceTransformer() {
 		super();
 		Runtime.getRuntime().addShutdownHook(new Thread(){
@@ -43,7 +46,7 @@ public class TraceTransformer implements ClassFileTransformer {
 
 		// blacklist: can't trace yourself and don't instrument tests (better performance)
 
-		if (TestInfo.isTest(className.replace('/','.'))) {
+		if (e.shouldExclude(className.replace('/', '.'))) {
 			//System.err.println("Blacklisted: " + className);
 			return classfileBuffer;
 		}

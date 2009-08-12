@@ -1,5 +1,6 @@
 package de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,11 +24,21 @@ public class Excludes {
 	// private static Logger logger = Logger.getLogger(Excludes.class);
 
 	private static class SingletonHolder {
-		private static final Excludes INSTANCE = new Excludes();
+		private static final Excludes INSTANCE = new Excludes(
+				MutationProperties.EXCLUDE_FILE);
+	}
+	
+	private static class TestSingletonHolder {
+		private static final Excludes INSTANCE = new Excludes(
+				MutationProperties.TEST_EXCLUDE_FILE);
 	}
 
 	public static Excludes getInstance() {
 		return SingletonHolder.INSTANCE;
+	}
+
+	public static Excludes getTestExcludesInstance() {
+		return TestSingletonHolder.INSTANCE;
 	}
 
 	private Set<String> excludes;
@@ -38,12 +49,12 @@ public class Excludes {
 		return excludes.contains(classNameWithDots);
 	}
 
-	private Excludes() {
+	private Excludes(File f) {
 		excludes = new HashSet<String>();
 		allClasses = new TreeSet<String>();
-		if (MutationProperties.EXCLUDE_FILE.exists()) {
+		if (f.exists()) {
 			List<String> lines = Io
-					.getLinesFromFile(MutationProperties.EXCLUDE_FILE);
+					.getLinesFromFile(f);
 			for (String line : lines) {
 				String trim = line.trim();
 				if (!trim.startsWith("#")) {
@@ -73,6 +84,7 @@ public class Excludes {
 			}
 		}
 		Io.writeFile(sb.toString(), MutationProperties.EXCLUDE_FILE);
+		Io.writeFile(sb.toString(), MutationProperties.TEST_EXCLUDE_FILE);
 	}
 
 	public void exclude(String testClass) {

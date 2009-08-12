@@ -28,6 +28,10 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
  * a second step.
  */
 
+/**
+ * @author Bernhard Gruen
+ * 
+ */
 public class NewTracerAnalyzer implements MutationAnalyzer {
 
 	private static class MutationCache {
@@ -45,7 +49,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		public static MutationCache create(Mutation m) {
 			MutationCache mc = new MutationCache();
 			mc.id = m.getId();
-//			mc.shortString = m.toShortString();
+			// mc.shortString = m.toShortString();
 			mc.killed = m.isKilled();
 			mc.classInit = m.isClassInit();
 			mc.className = m.getClassName();
@@ -54,7 +58,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			mc.mutationType = m.getMutationType().toString();
 			mc.mutationResult = m.getMutationResult() != null ? m
 					.getMutationResult().toShortString()
-					: TracerConstants.NO_RESULT;
+					: TracerProperties.NO_RESULT;
 			return mc;
 		}
 	}
@@ -98,8 +102,6 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 	boolean firstCallToWriteOut = true;
 	PrintStream out = null;
-	StringBuffer sb = new StringBuffer();
-
 
 	// (not-)killed by all criterions (line + data)
 	ArrayList<Number> killed = new ArrayList<Number>();
@@ -113,11 +115,9 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 	ArrayList<Number> killedData = new ArrayList<Number>();
 	ArrayList<Number> notKilledData = new ArrayList<Number>();
 
-
 	DecimalFormat dec = new DecimalFormat("###.##");
 
 	LinkedBlockingQueue<MutationCache> lbq = new LinkedBlockingQueue<MutationCache>();
-
 
 	/*
 	 * Theses two Sets contain excluded method names. So those methods don't
@@ -130,21 +130,21 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 	private int outcount;
 
 	private static HashSet<String> loadDontInstrument() {
-		if (new File(TracerConstants.TRACE_DONT_INSTRUMENT_FILE).exists()) {
-			return XmlIo.get(TracerConstants.TRACE_DONT_INSTRUMENT_FILE);
+		if (new File(TracerProperties.TRACE_DONT_INSTRUMENT_FILE).exists()) {
+			return XmlIo.get(TracerProperties.TRACE_DONT_INSTRUMENT_FILE);
 		}
 		return new HashSet<String>();
 	}
 
 	private static HashSet<String> loadDifferences() {
-		if (new File(TracerConstants.TRACE_DIFFERENCES_FILE).exists()) {
-			return XmlIo.get(TracerConstants.TRACE_DIFFERENCES_FILE);
+		if (new File(TracerProperties.TRACE_DIFFERENCES_FILE).exists()) {
+			return XmlIo.get(TracerProperties.TRACE_DIFFERENCES_FILE);
 		}
 		return new HashSet<String>();
 	}
 
-
-	/* *************************************************************************
+	/*
+	 * *************************************************************************
 	 * Helper method to load the original (id=0) line and data coverage traces.
 	 */
 	private void loadOriginalTraces() {
@@ -152,7 +152,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		originalDataCoverageMaps = loadDataCoverageTrace("0");
 	}
 
-	/* *************************************************************************
+	/*
+	 * *************************************************************************
 	 * Helper method to load an arbitrary trace (line or data coverage)
 	 */
 	private HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadTrace(
@@ -172,8 +173,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 
 		for (String test : originalTests) {
 			try {
-				ois = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(
-						new FileInputStream(path + test))));
+				ois = new ObjectInputStream(new BufferedInputStream(
+						new GZIPInputStream(new FileInputStream(path + test))));
 				numClasses = ois.readInt();
 				classMap = new HashMap<String, HashMap<Integer, Integer>>();
 				for (int i = 0; i < numClasses; i++) {
@@ -195,23 +196,26 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		return map;
 	}
 
-	/* *************************************************************************
+	/*
+	 * *************************************************************************
 	 * Helper method to load an arbitrary line coverage trace.
 	 */
 	protected HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadLineCoverageTrace(
 			String mutation_dir) {
-		return loadTrace(TracerConstants.TRACE_RESULT_LINE_DIR, mutation_dir);
+		return loadTrace(TracerProperties.TRACE_RESULT_LINE_DIR, mutation_dir);
 	}
 
-	/* *************************************************************************
+	/*
+	 * *************************************************************************
 	 * Helper method to load an arbitrary data coverage trace.
 	 */
 	protected HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadDataCoverageTrace(
 			String mutation_dir) {
-		return loadTrace(TracerConstants.TRACE_RESULT_DATA_DIR, mutation_dir);
+		return loadTrace(TracerProperties.TRACE_RESULT_DATA_DIR, mutation_dir);
 	}
 
-	/* *************************************************************************
+	/*
+	 * *************************************************************************
 	 * Method to write out results as csv data for a given mutation and result.
 	 * This method is synchronized as we have to ensure that each thread can
 	 * write its own data (a whole line of csv data) to the file.
@@ -229,50 +233,45 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		}
 
 		if (firstCallToWriteOut) {
-			out.println("ID;KILLED;"
-					+ "CLASSES_TOTAL;CLASSES_MODIFIED;"
-					+ "METHODS_TOTAL;"
-					+ "METHODS_MODIFIED_LINE;METHODS_MODIFIED_DATA;METHODS_MODIFIED_ALL;"
-					+ "METHODS_MODIFIED_LINE_WOS;METHODS_MODIFIED_DATA_WOS;METHODS_MODIFIED_ALL_WOS;"
-					+ "LINES_TOTAL;LINES_MODIFIED;"
-					+ "DATA_TOTAL;DATA_MODIFIED;"
-					+ "TESTS_TOTAL;TESTS_EXECUTED;"
-					+ "MUTATION_TYPE;CLASS_NAME;METHOD_NAME;LINE_NUMBER;MUTATION_FOR_LINE;"
-					+ "CLASS_INIT;MUTATION_RESULT");
+			out
+					.println("ID;KILLED;"
+							+ "CLASSES_TOTAL;CLASSES_MODIFIED;"
+							+ "METHODS_TOTAL;"
+							+ "METHODS_MODIFIED_LINE;METHODS_MODIFIED_DATA;METHODS_MODIFIED_ALL;"
+							+ "METHODS_MODIFIED_LINE_WOS;METHODS_MODIFIED_DATA_WOS;METHODS_MODIFIED_ALL_WOS;"
+							+ "LINES_TOTAL;LINES_MODIFIED;"
+							+ "DATA_TOTAL;DATA_MODIFIED;"
+							+ "TESTS_TOTAL;TESTS_EXECUTED;"
+							+ "MUTATION_TYPE;CLASS_NAME;METHOD_NAME;LINE_NUMBER;MUTATION_FOR_LINE;"
+							+ "CLASS_INIT;MUTATION_RESULT");
 			firstCallToWriteOut = false;
 		}
 		logger.debug("ID: " + mutation.id + "\tKilled: " + mutation.killed
-				+ "\tValue: "
-				+ (results.methodsModifiedAll) + " ("
+				+ "\tValue: " + (results.methodsModifiedAll) + " ("
 				+ mutation.mutationType + ")");
 		outcount++;
-		if(outcount % 500 == 0){
-			logger.info("Written results for "  + outcount + " mutations");
+		if (outcount % 500 == 0) {
+			logger.info("Written results for " + outcount + " mutations");
 		}
 		out.println(mutation.id + ";" + mutation.killed + ";"
-				+ results.classesTotal + ";"
-				+ results.classesModified + ";"
-				+ results.methodsTotal + ";"
-				+ results.methodsModifiedLine + ";"
-				+ results.methodsModifiedData + ";"
+				+ results.classesTotal + ";" + results.classesModified + ";"
+				+ results.methodsTotal + ";" + results.methodsModifiedLine
+				+ ";" + results.methodsModifiedData + ";"
 				+ results.methodsModifiedAll + ";"
 				+ results.methodsModifiedLineWOS + ";"
 				+ results.methodsModifiedDataWOS + ";"
-				+ results.methodsModifiedAllWOS + ";"
-				+ results.linesTotal + ";"
-				+ results.linesModified + ";"
-				+ results.dataTotal + ";"
-				+ results.dataModified + ";"
-				+ results.testsTotal + ";"
-				+ results.testsExecuted + ";"
-				+ mutation.mutationType + ";" + mutation.className + ";"
-				+ mutation.methodName + ";"
+				+ results.methodsModifiedAllWOS + ";" + results.linesTotal
+				+ ";" + results.linesModified + ";" + results.dataTotal + ";"
+				+ results.dataModified + ";" + results.testsTotal + ";"
+				+ results.testsExecuted + ";" + mutation.mutationType + ";"
+				+ mutation.className + ";" + mutation.methodName + ";"
 				+ mutation.lineNumber + ";" + mutation.mutationForLine + ";"
 				+ mutation.classInit + ";" + mutation.mutationResult);
 
 	}
 
-	/* *************************************************************************
+	/*
+	 * *************************************************************************
 	 * Method that processes a single line coverage test and returns its results
 	 * to the calling mutation test method.
 	 */
@@ -381,8 +380,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		}
 	}
 
-
-	/* *************************************************************************
+	/*
+	 * *************************************************************************
 	 * Method that processes a single data coverage test and returns its results
 	 * to the calling mutation test method.
 	 */
@@ -492,22 +491,26 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			modified.put(tmpS, lineSet);
 		}
 	}
-	/* *************************************************************************
-	 * Helper method to find the mutated method given a line number in some class.
+
+	/*
+	 * *************************************************************************
+	 * Helper method to find the mutated method given a line number in some
+	 * class.
 	 */
 	private String findMutatedMethod(MutationCache mutation) {
 		Iterator<String> it = originalLineCoverageMaps.keySet().iterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			String testName = it.next();
-			HashMap<String, HashMap<Integer, Integer>> classes = originalLineCoverageMaps.get(testName);
+			HashMap<String, HashMap<Integer, Integer>> classes = originalLineCoverageMaps
+					.get(testName);
 			Iterator<String> it2 = classes.keySet().iterator();
-			while(it2.hasNext()) {
+			while (it2.hasNext()) {
 				String name = it2.next();
 				if (name.startsWith(mutation.className)) {
 					HashMap<Integer, Integer> lines = classes.get(name);
 					if (lines.containsKey(mutation.lineNumber)) {
 						int pos = name.indexOf('@') + 1;
-						mutation.methodName=name.substring(pos);
+						mutation.methodName = name.substring(pos);
 						return name;
 					}
 				}
@@ -516,7 +519,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		return "";
 	}
 
-	/* *************************************************************************
+	/*
+	 * *************************************************************************
 	 * General that gets a mutation out of the queue and runs two helper methods
 	 * to process line coverage and data coverage sequentially.
 	 */
@@ -526,10 +530,11 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			String ignoredMethod = findMutatedMethod(mutation);
 			TracerResult results = new TracerResult();
 			HashSet<String> modifiedMethods = new HashSet<String>();
-			processMutationLineCoverage(mutation, results, modifiedMethods, ignoredMethod);
-			processMutationDataCoverage(mutation, results, modifiedMethods, ignoredMethod);
+			processMutationLineCoverage(mutation, results, modifiedMethods,
+					ignoredMethod);
+			processMutationDataCoverage(mutation, results, modifiedMethods,
+					ignoredMethod);
 
-			//System.out.println("modifiedMethodsAll: " + modifiedMethods);
 			results.methodsModifiedAll = modifiedMethods.size();
 			results.methodsModifiedAllWOS = modifiedMethods.size();
 
@@ -541,17 +546,20 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		}
 	}
 
-	/* *************************************************************************
+	/*
+	 * *************************************************************************
 	 * Helper method that processes a single mutation for line coverage data.
 	 */
 	private void processMutationLineCoverage(MutationCache mutation,
-			TracerResult results, HashSet<String> modifiedMethodsSet, String ignoredMethod) {
+			TracerResult results, HashSet<String> modifiedMethodsSet,
+			String ignoredMethod) {
 		ObjectInputStream ois = null;
 
-		String path = TracerConstants.TRACE_RESULT_LINE_DIR + mutation.id + "/";
+		String path = TracerProperties.TRACE_RESULT_LINE_DIR + mutation.id + "/";
 		File dir = new File(path);
 		if (!dir.exists()) {
-			logger.warn("No line coverage data found for mutation: " + mutation.shortString);
+			logger.warn("No line coverage data found for mutation: "
+					+ mutation.shortString);
 			return;
 		}
 		String[] mutatedTests = dir.list();
@@ -566,8 +574,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			modifiedTmp = modified;
 			commit = true;
 			try {
-				ois = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(
-						new FileInputStream(path + test))));
+				ois = new ObjectInputStream(new BufferedInputStream(
+						new GZIPInputStream(new FileInputStream(path + test))));
 				if (originalLineCoverageMaps.containsKey(test)) {
 					processTestLineCoverage(originalLineCoverageMaps.get(test),
 							ois, modifiedTmp);
@@ -599,10 +607,10 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			if (commit) {
 				modified = modifiedTmp;
 			} else {
-				logger.info("Line Coverage Test '" + test +"' for Mutation "+  mutation.id + " excluded.");
+				logger.info("Line Coverage Test '" + test + "' for Mutation "
+						+ mutation.id + " excluded.");
 			}
 		}
-
 
 		// Count the number of modified lines/methods/classes;
 		int linesTotal = 0, linesModified = 0;
@@ -639,7 +647,6 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			Iterator<Integer> itLineSet = lineSet.keySet().iterator();
 
 			boolean first = true;
-
 
 			while (itLineSet.hasNext()) {
 				Integer line = itLineSet.next();
@@ -681,14 +688,16 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		results.classesModified += classesModifiedHash.size();
 	}
 
-	/* *************************************************************************
+	/*
+	 * *************************************************************************
 	 * Helper method that processes a single mutation for data coverage data.
 	 */
 	private void processMutationDataCoverage(MutationCache mutation,
-			TracerResult results, HashSet<String> modifiedMethodsSet, String ignoredMethod) {
+			TracerResult results, HashSet<String> modifiedMethodsSet,
+			String ignoredMethod) {
 		ObjectInputStream ois = null;
 
-		String path = TracerConstants.TRACE_RESULT_DATA_DIR + mutation.id + "/";
+		String path = TracerProperties.TRACE_RESULT_DATA_DIR + mutation.id + "/";
 		File dir = new File(path);
 		if (!dir.exists()) {
 			System.out.println("NOT FOUND: " + mutation.shortString);
@@ -706,8 +715,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			modifiedTmp = modified;
 			commit = true;
 			try {
-				ois = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(
-						new FileInputStream(path + test))));
+				ois = new ObjectInputStream(new BufferedInputStream(
+						new GZIPInputStream(new FileInputStream(path + test))));
 				if (originalDataCoverageMaps.containsKey(test)) {
 					processTestDataCoverage(originalDataCoverageMaps.get(test),
 							ois, modified);
@@ -739,7 +748,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 			if (commit) {
 				modified = modifiedTmp;
 			} else {
-				logger.info("Data Coverage Test '" + test +"' for Mutation "+  mutation.id + " excluded.");
+				logger.info("Data Coverage Test '" + test + "' for Mutation "
+						+ mutation.id + " excluded.");
 			}
 		}
 
@@ -793,23 +803,27 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		results.dataModified += dataModified;
 	}
 
-	/* *************************************************************************
+	/*
+	 * *************************************************************************
 	 * Helper method is called at the end of the whole process to give the user
 	 * a short summary (written out to the console) of the processed data.
 	 */
-	private void writeShortResults(int counter, double epsilon) {
+	private String getShortResults(int counter, double epsilon) {
+		StringBuilder sb = new StringBuilder();
 		sb.append("Mutations processed: " + counter + "\n");
 		sb.append("\tEpsilon:        " + epsilon + "\n");
-
 		sb.append("Results for line coverage traces:\n");
-		writeShortResultPercentHelper(epsilon, killedLine, notKilledLine);
+		writeShortResultPercentHelper(sb, epsilon, killedLine, notKilledLine);
 		sb.append("Results for data coverage traces:\n");
-		writeShortResultPercentHelper(epsilon, killedData, notKilledData);
+		writeShortResultPercentHelper(sb, epsilon, killedData, notKilledData);
 		sb.append("Results for combined coverage traces:\n");
-		writeShortResultPercentHelper(epsilon, killed, notKilled);
+		writeShortResultPercentHelper(sb, epsilon, killed, notKilled);
+		return sb.toString();
 	}
 
-	private void writeShortResultPercentHelper(double epsilon, List<Number> killed, List<Number> notKilled) {
+	private void writeShortResultPercentHelper(StringBuilder sb,
+			double epsilon,
+			List<Number> killed, List<Number> notKilled) {
 		// killed
 		int over = 0, under = 0;
 		for (Number n : killed) {
@@ -846,8 +860,8 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		}
 	}
 
-
-	/* *************************************************************************
+	/*
+	 * *************************************************************************
 	 * Main method that first reads in all mutations and writes it into a queue.
 	 * After that the method starts several threads. Each thread then works on
 	 * the same queue and so processes mutations.
@@ -869,10 +883,10 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 		while (mi.hasNext()) {
 			Mutation m = mi.next();
 			MutationCache mc = MutationCache.create(m);
-			if (!mc.mutationResult.equals(TracerConstants.NO_RESULT)) {
+			if (!mc.mutationResult.equals(TracerProperties.NO_RESULT)) {
 				counter++;
-				if(counter%500== 0){
-					logger.info("Added " + counter +  " mutations to queue");
+				if (counter % 500 == 0) {
+					logger.info("Added " + counter + " mutations to queue");
 				}
 				lbq.offer(mc);
 			}
@@ -906,9 +920,7 @@ public class NewTracerAnalyzer implements MutationAnalyzer {
 				}
 			}
 		}
-
-		writeShortResults(counter, epsilon);
-
-		return sb.toString();
+		String shortResults = getShortResults(counter, epsilon);
+		return shortResults;
 	}
 }

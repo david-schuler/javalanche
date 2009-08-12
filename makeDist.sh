@@ -11,6 +11,7 @@ mkdir -p ${DIST}/src/main/resources/
 cp src/main/resources/mutation-build.xml ${DIST}/src/main/resources/
 cp src/main/resources/hibernate.cfg.xml ${DIST}/src/main/resources/
 cp src/main/resources/log4j.properties ${DIST}/src/main/resources/
+cp src/main/resources/coverage-include.xml ${DIST}/src/main/resources/
 cp ../adabu2-check-invariants/src/main/resources/invariant-build.xml  ${DIST}/src/main/resources/
 
 mkdir -p ${DIST}/examples/triangle
@@ -24,7 +25,14 @@ cp -r ../InvariantExample/src ${DIST}/examples/invariantExample/
 
 rm ${DIST}/javalanche-mutation-${VERSION}.jar
 
-TAR=javalanche-${VERSION}-bin.tar.gz
-tar -cvzf ${TAR} javalanche-${VERSION}
-cp ${TAR} src/site/builds/
+if [  $1 ]; then
+ if [ $1 == "tgz"  ]
+	then
+		echo "Generating tgz"
+		TAR=javalanche-${VERSION}-bin.tar.gz
+		tar -cvzf ${TAR} javalanche-${VERSION}
+		cp ${TAR} src/site/builds/
+	fi
+fi
+
 

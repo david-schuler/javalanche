@@ -247,7 +247,8 @@ Total time: 4 seconds
  Using the produced task we can execute the mutations.
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  runMutations  -Dmutation.file=./mutation-files/mutation-task-triangle-01.txt
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  runMutations \
+-Dmutation.file=./mutation-files/mutation-task-triangle-01.txt
 +-------------------------------+
 
  Output:

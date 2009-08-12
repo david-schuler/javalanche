@@ -326,4 +326,7 @@ public class MutationProperties {
 
 	public static final String CLASSES_TO_MUTATE_KEY = "javalanche.classes.to.mutate";
 
+	public static final File TEST_EXCLUDE_FILE = new File(OUTPUT_DIR,
+			"test-exclude.txt"); // TODO other dir
+
 }

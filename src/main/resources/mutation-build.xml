@@ -12,12 +12,16 @@
 			<isset property="javalanche.maxmemory"/>
 	  	</not>
 	</condition>
+	
+	
 	  
 	<path id="mutation.classpath">
 		<!--pathelement path="/Users/schuler/workspace/mutationTest/target/classes/" /-->
 		<pathelement path="${javalanche.dist.dir}/src/main/resources"/>
 		<fileset dir="${mutation.jars.dir}" includes="*.jar"/>
 	</path>
+	
+	<import file="./coverage-include.xml"/>
 	
 	<target name="cleanJavalanche" description="* Delete all files produced by javalanche.">
 		<delete dir="${javalanche.mutation.output.dir}"/>

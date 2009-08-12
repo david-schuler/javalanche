@@ -77,17 +77,17 @@ public class TracerTestListener implements MutationTestListener {
 	 */
 
 	public TracerTestListener() {
-		File dir = new File(TracerConstants.TRACE_RESULT_DIR);
+		File dir = new File(TracerProperties.TRACE_RESULT_DIR);
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
 
-		dir = new File(TracerConstants.TRACE_RESULT_DATA_DIR);
+		dir = new File(TracerProperties.TRACE_RESULT_DATA_DIR);
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
 
-		dir = new File(TracerConstants.TRACE_RESULT_LINE_DIR);
+		dir = new File(TracerProperties.TRACE_RESULT_LINE_DIR);
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
@@ -98,13 +98,13 @@ public class TracerTestListener implements MutationTestListener {
 	}
 
 	private void createMutationDir() {
-		File dir = new File(TracerConstants.TRACE_RESULT_DATA_DIR
+		File dir = new File(TracerProperties.TRACE_RESULT_DATA_DIR
 				+ getMutationIdFileName());
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
 
-		dir = new File(TracerConstants.TRACE_RESULT_LINE_DIR
+		dir = new File(TracerProperties.TRACE_RESULT_LINE_DIR
 				+ getMutationIdFileName());
 		if (!dir.exists()) {
 			dir.mkdir();
@@ -134,10 +134,10 @@ public class TracerTestListener implements MutationTestListener {
 			if (seenTests.contains(testName)) {
 				seenTests.clear();
 				long i = 1;
-				File dir = new File(TracerConstants.TRACE_RESULT_DATA_DIR + "PERMUTATED_" + i);
+				File dir = new File(TracerProperties.TRACE_RESULT_DATA_DIR + "PERMUTATED_" + i);
 				while (dir.exists()) {
 					i++;
-					dir = new File(TracerConstants.TRACE_RESULT_DATA_DIR + "PERMUTATED_" + i);
+					dir = new File(TracerProperties.TRACE_RESULT_DATA_DIR + "PERMUTATED_" + i);
 				}
 				mutation_id = -i;
 			}
@@ -182,12 +182,12 @@ public class TracerTestListener implements MutationTestListener {
 		if (mutation_id != 0) {
 			return;
 		}
-		XmlIo.toXML(profilerMap, TracerConstants.TRACE_PROFILER_FILE);
+		XmlIo.toXML(profilerMap, TracerProperties.TRACE_PROFILER_FILE);
 	}
 
 	private static HashSet<String> loadDontInstrument() {
-		if (new File(TracerConstants.TRACE_DONT_INSTRUMENT_FILE).exists()) {
-			return XmlIo.get(TracerConstants.TRACE_DONT_INSTRUMENT_FILE);
+		if (new File(TracerProperties.TRACE_DONT_INSTRUMENT_FILE).exists()) {
+			return XmlIo.get(TracerProperties.TRACE_DONT_INSTRUMENT_FILE);
 		}
 		return new HashSet<String>();
 	}
@@ -197,7 +197,7 @@ public class TracerTestListener implements MutationTestListener {
 			return;
 		}
 		XmlIo.toXML(dontInstrumentSet,
-				TracerConstants.TRACE_DONT_INSTRUMENT_FILE);
+				TracerProperties.TRACE_DONT_INSTRUMENT_FILE);
 
 	}
 
@@ -221,7 +221,7 @@ public class TracerTestListener implements MutationTestListener {
 		try {
 			oos = new ObjectOutputStream(new BufferedOutputStream(
 					new GZIPOutputStream(new FileOutputStream(
-							TracerConstants.TRACE_RESULT_LINE_DIR
+							TracerProperties.TRACE_RESULT_LINE_DIR
 									+ getMutationIdFileName() + "/" + testName
 									+ ".gz"))));
 
@@ -286,7 +286,7 @@ public class TracerTestListener implements MutationTestListener {
 		try {
 			oos = new ObjectOutputStream(new BufferedOutputStream(
 					new GZIPOutputStream(new FileOutputStream(
-							TracerConstants.TRACE_RESULT_DATA_DIR
+							TracerProperties.TRACE_RESULT_DATA_DIR
 									+ getMutationIdFileName() + "/" + testName
 									+ ".gz"))));
 			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
