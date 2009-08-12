@@ -5,9 +5,10 @@
 
 
 	<path id="mutation.classpath">
+		<pathelement path="src/main/resources"/>
 		<fileset dir="${lib.dir}">
-				<include name="**/*.jar" />
-				<include name="**/*.zip" />
+			<include name="**/*.jar" />
+			<include name="**/*.zip" />
 		</fileset>
 	</path>
 

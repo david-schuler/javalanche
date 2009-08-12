@@ -27,6 +27,7 @@ import com.google.common.collect.Multimap;
 import de.unisb.cs.st.ds.util.io.DirectoryFileSource;
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
+import de.unisb.cs.st.javalanche.mutation.analyze.MutationResultAnalyzer;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
@@ -57,9 +58,12 @@ public class HtmlAnalyzer implements MutationAnalyzer {
 			count++;
 		}
 		File navigation = createNavigation(fileMap);
-		File summary = createSummary(map);
+		String mutationSummary = new MutationResultAnalyzer()
+				.analyze(mutations).replace("\n", "<br/>\n");
+		File summary = createSummary(mutationSummary);
 		createFrameFile(navigation, summary);
-		return "saved " + count + " files ";
+		return "Created report in " + REPORT_DIR + " saved " + count
+				+ " files ";
 	}
 
 	private void createFrameFile(File navigationFile, File summaryFile) {
@@ -88,12 +92,13 @@ public class HtmlAnalyzer implements MutationAnalyzer {
 				"index.html"));
 	}
 
-	private File createSummary(Multimap<String, Mutation> map) {
+	private File createSummary(String mutationSummary) {
 		StringBuilder sb = new StringBuilder(
-				"<html><head><title>Javalanche Sumary</title></head><body>");
-		sb.append(String.format("Got %d mutations in %d classes", map.size(),
-				map.keySet().size()));
-		sb.append("</body></html>");
+				"<html><head><title>Javalanche Sumary</title></head><body>\n");
+		sb.append("<h2> Results for project:<br/>"
+				+ MutationProperties.PROJECT_PREFIX + "</h2>\n");
+		sb.append(mutationSummary);
+		sb.append("\n</body></html>");
 		File file = new File(REPORT_DIR, "summary.html");
 		Io.writeFile(sb.toString(), file);
 		return file;

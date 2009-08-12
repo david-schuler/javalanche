@@ -15,8 +15,7 @@
 	  
 	<path id="mutation.classpath">
 		<!--pathelement path="/Users/schuler/workspace/mutationTest/target/classes/" /-->
-		
-		<pathelement location="${mutation.jars.dir}/javalanche-mutation-0.1.jar" />
+		<pathelement path="${javalanche.dist.dir}/src/main/resources"/>
 		<fileset dir="${mutation.jars.dir}" includes="*.jar"/>
 	</path>
 	

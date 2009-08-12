@@ -119,6 +119,8 @@ Documentation
  The results of the mutations can be analyzed with <<<analyzeResults>>>. This
  shows the mutation score and the number of mutations that are detected by the
  test suite as well as the mutation score for the executed mutations. 
+ Furthermore, an html report is generated that shows the mutations for each 
+ class.
  
  With the parameter (<<<-Djavalanche.mutation.analyzers>>>) own mutation 
  analyzers can be supplied. These analyzers have to implement the Interface 
@@ -140,7 +142,7 @@ Documentation
  Note: If you run deleteMutations you should also run cleanJavalanche and vice 
  versa.
  
-** Running tasks in parallel
+** Running tasks in {parallel}
 	
  Instead of running the several task sequentally, they can also be run in parallel
  Therfore, first a script (default name: runMutations.sh) has to be created 
@@ -153,6 +155,8 @@ Documentation
  [[2]] The number of the task file.
  
  [[3]] Any additional inputs.
+ 
+ []
  
  A sample script looks as follows:
  
@@ -172,20 +176,20 @@ do
 done
 +-------------------------------+
 
-	The task <<<createMutationMakefile>>> then creates a makefile with different
-	targets (one for each task file) that call this script.
+ The task <<<createMutationMakefile>>> then creates a makefile with different
+ targets (one for each task file) that call this script.
 
 +-------------------------------+
 ant -f javalanche.xml createMutationMakefile
 +-------------------------------+
 
-	In order to run multiple tasks in parallel, make has to be called with the
-	<<<-j>>> switch.
+ In order to run multiple tasks in parallel, make has to be called with the
+ <<<-j>>> switch.
 	
 +-------------------------------+
 make -j4
 +-------------------------------+
 	
-	This task, for example, runs the four task in parallel. 
+ This task, for example, runs the four task in parallel. 
 
 

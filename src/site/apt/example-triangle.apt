@@ -46,19 +46,19 @@ Total time: 2 seconds
  After we compiled the project, we copy <<<javalanche.xml>>> to this directory.
 
 +-------------------------------+
-$cp ../../javalanche.xml .
+cp ../../javalanche.xml .
 +-------------------------------+
 
  Then we start the database:
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  startHsql
+ant -f javalanche.xml -Djavalanche=../../  startHsql
 +-------------------------------+
 
  and export the database schema:
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  schemaexport
+ant -f javalanche.xml -Djavalanche=../../  schemaexport
 +-------------------------------+
 
 
@@ -68,7 +68,7 @@ ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangl
  testing in one step:
  
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  mutationTest
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  mutationTest
 +-------------------------------+
 
  This command executes all steps that are necessary. And displays the results.
@@ -79,7 +79,7 @@ ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangl
  After we setup Javalanche we can test if the test suite behaves as expected
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask1
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask1
 +-------------------------------+
 
  Output:
@@ -103,7 +103,7 @@ Total time: 1 second
  and we can test the Javalanche test runner.
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask2
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask2
 +-------------------------------+
 
  Output:
@@ -129,7 +129,7 @@ Total time: 4 seconds
  execution order
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask3
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask3
 +-------------------------------+
 
  Output: 
@@ -156,7 +156,7 @@ Total time: 4 seconds
  As all of the tests are working we can scan the project:
  
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  scanProject
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  scanProject
 +-------------------------------+
 
  Output:
@@ -196,7 +196,7 @@ triangle.tests.TriangleTestSuite
  it from mutation testing by removing the <<<# >>>.
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  scan
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  scan
 +-------------------------------+
 
  Output:
@@ -228,7 +228,7 @@ Total time: 5 seconds
  
  
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  createTasks
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  createTasks
 +-------------------------------+
 
  Output:
@@ -247,7 +247,7 @@ Total time: 4 seconds
  Using the produced task we can execute the mutations.
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  runMutations  -Dmutation.file=./mutation-files/mutation-task-triangle-01.txt
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  runMutations  -Dmutation.file=./mutation-files/mutation-task-triangle-01.txt
 +-------------------------------+
 
  Output:
@@ -270,13 +270,13 @@ test-javalanche:
 
 
  
-* Analyzing Results
+* {Analyzing Results}
 
  Since all mutations are executed, we can analyze the mutation testing 
  results.
  
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/ -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  analyzeResults
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  analyzeResults
 +-------------------------------+
  
  
@@ -299,8 +299,28 @@ analyzeResults:
      [java] 
      [java] --------------------------------------------------------------------------------
      [java] 
+     [java] Results from class de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlAnalyzer
+     [java] Created report in mutation-files/report saved 1 files 
+     [java] --------------------------------------------------------------------------------
 
 BUILD SUCCESSFUL
 Total time: 3 seconds
 +-------------------------------+
 
+
+
+ This will also generate an html report for the mutation testing results. 
+ For each tested class the source code (if available) and a a table with 
+ its mutations is reported.
+ For each mutation a table shows its database id, line number, mutation type,
+ whether it is detected or not, and its impact. 
+ If the line number of a mutation is followed by another number in braces, more
+ than one mutation of this type were made in this line. 
+ The number in braces then gives the position of this mutation in the bytecode 
+ for this line (starting from 0)
+
+[img/html_report.png]
+
+
+	 
+ 

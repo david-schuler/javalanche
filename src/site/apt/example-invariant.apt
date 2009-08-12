@@ -26,13 +26,13 @@ ant test
 * Setting up
 
  We copy the <<<javalanche.xml>>> file from the distribution into this directory
- and  specify the corresponding properties in the this file:
+ and  specify the corresponding properties in this file:
 
 +-------------------------------+
 <property name="prefix" value="invariant.example"/>
 <property name="testsuite" value="invariant.example.InvariantExampleTestSuite"/>
 <property name="javalanche" value="../../"/>
-<property name="cp" value="invariantExample.jar"/>
+<property name="cp" value="./target/classes:../triangle/lib/junit.jar"/>
 +-------------------------------+
 
  If the database is not already running we start it with the following command:

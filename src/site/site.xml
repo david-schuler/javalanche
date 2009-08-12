@@ -34,6 +34,7 @@ under the License.
 	  <item name="Example I-Triangle" href="example-triangle.html"/>
 	  <item name="Example II-Jaxen" href="example-jaxen.html"/>
 	  <item name="Example III-Invariants" href="example-invariant.html"/>
+	  <item name="Example IV-Jaxen-Invariants" href="example-jaxen-invariant.html"/>
     </menu>
 	
 	<menu ref="reports"/>

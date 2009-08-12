@@ -5,7 +5,12 @@
 
 Downloads
 
- The current version of Javalanche is 0.1 and marks the initial release. 
+ The current version of Javalanche is 0.2. 
  
- * {{{builds/javalanche-0.1-bin.tar.gz}tgz-Archive}} including all dependencies.
+ * {{{builds/javalanche-0.2-bin.tar.gz} Javalanche 0.2}} tgz-Archive including all dependencies. 
+
+* Older versions
+
+ * {{{builds/javalanche-0.1-bin.tar.gz} Javalanche 0.1}} initial release. 
+
 

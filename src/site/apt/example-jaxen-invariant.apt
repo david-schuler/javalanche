@@ -1,0 +1,100 @@
+            ------
+            Jaxen Example
+            ------
+            David Schuler
+            ------
+            Date
+
+
+Jaxen
+	
+ This example shows the additional steps for running mutation testing with
+ invariant testing for jaxen.
+ The steps needed for preparin jaxen for mutation testing are described
+ {{{example-jaxen.html} here}}.
+ In case there are already results in the database without invariant checking,
+ they can be delted with <<<deleteResults>>> task.
+ 
++-------------------------------+
+ant -f javalanche.xml deleteResults
++-------------------------------+
+
+
+* Tracing
+
+ The test of the project can be traces with the <<<trace>>> task.
+ 
++-------------------------------+
+ant -f javalanche.xml trace
++-------------------------------+
+
+ These filed then have to be converted into the daikon trace format.
+
++-------------------------------+
+ant -f javalanche.xml createDaikonFiles
++-------------------------------+
+
+* Detect Dynamic Invariants
+ 
+ First a script has to be generated that calls Daikon.
+ 
++-------------------------------+
+ant -f javalanche.xml createDaikonScript
++-------------------------------+
+
+ Then a Makefile needs to be created that calls this script.
+
++-------------------------------+
+ant -f javalanche.xml createDaikonMakefile
++-------------------------------+
+ 
+ Using make can the invariants can be inferred from the daikon trace files. 
+
++-------------------------------+
+make
++-------------------------------+
+
+* Creating Invariant Checkers
+ 
+ The invariant checkers a created via the <<<createInvariantCheckers>>> task.
+
++-------------------------------+
+ant -f javalanche.xml createInvariantCheckers
++-------------------------------+
+
+Applying the Invariant Checkers
+
+ Before actually applying the invariant checkers to the program we need to check 
+ the field visibilities.
+
++-------------------------------+
+ant -f javalanche.xml scanFields             
++-------------------------------+
+ 
+ With this information the invariant checkers can be applied and tested on the
+ unmutated program.
+
++-------------------------------+
+ant -f javalanche.xml checkInvariants
++-------------------------------+
+
+ After running this task twice we get the message that no more invariants were 
+ violated
+ 
++-------------------------------+
+No invariant violations:
+RUN_SUCCESSFULL
++-------------------------------+
+
+
+
+* Mutation Testing with Invariant Checking
+
+ Using the invariant checkers and the task files we can run mutation testing
+ with invariant checking.
+
++-------------------------------+
+ant -f javalanche.xml runMutationsInvariant -Dmutation.file=mutation-files/mutation-task-org_jaxen-01.txt 
++-------------------------------+
+
+

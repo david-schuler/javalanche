@@ -25,3 +25,11 @@ pre.prettyprint { padding: 2px; border: 1px solid #888; }
   .atn { color: #404; }
   .atv { color: #060; }
 }
+
+
+
+/* Stuff for mutation testing table */
+
+table { text-align:left;  }
+
+td,th {padding-right:30px;}

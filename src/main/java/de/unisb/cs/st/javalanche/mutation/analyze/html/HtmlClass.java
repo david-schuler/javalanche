@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.google.common.base.Join;
 
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
@@ -61,20 +63,20 @@ public class HtmlClass {
 
 	private Object getMutationsHtml() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("<table summary=\"Mutations\">");
+		sb.append("<table class=\"mutation_table\" summary=\"Mutations\">");
 		sb
-				.append("<tr><th>ID</th><th>Line</th><th>Type</th><th>Detected</th><th>Impact</th></tr>");
+				.append("<tr><th>ID</th><th>Line</th><th>Type</th><th>Detected</th><th>Impact</th></tr>\n");
 		for (Mutation m : mutations) {
 			sb.append("<tr><td>");
 			String s = String
 					.format(
-							"<tr><td>%d</td><td><a href=\"#%d\">%s</a></td><td>%s</td><td> <img src=\"%s\"/></td><td>%s</td></tr>",
+							"\t<tr><td>%d</td><td><a href=\"#%d\">%s</a></td><td>%s</td><td> <img src=\"%s\"/></td><td>%s</td></tr>\n",
 							m.getId(), m.getLineNumber(),
 							getLineNumberString(m), m.getMutationType()
 									.getDesc(), getDetected(m), getImpact(m));
 			sb.append(s);
 		}
-		sb.append("</table>");
+		sb.append("</table>\n");
 
 		return sb.toString();
 	}
@@ -95,7 +97,7 @@ public class HtmlClass {
 			MutationTestResult mr = m.getMutationResult();
 			return "" + mr.getDifferentViolatedInvariants();
 		}
-		return "";
+		return "not executed by tests";
 	}
 
 	private String getSourceHtml() {
@@ -108,7 +110,7 @@ public class HtmlClass {
 					"<span class=\"nocode\"><a name=\"%d\">%3d: </a></span>",
 					linecount, linecount));
 			linecount++;
-			sb.append(line);
+			sb.append(StringEscapeUtils.escapeHtml(line));
 			sb.append("\n");
 		}
 		sb.append("</pre>");
