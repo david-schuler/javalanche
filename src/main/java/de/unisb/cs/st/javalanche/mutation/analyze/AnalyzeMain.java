@@ -16,7 +16,7 @@ import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.cs.st.javalanche.tracer.TraceAnalyzer;
+import de.unisb.cs.st.javalanche.tracer.CoverageAnalyzer;
 
 /**
  * Analyzes the mutation results for a project. Either a list (comma separated)
@@ -31,16 +31,17 @@ public class AnalyzeMain {
 	public static final String ANALYZERS_KEY = "javalanche.mutation.analyzers";
 
 	public static void main(String[] args) {
-		MutationAnalyzer[] analyzers = getAnalyzersFromProperty();
-		if (analyzers != null && analyzers.length > 0) {
-			analyzeMutations(analyzers);
-		} else {
-			analyzeMutations(new MutationAnalyzer[] { new MutationResultAnalyzer() });
+		List<MutationAnalyzer> analyzers = new ArrayList<MutationAnalyzer>();
+		analyzers.add(new MutationResultAnalyzer());
+		List<MutationAnalyzer> analyzersFromProperty = getAnalyzersFromProperty();
+		if (analyzersFromProperty != null && analyzersFromProperty.size() > 0) {
+			analyzers.addAll(analyzersFromProperty);
 		}
+		analyzeMutations(analyzers);
 	}
 
 	@SuppressWarnings("unchecked")
-	private static MutationAnalyzer[] getAnalyzersFromProperty() {
+	private static List<MutationAnalyzer> getAnalyzersFromProperty() {
 		String property = System.getProperty(ANALYZERS_KEY);
 		List<MutationAnalyzer> analyzers = new ArrayList<MutationAnalyzer>();
 		if (property != null) {
@@ -62,23 +63,23 @@ public class AnalyzeMain {
 				}
 			}
 		}
-		return analyzers.toArray(new MutationAnalyzer[0]);
+		return analyzers;
 	}
 
 	/**
 	 * 
 	 * Analyzes the mutation results for a project
 	 * 
-	 * @param mutationResultAnalyzers
+	 * @param analyzers
 	 *            the mutationAnalyzers to use
 	 */
 	private static void analyzeMutations(
-			MutationAnalyzer[] mutationResultAnalyzers) {
+			List<MutationAnalyzer> analyzers) {
 		String prefix = PROJECT_PREFIX;
 		if (prefix == null) {
 			throw new RuntimeException("no prefix set");
 		}
-		analyzeMutations(mutationResultAnalyzers, prefix);
+		analyzeMutations(analyzers, prefix);
 	}
 
 	/**
@@ -88,12 +89,12 @@ public class AnalyzeMain {
 	 * @param mutationResultAnalyzers
 	 *            the mutationAnalyzers to use
 	 * 
-	 * @param mutationAnalyzers
+	 * @param analyzers
 	 * @param prefix
 	 *            the prefix for the mutations to analyze
 	 */
 	@SuppressWarnings("unchecked")
-	private static void analyzeMutations(MutationAnalyzer[] mutationAnalyzers,
+	private static void analyzeMutations(List<MutationAnalyzer> analyzers,
 			String prefix) {
 		Session session = HibernateUtil.openSession();
 		// Session session =
@@ -109,11 +110,12 @@ public class AnalyzeMain {
 		sb
 				.append("--------------------------------------------------------------------------------\n");
 
-		for (MutationAnalyzer mutationAnalyzer : mutationAnalyzers) {
+		for (MutationAnalyzer mutationAnalyzer : analyzers) {
 
 			String analyzeResult = mutationAnalyzer.analyze(mutations, report);
 
-			String str = "Results from " + mutationAnalyzer.getClass() + "\n";
+			String str = "Results from "
+					+ mutationAnalyzer.getClass().getName() + "\n";
 			report.addSummary(str, analyzeResult);
 			sb.append(str);
 			sb.append(analyzeResult);

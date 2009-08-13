@@ -25,6 +25,8 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 
 public class HtmlReport {
 
+	private static final String SUMMARY_FILE_NAME = "summary.html";
+
 	private static Logger logger = Logger.getLogger(HtmlReport.class);
 
 	private static final File REPORT_DIR = new File(
@@ -108,7 +110,7 @@ public class HtmlReport {
 				+ MutationProperties.PROJECT_PREFIX + "</h2>\n");
 		sb.append(mutationSummary);
 		sb.append("\n</body></html>");
-		File file = new File(REPORT_DIR, "summary.html");
+		File file = new File(REPORT_DIR, SUMMARY_FILE_NAME);
 		Io.writeFile(sb.toString(), file);
 		return file;
 	}
@@ -117,6 +119,9 @@ public class HtmlReport {
 		StringBuilder sb = new StringBuilder(
 				"<html><head><title>Javalanche Report</title></head><body>");
 		SortedSet<String> keySet = new TreeSet<String>(fileMap.keySet());
+		sb.append(String.format(
+				"<a href=\"%s\" target=\"main\" >Summary</a><br/>",
+				SUMMARY_FILE_NAME));
 		for (String key : keySet) {
 			sb.append(String.format(
 					"<a href=\"%s\" target=\"main\" >%s</a><br/>", fileMap

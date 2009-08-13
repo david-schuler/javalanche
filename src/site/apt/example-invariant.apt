@@ -41,6 +41,10 @@ ant test
 ant -f javalanche.xml  startHsql
 +-------------------------------+
 
++-------------------------------+
+ant -f javalanche.xml  schemaexport
++-------------------------------+
+
 
 * Checking Tests
 

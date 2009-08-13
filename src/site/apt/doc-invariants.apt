@@ -9,8 +9,8 @@
 Mutation Testing with Invariant Checking
 
  Mutation testing with invariant checking needs some additional steps
- to the ones described in {{{http://groups.csail.mit.edu/pag/daikon/} Daikon}}
- These steps are described below, and an example is described 
+ to the ones described in the {{{documentation.html} documentation on mutation testing}}.
+ These steps are described below, and an example is given 
  {{{example-invariant.html}here}}.
 
 * Tracing

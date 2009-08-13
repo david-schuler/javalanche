@@ -34,7 +34,7 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
  * @author Bernhard Gruen
  * 
  */
-public class TraceAnalyzer implements MutationAnalyzer {
+public class CoverageAnalyzer implements MutationAnalyzer {
 
 	private static final String COLUMN_NAME = "Methods <br/> with <br/> Coverage <br/> Difference";
 
@@ -98,7 +98,7 @@ public class TraceAnalyzer implements MutationAnalyzer {
 		public int dataModified = 0;
 	}
 
-	private static final Logger logger = Logger.getLogger(TraceAnalyzer.class);
+	private static final Logger logger = Logger.getLogger(CoverageAnalyzer.class);
 
 	private static HashMap<String, HashMap<String, HashMap<Integer, Integer>>> originalLineCoverageMaps = null;
 	private static HashMap<String, HashMap<String, HashMap<Integer, Integer>>> originalDataCoverageMaps = null;

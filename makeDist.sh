@@ -1,6 +1,6 @@
 #! /bin/sh
 mvn -Dmaven.test.skip=true   assembly:assembly
-VERSION=0.2
+VERSION=0.3
 DIST=javalanche-$VERSION
 mkdir ${DIST}
 cp -r target/javalanche-mutation-${VERSION}-dist.dir/ ${DIST}/
