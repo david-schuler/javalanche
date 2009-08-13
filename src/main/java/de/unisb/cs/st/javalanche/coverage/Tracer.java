@@ -10,10 +10,10 @@ import org.apache.log4j.Logger;
  * @author Bernhard Gruen
  * 
  */
-public class Trace {
-	private static Logger logger = Logger.getLogger(Trace.class);
+public class Tracer {
+	private static Logger logger = Logger.getLogger(Tracer.class);
 
-	private static Trace trace = null;
+	private static Tracer trace = null;
 	private HashMap<String, HashMap<Integer, Integer>> classMap = null;
 	private HashMap<String, HashMap<Integer, Integer>> valueMap = null;
 	private HashMap<String, Long> profilerMap = null;
@@ -25,22 +25,22 @@ public class Trace {
 	private Set<String> exceptionsSeen = null;
 
 
-	private Trace() {
+	private Tracer() {
 	}
 
 	private void setMap() {
 		if (classMap == null) {
-			classMap = TracerTestListener.getLineCoverageMap();
+			classMap = CoverageMutationListener.getLineCoverageMap();
 		}
 		if (valueMap == null) {
-			valueMap = TracerTestListener.getValueMap();
+			valueMap = CoverageMutationListener.getValueMap();
 		}
 		if (profilerMap == null) {
-			profilerMap = TracerTestListener.getProfilerMap();
+			profilerMap = CoverageMutationListener.getProfilerMap();
 		}
 
 		if (exceptionsSeen == null) {
-			exceptionsSeen = TracerTestListener.getDontInstrumentSet();
+			exceptionsSeen = CoverageMutationListener.getDontInstrumentSet();
 		}
 
 		/*
@@ -51,9 +51,9 @@ public class Trace {
 
 	}
 
-	public static Trace getInstance() {
+	public static Tracer getInstance() {
 		if (trace == null) {
-			trace = new Trace();
+			trace = new Tracer();
 			trace.setMap();
 		}
 		return trace;
@@ -74,7 +74,7 @@ public class Trace {
 			valueMap.put(key, new HashMap<Integer, Integer>());
 		}
 
-		if (TracerTestListener.getMutationId() == 0) {
+		if (CoverageMutationListener.getMutationId() == 0) {
 			if (!profilerMap.containsKey(key)) {
 				profilerMap.put(key, 1L);
 			} else {

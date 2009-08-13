@@ -62,7 +62,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			mc.mutationType = m.getMutationType().toString();
 			mc.mutationResult = m.getMutationResult() != null ? m
 					.getMutationResult().toShortString()
-					: TracerProperties.NO_RESULT;
+					: CoverageProperties.NO_RESULT;
 			return mc;
 		}
 	}
@@ -135,15 +135,15 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 	private int outcount;
 
 	private static HashSet<String> loadDontInstrument() {
-		if (new File(TracerProperties.TRACE_DONT_INSTRUMENT_FILE).exists()) {
-			return XmlIo.get(TracerProperties.TRACE_DONT_INSTRUMENT_FILE);
+		if (new File(CoverageProperties.TRACE_DONT_INSTRUMENT_FILE).exists()) {
+			return XmlIo.get(CoverageProperties.TRACE_DONT_INSTRUMENT_FILE);
 		}
 		return new HashSet<String>();
 	}
 
 	private static HashSet<String> loadDifferences() {
-		if (new File(TracerProperties.TRACE_DIFFERENCES_FILE).exists()) {
-			return XmlIo.get(TracerProperties.TRACE_DIFFERENCES_FILE);
+		if (new File(CoverageProperties.TRACE_DIFFERENCES_FILE).exists()) {
+			return XmlIo.get(CoverageProperties.TRACE_DIFFERENCES_FILE);
 		}
 		return new HashSet<String>();
 	}
@@ -207,7 +207,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 	 */
 	protected HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadLineCoverageTrace(
 			String mutation_dir) {
-		return loadTrace(TracerProperties.TRACE_RESULT_LINE_DIR, mutation_dir);
+		return loadTrace(CoverageProperties.TRACE_RESULT_LINE_DIR, mutation_dir);
 	}
 
 	/*
@@ -216,7 +216,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 	 */
 	protected HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadDataCoverageTrace(
 			String mutation_dir) {
-		return loadTrace(TracerProperties.TRACE_RESULT_DATA_DIR, mutation_dir);
+		return loadTrace(CoverageProperties.TRACE_RESULT_DATA_DIR, mutation_dir);
 	}
 
 	/*
@@ -535,7 +535,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			String ignoredMethod = findMutatedMethod(mutation);
 			TracerResult results = new TracerResult();
 			HashSet<String> modifiedMethods = new HashSet<String>();
-			if (TracerProperties.TRACE_LINES) {
+			if (CoverageProperties.TRACE_LINES) {
 				processMutationLineCoverage(mutation, results, modifiedMethods,
 						ignoredMethod);
 				ClassReport classReport = report
@@ -544,7 +544,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 				classReport.putEntry(mutation.id, COLUMN_NAME,
 						results.methodsModifiedLine + "");
 			}
-			if (TracerProperties.TRACE_RETURNS) {
+			if (CoverageProperties.TRACE_RETURNS) {
 				processMutationDataCoverage(mutation, results, modifiedMethods,
 						ignoredMethod);
 			}
@@ -569,7 +569,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			String ignoredMethod) {
 		ObjectInputStream ois = null;
 
-		String path = TracerProperties.TRACE_RESULT_LINE_DIR + mutation.id
+		String path = CoverageProperties.TRACE_RESULT_LINE_DIR + mutation.id
 				+ "/";
 		File dir = new File(path);
 		if (!dir.exists()) {
@@ -712,7 +712,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			String ignoredMethod) {
 		ObjectInputStream ois = null;
 
-		String path = TracerProperties.TRACE_RESULT_DATA_DIR + mutation.id
+		String path = CoverageProperties.TRACE_RESULT_DATA_DIR + mutation.id
 				+ "/";
 		File dir = new File(path);
 		if (!dir.exists()) {
@@ -828,18 +828,18 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Mutations processed: " + counter + "\n");
 		sb.append("\tEpsilon:        " + epsilon + "\n");
-		if (TracerProperties.TRACE_LINES) {
+		if (CoverageProperties.TRACE_LINES) {
 			sb.append("Results for line coverage traces:\n");
 			writeShortResultPercentHelper(sb, epsilon, killedLine,
 					notKilledLine);
 
 		}
-		if (TracerProperties.TRACE_RETURNS) {
+		if (CoverageProperties.TRACE_RETURNS) {
 			sb.append("Results for data coverage traces:\n");
 			writeShortResultPercentHelper(sb, epsilon, killedData,
 					notKilledData);
 		}
-		if (TracerProperties.TRACE_LINES && TracerProperties.TRACE_RETURNS) {
+		if (CoverageProperties.TRACE_LINES && CoverageProperties.TRACE_RETURNS) {
 			sb.append("Results for combined coverage traces:\n");
 			writeShortResultPercentHelper(sb, epsilon, killed, notKilled);
 		}
@@ -908,7 +908,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		while (mi.hasNext()) {
 			Mutation m = mi.next();
 			MutationCache mc = MutationCache.create(m);
-			if (!mc.mutationResult.equals(TracerProperties.NO_RESULT)) {
+			if (!mc.mutationResult.equals(CoverageProperties.NO_RESULT)) {
 				counter++;
 				if (counter % 500 == 0) {
 					logger.info("Added " + counter + " mutations to queue");

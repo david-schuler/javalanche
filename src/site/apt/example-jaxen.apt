@@ -67,7 +67,7 @@ maven test -X
  The name of the test suite for this project is <<<org.jaxen.test.JaxenTests>>>
  and the common package prefix is <<<org.jaxen>>>.
  
- We can specify this information at the top of the <<<mutation.xml>>> file, such 
+ We can specify this information at the top of the <<<javalanche.xml>>> file, such 
  that we do not have to provide it in every step.
  
 +-------------------------------+

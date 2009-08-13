@@ -1,6 +1,6 @@
 package de.unisb.cs.st.javalanche.coverage;
 
-import static de.unisb.cs.st.javalanche.coverage.TracerProperties.*;
+import static de.unisb.cs.st.javalanche.coverage.CoverageProperties.*;
 
 import java.io.File;
 import java.util.Map;
@@ -24,8 +24,8 @@ public class TracerMethodAdapter extends MethodAdapter {
 
 	private String methodName, className;
 
-	private boolean instrumentReturns = TracerProperties.TRACE_RETURNS;
-	private boolean instrumentLine = TracerProperties.TRACE_LINES;
+	private boolean instrumentReturns = CoverageProperties.TRACE_RETURNS;
+	private boolean instrumentLine = CoverageProperties.TRACE_LINES;
 
 	// primitive data types
 	private enum PDType { LONG, INTEGER, FLOAT, DOUBLE };
@@ -34,7 +34,7 @@ public class TracerMethodAdapter extends MethodAdapter {
 	private static Map<String, Long> profilerMap =  (Map<String, Long>) (new File(TRACE_PROFILER_FILE).exists() ? XmlIo.get(TRACE_PROFILER_FILE) : null);
 
 	@SuppressWarnings("unchecked")
-	private static Set<String> dontInstrumentSet =  (Set<String>) (new File(TracerProperties.TRACE_DONT_INSTRUMENT_FILE).exists() ? XmlIo.get(TracerProperties.TRACE_DONT_INSTRUMENT_FILE) : null);
+	private static Set<String> dontInstrumentSet =  (Set<String>) (new File(CoverageProperties.TRACE_DONT_INSTRUMENT_FILE).exists() ? XmlIo.get(CoverageProperties.TRACE_DONT_INSTRUMENT_FILE) : null);
 
 
 
@@ -68,12 +68,12 @@ public class TracerMethodAdapter extends MethodAdapter {
 		if (!methodName.equals("<clinit>")
 				&& (instrumentLine || instrumentReturns)) {
 			// System.out.println(className + "." + methodName);
-			this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerProperties.TRACER_CLASS_NAME, "getInstance", "()L"+ TracerProperties.TRACER_CLASS_NAME + ";");
+			this.visitMethodInsn(Opcodes.INVOKESTATIC, CoverageProperties.TRACER_CLASS_NAME, "getInstance", "()L"+ CoverageProperties.TRACER_CLASS_NAME + ";");
 			this.visitLdcInsn(className);
 			this.visitLdcInsn(methodName);
 			this.visitLdcInsn(instrumentLine);
 			this.visitLdcInsn(instrumentReturns);
-			this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TracerProperties.TRACER_CLASS_NAME, "begin", "(Ljava/lang/String;Ljava/lang/String;ZZ)V");
+			this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, CoverageProperties.TRACER_CLASS_NAME, "begin", "(Ljava/lang/String;Ljava/lang/String;ZZ)V");
 		}
 		super.visitCode();
 	}
@@ -127,11 +127,11 @@ public class TracerMethodAdapter extends MethodAdapter {
 	 */
 	public void visitLineNumber(int line, Label start) {
 		if (!methodName.equals("<clinit>") && instrumentLine) {
-			this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerProperties.TRACER_CLASS_NAME, "getInstance", "()L" + TracerProperties.TRACER_CLASS_NAME +";");
+			this.visitMethodInsn(Opcodes.INVOKESTATIC, CoverageProperties.TRACER_CLASS_NAME, "getInstance", "()L" + CoverageProperties.TRACER_CLASS_NAME +";");
 			this.visitLdcInsn(line);
 			this.visitLdcInsn(className);
 			this.visitLdcInsn(methodName);
-			this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TracerProperties.TRACER_CLASS_NAME, "logLineNumber", "(ILjava/lang/String;Ljava/lang/String;)V");
+			this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, CoverageProperties.TRACER_CLASS_NAME, "logLineNumber", "(ILjava/lang/String;Ljava/lang/String;)V");
 		}
 		super.visitLineNumber(line, start);
 	 }
@@ -154,11 +154,11 @@ public class TracerMethodAdapter extends MethodAdapter {
 			this.visitInsn(Opcodes.L2I);
 		}
 
-		this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerProperties.TRACER_CLASS_NAME, "getInstance", "()L" + TracerProperties.TRACER_CLASS_NAME  +";");
+		this.visitMethodInsn(Opcodes.INVOKESTATIC, CoverageProperties.TRACER_CLASS_NAME, "getInstance", "()L" + CoverageProperties.TRACER_CLASS_NAME  +";");
 		this.visitInsn(Opcodes.SWAP);
 		this.visitLdcInsn(className);
 		this.visitLdcInsn(methodName);
-		this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TracerProperties.TRACER_CLASS_NAME, name, "(ILjava/lang/String;Ljava/lang/String;)V");
+		this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, CoverageProperties.TRACER_CLASS_NAME, name, "(ILjava/lang/String;Ljava/lang/String;)V");
 	}
 
 	private void callLogIReturn() {
@@ -167,11 +167,11 @@ public class TracerMethodAdapter extends MethodAdapter {
 
 	private void callLogAReturn() {
 		this.visitInsn(Opcodes.DUP);
-		this.visitMethodInsn(Opcodes.INVOKESTATIC, TracerProperties.TRACER_CLASS_NAME, "getInstance", "()L" + TracerProperties.TRACER_CLASS_NAME  +";");
+		this.visitMethodInsn(Opcodes.INVOKESTATIC, CoverageProperties.TRACER_CLASS_NAME, "getInstance", "()L" + CoverageProperties.TRACER_CLASS_NAME  +";");
 		this.visitInsn(Opcodes.SWAP);
 		this.visitLdcInsn(className);
 		this.visitLdcInsn(methodName);
-		this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, TracerProperties.TRACER_CLASS_NAME, "logAReturn", "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V");
+		this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, CoverageProperties.TRACER_CLASS_NAME, "logAReturn", "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V");
 	}
 
 

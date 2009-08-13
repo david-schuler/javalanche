@@ -31,10 +31,16 @@ under the License.
 	 <menu name="Documentation">
       <item name="Running Javalanche" href="documentation.html"/>
       <item name="Invariant Checking" href="doc-invariants.html"/>
-	  <item name="Example I-Triangle" href="example-triangle.html"/>
-	  <item name="Example II-Jaxen" href="example-jaxen.html"/>
-	  <item name="Example III-Invariants" href="example-invariant.html"/>
-	  <item name="Example IV-Jaxen-Invariants" href="example-jaxen-invariant.html"/>
+	  <item name="Coverage Impact" href="doc-coverage.html"/>
+    </menu>
+	
+	 <menu name="Examples">	  
+	  <item name="I-Triangle" href="example-triangle.html"/>
+	  <item name="II-Jaxen" href="example-jaxen.html"/>
+	  <item name="III-Invariants" href="example-invariant.html"/>
+	  <item name="IV-Jaxen-Invariants" href="example-jaxen-invariant.html"/>
+	  <item name="V-Coverage-Impact" href="example-triangle-coverage.html"/>
+	  <item name="VI-Jaxen-Coverage" href="example-jaxen-coverage.html"/>
     </menu>
 	
 	<menu ref="reports"/>

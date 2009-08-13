@@ -49,6 +49,7 @@ public class HtmlReport {
 			String filename = key + ".html";
 			fileMap.put(key, filename);
 			Io.writeFile(classReport.getHtml(), new File(REPORT_DIR, filename));
+			count++;
 		}
 		File navigation = createNavigation(fileMap);
 		String mutationSummary = getSummary();

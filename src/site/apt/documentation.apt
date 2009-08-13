@@ -106,8 +106,8 @@ Documentation
  
 ** Executing Mutations
  
- In order to test the mutations, tasks have to be created. A task is a text file
- that contains one mutation id per line. 
+ In order to test the mutations, task files have to be created.
+ A task is a text file that contains one mutation id per line. 
  The ant task <<<createTasks>>> creates different mutation tasks for all 
  mutations that are covered by tests and do not have results yet.
 	

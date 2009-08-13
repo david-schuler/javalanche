@@ -229,7 +229,7 @@ public class MutationProperties {
 	public static final boolean IGNORE_REMOVE_CALLS = getPropertyOrDefault(
 			IGNORE_REMOVE_CALLS_KEY, false);
 
-	private static final int getPropertyOrDefault(String key, int defaultValue) {
+	public static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
 		return Integer.parseInt(result);
 	}

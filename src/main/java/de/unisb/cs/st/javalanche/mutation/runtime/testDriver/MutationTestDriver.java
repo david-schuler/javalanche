@@ -34,7 +34,7 @@ import de.unisb.cs.st.javalanche.mutation.runtime.ResultReporter;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit3MutationTestDriver;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestCheckListener;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestListener;
-import de.unisb.cs.st.javalanche.coverage.TracerTestListener;
+import de.unisb.cs.st.javalanche.coverage.CoverageMutationListener;
 
 /**
  * Abstract class that drives the mutation test process. Driver for specific
@@ -133,7 +133,7 @@ public abstract class MutationTestDriver {
 				addMutationTestListener(new InvariantPerTestListener());
 			}
 			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_COVERAGE) {
-				addMutationTestListener(new TracerTestListener());
+				addMutationTestListener(new CoverageMutationListener());
 			}
 			listeners.addLast(new ResultReporter());
 			runMutations();
@@ -144,7 +144,7 @@ public abstract class MutationTestDriver {
 			addMutationTestListener(new InvariantPerTestCheckListener());
 			runNormalTests();
 		} else if (MutationProperties.RUN_MODE == RunMode.CREATE_COVERAGE) {
-			addMutationTestListener(new TracerTestListener());
+			addMutationTestListener(new CoverageMutationListener());
 			runNormalTests();
 		} else if (MutationProperties.RUN_MODE == RunMode.TEST_PERMUTED) {
 			runPermutedTests();
