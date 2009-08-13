@@ -1,4 +1,4 @@
-package de.unisb.cs.st.javalanche.tracer;
+package de.unisb.cs.st.javalanche.coverage;
 
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
@@ -8,6 +8,7 @@ import org.objectweb.asm.MethodVisitor;
  * @author Bernhard Gruen
  * 
  */
+ 
 public class TracerClassAdapter extends ClassAdapter {
 
 	private String className;

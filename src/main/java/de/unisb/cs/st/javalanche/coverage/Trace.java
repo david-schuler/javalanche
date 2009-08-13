@@ -1,4 +1,4 @@
-package de.unisb.cs.st.javalanche.tracer;
+package de.unisb.cs.st.javalanche.coverage;
 
 import java.util.HashMap;
 import java.util.HashSet;

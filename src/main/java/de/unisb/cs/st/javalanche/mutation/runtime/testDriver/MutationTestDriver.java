@@ -34,7 +34,7 @@ import de.unisb.cs.st.javalanche.mutation.runtime.ResultReporter;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit3MutationTestDriver;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestCheckListener;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestListener;
-import de.unisb.cs.st.javalanche.tracer.TracerTestListener;
+import de.unisb.cs.st.javalanche.coverage.TracerTestListener;
 
 /**
  * Abstract class that drives the mutation test process. Driver for specific

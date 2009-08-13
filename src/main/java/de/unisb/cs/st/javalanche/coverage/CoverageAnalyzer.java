@@ -1,4 +1,4 @@
-package de.unisb.cs.st.javalanche.tracer;
+package de.unisb.cs.st.javalanche.coverage;
 
 import java.io.BufferedInputStream;
 import java.io.File;

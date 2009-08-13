@@ -16,7 +16,6 @@ import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.cs.st.javalanche.tracer.CoverageAnalyzer;
 
 /**
  * Analyzes the mutation results for a project. Either a list (comma separated)

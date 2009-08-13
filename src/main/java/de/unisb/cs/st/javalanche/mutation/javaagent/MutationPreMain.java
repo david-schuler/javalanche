@@ -18,7 +18,7 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.cs.st.javalanche.tracer.TraceTransformer;
+import de.unisb.cs.st.javalanche.coverage.TraceTransformer;
 
 import de.unisb.cs.st.javalanche.invariants.javaagent.InvariantTransformer;
 

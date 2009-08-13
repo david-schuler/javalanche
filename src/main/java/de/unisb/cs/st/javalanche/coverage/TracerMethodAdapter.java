@@ -1,6 +1,6 @@
-package de.unisb.cs.st.javalanche.tracer;
+package de.unisb.cs.st.javalanche.coverage;
 
-import static de.unisb.cs.st.javalanche.tracer.TracerProperties.*;
+import static de.unisb.cs.st.javalanche.coverage.TracerProperties.*;
 
 import java.io.File;
 import java.util.Map;
