@@ -83,7 +83,7 @@ ant -f javalanche.xml checkInvariants
  
 +-------------------------------+
 No invariant violations:
-RUN_SUCCESSFULL
+RUN_SUCCESSFUL
 +-------------------------------+
 
 

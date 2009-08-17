@@ -25,7 +25,8 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListene
  */
 public class CoverageMutationListener implements MutationTestListener {
 
-	private static Logger logger = Logger.getLogger(CoverageMutationListener.class);
+	private static Logger logger = Logger
+			.getLogger(CoverageMutationListener.class);
 
 	private static boolean isPermutated = false;
 	private static HashSet<String> seenTests = new HashSet<String>();
@@ -116,7 +117,6 @@ public class CoverageMutationListener implements MutationTestListener {
 	}
 
 	public void start() {
-		System.out.println("TracerTestListener.start()");
 		mutation_id = new Long(0);
 		classMap.clear();
 		valueMap.clear();
@@ -126,7 +126,6 @@ public class CoverageMutationListener implements MutationTestListener {
 	public void end() {
 		writeProfilingData();
 		writeDontInstrument();
-		System.out.println("TracerTestListener.end()");
 		classMap.clear();
 		valueMap.clear();
 		saveFiles = false;
@@ -221,8 +220,8 @@ public class CoverageMutationListener implements MutationTestListener {
 			classMapCopy = new HashMap<String, HashMap<Integer, Integer>>(
 					classMap);
 		}
-		if (classMapCopy.size() == 0) {
-			logger.warn("Empty coverage map");
+		if (classMapCopy.size() == 0 && CoverageProperties.TRACE_LINES) {
+			logger.warn("Empty coverage map for test " + testName);
 		}
 
 		try {
@@ -285,8 +284,8 @@ public class CoverageMutationListener implements MutationTestListener {
 					valueMap);
 
 		}
-		if (valueMapCopy.size() == 0) {
-			logger.warn("Empty value map");
+		if (valueMapCopy.size() == 0 && CoverageProperties.TRACE_RETURNS) {
+			logger.warn("Empty value map for test " + testName);
 		}
 		ObjectOutputStream oos = null;
 

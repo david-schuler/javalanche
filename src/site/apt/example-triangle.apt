@@ -28,11 +28,11 @@ ant test
 Buildfile: build.xml
 
 compile:
-    [mkdir] Created dir: /Users/schuler/workspace/mutationTest/javalanche-0.1/examples/triangle/target/classes
-    [javac] Compiling 6 source files to /Users/schuler/workspace/mutationTest/javalanche-0.1/examples/triangle/target/classes
+    [mkdir] Created dir: /Users/schuler/workspace/mutationTest/javalanche/examples/triangle/target/classes
+    [javac] Compiling 6 source files to /Users/schuler/workspace/mutationTest/javalanche/examples/triangle/target/classes
 
 test:
-    [mkdir] Created dir: /Users/schuler/workspace/mutationTest/javalanche-0.1/examples/triangle/target/test-reports
+    [mkdir] Created dir: /Users/schuler/workspace/mutationTest/javalanche/examples/triangle/target/test-reports
     [junit] Running triangle.tests.TriangleTestSuite
     [junit] Tests run: 18, Failures: 0, Errors: 0, Time elapsed: 0.02 sec
 
@@ -90,7 +90,7 @@ Buildfile: javalanche.xml
 testTask1:
 
 test-javalanche:
-    [mkdir] Created dir: /Users/schuler/workspace/mutationTest/javalanche-0.1/examples/triangle/mutation-files/junit-reports
+    [mkdir] Created dir: /Users/schuler/workspace/mutationTest/javalanche/examples/triangle/mutation-files/junit-reports
     [junit] Running triangle.tests.TriangleTestSuite
     [junit] Tests run: 18, Failures: 0, Errors: 0, Time elapsed: 0.108 sec
 
@@ -237,7 +237,7 @@ ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dt
 Buildfile: javalanche.xml
 
 createTasks:
-     [java] Task created: /Users/schuler/workspace/mutationTest/javalanche-0.1/examples/triangle/mutation-files/mutation-task-triangle-01.txt
+     [java] Task created: /Users/schuler/workspace/mutationTest/javalanche/examples/triangle/mutation-files/mutation-task-triangle-01.txt
      [java] Created 1 mutation tasks
 
 BUILD SUCCESSFUL

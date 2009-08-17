@@ -73,7 +73,7 @@ maven test -X
 +-------------------------------+
 <property name="cp" value="/jaxen/target/test-classes:/jaxen/target/classes:/.maven/repository/dom4j/jars/dom4j-1.6.1.jar:..." />
 <property name="prefix" value="org.jaxen"/>
-<property name="javalanche" value="/path/to/javalanche-0.1" />
+<property name="javalanche" value="/path/to/javalanche" />
 <property name="testsuite" value="org.jaxen.test.JaxenTests"/>	
 
 +-------------------------------+

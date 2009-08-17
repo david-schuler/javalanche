@@ -9,12 +9,12 @@ import org.objectweb.asm.MethodVisitor;
  * 
  */
  
-public class TracerClassAdapter extends ClassAdapter {
+public class CoverageClassAdapter extends ClassAdapter {
 
 	private String className;
 	private int classAccess;
 
-	public TracerClassAdapter(ClassVisitor visitor, String theClass) {
+	public CoverageClassAdapter(ClassVisitor visitor, String theClass) {
 		super(visitor);
 		this.className = theClass;
 	}
@@ -32,7 +32,7 @@ public class TracerClassAdapter extends ClassAdapter {
 		MethodVisitor mv = super.visitMethod(methodAccess, name,	descriptor,	signature, exceptions);
 		// TODO
 		if(!className.endsWith("org/apache/commons/lang/builder/ReflectionToStringBuilder") &&!className.endsWith("org/apache/commons/lang/builder/ToStringBuilder")){
-			mv = new TracerMethodAdapter(mv, className, name, descriptor, classAccess, methodAccess);
+			mv = new CoverageMethodAdapter(mv, className, name, descriptor, classAccess, methodAccess);
 		}
 		return mv;
 	}

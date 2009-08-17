@@ -79,7 +79,7 @@ ant -f javalanche.xml scan
 
 * Tracing
 
- In order to compute the invariants, the program needs to be traced first
+ In order to compute the invariants, the program needs to be traced first.
  
 +-------------------------------+
 ant -f javalanche.xml trace
@@ -140,7 +140,7 @@ ant -f javalanche.xml checkInvariants
 
 +-------------------------------+
 No invariant violations:
-RUN_SUCCESSFULL
+RUN_SUCCESSFUL
 +-------------------------------+
  
  we can start with mutation testing otherwise we have to repeat the last step 
@@ -156,7 +156,7 @@ RUN_SUCCESSFULL
 ant -f javalanche.xml createTasks
 +-------------------------------+
 
- The we can run this task and check for invariant violations of the mutations
+ The we can run this task and check for invariant violations of the mutations.
  
 +-------------------------------+
 ant -f javalanche.xml runMutationsInvariant -Dmutation.file=mutation-files/mutation-task-invariant_example-01.txt 
@@ -165,7 +165,7 @@ ant -f javalanche.xml runMutationsInvariant -Dmutation.file=mutation-files/mutat
 
 * Analyze Results
 
- When the mutation testing is finished we can analyze the results
+ When the mutation testing is finished we can analyze the results.
  
 +-------------------------------+
 ant -f javalanche.xml -Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.mutation.analyze.InvariantAnalyzer analyzeResults

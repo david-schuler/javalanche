@@ -96,13 +96,13 @@ Documentation
  The exclude file contains all classes of this project that were executed by the
  test suite. All classes that Javalanche identified as tests are not prefixed
  with a <<<#>>>, and are excluded (not mutated). To exclude further classes or 
- include misclasified classes simply modify the <<<#>>> in their entry.
+ include misclassified classes simply modify the <<<#>>> in their entry.
  
  In a next step all classes are scanned for possible mutations with the 
  <<<scan>>> task. In this task all mutation possibilities for classes, which
  match the given prefix and are not excluded, are written to the database. 
- Furthermore, this tasks collects coverage data (which mutaitons are executed by
- wich test)
+ Furthermore, this tasks collects coverage data (which mutations are executed by
+ which test)
  
 ** Executing Mutations
  
@@ -144,8 +144,8 @@ Documentation
  
 ** Running tasks in {parallel}
 	
- Instead of running the several task sequentally, they can also be run in parallel
- Therfore, first a script (default name: runMutations.sh) has to be created 
+ Instead of running the several task sequentially, they can also be run in parallel
+ Therefore, first a script (default name: runMutations.sh) has to be created 
  that calls the runMutations task with its argument.
  
  This script gets three inputs:

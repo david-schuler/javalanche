@@ -895,7 +895,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		loadOriginalTraces();
 
 		int counter = 0;
-		double epsilon = 0;
+		double epsilon = CoverageProperties.EPSILON;
 
 		try {
 			out = new PrintStream("analyze.csv");

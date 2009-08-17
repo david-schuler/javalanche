@@ -20,13 +20,13 @@ import de.unisb.cs.st.javalanche.mutation.testDetector.TestInfo;
  * @author Bernhard Gruen
  * 
  */
-public class TraceTransformer implements ClassFileTransformer {
+public class CoverageTransformer implements ClassFileTransformer {
 
-	private static Logger logger = Logger.getLogger(TraceTransformer.class);
+	private static Logger logger = Logger.getLogger(CoverageTransformer.class);
 
 	private static final Excludes e = Excludes.getTestExcludesInstance(); 
 	
-	public TraceTransformer() {
+	public CoverageTransformer() {
 		super();
 		Runtime.getRuntime().addShutdownHook(new Thread(){
 			public void run(){
@@ -64,7 +64,7 @@ public class TraceTransformer implements ClassFileTransformer {
 			cv = new TraceClassVisitor(cv, new PrintWriter(
 					MutationPreMain.sysout));
 		}
-		cv = new TracerClassAdapter(cv, className);
+		cv = new CoverageClassAdapter(cv, className);
 		reader.accept(cv, ClassReader.SKIP_FRAMES);
 		result = writer.toByteArray();
 

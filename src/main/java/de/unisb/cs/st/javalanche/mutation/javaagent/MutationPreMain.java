@@ -18,7 +18,7 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.cs.st.javalanche.coverage.TraceTransformer;
+import de.unisb.cs.st.javalanche.coverage.CoverageTransformer;
 
 import de.unisb.cs.st.javalanche.invariants.javaagent.InvariantTransformer;
 
@@ -83,7 +83,7 @@ public class MutationPreMain {
 						.println("Run mutation tests with tracing of coverage data per test");
 				addClassFileTransformer(instrumentation,
 						new MutationFileTransformer());
-				addClassFileTransformer(instrumentation, new TraceTransformer());
+				addClassFileTransformer(instrumentation, new CoverageTransformer());
 				return;
 			} else if (RUN_MODE == SCAN) {
 				System.out.println("Scanning for mutations");
@@ -104,7 +104,7 @@ public class MutationPreMain {
 						.println("Getting line coverage data for unmutated run.");
 				addClassFileTransformer(instrumentation,
 						new IntegrateRandomPermutationTransformer());
-				addClassFileTransformer(instrumentation, new TraceTransformer());
+				addClassFileTransformer(instrumentation, new CoverageTransformer());
 				return;
 			} else if (RUN_MODE == TEST_TESTSUITE_SECOND) {
 				System.out.println("Check test suite data in db");

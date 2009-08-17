@@ -18,9 +18,9 @@ import de.unisb.cs.st.ds.util.io.XmlIo;
  * @author Bernhard Gruen
  * 
  */
-public class TracerMethodAdapter extends MethodAdapter {
+public class CoverageMethodAdapter extends MethodAdapter {
 
-	private static Logger logger = Logger.getLogger(TracerMethodAdapter.class);
+	private static Logger logger = Logger.getLogger(CoverageMethodAdapter.class);
 
 	private String methodName, className;
 
@@ -40,7 +40,7 @@ public class TracerMethodAdapter extends MethodAdapter {
 
 
 
-	public TracerMethodAdapter(MethodVisitor visitor, String className,	String methodName, String signature, int classAccess, int methodAccess) {
+	public CoverageMethodAdapter(MethodVisitor visitor, String className,	String methodName, String signature, int classAccess, int methodAccess) {
 		super(visitor);
 		this.className = className.replace('/', '.');
 		this.methodName = methodName;

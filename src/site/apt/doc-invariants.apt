@@ -23,14 +23,14 @@ Mutation Testing with Invariant Checking
  test suite.
  
  In order to be processed by {{{http://groups.csail.mit.edu/pag/daikon/} Daikon}}
- the Adabu2 traces have to be converted into the daikon dtrace format.
+ the Adabu2 traces have to be converted into the Daikon dtrace format.
  This is done with the <<<createDaikonFiles>>> task.
  
 * Detect Dynamic Invariants
 	
   {{{http://groups.csail.mit.edu/pag/daikon/} Daikon}} is used to detect dynamic invariants
   for the run of the test suite. Therfore, a script  is generated that calls Daikon
-  with the appropiate arguments (task: <<<createDaikonScript>>>).
+  with the appropriate arguments (task: <<<createDaikonScript>>>).
   
   In order to generate dynamic invariants for all traces a Makefile is generated 
   that calls the script for every trace file (task: <<<createDaikonMakefile>>>).
@@ -57,7 +57,7 @@ Mutation Testing with Invariant Checking
 
 +-------------------------------+
 No invariant violations:
-RUN_SUCCESSFULL
+RUN_SUCCESSFUL
 +-------------------------------+
 
 * Mutation Testing with Invariant Checking
