@@ -1,14 +1,21 @@
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.URL;
 
 import org.objectweb.asm.ClassAdapter;
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
+import sun.awt.image.URLImageSource;
+
+import de.unisb.cs.st.javalanche.mutation.analyze.html.ClassReport;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
@@ -98,4 +105,32 @@ public class IntegrateSuiteTransformer extends BytecodeTransformer {
 		return new IntegrateSuiteTransformer(targetClass, integrationMethod,
 				integrationMethodSignature);
 	}
+
+	public static byte[] modifyJunit4AdapertScan(byte[] bytecode) {
+		ClassReader cr = new ClassReader(bytecode);
+		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS
+				| ClassWriter.COMPUTE_FRAMES);
+		CheckClassAdapter cc = new CheckClassAdapter(cw);
+		ClassVisitor cv = new ModifyJunit4Adaper(cc);
+		cr.accept(cv, ClassReader.SKIP_FRAMES);
+		return cw.toByteArray();
+	}
+	
+	public static void main(String[] args) throws ClassNotFoundException,
+			IOException {
+		URL systemResource = ClassLoader
+				.getSystemResource("junit/framework/JUnit4TestAdapter.class");
+		Class<?> forName = Class.forName("junit.framework.JUnit4TestAdapter");
+		System.out.println(forName);
+		InputStream openStream = systemResource.openStream();
+
+		ClassReader cr = new ClassReader(openStream);
+		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS
+				| ClassWriter.COMPUTE_FRAMES);
+		CheckClassAdapter cc = new CheckClassAdapter(cw);
+		ClassVisitor cv = new ModifyJunit4Adaper(cc);
+		cr.accept(cv, ClassReader.SKIP_FRAMES);
+		
+	}
+
 }

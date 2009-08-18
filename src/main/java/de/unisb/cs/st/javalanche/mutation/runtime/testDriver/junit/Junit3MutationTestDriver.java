@@ -34,7 +34,7 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 	private static Logger logger = Logger
 			.getLogger(Junit3MutationTestDriver.class);
 
-	private final static class SingleTestListener implements TestListener {
+	public final static class SingleTestListener implements TestListener {
 
 		private String message;
 

@@ -329,4 +329,9 @@ public class MutationProperties {
 	public static final File TEST_EXCLUDE_FILE = new File(OUTPUT_DIR,
 			"test-exclude.txt"); // TODO other dir
 
+	public static final String JUNIT4_MODE_KEY = "javalanche.junit4";
+	
+	public static final boolean JUNIT4_MODE = getPropertyOrDefault(
+			JUNIT4_MODE_KEY, false);
+
 }

@@ -33,6 +33,7 @@ public class ScanProjectTransformer implements ClassFileTransformer {
 	}
 
 	private static int count = 0; 
+	
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {

@@ -21,6 +21,8 @@ import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class MutationScanner implements ClassFileTransformer {
 
+	private static final Object JUNIT4_TEST_ADAPTER = "junit.framework.JUnit4TestAdapter";
+
 	private static Logger logger = Logger.getLogger(MutationScanner.class);
 
 	private MutationPossibilityCollector mpc = new MutationPossibilityCollector();
@@ -71,10 +73,11 @@ public class MutationScanner implements ClassFileTransformer {
 				long numberOfTests = QueryManager.getNumberOfTestsForProject();
 				long addedTests = QueryManager.getNumberOfTests()
 						- numberOfTestsPre;
-				String testMessage = String.format(
-						"Added %d tests. Total number of tests for project %s : %d",
-						addedTests, MutationProperties.PROJECT_PREFIX,
-						numberOfTests);
+				String testMessage = String
+						.format(
+								"Added %d tests. Total number of tests for project %s : %d",
+								addedTests, MutationProperties.PROJECT_PREFIX,
+								numberOfTests);
 				long coveredMutations = MutationCoverageFile
 						.getNumberOfCoveredMutations();
 				String coveredMessage = String
@@ -113,13 +116,24 @@ public class MutationScanner implements ClassFileTransformer {
 				} else {
 					logger.debug("Skipping class " + className);
 				}
-				if (compareWithSuiteProperty(classNameWithDots)) {
-					logger.info("Trying to integrate ScanAndCoverageTestSuite");
-					BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer
-							.getIntegrateScanAndCoverageTestSuiteTransformer();
-					classfileBuffer = integrateSuiteTransformer
-							.transformBytecode(classfileBuffer);
-					// logger.debug(AsmUtil.classToString(classfileBuffer));
+				if (MutationProperties.JUNIT4_MODE) {
+					if (classNameWithDots.contains("JUnit4TestAdapter")) {
+					}
+					if (classNameWithDots.equals(JUNIT4_TEST_ADAPTER)) {
+						System.err.println("XASDFAS " + classNameWithDots);
+						classfileBuffer = IntegrateSuiteTransformer
+								.modifyJunit4AdapertScan(classfileBuffer);
+					}
+				} else {
+					if (compareWithSuiteProperty(classNameWithDots)) {
+						logger
+								.info("Trying to integrate ScanAndCoverageTestSuite");
+						BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer
+								.getIntegrateScanAndCoverageTestSuiteTransformer();
+						classfileBuffer = integrateSuiteTransformer
+								.transformBytecode(classfileBuffer);
+						// logger.debug(AsmUtil.classToString(classfileBuffer));
+					}
 				}
 
 			} catch (Throwable t) {
