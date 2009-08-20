@@ -7,6 +7,7 @@ import java.security.ProtectionDomain;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.Util;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationScannerTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
@@ -116,24 +117,9 @@ public class MutationScanner implements ClassFileTransformer {
 				} else {
 					logger.debug("Skipping class " + className);
 				}
-				if (MutationProperties.JUNIT4_MODE) {
-					if (classNameWithDots.contains("JUnit4TestAdapter")) {
-					}
-					if (classNameWithDots.equals(JUNIT4_TEST_ADAPTER)) {
-						System.err.println("XASDFAS " + classNameWithDots);
-						classfileBuffer = IntegrateSuiteTransformer
-								.modifyJunit4AdapertScan(classfileBuffer);
-					}
-				} else {
-					if (compareWithSuiteProperty(classNameWithDots)) {
-						logger
-								.info("Trying to integrate ScanAndCoverageTestSuite");
-						BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer
-								.getIntegrateScanAndCoverageTestSuiteTransformer();
-						classfileBuffer = integrateSuiteTransformer
-								.transformBytecode(classfileBuffer);
-						// logger.debug(AsmUtil.classToString(classfileBuffer));
-					}
+				if (BytecodeTasks.shouldIntegrate(classNameWithDots)) {
+					BytecodeTasks.integrateTestSuite(classfileBuffer,
+							classNameWithDots);
 				}
 
 			} catch (Throwable t) {
@@ -148,16 +134,4 @@ public class MutationScanner implements ClassFileTransformer {
 		return classfileBuffer;
 	}
 
-	public static boolean compareWithSuiteProperty(String classNameWithDots) {
-		boolean returnValue = false;
-		String testSuiteName = MutationProperties.TEST_SUITE;
-		if (testSuiteName != null && classNameWithDots.contains(testSuiteName)) {
-			returnValue = true;
-		}
-		return returnValue;
-	}
-
-	public static void main(String[] args) {
-		new MutationScanner();
-	}
 }

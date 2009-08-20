@@ -1,0 +1,159 @@
+            ------
+            Jaxen Example
+            ------
+            David Schuler
+            ------
+            Date
+
+
+Jaxen
+
+
+
+* Setting Up
+
+ The steps in this section are explained in the {{{example-jaxen.html} first jaxen example}}.
+ 
++-------------------------------+
+svn co -r1342 https://svn.codehaus.org/jaxen/trunk/jaxen/jaxen jaxen
++-------------------------------+
+
++-------------------------------+
+cp ../../javalanche.xml .
++-------------------------------+
+
+
++-------------------------------+
+ant -f javalanche.xml -Djavalanche=../..  startHsql
++-------------------------------+
+
++-------------------------------+
+ant -f javalanche.xml -Djavalanche=../.. schemaexport
++-------------------------------+
+
+
+
+ Applying diff
+
++-------------------------------+
+Index: src/java/test/org/jaxen/test/SingleObjectIteratorTest.java
+===================================================================
+--- src/java/test/org/jaxen/test/SingleObjectIteratorTest.java	(revision 1342)
++++ src/java/test/org/jaxen/test/SingleObjectIteratorTest.java	(working copy)
+@@ -54,8 +54,13 @@
+ 
+ public class SingleObjectIteratorTest extends TestCase {
+ 
+-    private Iterator iterator = new SingleObjectIterator(new Object());
+-    
++	
++    private Iterator iterator;
++	
++	public void setUp(){
++		iterator = new SingleObjectIterator(new Object());
++    }
++	
+     public void testNoInfiniteLoops() {
+      
+         iterator.next();
++-------------------------------+
+
+ Modifying <<<javalanche.xml>>> 
+ 
++-------------------------------+
+<property name="cp" value="/jaxen/target/test-classes:/jaxen/target/classes:/.maven/repository/dom4j/jars/dom4j-1.6.1.jar:..." />
+<property name="prefix" value="org.jaxen"/>
+<property name="javalanche" value="/path/to/javalanche/" />
+<property name="testsuite" value="org.jaxen.test.JaxenTests"/>	
+
++-------------------------------+
+
++-------------------------------+
+maven java:compile
+maven test
++-------------------------------+
+
+
++-------------------------------+
+ant  -f javalanche.xml testTask1
++-------------------------------+
+
++-------------------------------+
+ant  -f javalanche.xml testTask2
++-------------------------------+
+
++-------------------------------+
+ant -f javalanche.xml testTask3
++-------------------------------+
+
+ Scanning the Project
+
++-------------------------------+
+ant -f javalanche.xml scanProject
++-------------------------------+
+
++-------------------------------+
+ant -f javalanche.xml scan
++-------------------------------+
+
+
+* Creating Coverage Data for an Unmutated Run
+
++-------------------------------+
+ant -f javalanche.xml createCoverageData
++-------------------------------+
+
+
+
+* Creating Coverage Data for Mutations
+
+ First we create the task 
+
++-------------------------------+
+ant -f javalanche.xml createTasks
++-------------------------------+
+
+ Then we generate a script <<<runMutations.sh>> that runs the
+ <<<runMutationsCoverage>>> task.
+
++-------------------------------+
+#!/bin/sh
+OUTPUTFILE=mutation-files/output-runMutationDaikon-${2}.txt
+BACKOUTPUTFILE=mutation-files/back-output-runMutationDaikon-${2}.txt
+if [ -e $OUTPUTFILE ]
+then
+        mv $OUTPUTFILE ${BACKOUTPUTFILE}
+fi
+while  ! grep -q ALL_RESULTS ${OUTPUTFILE}
+do
+        echo "Task ${2} not completed - starting again"
+        nice -10 ant -f javalanche.xml runMutationsCoverage ${3} -Dmutation.file=${1}  2>&1 | tee -a $OUTPUTFILE 
+        sleep 1
+done
++-------------------------------+
+
+ Then we generate a Makefile that calls this script for all mutation tasks.
+
++-------------------------------+
+ant -f javalanche.xml  createMutationMakefile
++-------------------------------+
+
+ Finally we run <<<make>>> with the <<<-j>>> switch.
+
++-------------------------------+
+make -j4
++-------------------------------+
+
+* Analyzing the Coverage Impact
+
+ The impact of a mutations can be analyzed with the
+ <<<de.unisb.cs.st.javalanche.coverage.CoverageAnalyzer>>> analyzer, which also
+ adds information to the html report in <<<mutation-files/report/>>>.
+
++-------------------------------+
+ant -f javalanche.xml -Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.coverage.CoverageAnalyzer analyzeResults
++-------------------------------+
+ 
+ 
+
+

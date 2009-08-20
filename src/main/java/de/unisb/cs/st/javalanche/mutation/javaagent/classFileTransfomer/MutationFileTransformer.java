@@ -121,7 +121,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 				if (compareWithSuiteProperty(classNameWithDots)) {
 					logger.info("Trying to integrate SelectiveTestSuite");
 					BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer
-							.getIntegrateSelectiveTestSuiteTransformer();
+							.getIntegrateTransformer();
 					classfileBuffer = integrateSuiteTransformer
 							.transformBytecode(classfileBuffer);
 				}

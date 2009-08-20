@@ -940,6 +940,10 @@ public class QueryManager {
 		return list;
 	}
 
+	public static void main(String[] args) {
+		List<Mutation> allMutationsForClass = getAllMutationsForClass("test.C1");
+		System.out.println(allMutationsForClass);
+	}
 	public static TestName getTestName(String testCaseName) {
 		TestName result = null;
 		Session session = openSession();

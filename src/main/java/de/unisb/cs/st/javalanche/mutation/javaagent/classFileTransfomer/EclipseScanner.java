@@ -95,7 +95,7 @@ public class EclipseScanner implements ClassFileTransformer {
 					logger.warn("Trying to integrate ScanAndCoverageTestSuite "
 							+ classNameWithDots);
 					BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer
-							.getIntegrateScanAndCoverageTestSuiteTransformer();
+							.getIntegrateTransformer();
 					classfileBuffer = integrateSuiteTransformer
 							.transformBytecode(classfileBuffer);
 					// logger.debug(AsmUtil.classToString(classfileBuffer));

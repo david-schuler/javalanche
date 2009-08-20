@@ -13,9 +13,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
-import sun.awt.image.URLImageSource;
-
-import de.unisb.cs.st.javalanche.mutation.analyze.html.ClassReport;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
@@ -74,23 +71,18 @@ public class IntegrateSuiteTransformer extends BytecodeTransformer {
 				integrationMethod, integrationMethodSignature);
 	}
 
-	public static BytecodeTransformer getIntegrateSelectiveTestSuiteTransformer() {
-		String targetClass = "de/unisb/cs/st/javalanche/mutation/runtime/testsuites/MutationTestSuite";
-		String integrationMethod = "toMutationTestSuite";
-		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lde/unisb/cs/st/javalanche/mutation/runtime/testsuites/MutationTestSuite;";
-		return new IntegrateSuiteTransformer(targetClass, integrationMethod,
-				integrationMethodSignature);
-	}
+	// private static BytecodeTransformer
+	// getIntegrateSelectiveTestSuiteTransformer() {
+	// String targetClass =
+	// "de/unisb/cs/st/javalanche/mutation/runtime/testsuites/MutationTestSuite";
+	// String integrationMethod = "toMutationTestSuite";
+	// String integrationMethodSignature =
+	// "(Ljunit/framework/TestSuite;)Lde/unisb/cs/st/javalanche/mutation/runtime/testsuites/MutationTestSuite;";
+	// return new IntegrateSuiteTransformer(targetClass, integrationMethod,
+	// integrationMethodSignature);
+	// }
 
-	public static BytecodeTransformer getIntegrateRandomPermutationTestSuiteTransformer() {
-		String targetClass = "de/unisb/cs/st/javalanche/mutation/runtime/testsuites/RandomPermutationTestSuite";
-		String integrationMethod = "toRandomPermutationTestSuite";
-		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lde/unisb/cs/st/javalanche/mutation/runtime/testsuites/RandomPermutationTestSuite;";
-		return new IntegrateSuiteTransformer(targetClass, integrationMethod,
-				integrationMethodSignature);
-	}
-
-	public static BytecodeTransformer getIntegrateScanAndCoverageTestSuiteTransformer() {
+	public static BytecodeTransformer getIntegrateTransformer() {
 		String targetClass = "de/unisb/cs/st/javalanche/mutation/runtime/testsuites/MutationTestSuite";
 		String integrationMethod = "toMutationTestSuite";
 		String integrationMethodSignature = "(Ljunit/framework/TestSuite;)Lde/unisb/cs/st/javalanche/mutation/runtime/testsuites/MutationTestSuite;";
@@ -106,7 +98,7 @@ public class IntegrateSuiteTransformer extends BytecodeTransformer {
 				integrationMethodSignature);
 	}
 
-	public static byte[] modifyJunit4AdapertScan(byte[] bytecode) {
+	public static byte[] modifyJunit4Adapter(byte[] bytecode) {
 		ClassReader cr = new ClassReader(bytecode);
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS
 				| ClassWriter.COMPUTE_FRAMES);
@@ -115,7 +107,7 @@ public class IntegrateSuiteTransformer extends BytecodeTransformer {
 		cr.accept(cv, ClassReader.SKIP_FRAMES);
 		return cw.toByteArray();
 	}
-	
+
 	public static void main(String[] args) throws ClassNotFoundException,
 			IOException {
 		URL systemResource = ClassLoader
@@ -130,7 +122,7 @@ public class IntegrateSuiteTransformer extends BytecodeTransformer {
 		CheckClassAdapter cc = new CheckClassAdapter(cw);
 		ClassVisitor cv = new ModifyJunit4Adaper(cc);
 		cr.accept(cv, ClassReader.SKIP_FRAMES);
-		
+
 	}
 
 }

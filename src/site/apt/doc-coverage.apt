@@ -1,0 +1,47 @@
+            ------
+            Documentation
+            ------
+            David Schuler
+            ------
+            Date
+
+			
+Mutation Testing with Coverage Impact
+
+ Mutation Testing with coverage impact calculation requires some additional
+ steps to the ones described in the {{{documentation.html} documentation on
+ mutation testing}}. These steps are described below and an example is given
+ {{{example-triangle-coverage.html} here}}
+ 
+* Calculating the Coverage Impact
+
+ In order to calculate the impact of a mutation on the code coverage, an unmutated
+ run of the test suite is compared with a mutated run of the test suite. 
+ To this end coverage data has to be collected for these runs.
+ 
+* Creating Coverage Data for an Unmutated Run
+	
+  After the <<<javalanche.xml>>> is modified as describer in the documentation, 
+  the coverage data for a run of the test suite on the unmutated program can 
+  be obtained with the <<<createCoverageData>>> task.
+	
+
+* Creating Coverage Data for Mutations
+
+ The coverage data for the mutations is created by running the mutation task 
+ with the <<<runMutationsCoverage>>> task.
+ 
+* Analyzing the Coverage Impact
+ 
+ The coverage impact of the mutations can be analyzed by
+ <<<de.unisb.cs.st.javalanche.coverage.CoverageAnalyzer>>>. This analyzer
+ determines how many mutations have an impact greater than a epsilon (default 0,
+ can be specified via the property <<<javalanche.coverage.epsilon>>>). 
+ 
+ 
+* Cleaning Up
+
+ The <<<cleanCoverage>>> task deletes all files that are produced by the
+ coverage tasks. The clean task has to be used before a new run or if the trace
+ data is corrupted.
+ 

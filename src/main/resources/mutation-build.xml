@@ -18,7 +18,10 @@
 	<path id="mutation.classpath">
 		<!--pathelement path="/Users/schuler/workspace/mutationTest/target/classes/" /-->
 		<pathelement path="${javalanche.dist.dir}/src/main/resources"/>
-		<fileset dir="${mutation.jars.dir}" includes="*.jar"/>
+		<fileset dir="${mutation.jars.dir}" includes="*.jar">
+		  <include name="**/*.jar"/>
+		  <exclude name="**/*daikon*"/>
+		 </fileset>
 	</path>
 	
 	<import file="./coverage-include.xml"/>
@@ -92,6 +95,7 @@
 		<property name="scan.project.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="scan.project.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
 		<property name="scan.project.verbose" value="-verbose"/>
+
 		
 		<path id="scan.project.classpath.add">
 			<path refid="mutation.classpath"/>
@@ -132,14 +136,15 @@
 		<property name="scan.mutation.run.mode" value="-Dmutation.run.mode=scan"/>
 		<property name="scan.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="scan.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
-
+		<!--property name="scan.junit4" value="-Djavalanche.junit4=true"/-->
+		
 		<property name="scan.bootclasspath" value="-Xbootclasspath/a:${javalanche.dist.dir}/javalanche-mutation-bootclasspath.jar"/>
 		<path id="scan.javalanche.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
 		
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value=" ${scan.memory} ${scan.bootclasspath} ${scan.mutation.javaagent}  ${scan.mutation.run.mode} ${scan.javalanche.package.prefix} ${scan.javalanche.project.test.suite}" />
+			<param name="javalanche.arg.line" value=" ${scan.memory} ${scan.bootclasspath} ${scan.mutation.javaagent}  ${scan.mutation.run.mode} ${scan.javalanche.package.prefix} ${scan.javalanche.project.test.suite} " />
 			<reference refid="scan.javalanche.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>

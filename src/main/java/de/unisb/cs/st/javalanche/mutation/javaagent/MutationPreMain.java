@@ -9,7 +9,7 @@ import java.lang.instrument.Instrumentation;
 
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.EclipseScanner;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.IntegrateCheckNamesSuiteTransformer;
-import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.IntegrateRandomPermutationTransformer;
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.IntegrateInTestSuiteTRansformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationScanner;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanProjectTransformer;
@@ -93,7 +93,7 @@ public class MutationPreMain {
 					|| RUN_MODE == TEST_PERMUTED) {
 				System.out.println("Integrating RandomPermutationTestSuite");
 				addClassFileTransformer(instrumentation,
-						new IntegrateRandomPermutationTransformer());
+						new IntegrateInTestSuiteTRansformer());
 				// FIXME
 				// addClassFileTransformer(instrumentation, new
 				// TraceTransformer());
@@ -103,7 +103,7 @@ public class MutationPreMain {
 				System.out
 						.println("Getting line coverage data for unmutated run.");
 				addClassFileTransformer(instrumentation,
-						new IntegrateRandomPermutationTransformer());
+						new IntegrateInTestSuiteTRansformer());
 				addClassFileTransformer(instrumentation, new CoverageTransformer());
 				return;
 			} else if (RUN_MODE == TEST_TESTSUITE_SECOND) {

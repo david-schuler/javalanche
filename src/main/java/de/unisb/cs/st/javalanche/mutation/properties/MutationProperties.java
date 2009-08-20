@@ -203,7 +203,7 @@ public class MutationProperties {
 	private static final String DEFAULT_TIMEOUT_IN_SECONDS_KEY = "mutation.default.timeout";
 
 	public static final int DEFAULT_TIMEOUT_IN_SECONDS = getPropertyOrDefault(
-			DEFAULT_TIMEOUT_IN_SECONDS_KEY, 10);
+			DEFAULT_TIMEOUT_IN_SECONDS_KEY, 1000);
 
 	/**
 	 * The save interval in which the mutation results are written to the
@@ -333,5 +333,7 @@ public class MutationProperties {
 	
 	public static final boolean JUNIT4_MODE = getPropertyOrDefault(
 			JUNIT4_MODE_KEY, false);
+
+	public static final Object JUNIT4_TEST_ADAPTER = "junit.framework.JUnit4TestAdapter";
 
 }

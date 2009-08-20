@@ -1,0 +1,89 @@
+            ------
+            Triangle Example with Coverage Impact
+            ------
+            David Schuler
+            ------
+            Date
+
+
+Triangle Example with Coverage Impact 
+ 
+ This example shows the steps needed to test the triangle project and compute 
+ the coverage impact.
+  
+* Setting Up
+ 
+ In order to run the example the steps as described in the 
+ {{{example-triangle.html} triangle example}} have to be executed.
+ 
+
++-------------------------------+
+ant test
++-------------------------------+
+
++-------------------------------+
+cp ../../javalanche.xml .
++-------------------------------+
+
++-------------------------------+
+ant -f javalanche.xml -Djavalanche=../../  startHsql
++-------------------------------+
+
++-------------------------------+
+ant -f javalanche.xml -Djavalanche=../../  schemaexport
++-------------------------------+
+
++-------------------------------+
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask1
++-------------------------------+
+
++-------------------------------+
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask2
++-------------------------------+
+
++-------------------------------+
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask3
++-------------------------------+
+
++-------------------------------+
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  scanProject
++-------------------------------+
+
++-------------------------------+
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  scan
++-------------------------------+
+
++-------------------------------+
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  createTasks
++-------------------------------+
+
+ 
+* Creating Coverage Data for an Unmutated Run
+
+ The coverage data for an the unmutated programm is generated with the <<<createCoverageData>>> task.
+ 
++-------------------------------+
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  createCoverageData
++-------------------------------+
+
+
+* Creating Coverage Data for Mutations
+
+ The coverage data for the mutations is obtained by using the <<<runMutationsCoverage>>>
+ task for mutation testing.
+ 
++-------------------------------+
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  runMutationsCoverage \
+-Dmutation.file=./mutation-files/mutation-task-triangle-01.txt
++-------------------------------+
+
+* Analyzing the Coverage Impact
+
+ The impact of a mutations can be analyzed with the
+ <<<de.unisb.cs.st.javalanche.coverage.CoverageAnalyzer>>> analyzer.
+
++-------------------------------+
+ant -f javalanche.xml -Dprefix=triangle -Djavalanche=../../ -Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.coverage.CoverageAnalyzer analyzeResults
++-------------------------------+
+ 
+

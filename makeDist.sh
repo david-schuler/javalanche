@@ -24,7 +24,8 @@ cp ../InvariantExample/build.xml ${DIST}/examples/invariantExample/
 cp -r ../InvariantExample/src ${DIST}/examples/invariantExample/
 
 rm ${DIST}/javalanche-mutation-${VERSION}.jar
-
+rm ${DIST}/lib/junit-4.1.jar
+#rm ${DIST}/lib/daikon-local.jar
 if [  $1 ]; then
  if [ $1 == "tgz"  ]
 	then

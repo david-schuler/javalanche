@@ -5,14 +5,16 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 /**
  * Class that provides static methods for common bytecode modifications.
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class BytecodeTasks {
 
@@ -33,11 +35,15 @@ public class BytecodeTasks {
 	 * 			execute mutated code
 	 * 		}
 	 * 		else{
-	 *			execute unmutated code
+	 * 			execute unmutated code
 	 * 		}
-	 * @param mv MethodVisitor where the code is inserted.
-	 * @param unMutated code that should be used when no mutation is applied.
-	 * @param mutations code that should be used when one of the mutations is applied.
+	 * 
+	 * @param mv
+	 *            MethodVisitor where the code is inserted.
+	 * @param unMutated
+	 *            code that should be used when no mutation is applied.
+	 * @param mutations
+	 *            code that should be used when one of the mutations is applied.
 	 */
 	public static void insertIfElse(MethodVisitor mv, MutationCode unMutated,
 			MutationCode[] mutations) {
@@ -76,7 +82,7 @@ public class BytecodeTasks {
 
 	/**
 	 * Insert calls that signalize whether the mutated code was executed.
-	 *
+	 * 
 	 * @param mv
 	 *            the methodvisitor to add the statements
 	 * @param mutation
@@ -97,7 +103,7 @@ public class BytecodeTasks {
 
 	/**
 	 * Inserts bytecode that prints the given message.
-	 *
+	 * 
 	 * @param mv
 	 *            The MethodVisitor for which the code is added.
 	 * @param message
@@ -111,4 +117,51 @@ public class BytecodeTasks {
 				"println", "(Ljava/lang/String;)V");
 	}
 
+	public static byte[] integrateTestSuite(byte[] classfileBuffer,
+			String classNameWithDots) {
+		if (!shouldIntegrate(classNameWithDots)) {
+			throw new IllegalArgumentException("Should not integrate in "
+					+ classNameWithDots);
+		}
+		byte[] result = null;
+		if (MutationProperties.JUNIT4_MODE) {
+			if (classNameWithDots
+					.equals(MutationProperties.JUNIT4_TEST_ADAPTER)) {
+				logger
+						.info("Integrating in Junit 4 suite "
+								+ classNameWithDots);
+				result = IntegrateSuiteTransformer
+						.modifyJunit4Adapter(classfileBuffer);
+			}
+		} else {
+			logger.info("Integrating in Junit 3 suite " + classNameWithDots);
+			BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer
+					.getIntegrateTransformer();
+			result = integrateSuiteTransformer
+					.transformBytecode(classfileBuffer);
+
+		}
+		return result;
+	}
+
+	public static boolean shouldIntegrate(String classNameWithDots) {
+		if (MutationProperties.JUNIT4_MODE) {
+			if (classNameWithDots
+					.equals(MutationProperties.JUNIT4_TEST_ADAPTER)) {
+				return true;
+			}
+		} else {
+			return compareWithSuiteProperty(classNameWithDots);
+		}
+		return false;
+	}
+
+	private static boolean compareWithSuiteProperty(String classNameWithDots) {
+		boolean result = false;
+		String testSuiteName = MutationProperties.TEST_SUITE;
+		if (testSuiteName != null && classNameWithDots.contains(testSuiteName)) {
+			result = true;
+		}
+		return result;
+	}
 }
