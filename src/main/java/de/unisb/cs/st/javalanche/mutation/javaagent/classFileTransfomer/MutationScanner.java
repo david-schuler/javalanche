@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationScannerTransformer;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecisionFactory;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
@@ -18,11 +17,8 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class MutationScanner implements ClassFileTransformer {
-
-	private static final Object JUNIT4_TEST_ADAPTER = "junit.framework.JUnit4TestAdapter";
 
 	private static Logger logger = Logger.getLogger(MutationScanner.class);
 
@@ -104,7 +100,6 @@ public class MutationScanner implements ClassFileTransformer {
 
 				String classNameWithDots = className.replace('/', '.');
 				logger.debug(classNameWithDots);
-
 				if (md.shouldBeHandled(classNameWithDots)) {
 					classfileBuffer = mutationScannerTransformer
 							.transformBytecode(classfileBuffer);
@@ -117,8 +112,10 @@ public class MutationScanner implements ClassFileTransformer {
 				} else {
 					logger.debug("Skipping class " + className);
 				}
+				
 				if (BytecodeTasks.shouldIntegrate(classNameWithDots)) {
-					BytecodeTasks.integrateTestSuite(classfileBuffer,
+					classfileBuffer = BytecodeTasks.integrateTestSuite(
+							classfileBuffer,
 							classNameWithDots);
 				}
 

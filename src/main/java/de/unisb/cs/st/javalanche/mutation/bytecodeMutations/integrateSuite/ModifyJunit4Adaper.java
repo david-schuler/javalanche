@@ -5,12 +5,10 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-
-import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit4MutationTestDriver;
+import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
 
 public class ModifyJunit4Adaper extends ClassAdapter {
 
@@ -26,7 +24,7 @@ public class ModifyJunit4Adaper extends ClassAdapter {
 		MethodVisitor mv = super.visitMethod(access, name, desc, signature,
 				exceptions);
 		if (name.equals("run")) {
-			logger.warn("Found run");
+			logger.debug("Found run in " + JUNIT4_TEST_ADAPTER);
 			mv = new ModifyMethodAdapater(mv);
 		}
 		return mv;
@@ -41,7 +39,7 @@ public class ModifyJunit4Adaper extends ClassAdapter {
 		}
 
 		public void visitCode() {
-			logger.warn("Insert new run method");
+			logger.debug("Modifying the run Method of " + JUNIT4_TEST_ADAPTER);
 			mv.visitCode();
 			mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out",
 					"Ljava/io/PrintStream;");

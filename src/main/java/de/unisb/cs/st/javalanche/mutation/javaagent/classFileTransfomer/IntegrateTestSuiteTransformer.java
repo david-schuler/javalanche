@@ -8,11 +8,11 @@ import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
 
-public class IntegrateInTestSuiteTRansformer implements
+public class IntegrateTestSuiteTransformer implements
 		ClassFileTransformer {
 
 	private static Logger logger = Logger
-			.getLogger(IntegrateInTestSuiteTRansformer.class);
+			.getLogger(IntegrateTestSuiteTransformer.class);
 
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,

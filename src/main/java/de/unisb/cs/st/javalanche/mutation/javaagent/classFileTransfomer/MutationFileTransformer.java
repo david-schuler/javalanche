@@ -16,6 +16,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
@@ -34,9 +35,9 @@ import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 /**
  * MutationTransformer is used to apply mutations during runtime via a java
  * agent.
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 @SuppressWarnings("unchecked")
 public class MutationFileTransformer implements ClassFileTransformer {
@@ -99,10 +100,11 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see java.lang.instrument.ClassFileTransformer#transform(java.lang.ClassLoader,
-	 *      java.lang.String, java.lang.Class, java.security.ProtectionDomain,
-	 *      byte[])
+	 * 
+	 * @see
+	 * java.lang.instrument.ClassFileTransformer#transform(java.lang.ClassLoader
+	 * , java.lang.String, java.lang.Class, java.security.ProtectionDomain,
+	 * byte[])
 	 */
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
@@ -118,14 +120,10 @@ public class MutationFileTransformer implements ClassFileTransformer {
 					classfileBuffer = systemExitTransformer
 							.transformBytecode(classfileBuffer);
 				}
-				if (compareWithSuiteProperty(classNameWithDots)) {
-					logger.info("Trying to integrate SelectiveTestSuite");
-					BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer
-							.getIntegrateTransformer();
-					classfileBuffer = integrateSuiteTransformer
-							.transformBytecode(classfileBuffer);
+				if (BytecodeTasks.shouldIntegrate(classNameWithDots)) {
+					classfileBuffer = BytecodeTasks.integrateTestSuite(
+							classfileBuffer, classNameWithDots);
 				}
-
 				if (mutationDecision.shouldBeHandled(classNameWithDots)) {
 					logger.info("Transforming: " + classNameWithDots);
 					byte[] transformedBytecode = null;
@@ -170,7 +168,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	/**
 	 * Checks if the given class name equals to the test suite property.
-	 *
+	 * 
 	 * @param classNameWithDots
 	 *            the class name to check
 	 * @return true, if
@@ -185,7 +183,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	/**
 	 * Checks if the given class contains a System.exit() call.
-	 *
+	 * 
 	 * @param classNameWithDots
 	 *            the class to check
 	 * @return true, if the class contains a call to System.exit()

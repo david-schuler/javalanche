@@ -1,6 +1,6 @@
 #! /bin/sh
 mvn -Dmaven.test.skip=true   assembly:assembly
-VERSION=0.3
+VERSION=0.3.1
 DIST=javalanche-$VERSION
 mkdir ${DIST}
 cp -r target/javalanche-mutation-${VERSION}-dist.dir/ ${DIST}/
@@ -18,6 +18,13 @@ mkdir -p ${DIST}/examples/triangle
 cp ../Triangle/build.xml ${DIST}/examples/triangle/ 
 cp -r ../Triangle/src ${DIST}/examples/triangle/
 cp -r ../Triangle/lib ${DIST}/examples/triangle/
+
+
+mkdir -p ${DIST}/examples/triangleJunit4
+cp ../TriangleJunit4/build.xml ${DIST}/examples/triangleJunit4/ 
+cp -r ../TriangleJunit4/src ${DIST}/examples/triangleJunit4/
+cp -r ../TriangleJunit4/lib ${DIST}/examples/triangleJunit4/
+rm ${DIST}/examples/triangleJunit4/src/triangle/TESTJUNIT4.java
 
 mkdir -p ${DIST}/examples/invariantExample
 cp ../InvariantExample/build.xml ${DIST}/examples/invariantExample/
