@@ -4,6 +4,21 @@
     <format>dir</format>
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
+  <moduleSets>
+    <moduleSet>
+      <sources>
+        <fileSets>
+          <fileSet>
+		  <directory>src</directory>
+		  <includes>
+				<include>*.java</include>
+		  </includes>
+		  </fileSet>
+		</fileSets>
+	  </sources>
+    </moduleSet>
+  </moduleSets>
+		
   <fileSets>
     <fileSet>
       <directory>target</directory>

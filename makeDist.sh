@@ -1,8 +1,17 @@
 #! /bin/sh
+if [  $1 ]; then
+ if [ $1 == "tgz"  ]
+  then
+ 	mvn clean
+	mvn site
+ fi
+fi
 mvn -Dmaven.test.skip=true   assembly:assembly
-VERSION=0.3.1
+VERSION=0.3.2
 DIST=javalanche-$VERSION
 mkdir ${DIST}
+
+
 cp -r target/javalanche-mutation-${VERSION}-dist.dir/ ${DIST}/
 
 cp javalanche.xml ${DIST}/
@@ -40,6 +49,22 @@ if [  $1 ]; then
 		TAR=javalanche-${VERSION}-bin.tar.gz
 		tar -cvzf ${TAR} javalanche-${VERSION}
 		cp ${TAR} src/site/builds/
+		
+		SRCDIR=target/javalanche-src/
+		mkdir ${SRCDIR}
+		cp -r src ${SRCDIR}
+		cp pom.xml ${SRCDIR}
+		cp mavenAnt.xml ${SRCDIR}
+		rm  ${SRCDIR}/src/dist*
+		rm -rf ${SRCDIR}/src/attic
+		rm -rf ${SRCDIR}/src/site
+		rm -rf ${SRCDIR}/src/main/doc
+		find ${SRCDIR} -name ".svn" | xargs rm -rf 
+		cd target
+		tar -cvzf javalanche-${VERSION}-src.tar.gz  javalanche-src/     
+		cp ${TAR} src/site/resources/builds/
+		cd ..
+		rsync -r target/site/ ~/Sites/st_chair/javalanche/
 	fi
 fi
 

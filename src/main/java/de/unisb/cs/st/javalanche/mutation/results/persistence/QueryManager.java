@@ -944,6 +944,7 @@ public class QueryManager {
 		List<Mutation> allMutationsForClass = getAllMutationsForClass("test.C1");
 		System.out.println(allMutationsForClass);
 	}
+
 	public static TestName getTestName(String testCaseName) {
 		TestName result = null;
 		Session session = openSession();
@@ -1067,6 +1068,72 @@ public class QueryManager {
 			result = m;
 		}
 		return result;
+	}
+
+	public static void deleteResult(Long id) {
+		Session session = openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("FROM Mutation m  WHERE m.id = (:ids)");
+		query.setParameter("ids", id);
+		List results = query.list();
+		Mutation m = (Mutation) results.get(0);
+		if (m != null) {
+			MutationTestResult mutationResult = m.getMutationResult();
+			m.setMutationResult(null);
+			if (mutationResult != null) {
+				session.delete(mutationResult);
+			}
+		}
+		tx.commit();
+		session.close();
+	}
+
+	public static void deleteMutations(String[] classes) {
+		for (String clazz : classes) {
+			deleteMutations(clazz);
+		}
+	}
+
+	public static void deleteMutations(String clazz) {
+		Session session = openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("FROM Mutation m  WHERE m.className= (:classN)");
+		query.setParameter("classN", clazz);
+		List results = query.list();
+		for (Object object : results) {
+			session.delete(object);
+		}
+		tx.commit();
+		session.close();
+	}
+
+	public static void deleteResults(String[] classes) {
+		for (String clazz : classes) {
+			deleteResults(clazz);
+		}
+	}
+
+	public static void deleteResults(String clazz) {
+		Session session = openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("FROM Mutation m  WHERE m.className= (:classN)");
+		query.setParameter("classN", clazz);
+		List results = query.list();
+		for (Object object : results) {
+			if (object != null) {
+				Mutation m = (Mutation) object;
+				MutationTestResult mutationResult = m.getMutationResult();
+				m.setMutationResult(null);
+				if (mutationResult != null) {
+					session.delete(mutationResult);
+				}
+			}
+		}
+		tx.commit();
+		session.close();
 	}
 
 }

@@ -21,6 +21,7 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListene
 
 /**
  * @author Bernhard Gruen
+ * @author David Schuler
  * 
  */
 public class CoverageMutationListener implements MutationTestListener {
@@ -28,7 +29,7 @@ public class CoverageMutationListener implements MutationTestListener {
 	private static Logger logger = Logger
 			.getLogger(CoverageMutationListener.class);
 
-	private static boolean isPermutated = false;
+	private static boolean isPermuted = false;
 	private static HashSet<String> seenTests = new HashSet<String>();
 
 	private static Long mutation_id = new Long(-1);
@@ -43,7 +44,6 @@ public class CoverageMutationListener implements MutationTestListener {
 
 	private static HashMap<String, Long> profilerMap = new HashMap<String, Long>();
 
-	private static final HashSet<String> dontInstrumentSet = loadDontInstrument();
 
 	// private static HashMap<String, Integer> idMap = new HashMap<String,
 	// Integer>();
@@ -61,9 +61,7 @@ public class CoverageMutationListener implements MutationTestListener {
 		return profilerMap;
 	}
 
-	public static HashSet<String> getDontInstrumentSet() {
-		return dontInstrumentSet;
-	}
+
 
 	public static Long getMutationId() {
 		return mutation_id;
@@ -71,7 +69,7 @@ public class CoverageMutationListener implements MutationTestListener {
 
 	public static String getMutationIdFileName() {
 		if (mutation_id < 0) {
-			return "PERMUTATED_" + Math.abs(mutation_id);
+			return CoverageProperties.PERMUTED_PREFIX + Math.abs(mutation_id);
 		} else {
 			return mutation_id.toString();
 		}
@@ -97,8 +95,9 @@ public class CoverageMutationListener implements MutationTestListener {
 			dir.mkdir();
 		}
 
-		if (MutationProperties.RUN_MODE == RunMode.TEST_PERMUTED) {
-			isPermutated = true;
+		if (MutationProperties.RUN_MODE == RunMode.TEST_PERMUTED
+				|| MutationProperties.RUN_MODE == RunMode.CREATE_COVERAGE) {
+			isPermuted = true;
 		}
 	}
 
@@ -125,7 +124,7 @@ public class CoverageMutationListener implements MutationTestListener {
 
 	public void end() {
 		writeProfilingData();
-		writeDontInstrument();
+		InstrumentExclude.save();
 		classMap.clear();
 		valueMap.clear();
 		saveFiles = false;
@@ -133,22 +132,21 @@ public class CoverageMutationListener implements MutationTestListener {
 
 	public void testStart(String testName) {
 		this.testName = testName;
-		if (isPermutated) {
+		if (isPermuted) {
 			if (seenTests.contains(testName)) {
 				seenTests.clear();
 				long i = 1;
 				File dir = new File(CoverageProperties.TRACE_RESULT_DATA_DIR
-						+ "PERMUTATED_" + i);
+						+ CoverageProperties.PERMUTED_PREFIX + i);
 				while (dir.exists()) {
 					i++;
 					dir = new File(CoverageProperties.TRACE_RESULT_DATA_DIR
-							+ "PERMUTATED_" + i);
+							+ CoverageProperties.PERMUTED_PREFIX + i);
 				}
 				mutation_id = -i;
 			}
 			seenTests.add(testName);
 		}
-
 		classMap.clear();
 		valueMap.clear();
 		saveFiles = true;
@@ -165,7 +163,7 @@ public class CoverageMutationListener implements MutationTestListener {
 		valueMap.clear();
 		Tracer.getInstance().setDataCoverageDeactivated(false);
 		Tracer.getInstance().setLineCoverageDeactivated(false);
-		;
+
 		saveFiles = false;
 	}
 
@@ -191,21 +189,9 @@ public class CoverageMutationListener implements MutationTestListener {
 		XmlIo.toXML(profilerMap, CoverageProperties.TRACE_PROFILER_FILE);
 	}
 
-	private static HashSet<String> loadDontInstrument() {
-		if (new File(CoverageProperties.TRACE_DONT_INSTRUMENT_FILE).exists()) {
-			return XmlIo.get(CoverageProperties.TRACE_DONT_INSTRUMENT_FILE);
-		}
-		return new HashSet<String>();
-	}
+	
 
-	private void writeDontInstrument() {
-		if (mutation_id != 0) {
-			return;
-		}
-		XmlIo.toXML(dontInstrumentSet,
-				CoverageProperties.TRACE_DONT_INSTRUMENT_FILE);
 
-	}
 
 	private void serializeHashMap() {
 		if (!saveFiles) {
@@ -230,7 +216,8 @@ public class CoverageMutationListener implements MutationTestListener {
 							CoverageProperties.TRACE_RESULT_LINE_DIR
 									+ getMutationIdFileName() + "/" + testName
 									+ ".gz"))));
-
+			logger.info("writing coverage data for mutation "
+					+ getMutationIdFileName());
 			Set<String> ks = classMapCopy.keySet();
 
 			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();

@@ -146,7 +146,7 @@ public class HtmlReport {
 
 	private void copyFile(String name) {
 		URL systemResource = ClassLoader.getSystemResource("report/" + name);
-		logger.info(systemResource);
+		logger.debug("Copying from resource: " + systemResource);
 		copyFile(systemResource, new File(REPORT_DIR, name));
 	}
 

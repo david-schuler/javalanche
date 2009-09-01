@@ -1,22 +1,25 @@
 package de.unisb.cs.st.javalanche.coverage;
 
+import static de.unisb.cs.st.javalanche.coverage.CoverageAnalyzer.*;
+
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
 
-public class CompareTraces extends CoverageAnalyzer {
+public class CompareTraces {
 
-	class FilenameFilterImpl implements FilenameFilter {
-		public boolean accept(File arg0, String arg1) {
-			if (arg1.startsWith("PERMUTATED_")) {
+	private static class PermutatedFilter implements FilenameFilter {
+
+		public boolean accept(File dir, String name) {
+			if (name.startsWith(CoverageProperties.PERMUTED_PREFIX)) {
 				return true;
 			}
 			return false;
@@ -25,137 +28,141 @@ public class CompareTraces extends CoverageAnalyzer {
 
 	private static Logger logger = Logger.getLogger(CompareTraces.class);
 
-	HashMap<String, HashMap<String, HashMap<Integer, Integer>>> trace1 = null;
-	HashMap<String, HashMap<String, HashMap<Integer, Integer>>> trace2 = null;
-	Set<String> differences = (Set<String>) new HashSet<String>();
+	private enum Mode {
+		LINE, DATA
+	};
 
-	private enum Mode { LINE, DATA };
-	private String mutation_dir1 = "0";
-	private String mutation_dir2 = "0";
-
-	public CompareTraces() {
-		this("both");
-	}
-
-	public CompareTraces(String mode) {
+	public static void comparePermuted() {
 		File dir = new File(CoverageProperties.TRACE_RESULT_LINE_DIR);
-		String[] files = dir.list(new FilenameFilterImpl());
+		String[] files = dir.list(new PermutatedFilter());
 		HashSet<String> diffComplete = new HashSet<String>();
-		int count =0;
+		int count = 0;
 		for (String file : files) {
-			calculateDifferences(mode, "0", file);
+			Set<String> differences = calculateDifferences(EnumSet.of(
+					Mode.LINE, Mode.DATA), "0", file);
 			count++;
 			int preValue = diffComplete.size();
 			diffComplete.addAll(differences);
-			logger.info("Added " + (diffComplete.size() - preValue) + " methods. Total methods now: " + diffComplete.size());
-			if(count %10 == 0){
-				XmlIo.toXML(diffComplete, CoverageProperties.TRACE_DIFFERENCES_FILE + count);
-			}
-			differences.clear();
+			logger.info("Added " + (diffComplete.size() - preValue)
+					+ " methods. Total methods now: " + diffComplete.size());
+
 		}
-		System.out.println("Methods that have differences in at least on run:" + diffComplete);
+		System.out.println("Methods that have differences in at least one run:"
+				+ diffComplete);
+		InstrumentExclude.save();
 		XmlIo.toXML(diffComplete, CoverageProperties.TRACE_DIFFERENCES_FILE);
 	}
 
-	public CompareTraces(String mode, String id1, String id2) {
-		calculateDifferences(mode, id1, id2);
-	}
-
-	private void calculateDifferences(String mode, String id1, String id2) {
-		//if (new File(TracerConstants.TRACE_DIFFERENCES_FILE).exists()) {
-		//	differences =  (Set<String>) XmlIo.get(TracerConstants.TRACE_DIFFERENCES_FILE);
-		//}
-		differences  = new HashSet<String>();
-		mutation_dir1 = id1;
-		mutation_dir2 = id2;
+	private static Set<String> calculateDifferences(Set<Mode> modes,
+			String id1, String id2) {
+		// if (new File(TracerConstants.TRACE_DIFFERENCES_FILE).exists()) {
+		// differences = (Set<String>)
+		// XmlIo.get(TracerConstants.TRACE_DIFFERENCES_FILE);
+		// }
+		Set<String> allDifferences = new HashSet<String>();
 
 		System.out.println(id1 + " VS. " + id2 + ": ");
-		if (mode.equals("line") || mode.equals("both")) {
+		if (modes.contains(Mode.LINE)) {
 			logger.info("Comparing lines");
-			compare(Mode.LINE);
-			logger.info("Differences " + differences.size());
-		}
-		if (mode.equals("data") || mode.equals("both")) {
-			logger.info("Comparing data");
-			compare(Mode.DATA);
-			logger.info("Differences " + differences.size());
-		}
-		XmlIo.toXML(differences, CoverageProperties.TRACE_DIFFERENCES_FILE);
-		System.out.println(differences);
-	}
-
-	protected void loadTraces(Mode mode) {
-		if (mode == Mode.LINE) {
-			trace1 = loadLineCoverageTrace(mutation_dir1);
-			trace2 = loadLineCoverageTrace(mutation_dir2);
-		} else {
-			trace1 = loadDataCoverageTrace(mutation_dir1);
-			trace2 = loadDataCoverageTrace(mutation_dir2);
-
-		}
-	}
-
-	protected void iterate(HashMap<String, HashMap<String, HashMap<Integer, Integer>>> map1, HashMap<String, HashMap<String, HashMap<Integer, Integer>>> map2) {
-		Iterator<String> it1 = map1.keySet().iterator();
-
-		boolean foundDifference = false;
-		while (map1 != null && it1.hasNext()) {
-			String testName = it1.next();
-			HashMap<String, HashMap<Integer, Integer>> testMap1 = map1.get(testName);
-			HashMap<String, HashMap<Integer, Integer>> testMap2 = map2.get(testName);
-			Iterator<String> it2 = testMap1.keySet().iterator();
-			while (testMap1 != null && testMap2 != null && it2.hasNext()) {
-				String className = it2.next();
-				HashMap<Integer, Integer> valueMap1 = testMap1.get(className);
-				HashMap<Integer, Integer> valueMap2 = testMap2.get(className);
-				Iterator<Integer> it3 = valueMap1.keySet().iterator();
-				if (valueMap2 == null && valueMap1 != null) {
-					foundDifference = true;
-					logger.info("Map2 is null for test: " + testName + "  - "  + className);
-				} else {
-					foundDifference = false;
-				}
-				while(!foundDifference && valueMap1 != null && it3.hasNext()) {
-					Integer valueKey = it3.next();
-					if (!valueMap1.get(valueKey).equals(valueMap2.get(valueKey))) {
-						foundDifference = true;
-						logger.info("Difference for test "  + testName + "  "  + className + " key " +  valueKey + " Value1: " + valueMap1.get(valueKey) +  " Value2:  " + valueMap2.get(valueKey)   );
-					}
-				}
-				if (foundDifference) {
-					differences.add(className);
-				}
+			Map<String, Map<String, Map<Integer, Integer>>> trace1 = loadLineCoverageTrace(id1);
+			Map<String, Map<String, Map<Integer, Integer>>> trace2 = loadLineCoverageTrace(id2);
+			// logger.info("Line data 1" + trace1);
+			// logger.info("Line data 2" + trace2);
+			Set<String> differences = compare(trace1, trace2);
+			allDifferences.addAll(differences);
+			logger.info("Differences " + differences);
+			for (String string : differences) {
+				InstrumentExclude.addExcludeLine(string);
 			}
 		}
+		if (modes.contains(Mode.DATA)) {
+			logger.info("Comparing data");
+			Map<String, Map<String, Map<Integer, Integer>>> trace1 = loadDataCoverageTrace(id1);
+			Map<String, Map<String, Map<Integer, Integer>>> trace2 = loadDataCoverageTrace(id2);
+			// logger.info("Return data 1" + trace1);
+			// logger.info("Return data 2" + trace2);
+			Set<String> differences = compare(trace1, trace2);
+			allDifferences.addAll(differences);
+			logger.info("Differences " + differences);
+			for (String string : differences) {
+				InstrumentExclude.addExcludeReturn(string);
+			}
+		}
+		// XmlIo.toXML(differences, CoverageProperties.TRACE_DIFFERENCES_FILE);
+		return allDifferences;
 	}
 
-	protected void compare(Mode mode) {
-		loadTraces(mode);
-		logger.info("Run 1");
-		iterate(trace1, trace2);
-		logger.info("Run 2");
-		iterate(trace2, trace1);
+	private static Set<String> compareTraces(
+			Map<String, Map<String, Map<Integer, Integer>>> map1,
+			Map<String, Map<String, Map<Integer, Integer>>> map2) {
+		if (map1 == null || map2 == null) {
+			throw new IllegalArgumentException("Got null as argument");
+		}
+		Set<String> differences = new HashSet<String>();
+		for (String testName : map1.keySet()) {
+			Map<String, Map<Integer, Integer>> testMap1 = map1.get(testName);
+			Map<String, Map<Integer, Integer>> testMap2 = map2.get(testName);
+			Collection<String> diff = CoverageTraceUtil.getDifferentMethods(
+					testMap1, testMap2);
+			differences.addAll(diff);
+			// for (String className : testMap1.keySet()) {
+			// Map<Integer, Integer> valueMap1 = testMap1.get(className);
+			// Map<Integer, Integer> valueMap2 = testMap2.get(className);
+			// if (valueMap2 == null && valueMap1 != null) {
+			// foundDifference = true;
+			// logger.info("Map2 is null for test: " + testName + "  - "
+			// + className);
+			// }
+			// for (Integer valueKey : valueMap1.keySet()) {
+			// if (!valueMap1.get(valueKey)
+			// .equals(valueMap2.get(valueKey))) {
+			// foundDifference = true;
+			// logger.debug("Difference for test " + testName + "  "
+			// + className + " key " + valueKey + " Value1: "
+			// + valueMap1.get(valueKey) + " Value2:  "
+			// + valueMap2.get(valueKey));
+			// break;
+			// }
+			// }
+			// if (foundDifference) {
+			// differences.add(className);
+			// }
+			// }
+		}
+		return differences;
+	}
+
+	private static Set<String> compare(
+			Map<String, Map<String, Map<Integer, Integer>>> trace1,
+			Map<String, Map<String, Map<Integer, Integer>>> trace2) {
+		Set<String> diff1 = compareTraces(trace1, trace2);
+		Set<String> diff2 = compareTraces(trace2, trace1);
+		Set<String> result = new HashSet<String>(diff1);
+		result.addAll(diff2);
+		return result;
 	}
 
 	public static void main(String[] args) {
-		boolean exit = false;
-		if (args.length < 1) {
-			exit = true;
-		}
-		if (exit) {
-			System.out.println("Error - read help");
-		}
-
-		StringTokenizer st = new StringTokenizer(args[0]);
-		CompareTraces ct = null;
-
-		if (!args[0].contains("cmpid") && st.countTokens() >= 3) {
-			ct = new CompareTraces(st.nextToken(), st.nextToken(), st.nextToken());
-		} else if (!args[0].contains("cmpmode") && st.countTokens() >= 1) {
-			ct = new CompareTraces(st.nextToken());
-		} else {
-			ct = new CompareTraces();
-		}
+		comparePermuted();
+		// boolean exit = false;
+		// if (args.length < 1) {
+		// exit = true;
+		// }
+		// if (exit) {
+		// System.out.println("Error - read help");
+		// }
+		//
+		// StringTokenizer st = new StringTokenizer(args[0]);
+		// CompareTraces ct = null;
+		//
+		// if (!args[0].contains("cmpid") && st.countTokens() >= 3) {
+		// ct = new CompareTraces(st.nextToken(), st.nextToken(), st
+		// .nextToken());
+		// } else if (!args[0].contains("cmpmode") && st.countTokens() >= 1) {
+		// ct = new CompareTraces(st.nextToken());
+		// } else {
+		// ct = new CompareTraces();
+		// }
 
 	}
 

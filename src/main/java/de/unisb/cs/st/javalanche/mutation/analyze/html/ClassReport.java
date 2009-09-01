@@ -36,13 +36,11 @@ public class ClassReport {
 
 	public void putEntry(Long id, String column, String value) {
 		if (!columns.contains(column)) {
-			logger.warn("T");
 			throw new IllegalArgumentException("Illegal column given " + column
 					+ "\nAllowed values: " + columns);
 		}
 		List<String> entry = entries.get(id);
 		if (entry == null) {
-			logger.warn("T2");
 			throw new IllegalArgumentException("No entry for id " + id
 					+ "\n Ids" + entries.keySet());
 		}
@@ -126,7 +124,7 @@ public class ClassReport {
 	}
 
 	public void addColumn(String columnName) {
-		logger.info("Adding column " + columnName);
+		logger.debug("Adding column " + columnName);
 		if (!columns.contains(columnName)) {
 			columns.add(columnName);
 		}

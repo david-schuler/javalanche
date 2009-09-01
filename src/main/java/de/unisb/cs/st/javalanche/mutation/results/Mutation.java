@@ -71,6 +71,8 @@ public class Mutation implements Serializable {
 	private MutationTestResult mutationResult;
 
 	private boolean classInit;
+	
+	private String addInfo;
 
 	/**
 	 * Default constructor needed by Hibernate.
@@ -318,6 +320,14 @@ public class Mutation implements Serializable {
 		if (mutationResult != null) {
 			mutationResult.loadAll();
 		}
+	}
+
+	public void setAddInfo(String addInfo) {
+		this.addInfo = addInfo;
+	}
+
+	public String getAddInfo() {
+		return addInfo;
 	}
 
 }

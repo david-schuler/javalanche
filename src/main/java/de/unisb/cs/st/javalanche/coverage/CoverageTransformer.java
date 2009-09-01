@@ -37,6 +37,9 @@ public class CoverageTransformer implements ClassFileTransformer {
 
 	public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
 	try{
+		if (className == null) {
+				return classfileBuffer;
+			}
 		if (loader != ClassLoader.getSystemClassLoader()) {
 			return classfileBuffer;
 		}

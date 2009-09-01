@@ -45,6 +45,7 @@ public class MutationTestSuite extends TestSuite {
 	 */
 	@Override
 	public void run(TestResult result) {
+		logger.info("Running mutation test suite");
 		Junit3MutationTestDriver driver = new Junit3MutationTestDriver(this);
 		driver.run();
 	}

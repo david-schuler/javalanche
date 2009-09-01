@@ -200,10 +200,10 @@ public class MutationProperties {
 	public static final boolean STOP_AFTER_FIRST_FAIL = getPropertyOrDefault(
 			STOP_AFTER_FIRST_FAIL_KEY, true);
 
-	private static final String DEFAULT_TIMEOUT_IN_SECONDS_KEY = "mutation.default.timeout";
+	private static final String DEFAULT_TIMEOUT_IN_SECONDS_KEY = "javalanche.mutation.default.timeout";
 
 	public static final int DEFAULT_TIMEOUT_IN_SECONDS = getPropertyOrDefault(
-			DEFAULT_TIMEOUT_IN_SECONDS_KEY, 1000);
+			DEFAULT_TIMEOUT_IN_SECONDS_KEY, 100);
 
 	/**
 	 * The save interval in which the mutation results are written to the
@@ -246,7 +246,7 @@ public class MutationProperties {
 		return false;
 	}
 
-	private static boolean getPropertyOrDefault(String key, boolean b) {
+	public static boolean getPropertyOrDefault(String key, boolean b) {
 		String property = getProperty(key);
 		if (property == null) {
 			return b;
@@ -335,5 +335,9 @@ public class MutationProperties {
 			JUNIT4_MODE_KEY, false);
 
 	public static final Object JUNIT4_TEST_ADAPTER = "junit.framework.JUnit4TestAdapter";
+
+	public static final String ECLIPSE_RUN_CONFIG_NAME_KEY = "javalanche.eclipse.run.configuration";
+	public static final String ECLIPSE_RUN_CONFIG_NAME = getPropertyOrDefault(
+			ECLIPSE_RUN_CONFIG_NAME_KEY, "no config");
 
 }

@@ -94,7 +94,6 @@ public class MutationPreMain {
 				System.out.println("Integrating RandomPermutationTestSuite");
 				addClassFileTransformer(instrumentation,
 						new IntegrateTestSuiteTransformer());
-		
 				return;
 			} else if (RUN_MODE == CREATE_COVERAGE) {
 				System.out

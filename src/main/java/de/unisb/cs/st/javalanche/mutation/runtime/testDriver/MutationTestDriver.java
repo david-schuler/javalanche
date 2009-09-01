@@ -36,6 +36,7 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.Invariant
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestListener;
 import de.unisb.cs.st.javalanche.coverage.CoverageMutationListener;
 
+import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
 /**
  * Abstract class that drives the mutation test process. Driver for specific
  * test architectures must subclass this class.
@@ -125,34 +126,39 @@ public abstract class MutationTestDriver {
 	 * corresponding method is called.
 	 */
 	public final void run() {
-		if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST
-				|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT
-				|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST
-				|| MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_COVERAGE) {
-			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) {
+		logger.debug("Run Mode" + RUN_MODE);
+		if (RUN_MODE == RunMode.MUTATION_TEST
+				|| RUN_MODE == RunMode.MUTATION_TEST_INVARIANT
+				|| RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST
+				|| RUN_MODE == RunMode.MUTATION_TEST_COVERAGE) {
+			if (RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) {
 				addMutationTestListener(new InvariantPerTestListener());
 			}
-			if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_COVERAGE) {
+			if (RUN_MODE == RunMode.MUTATION_TEST_COVERAGE) {
 				addMutationTestListener(new CoverageMutationListener());
+				runNormalTests();
 			}
 			listeners.addLast(new ResultReporter());
 			runMutations();
-		} else if (MutationProperties.RUN_MODE == RunMode.SCAN
-				|| MutationProperties.RUN_MODE == RunMode.SCAN_ECLIPSE) {
+		} else if (RUN_MODE == RunMode.SCAN || RUN_MODE == RunMode.SCAN_ECLIPSE) {
 			scanTests();
-		} else if (MutationProperties.RUN_MODE == RunMode.CHECK_INVARIANTS_PER_TEST) {
+		} else if (RUN_MODE == RunMode.CHECK_INVARIANTS_PER_TEST) {
 			addMutationTestListener(new InvariantPerTestCheckListener());
 			runNormalTests();
-		} else if (MutationProperties.RUN_MODE == RunMode.CREATE_COVERAGE) {
+		} else if (RUN_MODE == RunMode.CREATE_COVERAGE) {
+			// runNormalTests();
+			coldRun();
 			addMutationTestListener(new CoverageMutationListener());
-			runNormalTests();
-		} else if (MutationProperties.RUN_MODE == RunMode.TEST_PERMUTED) {
+			runPermutedTests();
+		} else if (RUN_MODE == RunMode.TEST_PERMUTED) {
 			runPermutedTests();
 		} else {
 			runNormalTests();
 		}
 
 	}
+
+
 
 	/**
 	 * Runs the tests without applying any changes. This method is used to check
@@ -227,8 +233,8 @@ public abstract class MutationTestDriver {
 		List<String> allTests = new ArrayList<String>(getAllTests());
 		timeout = Integer.MAX_VALUE;
 		List<SingleTestResult> allFailingTests = new ArrayList<SingleTestResult>();
-		testsStart();
 		coldRun(allTests);
+		testsStart();
 		int permutations = 10;
 		for (int i = 0; i < permutations; i++) {
 			logger.info("Shuffling tests. Round " + (i + 1));
@@ -313,12 +319,22 @@ public abstract class MutationTestDriver {
 	}
 
 	/**
-	 * Runs the given list of tests whitout any special modifications. This has
-	 * the purpose to get all classes loaded that are involved in the testsing.
+	 * Runs the all available tests without any special modifications. This has
+	 * the purpose to get all classes loaded that are involved in the testing.
+	 * 
+	 * @return true, if all tests passed.
+	 */
+	private boolean coldRun() {
+		return coldRun(getAllTests());
+	}
+
+	/**
+	 * Runs the given list of tests without any special modifications. This has
+	 * the purpose to get all classes loaded that are involved in the testing.
 	 * 
 	 * @param allTests
 	 *            the tests to run
-	 * @return true if all tests passed
+	 * @return true, if all tests passed.
 	 */
 	private boolean coldRun(List<String> allTests) {
 		int counter = 0;
@@ -555,19 +571,9 @@ public abstract class MutationTestDriver {
 			capturedThrowable = t;
 		} finally {
 			if (capturedThrowable != null) {
-				// capturedThrowable.printStackTrace();
-				// logger.error("Exception thrown", t);
 				if (exceptionMessage == null) {
 					exceptionMessage = "Exception caught during test execution.";
 				}
-				// TestMessage tm = new TestMessage(currentTestName,
-				// exceptionMessage + " - " + capturedThrowable,
-				// stopWatch.getTime());
-				// boolean touched =
-				// MutationObserver.getTouchingTestCases().contains(
-				// currentTestName);
-				// tm.setTouched(touched);
-				// setTestMessage(tm);
 				r.setFailed(exceptionMessage + " - " + capturedThrowable);
 			}
 		}
@@ -590,28 +596,8 @@ public abstract class MutationTestDriver {
 					currentTestName);
 			tm.setTouched(touched);
 			setTestMessage(tm);
-
 			String m;
-			// if (threadsPost.size() != threadsPre.size()) {
-			//
-			// m = "There are threads running that were not running befor the
-			// test: "
-			// + threadsPost;
-			// logger.info("Difference in thread size " );
-			// for (Thread thread : threadsPost) {
-			// logger.info("Thread name: " + thread.getName());
-			// StackTraceElement[] stackTrace = thread.getStackTrace();
-			// if (stackTrace != null) {
-			// for (StackTraceElement stackTraceElement : stackTrace) {
-			// System.out.println(stackTraceElement);
-			// logger.info(stackTraceElement);
-			// }
-			// }
-			// }
-			// } else {
-
 			m = "Mutated Thread is still running";
-			// }
 			logger.warn(m);
 			testEnd(currentTestName);
 			if (currentMutation != null) {

@@ -30,14 +30,7 @@ public class CoverageMethodAdapter extends MethodAdapter {
 	// primitive data types
 	private enum PDType { LONG, INTEGER, FLOAT, DOUBLE };
 
-	@SuppressWarnings("unchecked")
-	private static Map<String, Long> profilerMap =  (Map<String, Long>) (new File(TRACE_PROFILER_FILE).exists() ? XmlIo.get(TRACE_PROFILER_FILE) : null);
-
-	@SuppressWarnings("unchecked")
-	private static Set<String> dontInstrumentSet =  (Set<String>) (new File(CoverageProperties.TRACE_DONT_INSTRUMENT_FILE).exists() ? XmlIo.get(CoverageProperties.TRACE_DONT_INSTRUMENT_FILE) : null);
-
-
-
+	
 
 
 	public CoverageMethodAdapter(MethodVisitor visitor, String className,	String methodName, String signature, int classAccess, int methodAccess) {
@@ -53,8 +46,12 @@ public class CoverageMethodAdapter extends MethodAdapter {
 		}
 
 		// don't instrument classes for data coverage that throw an exception
-		if (dontInstrumentSet != null && dontInstrumentSet.contains(this.className + "@" + this.methodName)) {
+	
+		if (InstrumentExclude.shouldExcludeReturns(className, methodName)) {
 			instrumentReturns = false;
+		}
+		if (InstrumentExclude.shouldExcludeLines(className, methodName)) {
+			instrumentLine = false;
 		}
 
 	}
@@ -136,7 +133,7 @@ public class CoverageMethodAdapter extends MethodAdapter {
 		super.visitLineNumber(line, start);
 	 }
 
-	private void callLogPrototype(String name, PDType type) {
+	private void callLogPrototype(String traceMethod, PDType type) {
 		if (type != PDType.LONG && type != PDType.DOUBLE) {
 			this.visitInsn(Opcodes.DUP);
 			if (type == PDType.FLOAT) {
@@ -158,7 +155,9 @@ public class CoverageMethodAdapter extends MethodAdapter {
 		this.visitInsn(Opcodes.SWAP);
 		this.visitLdcInsn(className);
 		this.visitLdcInsn(methodName);
-		this.visitMethodInsn(Opcodes.INVOKEVIRTUAL, CoverageProperties.TRACER_CLASS_NAME, name, "(ILjava/lang/String;Ljava/lang/String;)V");
+		this.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
+				CoverageProperties.TRACER_CLASS_NAME, traceMethod,
+				"(ILjava/lang/String;Ljava/lang/String;)V");
 	}
 
 	private void callLogIReturn() {

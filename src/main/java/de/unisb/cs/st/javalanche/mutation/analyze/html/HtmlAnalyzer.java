@@ -47,8 +47,12 @@ public class HtmlAnalyzer {
 		String s = className.substring(className.lastIndexOf('.') + 1);
 		s = getClassName(s);
 		for (File f : files) {
-			String name = f.getAbsolutePath() + "." + f.getName();
+			String name = f.getAbsolutePath();
+			logger.info("Filename " + name);
 			name = name.replace('/', '.');
+			if (name.endsWith(".java")) {
+				name = name.substring(0, name.length() - 5);
+			}
 			if (name.contains(className)) {
 				List<String> linesFromFile = Io.getLinesFromFile(f);
 				logger.debug("Got file for " + className + "  -  " + f);

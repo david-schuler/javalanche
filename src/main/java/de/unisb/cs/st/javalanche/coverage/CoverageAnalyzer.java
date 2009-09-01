@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.zip.GZIPInputStream;
 
@@ -98,10 +99,11 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		public int dataModified = 0;
 	}
 
-	private static final Logger logger = Logger.getLogger(CoverageAnalyzer.class);
+	private static final Logger logger = Logger
+			.getLogger(CoverageAnalyzer.class);
 
-	private static HashMap<String, HashMap<String, HashMap<Integer, Integer>>> originalLineCoverageMaps = null;
-	private static HashMap<String, HashMap<String, HashMap<Integer, Integer>>> originalDataCoverageMaps = null;
+	private static Map<String, Map<String, Map<Integer, Integer>>> originalLineCoverageMaps;
+	private static Map<String, Map<String, Map<Integer, Integer>>> originalDataCoverageMaps;
 
 	boolean firstCallToWriteOut = true;
 	PrintStream out = null;
@@ -129,17 +131,11 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 	 * change the impact even if their traces are different.
 	 */
 
-	HashSet<String> dontInstrumentSet = loadDontInstrument();
 	HashSet<String> differencesSet = loadDifferences();
 
 	private int outcount;
 
-	private static HashSet<String> loadDontInstrument() {
-		if (new File(CoverageProperties.TRACE_DONT_INSTRUMENT_FILE).exists()) {
-			return XmlIo.get(CoverageProperties.TRACE_DONT_INSTRUMENT_FILE);
-		}
-		return new HashSet<String>();
-	}
+
 
 	private static HashSet<String> loadDifferences() {
 		if (new File(CoverageProperties.TRACE_DIFFERENCES_FILE).exists()) {
@@ -161,27 +157,29 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 	 * *************************************************************************
 	 * Helper method to load an arbitrary trace (line or data coverage)
 	 */
-	private HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadTrace(
+	private static Map<String, Map<String, Map<Integer, Integer>>> loadTrace(
 			String path, String mutation_dir) {
 		ObjectInputStream ois = null;
 		path += mutation_dir + "/";
 
 		File dir = new File(path);
-		String[] originalTests = dir.list();
+		logger.debug("Loading from " + dir);
+		String[] tests = dir.list();
 
 		int numClasses, numLines;
 		String className;
 
-		HashMap<String, HashMap<String, HashMap<Integer, Integer>>> map = new HashMap<String, HashMap<String, HashMap<Integer, Integer>>>();
-		HashMap<String, HashMap<Integer, Integer>> classMap;
-		HashMap<Integer, Integer> lineMap;
+		Map<String, Map<String, Map<Integer, Integer>>> map = new HashMap<String, Map<String, Map<Integer, Integer>>>();
+		Map<String, Map<Integer, Integer>> classMap;
+		Map<Integer, Integer> lineMap;
 
-		for (String test : originalTests) {
+		for (String test : tests) {
 			try {
 				ois = new ObjectInputStream(new BufferedInputStream(
 						new GZIPInputStream(new FileInputStream(path + test))));
 				numClasses = ois.readInt();
-				classMap = new HashMap<String, HashMap<Integer, Integer>>();
+				// logger.info("Number of classes " + numClasses);
+				classMap = new HashMap<String, Map<Integer, Integer>>();
 				for (int i = 0; i < numClasses; i++) {
 					className = ois.readUTF();
 					numLines = ois.readInt();
@@ -190,9 +188,14 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 						lineMap.put(ois.readInt(), ois.readInt());
 					}
 					classMap.put(className, lineMap);
-
+					// logger.info("Putting entry " + className + " = " +
+					// lineMap);
 				}
-				map.put(test, classMap);
+				String key = test;
+				if (test.endsWith(".gz")) {
+					key = test.substring(0, test.length() - 3);
+				}
+				map.put(key, classMap);
 				ois.close();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -201,11 +204,61 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		return map;
 	}
 
+	private static Map<String, Map<String, Map<String, Map<Integer, Integer>>>> loadTracePerTest(
+			String path, String mutation_dir) {
+		ObjectInputStream ois = null;
+		path += mutation_dir + "/";
+
+		File dir = new File(path);
+		logger.debug("Loading from " + dir);
+		String[] tests = dir.list();
+
+		int numClasses, numLines;
+		String className;
+
+		Map<String, Map<Integer, Integer>> classMap;
+		Map<Integer, Integer> lineMap;
+
+		Map<String, Map<String, Map<String, Map<Integer, Integer>>>> resultMap = new HashMap<String, Map<String, Map<String, Map<Integer, Integer>>>>();
+		for (String test : tests) {
+
+			Map<String, Map<String, Map<Integer, Integer>>> map = new HashMap<String, Map<String, Map<Integer, Integer>>>();
+			try {
+				ois = new ObjectInputStream(new BufferedInputStream(
+						new GZIPInputStream(new FileInputStream(path + test))));
+				numClasses = ois.readInt();
+				// logger.info("Number of classes " + numClasses);
+				classMap = new HashMap<String, Map<Integer, Integer>>();
+				for (int i = 0; i < numClasses; i++) {
+					className = ois.readUTF();
+					numLines = ois.readInt();
+					lineMap = new HashMap<Integer, Integer>();
+					for (int j = 0; j < numLines; j++) {
+						lineMap.put(ois.readInt(), ois.readInt());
+					}
+					classMap.put(className, lineMap);
+					// logger.info("Putting entry " + className + " = " +
+					// lineMap);
+				}
+				map.put(test, classMap);
+				ois.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			String key = test;
+			if (test.endsWith(".gz")) {
+				key = test.substring(0, test.length() - 3);
+			}
+			resultMap.put(key, map);
+		}
+		return resultMap;
+	}
+
 	/*
 	 * *************************************************************************
 	 * Helper method to load an arbitrary line coverage trace.
 	 */
-	protected HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadLineCoverageTrace(
+	public static Map<String, Map<String, Map<Integer, Integer>>> loadLineCoverageTrace(
 			String mutation_dir) {
 		return loadTrace(CoverageProperties.TRACE_RESULT_LINE_DIR, mutation_dir);
 	}
@@ -214,9 +267,25 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 	 * *************************************************************************
 	 * Helper method to load an arbitrary data coverage trace.
 	 */
-	protected HashMap<String, HashMap<String, HashMap<Integer, Integer>>> loadDataCoverageTrace(
+	public static Map<String, Map<String, Map<Integer, Integer>>> loadDataCoverageTrace(
 			String mutation_dir) {
 		return loadTrace(CoverageProperties.TRACE_RESULT_DATA_DIR, mutation_dir);
+	}
+
+	public static Map<String, Map<String, Map<String, Map<Integer, Integer>>>> loadLineCoverageTracePerTest(
+			String mutation_dir) {
+		return loadTracePerTest(CoverageProperties.TRACE_RESULT_LINE_DIR,
+				mutation_dir);
+	}
+
+	/*
+	 * *************************************************************************
+	 * Helper method to load an arbitrary data coverage trace.
+	 */
+	public static Map<String, Map<String, Map<String, Map<Integer, Integer>>>> loadDataCoverageTracePerTest(
+			String mutation_dir) {
+		return loadTracePerTest(CoverageProperties.TRACE_RESULT_DATA_DIR,
+				mutation_dir);
 	}
 
 	/*
@@ -281,14 +350,12 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 	 * to the calling mutation test method.
 	 */
 	private void processTestLineCoverage(
-			HashMap<String, HashMap<Integer, Integer>> classMap,
-			ObjectInputStream ois,
-			HashMap<String, HashMap<Integer, Boolean>> modified)
-			throws IOException {
+			Map<String, Map<Integer, Integer>> classMap, ObjectInputStream ois,
+			Map<String, Map<Integer, Boolean>> modified) throws IOException {
 		int numClasses, numLines;
 		String className;
 
-		HashMap<Integer, Integer> lineMap;
+		Map<Integer, Integer> lineMap;
 
 		int lineKey, lineValue;
 
@@ -302,7 +369,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 
 		numClasses = ois.readInt();
 
-		HashMap<Integer, Boolean> lineSet;
+		Map<Integer, Boolean> lineSet;
 
 		// process Classes
 		doneClasses = new HashSet<String>();
@@ -391,15 +458,13 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 	 * to the calling mutation test method.
 	 */
 	private void processTestDataCoverage(
-			HashMap<String, HashMap<Integer, Integer>> classMap,
-			ObjectInputStream ois,
-			HashMap<String, HashMap<Integer, Boolean>> modified)
-			throws IOException {
+			Map<String, Map<Integer, Integer>> classMap, ObjectInputStream ois,
+			Map<String, Map<Integer, Boolean>> modified) throws IOException {
 
 		int numClasses, numLines;
 		String className;
 
-		HashMap<Integer, Integer> lineMap;
+		Map<Integer, Integer> lineMap;
 
 		int lineKey, lineValue;
 
@@ -413,7 +478,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 
 		numClasses = ois.readInt();
 
-		HashMap<Integer, Boolean> lineSet;
+		Map<Integer, Boolean> lineSet;
 
 		// process Classes
 		doneClasses = new HashSet<String>();
@@ -506,13 +571,13 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		Iterator<String> it = originalLineCoverageMaps.keySet().iterator();
 		while (it.hasNext()) {
 			String testName = it.next();
-			HashMap<String, HashMap<Integer, Integer>> classes = originalLineCoverageMaps
+			Map<String, Map<Integer, Integer>> classes = originalLineCoverageMaps
 					.get(testName);
 			Iterator<String> it2 = classes.keySet().iterator();
 			while (it2.hasNext()) {
 				String name = it2.next();
 				if (name.startsWith(mutation.className)) {
-					HashMap<Integer, Integer> lines = classes.get(name);
+					Map<Integer, Integer> lines = classes.get(name);
 					if (lines.containsKey(mutation.lineNumber)) {
 						int pos = name.indexOf('@') + 1;
 						mutation.methodName = name.substring(pos);
@@ -538,11 +603,13 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			if (CoverageProperties.TRACE_LINES) {
 				processMutationLineCoverage(mutation, results, modifiedMethods,
 						ignoredMethod);
-				ClassReport classReport = report
-						.getClassReport(mutation.className);
-				classReport.addColumn(COLUMN_NAME);
-				classReport.putEntry(mutation.id, COLUMN_NAME,
-						results.methodsModifiedLine + "");
+				if (report != null) {
+					ClassReport classReport = report
+							.getClassReport(mutation.className);
+					classReport.addColumn(COLUMN_NAME);
+					classReport.putEntry(mutation.id, COLUMN_NAME,
+							results.methodsModifiedLine + "");
+				}
 			}
 			if (CoverageProperties.TRACE_RETURNS) {
 				processMutationDataCoverage(mutation, results, modifiedMethods,
@@ -579,9 +646,9 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		}
 		String[] mutatedTests = dir.list();
 
-		HashMap<String, HashMap<Integer, Boolean>> modified = new HashMap<String, HashMap<Integer, Boolean>>();
+		Map<String, Map<Integer, Boolean>> modified = new HashMap<String, Map<Integer, Boolean>>();
 
-		HashMap<String, HashMap<Integer, Boolean>> modifiedTmp = null;
+		Map<String, Map<Integer, Boolean>> modifiedTmp = null;
 		boolean commit = true;
 		for (String test : mutatedTests) {
 
@@ -657,7 +724,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 						"Expected that name contains an @ character. Name: "
 								+ name);
 			}
-			HashMap<Integer, Boolean> lineSet = modified.get(name);
+			Map<Integer, Boolean> lineSet = modified.get(name);
 
 			Iterator<Integer> itLineSet = lineSet.keySet().iterator();
 
@@ -721,9 +788,9 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		}
 		String[] mutatedTests = dir.list();
 
-		HashMap<String, HashMap<Integer, Boolean>> modified = new HashMap<String, HashMap<Integer, Boolean>>();
+		Map<String, Map<Integer, Boolean>> modified = new HashMap<String, Map<Integer, Boolean>>();
 
-		HashMap<String, HashMap<Integer, Boolean>> modifiedTmp = null;
+		Map<String, Map<Integer, Boolean>> modifiedTmp = null;
 		boolean commit = true;
 		for (String test : mutatedTests) {
 
@@ -785,7 +852,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 				continue;
 			}
 			// don't analyze methods contained in the dontInstrumentSet
-			if (dontInstrumentSet.contains(name)) {
+			if (InstrumentExclude.shouldExclude(name)) {
 				continue;
 			}
 
@@ -793,7 +860,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 				foundSelf = true;
 			}
 
-			HashMap<Integer, Boolean> lineSet = modified.get(name);
+			Map<Integer, Boolean> lineSet = modified.get(name);
 
 			Iterator<Integer> itLineSet = lineSet.keySet().iterator();
 

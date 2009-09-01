@@ -72,7 +72,7 @@ public class AnalyzeMain {
 	 * @param analyzers
 	 *            the mutationAnalyzers to use
 	 */
-	private static void analyzeMutations(
+	public static void analyzeMutations(
 			List<MutationAnalyzer> analyzers) {
 		String prefix = PROJECT_PREFIX;
 		if (prefix == null) {
