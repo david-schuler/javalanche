@@ -37,6 +37,7 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.Invariant
 import de.unisb.cs.st.javalanche.coverage.CoverageMutationListener;
 
 import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
+
 /**
  * Abstract class that drives the mutation test process. Driver for specific
  * test architectures must subclass this class.
@@ -147,7 +148,7 @@ public abstract class MutationTestDriver {
 			runNormalTests();
 		} else if (RUN_MODE == RunMode.CREATE_COVERAGE) {
 			// runNormalTests();
-			coldRun();
+			// coldRun();
 			addMutationTestListener(new CoverageMutationListener());
 			runPermutedTests();
 		} else if (RUN_MODE == RunMode.TEST_PERMUTED) {
@@ -157,8 +158,6 @@ public abstract class MutationTestDriver {
 		}
 
 	}
-
-
 
 	/**
 	 * Runs the tests without applying any changes. This method is used to check

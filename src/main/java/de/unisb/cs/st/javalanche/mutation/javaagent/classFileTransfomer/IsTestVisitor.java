@@ -19,6 +19,7 @@ public class IsTestVisitor extends ClassAdapter {
 	@Override
 	public void visit(int version, int access, String name, String signature,
 			String superName, String[] interfaces) {
+		// TODO longer inheritance chains
 		if (superName.startsWith("junit/framework")) {
 			logger.warn(name + " identified as test class");
 			isTest = true;

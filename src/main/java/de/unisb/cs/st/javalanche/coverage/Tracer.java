@@ -89,8 +89,8 @@ public class Tracer {
 	public synchronized void logLineNumber(int line, String className,
 			String methodName) {
 		if (isLineCoverageDeactivated) {
-			logger.info("Excluding line " + line + "  " + className + "."
-					+ methodName);
+			// logger.info("Excluding line " + line + "  " + className + "."
+			// + methodName);
 			return;
 		}
 		// Integer key = getId(className + "@" + methodName);
@@ -133,6 +133,10 @@ public class Tracer {
 	public void logAReturn(Object value, String className, String methodName) {
 		if (InstrumentExclude.shouldExcludeReturns(className, methodName)) {
 			return; // TODO handle nulls
+		}
+		if (value == null) {
+			logData(0, className, methodName);
+			return;
 		}
 		StringBuilder tmp = null;
 		try {
@@ -178,7 +182,7 @@ public class Tracer {
 		if (isDataCoverageDeactivated) {
 			return;
 		}
-	
+
 		// Integer key = getId(className + "@" + methodName);
 		String key = className + "@" + methodName;
 		HashMap<Integer, Integer> tmpMap = valueMap.get(key);

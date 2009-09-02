@@ -41,7 +41,7 @@ public class InstrumentExclude {
 	}
 
 	private static String getKey(String className, String methodName) {
-		return className + "." + methodName;
+		return className + "@" + methodName;
 	}
 
 	public static boolean shouldExcludeReturns(String className,
