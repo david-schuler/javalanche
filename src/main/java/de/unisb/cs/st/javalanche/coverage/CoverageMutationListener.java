@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
@@ -44,7 +45,6 @@ public class CoverageMutationListener implements MutationTestListener {
 
 	private static HashMap<String, Long> profilerMap = new HashMap<String, Long>();
 
-
 	// private static HashMap<String, Integer> idMap = new HashMap<String,
 	// Integer>();
 	// private static int idMapMasterSize = 0;
@@ -60,8 +60,6 @@ public class CoverageMutationListener implements MutationTestListener {
 	public static HashMap<String, Long> getProfilerMap() {
 		return profilerMap;
 	}
-
-
 
 	public static Long getMutationId() {
 		return mutation_id;
@@ -189,10 +187,6 @@ public class CoverageMutationListener implements MutationTestListener {
 		XmlIo.toXML(profilerMap, CoverageProperties.TRACE_PROFILER_FILE);
 	}
 
-	
-
-
-
 	private void serializeHashMap() {
 		if (!saveFiles) {
 			logger.warn("Double Call to serializeHashMap");
@@ -211,11 +205,13 @@ public class CoverageMutationListener implements MutationTestListener {
 		}
 
 		try {
+			String sanitizedName = sanitize(testName);
+			String fileName = CoverageProperties.TRACE_RESULT_LINE_DIR
+					+ getMutationIdFileName() + "/" + sanitizedName + ".gz";
+			
 			oos = new ObjectOutputStream(new BufferedOutputStream(
-					new GZIPOutputStream(new FileOutputStream(
-							CoverageProperties.TRACE_RESULT_LINE_DIR
-									+ getMutationIdFileName() + "/" + testName
-									+ ".gz"))));
+					new GZIPOutputStream(new FileOutputStream(fileName))));
+
 			logger.info("writing coverage data for mutation "
 					+ getMutationIdFileName());
 			Set<String> ks = classMapCopy.keySet();
@@ -258,6 +254,12 @@ public class CoverageMutationListener implements MutationTestListener {
 		}
 	}
 
+	private static String sanitize(String name) {
+		String result = name.replace(' ', '_');
+		result = result.replace('/', '-');
+		return result;
+	}
+
 	private void serializeValueMap() {
 		if (!saveFiles) {
 			logger.warn("Double Call to serializeValueMap");
@@ -277,11 +279,13 @@ public class CoverageMutationListener implements MutationTestListener {
 		ObjectOutputStream oos = null;
 
 		try {
+			String sanitizedName = sanitize(testName);
+			String fileName = CoverageProperties.TRACE_RESULT_DATA_DIR
+					+ getMutationIdFileName() + "/" + sanitizedName
+					+ ".gz";
 			oos = new ObjectOutputStream(new BufferedOutputStream(
 					new GZIPOutputStream(new FileOutputStream(
-							CoverageProperties.TRACE_RESULT_DATA_DIR
-									+ getMutationIdFileName() + "/" + testName
-									+ ".gz"))));
+							fileName))));
 			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
 
 			Set<String> ks = valueMapCopy.keySet();

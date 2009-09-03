@@ -48,7 +48,6 @@ public class HtmlAnalyzer {
 		s = getClassName(s);
 		for (File f : files) {
 			String name = f.getAbsolutePath();
-			logger.info("Filename " + name);
 			name = name.replace('/', '.');
 			if (name.endsWith(".java")) {
 				name = name.substring(0, name.length() - 5);

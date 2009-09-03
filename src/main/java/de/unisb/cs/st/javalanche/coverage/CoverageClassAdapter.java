@@ -18,7 +18,9 @@ public class CoverageClassAdapter extends ClassAdapter {
 
 	private static final List<String> EXCLUDES = Arrays.asList(
 			"org/apache/commons/lang/builder/ReflectionToStringBuilder",
-			"org/apache/commons/lang/builder/ToStringBuilder");
+			"org/apache/commons/lang/builder/ToStringBuilder",
+			"xorg/apache/commons/lang/builder/ReflectionToStringBuilder",
+			"xorg/apache/commons/lang/builder/ToStringBuilder");
 	
 	private String className;
 	private int classAccess;
