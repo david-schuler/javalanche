@@ -1,17 +1,17 @@
 package de.unisb.cs.st.javalanche.mutation.runtime;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.log4j.Logger;
 
-import de.unisb.cs.st.ds.util.io.XmlIo;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
@@ -32,19 +32,19 @@ public class MutationObserver implements MutationTestListener {
 	private static List<Mutation> reportedMutations = new ArrayList<Mutation>();
 
 	/**
-	 * All tests that wher touched by tests.
+	 * All tests that where touched by tests.
 	 */
 	private static Collection<String> touchingTestCases = new HashSet<String>();
 
 	/**
 	 * Id of the currently active mutation.
 	 */
-	private static long expectedID;
+	private static AtomicLong expectedID = new AtomicLong();
 
 	/**
 	 * Name of the currently active test.
 	 */
-	private static String actualTestCase;
+	private static AtomicReference<String> actualTestCase = new AtomicReference<String>();
 
 	/**
 	 * Set of all mutations that where touched during this run.
@@ -54,12 +54,12 @@ public class MutationObserver implements MutationTestListener {
 	/**
 	 * Currently active mutation.
 	 */
-	private static Mutation actualMutation;
+	private static AtomicReference<Mutation> actualMutation = new AtomicReference<Mutation>();
 
 	/**
-	 * Indicates wheter the currently active Mutation was touched or not.
+	 * Indicates whether the currently active Mutation was touched or not.
 	 */
-	private static boolean touched = false;
+	private static AtomicBoolean touched = new AtomicBoolean();
 
 	/**
 	 * This method is called by statements that are added to the mutated code.
@@ -68,24 +68,24 @@ public class MutationObserver implements MutationTestListener {
 	 * @param mutationID
 	 *            the id of the mutation that is executed
 	 */
-	public static synchronized void touch(long mutationID) {
+	public static void touch(long mutationID) {
 		// (actualMutation == null ? "null " : actualMutation.getId() + ""));
-		if (mutationID != expectedID) {
+		if (mutationID != expectedID.get()) {
 			String message = "Expected ID did not match reported ID "
-					+ expectedID + "  - " + mutationID;
+					+ expectedID.get() + "  - " + mutationID;
 			logger.warn(message);
 			throw new RuntimeException(message);
 		} else {
-			touchingTestCases.add(actualTestCase);
-			if (!touched) {
-				touchedMutations.add(actualMutation);
+			touchingTestCases.add(actualTestCase.get());
+			if (!touched.get()) {
+				touchedMutations.add(actualMutation.get());
 				logger.info("Touch called by mutated code in test: "
 						+ actualTestCase + " for mutation: " + mutationID
 						+ " Thread " + Thread.currentThread()
 						+ " loaded by class loader "
 						+ MutationObserver.class.getClassLoader());
 				// + "Trace " + Util.getStackTraceString());
-				touched = true;
+				touched.set(true);
 			}
 		}
 	}
@@ -131,10 +131,10 @@ public class MutationObserver implements MutationTestListener {
 	public void mutationStart(Mutation mutation) {
 		logger.info("Mutation start");
 		reportedMutations.add(mutation);
-		actualMutation = mutation;
+		actualMutation.set(mutation);
 		touchingTestCases.clear();
-		expectedID = mutation.getId();
-		touched = false;
+		expectedID.set(mutation.getId());
+		touched.set(false);
 	}
 
 	/**
@@ -157,7 +157,7 @@ public class MutationObserver implements MutationTestListener {
 	 * #testEnd(java.lang.String)
 	 */
 	public void testEnd(String testName) {
-		actualTestCase = null;
+		actualTestCase.set(null);
 	}
 
 	/*
@@ -168,7 +168,7 @@ public class MutationObserver implements MutationTestListener {
 	 * #testStart(java.lang.String)
 	 */
 	public void testStart(String testName) {
-		actualTestCase = testName;
+		actualTestCase.set(testName);
 	}
 
 }
