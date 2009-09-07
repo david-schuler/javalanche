@@ -137,7 +137,7 @@ public abstract class MutationTestDriver {
 			}
 			if (RUN_MODE == RunMode.MUTATION_TEST_COVERAGE) {
 				addMutationTestListener(new CoverageMutationListener());
-				runNormalTests();
+				// runNormalTests();
 			}
 			listeners.addLast(new ResultReporter());
 			runMutations();
@@ -460,7 +460,7 @@ public abstract class MutationTestDriver {
 	 * 
 	 * @param testsForThisRun
 	 *            a set of tests to be run
-	 * @return a mutaiton test result that sumarizes the outcome of the tests
+	 * @return a mutation test result that summarizes the outcome of the tests
 	 */
 	private MutationTestResult runTests(Set<String> testsForThisRun) {
 		int counter = 0;
@@ -537,21 +537,22 @@ public abstract class MutationTestDriver {
 		// ArrayList<Thread> threadsPre = ThreadUtil.getThreads();
 		ExecutorService service = Executors.newSingleThreadExecutor();
 		Future<?> future = service.submit(r);
-		logger.debug("Start timed test: ");
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		service.shutdown();
 		String exceptionMessage = null;
 		Throwable capturedThrowable = null;
 		try {
+			logger.debug("Start timed test1: ");
 			boolean terminated = service.awaitTermination(timeout,
 					TimeUnit.SECONDS);
-
+			logger.debug("First timeout");
 			long time1 = stopWatch.getTime();
 			if (!terminated) {
 				service.shutdownNow();
 			}
 			future.get(timeout, TimeUnit.SECONDS);
+			logger.debug("Second timeout");
 			long time2 = stopWatch.getTime();
 			if (time2 - time1 > 1000) {
 				logger.info("Process got some extra time: " + (time2 - time1)
@@ -629,7 +630,7 @@ public abstract class MutationTestDriver {
 		future.cancel(true);
 		try {
 			logger.info("Sleeping   ");
-			Thread.sleep(MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS * 1000);
+			Thread.sleep(MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

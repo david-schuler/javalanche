@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
@@ -61,6 +62,10 @@ public class MutationObserver implements MutationTestListener {
 	 */
 	private static AtomicBoolean touched = new AtomicBoolean();
 
+	private static long time;
+
+	public static final int LIMIT = MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS * 1000;
+
 	/**
 	 * This method is called by statements that are added to the mutated code.
 	 * It is called every time the mutated statements get executed.
@@ -76,6 +81,7 @@ public class MutationObserver implements MutationTestListener {
 			logger.warn(message);
 			throw new RuntimeException(message);
 		} else {
+
 			touchingTestCases.add(actualTestCase.get());
 			if (!touched.get()) {
 				touchedMutations.add(actualMutation.get());
@@ -86,6 +92,11 @@ public class MutationObserver implements MutationTestListener {
 						+ MutationObserver.class.getClassLoader());
 				// + "Trace " + Util.getStackTraceString());
 				touched.set(true);
+				time = System.currentTimeMillis();
+			} else {
+				if (System.currentTimeMillis() - time > LIMIT) {
+					throw new RuntimeException("Mutation exceeded time limit");
+				}
 			}
 		}
 	}
@@ -94,7 +105,7 @@ public class MutationObserver implements MutationTestListener {
 	 * Returns a summary for all collected test outcomes and writes these to a
 	 * file if a property for the file name was set.
 	 * 
-	 * @return The String containing the summary.
+	 * @return String containing the summary.
 	 */
 	public static String summary(boolean finishedNormal) {
 		RunResult runResult = new RunResult(reportedMutations,
@@ -135,6 +146,7 @@ public class MutationObserver implements MutationTestListener {
 		touchingTestCases.clear();
 		expectedID.set(mutation.getId());
 		touched.set(false);
+		// shouldEnd.set(false);
 	}
 
 	/**

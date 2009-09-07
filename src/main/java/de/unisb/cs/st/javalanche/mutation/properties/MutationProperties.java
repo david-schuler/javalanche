@@ -203,7 +203,7 @@ public class MutationProperties {
 	private static final String DEFAULT_TIMEOUT_IN_SECONDS_KEY = "javalanche.mutation.default.timeout";
 
 	public static final int DEFAULT_TIMEOUT_IN_SECONDS = getPropertyOrDefault(
-			DEFAULT_TIMEOUT_IN_SECONDS_KEY, 100);
+			DEFAULT_TIMEOUT_IN_SECONDS_KEY, 30);
 
 	/**
 	 * The save interval in which the mutation results are written to the
@@ -340,4 +340,9 @@ public class MutationProperties {
 	public static final String ECLIPSE_RUN_CONFIG_NAME = getPropertyOrDefault(
 			ECLIPSE_RUN_CONFIG_NAME_KEY, "no config");
 
+	public static final String CONNECTION_DATA_FILE = OUTPUT_DIR
+			+ "/connections.xml";
+
+	public static final String INHERITANCE_DATA_FILE = OUTPUT_DIR
+			+ "/inheritance.xml";
 }

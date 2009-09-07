@@ -53,7 +53,7 @@ public class Tracer {
 	/*
 	 * This code is executed at the beginning of a method
 	 */
-	public synchronized void begin(String className, String methodName,
+	public void begin(String className, String methodName,
 			boolean instrumentLine, boolean instrumentData) {
 		// Integer key = getId(className + "@" + methodName);
 		String key = className + "@" + methodName;
@@ -86,7 +86,7 @@ public class Tracer {
 	/*
 	 * This function is executed for every LineNumber
 	 */
-	public synchronized void logLineNumber(int line, String className,
+	public void logLineNumber(int line, String className,
 			String methodName) {
 		if (isLineCoverageDeactivated) {
 			// logger.info("Excluding line " + line + "  " + className + "."
@@ -177,7 +177,7 @@ public class Tracer {
 		// }
 	}
 
-	private synchronized void logData(int value, String className,
+	private void logData(int value, String className,
 			String methodName) {
 		if (isDataCoverageDeactivated) {
 			return;
@@ -206,20 +206,20 @@ public class Tracer {
 	 * return id; } }
 	 */
 
-	synchronized boolean isLineCoverageDeactivated() {
+	 boolean isLineCoverageDeactivated() {
 		return isLineCoverageDeactivated;
 	}
 
-	synchronized boolean isDataCoverageDeactivated() {
+	 boolean isDataCoverageDeactivated() {
 		return isDataCoverageDeactivated;
 	}
 
-	synchronized void setLineCoverageDeactivated(
+	 void setLineCoverageDeactivated(
 			boolean isLineCoverageDeactivated) {
 		this.isLineCoverageDeactivated = isLineCoverageDeactivated;
 	}
 
-	synchronized void setDataCoverageDeactivated(
+	 void setDataCoverageDeactivated(
 			boolean isDataCoverageDeactivated) {
 		this.isDataCoverageDeactivated = isDataCoverageDeactivated;
 	}
