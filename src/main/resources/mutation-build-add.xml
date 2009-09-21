@@ -216,8 +216,8 @@
 		<java classname="de.unisb.cs.st.javalanche.mutation.util.AsmUtil" fork="true">
 			<sysproperty key="class.name" value="${class.name}" />
 			<classpath>
-			         <path refid="build.classpath"></path>
-					 <path refid="mutation.classpath" />
+			         <path refid="cp"/>
+					 <path refid="mutation.classpath"/>
 			</classpath>
 		</java>
 	</target>

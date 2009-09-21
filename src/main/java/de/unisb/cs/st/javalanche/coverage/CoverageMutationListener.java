@@ -8,15 +8,19 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode;
+import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
@@ -38,27 +42,30 @@ public class CoverageMutationListener implements MutationTestListener {
 
 	private boolean saveFiles = false;
 
-	private static HashMap<String, HashMap<Integer, Integer>> classMap = new HashMap<String, HashMap<Integer, Integer>>(
-			(int) (2048 * 1.33));
+	// private static Map<String, Map<Integer, Integer>> classMap = new
+	// ConcurrentHashMap<String, Map<Integer, Integer>>();
 
-	private static HashMap<String, HashMap<Integer, Integer>> valueMap = new HashMap<String, HashMap<Integer, Integer>>();
+	public static AtomicReference<ConcurrentMap<String, ConcurrentMap<Integer, Integer>>> classMapRef = new AtomicReference<ConcurrentMap<String, ConcurrentMap<Integer, Integer>>>(
+			new ConcurrentHashMap<String, ConcurrentMap<Integer, Integer>>());
 
-	private static HashMap<String, Long> profilerMap = new HashMap<String, Long>();
+	// private static Map<String, Map<Integer, Integer>> valueMap = new
+	// ConcurrentHashMap<String, Map<Integer, Integer>>();
+
+	public static AtomicReference<ConcurrentMap<String, ConcurrentMap<Integer, Integer>>> valueMapRef = new AtomicReference<ConcurrentMap<String, ConcurrentMap<Integer, Integer>>>(
+			new ConcurrentHashMap<String, ConcurrentMap<Integer, Integer>>());
+
+	private static Map<String, Long> profilerMap = new ConcurrentHashMap<String, Long>();
 
 	// private static HashMap<String, Integer> idMap = new HashMap<String,
 	// Integer>();
 	// private static int idMapMasterSize = 0;
 
-	public static HashMap<String, HashMap<Integer, Integer>> getLineCoverageMap() {
-		return classMap;
+	public static ConcurrentMap<String, ConcurrentMap<Integer, Integer>> getLineCoverageMap() {
+		return classMapRef.get();
 	}
 
-	public static HashMap<String, HashMap<Integer, Integer>> getValueMap() {
-		return valueMap;
-	}
-
-	public static HashMap<String, Long> getProfilerMap() {
-		return profilerMap;
+	public static ConcurrentMap<String, ConcurrentMap<Integer, Integer>> getValueMap() {
+		return valueMapRef.get();
 	}
 
 	public static Long getMutationId() {
@@ -115,16 +122,16 @@ public class CoverageMutationListener implements MutationTestListener {
 
 	public void start() {
 		mutation_id = new Long(0);
-		classMap.clear();
-		valueMap.clear();
+		classMapRef.get().clear();
+		valueMapRef.get().clear();
 		saveFiles = true;
 	}
 
 	public void end() {
 		writeProfilingData();
 		InstrumentExclude.save();
-		classMap.clear();
-		valueMap.clear();
+		classMapRef.get().clear();
+		valueMapRef.get().clear();
 		saveFiles = false;
 	}
 
@@ -145,38 +152,44 @@ public class CoverageMutationListener implements MutationTestListener {
 			}
 			seenTests.add(testName);
 		}
-		classMap.clear();
-		valueMap.clear();
+		classMapRef.get().clear();
+		valueMapRef.get().clear();
 		saveFiles = true;
 	}
 
 	public void testEnd(String testName) {
 		createMutationDir();
 
-		Tracer.getInstance().setDataCoverageDeactivated(true);
-		Tracer.getInstance().setLineCoverageDeactivated(true);
-		serializeHashMap();
-		serializeValueMap();
-		classMap.clear();
-		valueMap.clear();
-		Tracer.getInstance().setDataCoverageDeactivated(false);
-		Tracer.getInstance().setLineCoverageDeactivated(false);
+		Tracer.getInstance().deactivateTrace();
+		ConcurrentMap<String, ConcurrentMap<Integer, Integer>> classMap = classMapRef
+				.get();
+		classMapRef
+				.set(new ConcurrentHashMap<String, ConcurrentMap<Integer, Integer>>());
+		serializeHashMap(classMap, getLineCoverageFileName());
+		classMapRef.get().clear();
+		ConcurrentMap<String, ConcurrentMap<Integer, Integer>> valueMap = valueMapRef
+				.get();
+		valueMapRef
+				.set(new ConcurrentHashMap<String, ConcurrentMap<Integer, Integer>>());
+		serializeHashMap(valueMap, getDataCoverageFileName());
+		valueMapRef.get().clear();
+		Tracer.getInstance().activateTrace();
 
 		saveFiles = false;
 	}
 
 	public void mutationStart(Mutation mutation) {
 		mutation_id = mutation.getId();
-		classMap.clear();
-		valueMap.clear();
+		classMapRef.get().clear();
+		valueMapRef.get().clear();
 		createMutationDir();
 		saveFiles = true;
 	}
 
 	public void mutationEnd(Mutation mutation) {
 		// serializeIdMap(mutation_id);
-		classMap.clear();
-		valueMap.clear();
+		classMapRef.get().clear();
+		valueMapRef.get().clear();
 		saveFiles = false;
 	}
 
@@ -187,71 +200,67 @@ public class CoverageMutationListener implements MutationTestListener {
 		XmlIo.toXML(profilerMap, CoverageProperties.TRACE_PROFILER_FILE);
 	}
 
-	private void serializeHashMap() {
-		if (!saveFiles) {
-			logger.warn("Double Call to serializeHashMap");
-			return;
+	public void serializeHashMap(
+			ConcurrentMap<String, ConcurrentMap<Integer, Integer>> classMap,
+			String fileName) {
+		int numClasses = classMap.size();
+		if (numClasses == 0 && CoverageProperties.TRACE_LINES) {
+			logger.info("Empty coverage map for test " + testName);
 		}
+		
+		int countClasses = 0;
 		ObjectOutputStream oos = null;
-
-		HashMap<String, HashMap<Integer, Integer>> classMapCopy = null;
-
-		synchronized (classMap) {
-			classMapCopy = new HashMap<String, HashMap<Integer, Integer>>(
-					classMap);
-		}
-		if (classMapCopy.size() == 0 && CoverageProperties.TRACE_LINES) {
-			logger.warn("Empty coverage map for test " + testName);
-		}
-
+		String exceptionMessage = "Could not write " + fileName;
 		try {
-			String sanitizedName = sanitize(testName);
-			String fileName = CoverageProperties.TRACE_RESULT_LINE_DIR
-					+ getMutationIdFileName() + "/" + sanitizedName + ".gz";
-			
-			oos = new ObjectOutputStream(new BufferedOutputStream(
-					new GZIPOutputStream(new FileOutputStream(fileName))));
-
-			logger.info("writing coverage data for mutation "
-					+ getMutationIdFileName());
-			Set<String> ks = classMapCopy.keySet();
-
-			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
-
-			Iterator<String> it = ks.iterator();
-			String s;
-			Set<Integer> ks2;
-			Iterator<Integer> it2;
-			Integer i;
-
-			oos.writeInt(classMapCopy.size());
-			// System.out.print(testName+":");
-			while (it.hasNext()) {
-				s = it.next();
+			oos = new ObjectOutputStream(new GZIPOutputStream(
+					new FileOutputStream(fileName)));
+			oos.writeInt(numClasses);
+			for (String s : classMap.keySet()) {
+				countClasses++;
 				oos.writeUTF(s);
-				lineMap = classMapCopy.get(s);
-				ks2 = lineMap.keySet();
-				it2 = ks2.iterator();
-				oos.writeInt(lineMap.size());
-				// System.out.println(s);
-				while (it2.hasNext()) {
-					i = it2.next();
-					oos.writeInt(i);
-					oos.writeInt(lineMap.get(i));
-					// System.out.println(i);
+				Map<Integer, Integer> lineMap = classMap.get(s);
+				int lineMapSize = lineMap.size();
+				oos.writeInt(lineMapSize);
+				int countLines = 0;
+				for (Entry<Integer, Integer> entry : lineMap.entrySet()) {
+					countLines++;
+					oos.writeInt(entry.getKey().intValue());
+					oos.writeInt(entry.getValue().intValue());
+				}
+				if (countLines != lineMapSize) {
+					logger.warn("Different sizes" + lineMapSize + "  "
+							+ countLines + " " + lineMap);
+					oos.flush();
+					oos.close();
+					serializeHashMap(classMap, fileName);
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.warn(exceptionMessage, e);
+			throw new RuntimeException(exceptionMessage, e);
 		} finally {
 			if (oos != null) {
 				try {
+					oos.flush();
 					oos.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.warn(exceptionMessage, e);
+					throw new RuntimeException(exceptionMessage, e);
 				}
 			}
 		}
+		if (countClasses != numClasses) {
+			logger.warn("Different number of total classes (Writing again) "
+					+ countClasses + " " + numClasses + " " + classMap);
+			serializeHashMap(classMap, fileName);
+		}
+	}
+
+	private String getLineCoverageFileName() {
+		String sanitizedName = sanitize(testName);
+		String fileName = CoverageProperties.TRACE_RESULT_LINE_DIR
+				+ getMutationIdFileName() + "/" + sanitizedName + ".gz";
+		return fileName;
 	}
 
 	private static String sanitize(String name) {
@@ -260,33 +269,23 @@ public class CoverageMutationListener implements MutationTestListener {
 		return result;
 	}
 
-	private void serializeValueMap() {
+	private void XserializeValueMap(
+			Map<String, Map<Integer, Integer>> valueMapCopy) {
 		if (!saveFiles) {
 			logger.warn("Double Call to serializeValueMap");
 			return;
 		}
 
-		HashMap<String, HashMap<Integer, Integer>> valueMapCopy = null;
-
-		synchronized (valueMap) {
-			valueMapCopy = new HashMap<String, HashMap<Integer, Integer>>(
-					valueMap);
-
-		}
 		if (valueMapCopy.size() == 0 && CoverageProperties.TRACE_RETURNS) {
-			logger.warn("Empty value map for test " + testName);
+			logger.info("Empty value map for test " + testName);
 		}
 		ObjectOutputStream oos = null;
 
+		String fileName = getDataCoverageFileName();
 		try {
-			String sanitizedName = sanitize(testName);
-			String fileName = CoverageProperties.TRACE_RESULT_DATA_DIR
-					+ getMutationIdFileName() + "/" + sanitizedName
-					+ ".gz";
 			oos = new ObjectOutputStream(new BufferedOutputStream(
-					new GZIPOutputStream(new FileOutputStream(
-							fileName))));
-			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
+					new GZIPOutputStream(new FileOutputStream(fileName))));
+			Map<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
 
 			Set<String> ks = valueMapCopy.keySet();
 			Iterator<String> it = ks.iterator();
@@ -313,15 +312,28 @@ public class CoverageMutationListener implements MutationTestListener {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			String message = "Exception while serializing. " + testName;
+			logger.warn(message, e);
+			// e.printStackTrace();
+			throw new RuntimeException(testName, e);
+
 		} finally {
 			if (oos != null) {
 				try {
+					oos.flush();
 					oos.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.warn(e);
+					throw new RuntimeException("Could not write " + fileName, e);
 				}
 			}
 		}
+	}
+
+	private String getDataCoverageFileName() {
+		String sanitizedName = sanitize(testName);
+		String fileName = CoverageProperties.TRACE_RESULT_DATA_DIR
+				+ getMutationIdFileName() + "/" + sanitizedName + ".gz";
+		return fileName;
 	}
 }

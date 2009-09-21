@@ -172,7 +172,7 @@ public class MutationTaskCreator {
 
 	private static File writeListToFile(List<Long> list, int id) {
 		String filename = String.format(MUTATION_TASK_FILE_FORMAT, id);
-		File resultFile = new File(MutationProperties.RESULT_DIR, filename);
+		File resultFile = new File(MutationProperties.OUTPUT_DIR, filename);
 		StringBuilder sb = new StringBuilder();
 		for (Long l : list) {
 			sb.append(l);

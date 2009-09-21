@@ -34,7 +34,7 @@ public class MutationTask {
 
 	public static List<MutationTask> getTasks() {
 		List<MutationTask> result = new ArrayList<MutationTask>();
-		File dir = new File(MutationProperties.RESULT_DIR);
+		File dir = new File(MutationProperties.OUTPUT_DIR);
 		File[] taskFiles = dir.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				if (name

@@ -147,8 +147,7 @@ public class ShowInvariantsServer {
 			// for (Mutation mutation : list) {
 			// System.out.println(mutation);
 			// }
-			Mutation dbMutation = QueryManager.getMutationOrNull(m, session,
-					transaction);
+			Mutation dbMutation = QueryManager.getMutationOrNull(m, session);
 			System.out.println(dbMutation.toShortString());
 			int[] violatedInvariants = dbMutation.getMutationResult()
 					.getViolatedInvariants();

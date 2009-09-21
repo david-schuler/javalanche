@@ -21,7 +21,7 @@ import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.ds.util.io.XmlIo;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode;
+import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
@@ -234,7 +234,7 @@ public abstract class MutationTestDriver {
 		List<SingleTestResult> allFailingTests = new ArrayList<SingleTestResult>();
 		coldRun(allTests);
 		testsStart();
-		int permutations = 10;
+		int permutations = MutationProperties.TEST_PERMUTATIONS;
 		for (int i = 0; i < permutations; i++) {
 			logger.info("Shuffling tests. Round " + (i + 1));
 			Collections.shuffle(allTests);
@@ -391,15 +391,9 @@ public abstract class MutationTestDriver {
 			currentMutation = mutationSwitcher.next();
 			totalMutations++;
 			checkClasspath(currentMutation);
-			Set<String> testsForThisRun = (MutationProperties.COVERAGE_INFORMATION ? mutationSwitcher
-					.getTests()
-					: new HashSet<String>(allTests));
-			if (testsForThisRun == null) {
-				logger.warn("No tests for " + currentMutation);
-				currentMutation.setMutationResult(MutationTestResult.NO_RESULT);
-				// report(currentMutation);
-				continue;
-			}
+			Set<String> coveredTests = mutationSwitcher.getTests();
+			Set<String> testsForThisRun = coveredTests.size() > 0 ? coveredTests
+					: new HashSet<String>(allTests);
 			System.out.println("Applying " + totalMutations
 					+ "th mutation with id " + currentMutation.getId()
 					+ ". Running " + testsForThisRun.size() + " tests");

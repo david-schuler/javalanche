@@ -1,8 +1,8 @@
 package de.unisb.cs.st.javalanche.coverage;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
 
@@ -10,9 +10,9 @@ public class InstrumentExclude {
 
 	private static class ExcludeData {
 
-		Set<String> lineExclude = new HashSet<String>();
+		Set<String> lineExclude = new CopyOnWriteArraySet<String>();
 
-		Set<String> returnExclude = new HashSet<String>();
+		Set<String> returnExclude = new CopyOnWriteArraySet<String>();
 
 	}
 
@@ -73,4 +73,11 @@ public class InstrumentExclude {
 		INSTANCE.lineExclude.add(name);
 	}
 
+	public static int numberOfExlusions() {
+		// Set<String> all = new HashSet<String>();
+		// all.addAll(INSTANCE.lineExclude);
+		// all.addAll(INSTANCE.returnExclude);
+		// return all.size();
+		return INSTANCE.lineExclude.size() + INSTANCE.returnExclude.size();
+	}
 }

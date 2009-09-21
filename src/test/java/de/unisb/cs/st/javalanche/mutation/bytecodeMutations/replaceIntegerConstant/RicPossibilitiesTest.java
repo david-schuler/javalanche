@@ -2,6 +2,7 @@ package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConst
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 
 import static junit.framework.Assert.*;
 
@@ -27,5 +28,14 @@ public class RicPossibilitiesTest {
 		assertEquals("Expecting " + expectedMutations + " mutations",
 				mutationPossibilityCollector.size(), expectedMutations);
 	}
+
+	private static class HelperLoader extends ClassLoader {
+
+		public void define(String className, byte[] bytecode) {
+			defineClass(className, bytecode, 0, bytecode.length);
+		}
+
+	}
+
 
 }

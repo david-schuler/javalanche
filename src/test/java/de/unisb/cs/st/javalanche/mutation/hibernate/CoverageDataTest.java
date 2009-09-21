@@ -8,7 +8,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,10 +15,7 @@ import org.apache.commons.lang.time.StopWatch;
 import org.junit.Test;
 
 import de.unisb.cs.st.ds.util.io.SerializeIo;
-import de.unisb.cs.st.javalanche.mutation.results.MutationCoverage;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
-import de.unisb.cs.st.javalanche.mutation.results.TestName;
-import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 public class CoverageDataTest {
 
@@ -64,14 +60,16 @@ public class CoverageDataTest {
 		StopWatch stp = new StopWatch();
 		stp.start();
 		MutationCoverageFile.saveCoverageData(map);
+		MutationCoverageFile.reset();
 		stp.stop();
+		System.out.println("Saving coverage data took:" + stp.getTime());
 		Set<String> coverageData = MutationCoverageFile.getCoverageDataId(10);
 		Set<String> tests = getTests();
 		assertEquals(tests.size(), coverageData.size());
 		for (String test : coverageData) {
 			assertTrue(tests.contains((test)));
 		}
-		System.out.println("TIME " + stp.getTime());
+		
 	}
 
 

@@ -14,6 +14,8 @@ import com.google.common.collect.HashBiMap;
 
 import de.unisb.cs.st.ds.util.io.SerializeIo;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 public class MutationCoverageFile {
 
@@ -94,6 +96,10 @@ public class MutationCoverageFile {
 		return result;
 	}
 
+	public static void reset() {
+		idMap = null;
+	}
+
 	public static long getNumberOfCoveredMutations() {
 		// File[] files = COVERAGE_DIR.listFiles();
 		// long count = 0;
@@ -128,5 +134,20 @@ public class MutationCoverageFile {
 
 	public static void deleteCoverageData() {
 		COVERAGE_DIR.delete();
+	}
+
+	public static void main(String[] args) {
+		// Mutation m = new Mutation(
+		// "xcom.thoughtworks.xstream.converters.extended.StackTraceElementConverter",
+		// 38, 1, MutationType.REMOVE_CALL, false);
+		Mutation m = new Mutation(
+				"xcom.thoughtworks.xstream.io.json.AbstractJsonWriter", 373, 3,
+				MutationType.NEGATE_JUMP, false);
+		Mutation m1 = QueryManager.getMutationOrNull(m);
+		System.out.println(m1.getId());
+		// /scratch/schuler/subjects-check/xstream/xstream
+		System.out.println(QueryManager.getMutationByID(24487l));
+		System.out.println(QueryManager.getMutationByID(24488l));
+		System.out.println(QueryManager.getMutationByID(24489l));
 	}
 }

@@ -21,7 +21,6 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
  */
 public class Excludes {
 
-	// private static Logger logger = Logger.getLogger(Excludes.class);
 
 	private static class SingletonHolder {
 		private static final Excludes INSTANCE = new Excludes(
@@ -49,7 +48,7 @@ public class Excludes {
 		return excludes.contains(classNameWithDots);
 	}
 
-	private Excludes(File f) {
+	Excludes(File f) {
 		excludes = new HashSet<String>();
 		allClasses = new TreeSet<String>();
 		if (f.exists()) {

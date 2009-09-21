@@ -48,21 +48,16 @@ public class CoverageMethodAdapter extends MethodAdapter {
 		// don't instrument classes for data coverage that throw an exception
 	
 		if (InstrumentExclude.shouldExcludeLines(this.className, methodName)) {
-			logger.info("Not instrumenting line coverage for: " + className
+			logger.debug("Not instrumenting line coverage for: " + className
 					+ "  " + methodName);
 			instrumentLine = false;
 		}
 		if (InstrumentExclude.shouldExcludeReturns(this.className, methodName)) {
-			logger.info("Not instrumenting return coverage for: "
+			logger.debug("Not instrumenting return coverage for: "
 					+ this.className
 					+ "  " + methodName);
 			instrumentReturns = false;
-		} else {
-			logger.info("Instrumenting return coverage for: " + this.className
-					+ "  " + methodName);
-		
-
-		}
+		} 
 
 	}
 

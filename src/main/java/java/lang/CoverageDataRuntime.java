@@ -62,7 +62,13 @@ public class CoverageDataRuntime {
 			coveredTests = new HashSet<String>();
 			SingletonHolder.instance.coverageData.put(id, coveredTests);
 		}
+		// boolean add =
 		coveredTests.add(SingletonHolder.instance.getTestName());
+		// if (add) {
+		// System.out.println("Added test "
+		// + SingletonHolder.instance.getTestName() + "for mutation "
+		// + id);
+		// }
 	}
 
 	private String getTestName() {
@@ -72,7 +78,7 @@ public class CoverageDataRuntime {
 
 	public static void setTestName(String testName) {
 		CoverageDataRuntime instance = SingletonHolder.instance;
-
+		System.out.println("CoverageDataRuntime.setTestName() " + testName);
 		instance.testsRun.add(testName);
 
 		if (instance.getTestName() == null) {

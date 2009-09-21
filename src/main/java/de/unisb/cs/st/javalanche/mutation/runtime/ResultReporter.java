@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.javalanche.invariants.runtime.InvariantObserver;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
@@ -60,7 +61,7 @@ public class ResultReporter implements MutationTestListener {
 			logger.info(message);
 			throw new RuntimeException(message);
 		}
-		if (MutationProperties.RUN_MODE == MutationProperties.RunMode.MUTATION_TEST_INVARIANT) {
+		if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT) {
 			reportInvariantResults(mutation.getMutationResult());
 		}
 	}

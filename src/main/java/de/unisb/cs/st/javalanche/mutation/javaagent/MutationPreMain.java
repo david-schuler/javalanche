@@ -1,12 +1,14 @@
 package de.unisb.cs.st.javalanche.mutation.javaagent;
 
 import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
-import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode.*;
+import static de.unisb.cs.st.javalanche.mutation.properties.RunMode.*;
 
 import java.io.PrintStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 
+import de.unisb.cs.st.javalanche.coverage.CoverageTransformer;
+import de.unisb.cs.st.javalanche.invariants.javaagent.InvariantTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.DistanceTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.EclipseScanner;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.IntegrateCheckNamesSuiteTransformer;
@@ -15,13 +17,9 @@ import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.Mutation
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationScanner;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanProjectTransformer;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.cs.st.javalanche.coverage.CoverageTransformer;
-
-import de.unisb.cs.st.javalanche.invariants.javaagent.InvariantTransformer;
 
 /**
  * Class that is used by the javaagent.

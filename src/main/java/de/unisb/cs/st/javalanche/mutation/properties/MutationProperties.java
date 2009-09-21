@@ -13,7 +13,7 @@ public class MutationProperties {
 
 	private static Logger logger = Logger.getLogger(MutationProperties.class);
 
-	public static final String PROPERTIES_FILE = "mutation.incl.properties";
+	public static final String PROPERTIES_FILE = "javalanche.properties";
 
 	public static final Properties PROPERTIES = getProperties();
 
@@ -32,7 +32,6 @@ public class MutationProperties {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
 			if (properties != null) {
 				logger.debug("Got following properties from file. File: "
 						+ PROPERTIES_FILE + " Properties: "
@@ -46,36 +45,10 @@ public class MutationProperties {
 		return properties;
 	}
 
+	private static final String OUTPUT_DIR_KEY = "javalanche.mutation.output.dir";
+
 	public static final String OUTPUT_DIR = getPropertyOrDefault(
-			"javalanche.mutation.output.dir", "mutation-files");
-
-	/*
-	 * Different run modes.
-	 */
-
-	public enum RunMode {
-		SCAN("scan"), MUTATION_TEST("mutation"), CHECK_TESTS("test1"), TEST_TESTSUITE_SECOND(
-				"test2"), MUTATION_TEST_INVARIANT("mutation-invariant"), MUTATION_TEST_INVARIANT_PER_TEST(
-				"mutation-invariant-per-test"), MUTATION_TEST_COVERAGE(
-				"mutation-coverage"), CREATE_COVERAGE("create-coverage"), OFF(
-				"off"), CHECK_INVARIANTS_PER_TEST("check-per-test"), TEST_PERMUTED(
-				"test3"), SCAN_PROJECT("scan-project"), SCAN_ECLIPSE(
-				"scan-eclipse");
-
-		private String key;
-
-		RunMode(String key) {
-			this.key = key;
-		}
-
-		/**
-		 * @return the key
-		 */
-		public String getKey() {
-			return key;
-		}
-
-	}
+			OUTPUT_DIR_KEY, "mutation-files");
 
 	private static final String RUN_MODE_KEY = "mutation.run.mode";
 
@@ -99,31 +72,6 @@ public class MutationProperties {
 	public static boolean INSERT_ORIGINAL_INSTEAD_OF_MUTATION = getPropertyOrDefault(
 			INSERT_ORIGINAL_INSTEAD_OF_MUTATION_KEY, false);
 
-	public static final String MUTATION_TEST_DEBUG_KEY = "mutation.test.debug";
-
-	public static final boolean DEBUG = true;
-
-	public static final String DEBUG_PORT_KEY = "mutation.debug.port";
-
-	// private static boolean getDebug() {
-	// String debugProperty = System.getProperty(MUTATION_TEST_DEBUG_KEY);
-	// if (debugProperty != null && !debugProperty.equals("false")) {
-	// logger.info("Debugging enabled");
-	// return true;
-	// }
-	// logger.info("Debugging not enabled");
-	// return false;
-	// }
-
-	public static final String RESULT_DIR = OUTPUT_DIR;
-
-	/**
-	 * Directory the serialized files are stored.
-	 */
-	public static final String RESULT_OBJECTS_DIR = OUTPUT_DIR + "objects/";
-
-	public static final String MUTATIONS_CLASS_RESULT_XML = "mutations-class-result.xml";
-
 	/**
 	 * 
 	 * The key for the system property that specifies the package prefix of the
@@ -145,28 +93,6 @@ public class MutationProperties {
 	public static final String TEST_SUITE_KEY = "mutation.test.suite";
 
 	public static final String TEST_SUITE = getProperty(TEST_SUITE_KEY);
-
-	/**
-	 * The key for the system property that specifies if there is coverage
-	 * information in the db.
-	 * 
-	 * -dmutation.coverage.information=false
-	 * 
-	 */
-	public static final String COVERAGE_INFORMATION_KEY = "mutation.coverage.information";
-
-	/**
-	 * True if coverage information is available in the db.
-	 */
-	public static final boolean COVERAGE_INFORMATION = getPropertyOrDefault(
-			COVERAGE_INFORMATION_KEY, true);
-
-	/**
-	 * Directory where the processes are executed
-	 */
-	public static final String EXEC_DIR = ".";
-
-	public static final String TESTCASES_FILE = OUTPUT_DIR + "/testCases.xml";
 
 	public static final String ACTUAL_MUTATION_KEY = "mutation.actual.mutation";
 
@@ -198,7 +124,7 @@ public class MutationProperties {
 	public static final String STOP_AFTER_FIRST_FAIL_KEY = "javalanche.mutation.stop.after.first.fail";
 
 	public static final boolean STOP_AFTER_FIRST_FAIL = getPropertyOrDefault(
-			STOP_AFTER_FIRST_FAIL_KEY, true);
+			STOP_AFTER_FIRST_FAIL_KEY, false);
 
 	private static final String DEFAULT_TIMEOUT_IN_SECONDS_KEY = "javalanche.mutation.default.timeout";
 
@@ -229,6 +155,45 @@ public class MutationProperties {
 	public static final boolean IGNORE_REMOVE_CALLS = getPropertyOrDefault(
 			IGNORE_REMOVE_CALLS_KEY, false);
 
+
+	public static final File TEST_MAP_FILE = new File(OUTPUT_DIR,
+			"testname-map.xml");
+
+	public static final File EXCLUDE_FILE = new File(OUTPUT_DIR, "exclude.txt");
+
+	public static final int BATCH_SIZE = 1;
+
+	private static final String SINGLE_TASK_MODE_KEY = "single.task.mode";
+
+	public static final boolean SINGLE_TASK_MODE = getPropertyOrDefault(
+			SINGLE_TASK_MODE_KEY, false);
+
+	public static final String CLASSES_TO_MUTATE_KEY = "javalanche.classes.to.mutate";
+
+	public static final File TEST_EXCLUDE_FILE = new File(OUTPUT_DIR,
+			"test-exclude.txt"); // TODO other dir
+
+	public static final String JUNIT4_MODE_KEY = "javalanche.junit4";
+
+	public static final boolean JUNIT4_MODE = getPropertyOrDefault(
+			JUNIT4_MODE_KEY, false);
+
+	public static final Object JUNIT4_TEST_ADAPTER = "junit.framework.JUnit4TestAdapter";
+
+	public static final String ECLIPSE_RUN_CONFIG_NAME_KEY = "javalanche.eclipse.run.configuration";
+	public static final String ECLIPSE_RUN_CONFIG_NAME = getPropertyOrDefault(
+			ECLIPSE_RUN_CONFIG_NAME_KEY, "no config");
+
+	public static final String CONNECTION_DATA_FILE = OUTPUT_DIR
+			+ "/connections.xml";
+
+	public static final String INHERITANCE_DATA_FILE = OUTPUT_DIR
+			+ "/inheritance.xml";
+
+	public static final String TEST_PERMUTATIONS_KEY = "javalanche.test.permutations";
+
+	public static final int TEST_PERMUTATIONS = getPropertyOrDefault(
+			TEST_PERMUTATIONS_KEY, 10);
 	public static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
 		return Integer.parseInt(result);
@@ -312,37 +277,4 @@ public class MutationProperties {
 		}
 	}
 
-	public static final File TEST_MAP_FILE = new File(OUTPUT_DIR,
-			"testname-map.xml");
-
-	public static final File EXCLUDE_FILE = new File(OUTPUT_DIR, "exclude.txt");
-
-	public static final int BATCH_SIZE = 1;
-
-	private static final String SINGLE_TASK_MODE_KEY = "single.task.mode";
-
-	public static final boolean SINGLE_TASK_MODE = getPropertyOrDefault(
-			SINGLE_TASK_MODE_KEY, false);
-
-	public static final String CLASSES_TO_MUTATE_KEY = "javalanche.classes.to.mutate";
-
-	public static final File TEST_EXCLUDE_FILE = new File(OUTPUT_DIR,
-			"test-exclude.txt"); // TODO other dir
-
-	public static final String JUNIT4_MODE_KEY = "javalanche.junit4";
-	
-	public static final boolean JUNIT4_MODE = getPropertyOrDefault(
-			JUNIT4_MODE_KEY, false);
-
-	public static final Object JUNIT4_TEST_ADAPTER = "junit.framework.JUnit4TestAdapter";
-
-	public static final String ECLIPSE_RUN_CONFIG_NAME_KEY = "javalanche.eclipse.run.configuration";
-	public static final String ECLIPSE_RUN_CONFIG_NAME = getPropertyOrDefault(
-			ECLIPSE_RUN_CONFIG_NAME_KEY, "no config");
-
-	public static final String CONNECTION_DATA_FILE = OUTPUT_DIR
-			+ "/connections.xml";
-
-	public static final String INHERITANCE_DATA_FILE = OUTPUT_DIR
-			+ "/inheritance.xml";
 }

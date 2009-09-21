@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
@@ -19,11 +20,11 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 public class DeleteTest<T> {
 
 	private static final String TEST_PREFIX = "test.test";
-
+	private Mutation m;
+	
 	@Test
 	public void testDeleteResult() {
-		Mutation m = new Mutation(TEST_PREFIX + " .Test", 1, 2,
-				MutationType.ARITHMETIC_REPLACE, false);
+		 setUp();
 		List<TestMessage> passing = Arrays.asList(new TestMessage(
 				"test.test.a", "pass", 3l));
 		List<TestMessage> failing = Arrays.asList(new TestMessage(
@@ -35,6 +36,7 @@ public class DeleteTest<T> {
 		m.setMutationResult(mutationTestResult);
 		QueryManager.saveMutation(m);
 		System.out.println(mutationTestResult.getId());
+		assertNotNull(mutationTestResult);
 		assertTrue(mutationTestResult.getId() != 0);
 		assertTrue(passing.get(0).getId() != 0);
 		assertTrue(failing.get(0).getId() != 0);
@@ -50,6 +52,16 @@ public class DeleteTest<T> {
 		expectDelete(errors.get(0).getId(), TestMessage.class);
 	}
 
+	@Before
+	public void setUp() {
+		m = new Mutation(TEST_PREFIX + " .Test", 1, 2,
+				MutationType.ARITHMETIC_REPLACE, false);
+		Mutation dbMutation = QueryManager.getMutationOrNull(m);
+		if (dbMutation != null) {
+			QueryManager.delete(dbMutation);
+		}
+	}
+
 	private <T> void expectDelete(Long id, Class<T> clazz) {
 		T objectById = QueryManager.getObjectById(id, clazz);
 		assertNull("Expected Object to be deleted ", objectById);
@@ -57,8 +69,7 @@ public class DeleteTest<T> {
 
 	@Test
 	public void testDeleteMutation() {
-		Mutation m = new Mutation(TEST_PREFIX + " .Test", 1, 2,
-				MutationType.ARITHMETIC_REPLACE, false);
+		setUp();
 		MutationTestResult mutationTestResult = new MutationTestResult();
 		m.setMutationResult(mutationTestResult);
 		QueryManager.saveMutation(m);
@@ -75,20 +86,17 @@ public class DeleteTest<T> {
 
 	@Test
 	public void testDeleteCoverageMutation() {
-		Mutation m = new Mutation(TEST_PREFIX + " .Test", 1, 2,
-				MutationType.ARITHMETIC_REPLACE, false);
+		 setUp();
 		MutationTestResult mutationTestResult = new MutationTestResult();
 		m.setMutationResult(mutationTestResult);
 		QueryManager.saveMutation(m);
 		TestName testName = new TestName(TEST_PREFIX + "Testa", TEST_PREFIX, 1l);
 		List<TestName> asList = Arrays.asList(testName);
 
-		MutationCoverage mutationCoverage = new MutationCoverage(m.getId(),
-				asList);
+		
 		QueryManager.save(testName);
-		QueryManager.save(mutationCoverage);
+		
 		assertTrue(mutationTestResult.getId() != 0);
-		assertTrue(mutationCoverage.getId() != 0);
 		assertTrue(testName.getId() != 0);
 
 
@@ -98,7 +106,6 @@ public class DeleteTest<T> {
 		MutationProperties.PROJECT_PREFIX = backup;
 		expectDelete(mutationTestResult.getId(), MutationTestResult.class);
 		expectDelete(testName.getId(), TestName.class);
-		expectDelete(mutationCoverage.getId(), MutationCoverage.class);
-
+		
 	}
 }

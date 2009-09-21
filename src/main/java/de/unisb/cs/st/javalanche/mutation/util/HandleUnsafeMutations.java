@@ -62,7 +62,7 @@ public class HandleUnsafeMutations {
 		Session s = sessionFactory.openSession();
 		Transaction tx = s.beginTransaction();
 		for (Mutation m : unsafes) {
-			Mutation dbMutation = QueryManager.getMutationOrNull(m, s, tx);
+			Mutation dbMutation = QueryManager.getMutationOrNull(m, s);
 			if (dbMutation != null) {
 //				if (dbMutation.getMutationResult() == null) {
 					logger.info("Setting default result for mutation "

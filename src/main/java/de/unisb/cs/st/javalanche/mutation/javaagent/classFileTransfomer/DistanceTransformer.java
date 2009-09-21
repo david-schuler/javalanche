@@ -100,7 +100,8 @@ public class DistanceTransformer implements ClassFileTransformer {
 		Runtime r = Runtime.getRuntime();
 		r.addShutdownHook(new Thread() {
 			public void run() {
-				XmlIo.toXML(data, MutationProperties.CONNECTION_DATA_FILE);
+				data.save();
+				
 				XmlIo.toXML(classes, MutationProperties.INHERITANCE_DATA_FILE);
 			}
 		});

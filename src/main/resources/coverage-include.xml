@@ -37,8 +37,7 @@
 		<property name="run.mutations.checker.file" value="-Dinvariant.checker.file=${invariant.checker.file}"/>
 		<property name="run.mutations.verbose.summary" value="-Dverbose.invariant.summary=false"/>
 		<property name="run.mutations.javalanche.invariant.mode" value="-Dinvariant.mode=INVARIANT"/>
-
-			<property name="run.mutations.trace.returns" value="-Djavalanche.trace.returns=true"/>
+		<property name="run.mutations.trace.returns" value="-Djavalanche.trace.returns=true"/>
 		
 	
 		<path id="run.mutations.classpath.add">
@@ -54,7 +53,13 @@
 	
 	
 	<target name="cleanCoverage" description="* Delete all data produced by the coverage tasks" depends="mutationDir">
-		<delete file="mutation-files/tracer/"/>
+		<delete dir="mutation-files/tracer/"/>
+	</target>
+	
+	
+	<target name="cleanTrace" description="* Delete the trace line coverage and return value data" depends="mutationDir">
+		<delete dir="mutation-files/tracer/line/"/>
+		<delete dir="mutation-files/tracer/data/"/>
 	</target>
 	
 	
@@ -88,6 +93,17 @@
 		</java>
 	</target>
 	
+	
+	
+	<target name="analyzeManual" description="">
+		<java classname="de.unisb.cs.st.javalanche.coverage.experiment.ManualResultsAnalyzer" maxmemory="${javalanche.maxmemory}" fork="true">
+		<jvmarg line="-Dmutation.package.prefix=${project.prefix}"/>	
+		<classpath>
+				<path refid="mutation.classpath" />
+		</classpath>
+
+		</java>
+	</target>
 
 
 </project>

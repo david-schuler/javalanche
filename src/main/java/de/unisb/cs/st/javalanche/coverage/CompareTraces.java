@@ -9,6 +9,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
@@ -34,9 +35,11 @@ public class CompareTraces {
 
 	public static void comparePermuted() {
 		File dir = new File(CoverageProperties.TRACE_RESULT_LINE_DIR);
+		logger.info("Total methods: " + getAllMethods());
 		String[] files = dir.list(new PermutatedFilter());
 		HashSet<String> diffComplete = new HashSet<String>();
 		int count = 0;
+		int excludePre = InstrumentExclude.numberOfExlusions();
 		for (String file : files) {
 			Set<String> differences = calculateDifferences(EnumSet.of(
 					Mode.LINE, Mode.DATA), "0", file);
@@ -44,41 +47,67 @@ public class CompareTraces {
 			int preValue = diffComplete.size();
 			diffComplete.addAll(differences);
 			logger.info("Added " + (diffComplete.size() - preValue)
-					+ " methods. Total methods now: " + diffComplete.size());
+					+ " methods. Total methods added: " + diffComplete.size()
+					+ " Total methods excluded: "
+					+ InstrumentExclude.numberOfExlusions());
 
 		}
-		System.out.println("Methods that have differences in at least one run:"
-				+ diffComplete);
+		 System.out.println("Methods that have differences in at least one run:"
+				+ diffComplete.size());
+		System.out.println("Added exclusions for this run: "
+				+ (InstrumentExclude.numberOfExlusions() - excludePre));
 		InstrumentExclude.save();
 		XmlIo.toXML(diffComplete, CoverageProperties.TRACE_DIFFERENCES_FILE);
 	}
 
+	private static int getAllMethods() {
+		Map<String, Map<String, Map<Integer, Integer>>> trace1 = CoverageTraceUtil
+				.loadLineCoverageTraceCached("0");
+		Map<String, Map<String, Map<Integer, Integer>>> trace2 = CoverageTraceUtil
+				.loadDataCoverageTraceCached("0");
+		Set<String> methods = new HashSet<String>();
+		addMethods(trace1, methods);
+		addMethods(trace2, methods);
+		return methods.size();
+	}
+
+	private static void addMethods(
+			Map<String, Map<String, Map<Integer, Integer>>> trace1,
+			Set<String> methods) {
+		Set<Entry<String, Map<String, Map<Integer, Integer>>>> entrySet = trace1
+				.entrySet();
+		for (Entry<String, Map<String, Map<Integer, Integer>>> entry : entrySet) {
+			Set<String> keySet = entry.getValue().keySet();
+			logger.debug(entry.getKey() + " Methods " + keySet.size());
+			methods.addAll(keySet);
+		}
+	}
+
 	private static Set<String> calculateDifferences(Set<Mode> modes,
 			String id1, String id2) {
-		// if (new File(TracerConstants.TRACE_DIFFERENCES_FILE).exists()) {
-		// differences = (Set<String>)
-		// XmlIo.get(TracerConstants.TRACE_DIFFERENCES_FILE);
-		// }
 		Set<String> allDifferences = new HashSet<String>();
-
 		System.out.println(id1 + " VS. " + id2 + ": ");
 		if (modes.contains(Mode.LINE)) {
 			logger.info("Comparing lines");
-			Map<String, Map<String, Map<Integer, Integer>>> trace1 = loadLineCoverageTrace(id1);
-			Map<String, Map<String, Map<Integer, Integer>>> trace2 = loadLineCoverageTrace(id2);
+			Map<String, Map<String, Map<Integer, Integer>>> trace1 = CoverageTraceUtil
+					.loadLineCoverageTraceCached(id1);
+			Map<String, Map<String, Map<Integer, Integer>>> trace2 = CoverageTraceUtil
+					.loadLineCoverageTraceCached(id2);
 			// logger.info("Line data 1" + trace1);
 			// logger.info("Line data 2" + trace2);
 			Set<String> differences = compare(trace1, trace2);
 			allDifferences.addAll(differences);
-			logger.info("Differences " + differences);
+			// logger.info("Differences " + differences);
 			for (String string : differences) {
 				InstrumentExclude.addExcludeLine(string);
 			}
 		}
 		if (modes.contains(Mode.DATA)) {
 			logger.info("Comparing data");
-			Map<String, Map<String, Map<Integer, Integer>>> trace1 = loadDataCoverageTrace(id1);
-			Map<String, Map<String, Map<Integer, Integer>>> trace2 = loadDataCoverageTrace(id2);
+			Map<String, Map<String, Map<Integer, Integer>>> trace1 = CoverageTraceUtil
+					.loadDataCoverageTraceCached(id1);
+			Map<String, Map<String, Map<Integer, Integer>>> trace2 = CoverageTraceUtil
+					.loadDataCoverageTraceCached(id2);
 			// logger.info("Return data 1" + trace1);
 			// logger.info("Return data 2" + trace2);
 			Set<String> differences = compare(trace1, trace2);
@@ -104,30 +133,11 @@ public class CompareTraces {
 			Map<String, Map<Integer, Integer>> testMap2 = map2.get(testName);
 			Collection<String> diff = CoverageTraceUtil.getDifferentMethods(
 					testMap1, testMap2);
+			if (diff.size() > 0) {
+				logger.info(diff.size() + " difference for test " + testName);
+			}
 			differences.addAll(diff);
-			// for (String className : testMap1.keySet()) {
-			// Map<Integer, Integer> valueMap1 = testMap1.get(className);
-			// Map<Integer, Integer> valueMap2 = testMap2.get(className);
-			// if (valueMap2 == null && valueMap1 != null) {
-			// foundDifference = true;
-			// logger.info("Map2 is null for test: " + testName + "  - "
-			// + className);
-			// }
-			// for (Integer valueKey : valueMap1.keySet()) {
-			// if (!valueMap1.get(valueKey)
-			// .equals(valueMap2.get(valueKey))) {
-			// foundDifference = true;
-			// logger.debug("Difference for test " + testName + "  "
-			// + className + " key " + valueKey + " Value1: "
-			// + valueMap1.get(valueKey) + " Value2:  "
-			// + valueMap2.get(valueKey));
-			// break;
-			// }
-			// }
-			// if (foundDifference) {
-			// differences.add(className);
-			// }
-			// }
+
 		}
 		return differences;
 	}

@@ -1,13 +1,51 @@
 package de.unisb.cs.st.javalanche.coverage;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 public class CoverageTraceUtil {
 
-	
+	private static final Collection<String> EMPTY_COLLECTION = new ArrayList<String>();
+	private static Logger logger = Logger.getLogger(CoverageTraceUtil.class);
+
+	public static Collection<String> getDifferentMethodsForTests(
+			Map<String, Map<String, Map<Integer, Integer>>> data1T,
+			Map<String, Map<String, Map<Integer, Integer>>> data2T) {
+		Set<String> differences = new HashSet<String>();
+		Set<String> keySet = data1T.keySet();
+		if (data1T == null || data2T == null) {
+			return EMPTY_COLLECTION;
+		}
+		for (String testKey : keySet) {
+			if (data2T.containsKey(testKey)) {
+				logger.info("Checking Test " + testKey);
+				Map<String, Map<Integer, Integer>> data1 = data1T.get(testKey);
+				Map<String, Map<Integer, Integer>> data2 = data2T.get(testKey);
+				Set<String> allMethods = getAllMethods(data1, data2);
+				for (String key : allMethods) {
+					boolean difference = false;
+					if (data1.containsKey(key) && data2.containsKey(key)) {
+						Map<Integer, Integer> classData1 = data1.get(key);
+						Map<Integer, Integer> classData2 = data2.get(key);
+						difference = compareLines(classData1, classData2);
+					} else {
+						difference = true;
+					}
+					if (difference) {
+						differences.add(key);
+					}
+				}
+			}
+		}
+		return differences;
+	}
+
 	public static Collection<String> getDifferentMethods(
 			Map<String, Map<Integer, Integer>> data1,
 			Map<String, Map<Integer, Integer>> data2) {
@@ -66,26 +104,86 @@ public class CoverageTraceUtil {
 		Set<String> allTests = new HashSet<String>();
 		allTests.addAll(data1.keySet());
 		allTests.addAll(data2.keySet());
-		// // logger.info("Data1: " + data1);
-		// // logger.info("Data2: " + data2);
-		// allClasses.addAll(data1.keySet());
-		// allClasses.addAll(data2.keySet());
-		// Multimap<String, String> methods = new HashMultimap<String,
-		// String>();
-		// for (String className : allClasses) {
-		// Map<String, Map<Integer, Integer>> map1 = data1.get(className);
-		// if (map1 != null) {
-		// for (String method : map1.keySet()) {
-		// methods.put(className, method);
-		// }
-		// }
-		// Map<String, Map<Integer, Integer>> map2 = data2.get(className);
-		// if (map2 != null) {
-		// for (String method : map2.keySet()) {
-		// methods.put(className, method);
-		// }
-		// }
-		// }
 		return allTests;
 	}
+
+	public static Collection<String> getDifferentReturnMethodsForTests(
+			Map<String, Map<String, Map<Integer, Integer>>> data1T,
+			Map<String, Map<String, Map<Integer, Integer>>> data2T) {
+		Set<String> differences = new HashSet<String>();
+		Set<String> keySet = data1T.keySet();
+		if (data1T == null || data2T == null) {
+			return EMPTY_COLLECTION;
+		}
+		for (String testKey : keySet) {
+			if (data2T.containsKey(testKey)) {
+				logger.info("Checking Test " + testKey);
+				Map<String, Map<Integer, Integer>> data1 = data1T.get(testKey);
+				Map<String, Map<Integer, Integer>> data2 = data2T.get(testKey);
+				Set<String> allMethods = getAllMethods(data1, data2);
+				for (String key : allMethods) {
+					boolean difference = false;
+					if (data1.containsKey(key) && data2.containsKey(key)) {
+						Map<Integer, Integer> classData1 = data1.get(key);
+						Map<Integer, Integer> classData2 = data2.get(key);
+						difference = compareReturns(classData1, classData2);
+					} else {
+						difference = true;
+					}
+					if (difference) {
+						differences.add(key);
+					}
+				}
+			}
+		}
+		return differences;
+	}
+
+	private static boolean compareReturns(Map<Integer, Integer> returnData1,
+			Map<Integer, Integer> returnData2) {
+		Set<Integer> allReturns = new HashSet<Integer>();
+		allReturns.addAll(returnData1.keySet());
+		allReturns.addAll(returnData2.keySet());
+		for (Integer returnHash : allReturns) {
+			if (returnData1.containsKey(returnHash)
+					&& returnData2.containsKey(returnHash)) {
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static Map<String, Map<String, Map<String, Map<Integer, Integer>>>> lineCache = new HashMap<String, Map<String, Map<String, Map<Integer, Integer>>>>();
+	private static Map<String, Map<String, Map<String, Map<Integer, Integer>>>> dataCache = new HashMap<String, Map<String, Map<String, Map<Integer, Integer>>>>();
+
+	public static Map<String, Map<String, Map<Integer, Integer>>> loadLineCoverageTraceCached(
+			String id) {
+		if ("0".equals(id)) {
+			if (lineCache.containsKey(id)) {
+				return lineCache.get(id);
+			}
+			Map<String, Map<String, Map<Integer, Integer>>> result = CoverageAnalyzer
+					.loadLineCoverageTrace(id);
+			lineCache.put(id, result);
+			return result;
+		}
+		return CoverageAnalyzer.loadLineCoverageTrace(id);
+
+	}
+
+	public static Map<String, Map<String, Map<Integer, Integer>>> loadDataCoverageTraceCached(
+			String id) {
+		if ("0".equals(id)) {
+			if (dataCache.containsKey(id)) {
+				return dataCache.get(id);
+			}
+			Map<String, Map<String, Map<Integer, Integer>>> result = CoverageAnalyzer
+					.loadDataCoverageTrace(id);
+			dataCache.put(id, result);
+			return result;
+		}
+		return CoverageAnalyzer.loadDataCoverageTrace(id);
+	}
+
 }

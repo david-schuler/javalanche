@@ -25,6 +25,7 @@
 	</path>
 	
 	<import file="./coverage-include.xml"/>
+	<import file="./mutation-add-tasks.xml"/>
 	
 	<target name="cleanJavalanche" description="* Delete all files produced by javalanche.">
 		<delete dir="${javalanche.mutation.output.dir}"/>

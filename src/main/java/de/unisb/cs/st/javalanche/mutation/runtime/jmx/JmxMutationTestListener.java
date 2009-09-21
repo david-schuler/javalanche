@@ -35,15 +35,18 @@ public class JmxMutationTestListener implements MutationTestListener {
 	}
 
 	private static int getRunNumber() {
+		int result = -1;
 		String run = MutationProperties.MUTATION_FILE_NAME;
 		int start = run.lastIndexOf('-') + 1;
 		int end = run.lastIndexOf(".txt");
 		if (start > -1 && end > 0) {
 			String numberString = run.substring(start, end);
-			int result = Integer.parseInt(numberString);
-			return result;
+			try {
+				result = Integer.parseInt(numberString);
+			} catch (NumberFormatException e) {
+			}
 		}
-		return -1;
+		return result;
 	}
 
 	public void testEnd(String testName) {

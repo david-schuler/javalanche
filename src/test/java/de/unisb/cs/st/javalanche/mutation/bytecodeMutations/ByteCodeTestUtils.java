@@ -2,7 +2,12 @@ package de.unisb.cs.st.javalanche.mutation.bytecodeMutations;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -16,6 +21,7 @@ import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibil
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverage;
+import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestName;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
@@ -24,12 +30,12 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
 
 /**
- *
+ * 
  * Class contains several helper methods for UnitTests that test the different
  * mutations.
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 // Because of hibernate
 @SuppressWarnings("unchecked")
@@ -44,22 +50,13 @@ public class ByteCodeTestUtils {
 
 	public static void deleteCoverageData(String className) {
 
-		List<Mutation> mutationsForClass = QueryManager.getMutationsForClass(className);
+		List<Mutation> mutationsForClass = QueryManager
+				.getMutationsForClass(className);
 		List<Long> ids = new ArrayList<Long>();
 		for (Mutation mutation : mutationsForClass) {
 			ids.add(mutation.getId());
 		}
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		Query query = session
-				.createQuery("from MutationCoverage WHERE mutationId IN (:mutation_ids) ");
-		query.setParameterList("mutation_ids", ids);
-		List l = query.list();
-		for (Object o : l) {
-			session.delete(o);
-		}
-		tx.commit();
-		session.close();
+		// TODO
 	}
 
 	public static void generateTestDataInDB(String classFileName,
@@ -71,7 +68,6 @@ public class ByteCodeTestUtils {
 		ft.process(collectorTransformer);
 		mpc.toDB();
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	public static void deleteTestMutationResult(String className) {
@@ -123,21 +119,15 @@ public class ByteCodeTestUtils {
 
 	public static void generateCoverageData(String className,
 			String[] testCaseNames, int[] linenumbers) {
+
+		Set<String> tests = new HashSet<String>(Arrays.asList(testCaseNames));
 		List<Mutation> mutations = QueryManager.getMutationsForClass(className);
-		List<TestName> testNames = new ArrayList<TestName>();
-		for (String testCaseName : testCaseNames) {
-			TestName tm = QueryManager.getTestName(testCaseName);
-			if (tm == null) {
-				tm = new TestName(testCaseName);
-				QueryManager.save(tm);
-			}
-			testNames.add(tm);
+		Map<Long, Set<String>> coverageData = new HashMap<Long, Set<String>>();
+		for (Mutation mutation : mutations) {
+			coverageData.put(mutation.getId(), tests);
 		}
-		for (Mutation m : mutations) {
-			MutationCoverage mutationCoverage = new MutationCoverage(m.getId(),
-					testNames);
-			QueryManager.save(mutationCoverage);
-		}
+		MutationCoverageFile.saveCoverageData(coverageData);
+		MutationCoverageFile.reset();
 	}
 
 	public static String[] generateTestCaseNames(String testCaseClassName,
@@ -163,7 +153,7 @@ public class ByteCodeTestUtils {
 
 	/**
 	 * Tests if exactly one testMethod failed because of the mutation.
-	 *
+	 * 
 	 * @param testClassName
 	 *            The class that test the mutated class.
 	 */
@@ -215,7 +205,7 @@ public class ByteCodeTestUtils {
 		}
 		File file = new File(DEFAULT_OUTPUT_FILE);
 		Io.writeFile(sb.toString(), file);
-		MutationProperties.MUTATION_FILE_NAME=  file.getAbsolutePath();
+		MutationProperties.MUTATION_FILE_NAME = file.getAbsolutePath();
 		MutationForRun.getInstance().reinit();
 	}
 

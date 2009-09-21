@@ -7,11 +7,11 @@ import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckMethodAdapter;
+
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.ArithmeticReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.RemoveMethodCallsMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.RicMethodAdapter;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 
 public class MutationsClassAdapter extends ClassAdapter {
 
@@ -24,8 +24,6 @@ public class MutationsClassAdapter extends ClassAdapter {
 	private Map<Integer, Integer> negatePossibilities = new HashMap<Integer, Integer>();
 
 	private Map<Integer, Integer> removeCallsPossibilities = new HashMap<Integer, Integer>();
-
-	private static final boolean DEBUG = MutationProperties.DEBUG;
 
 	public MutationsClassAdapter(ClassVisitor cv) {
 		super(cv);
@@ -42,9 +40,7 @@ public class MutationsClassAdapter extends ClassAdapter {
 			String signature, final String[] exceptions) {
 		MethodVisitor mv = super.visitMethod(access, name, desc, signature,
 				exceptions);
-		if (DEBUG) {
-			mv = new CheckMethodAdapter(mv);
-		}
+		mv = new CheckMethodAdapter(mv);
 		mv = new RicMethodAdapter(mv, className, name, ricPossibilities);
 		mv = new NegateJumpsMethodAdapter(mv, className, name,
 				negatePossibilities);

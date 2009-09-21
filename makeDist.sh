@@ -20,6 +20,7 @@ mkdir -p ${DIST}/src/main/resources/
 cp src/main/resources/mutation-build.xml ${DIST}/src/main/resources/
 cp src/main/resources/hibernate.cfg.xml ${DIST}/src/main/resources/
 cp src/main/resources/log4j.properties ${DIST}/src/main/resources/
+cp src/main/resources/mutation-add-tasks.xml ${DIST}/src/main/resources/
 cp src/main/resources/coverage-include.xml ${DIST}/src/main/resources/
 cp ../adabu2-check-invariants/src/main/resources/invariant-build.xml  ${DIST}/src/main/resources/
 
@@ -49,12 +50,13 @@ if [  $1 ]; then
 		TAR=javalanche-${VERSION}-bin.tar.gz
 		tar -cvzf ${TAR} javalanche-${VERSION}
 		cp ${TAR} src/site/builds/
-		
 		SRCDIR=target/javalanche-src/
 		mkdir ${SRCDIR}
 		cp -r src ${SRCDIR}
 		cp pom.xml ${SRCDIR}
 		cp mavenAnt.xml ${SRCDIR}
+		cp src/main/resources/COPYING ${SRCDIR}
+		cp src/main/resources/COPYING.LESSER ${SRCDIR}
 		rm  ${SRCDIR}/src/dist*
 		rm -rf ${SRCDIR}/src/attic
 		rm -rf ${SRCDIR}/src/site
@@ -62,9 +64,9 @@ if [  $1 ]; then
 		find ${SRCDIR} -name ".svn" | xargs rm -rf 
 		cd target
 		tar -cvzf javalanche-${VERSION}-src.tar.gz  javalanche-src/     
-		cp ${TAR} src/site/resources/builds/
 		cd ..
-		rsync -r target/site/ ~/Sites/st_chair/javalanche/
+		cp ${TAR} src/site/resources/builds/
+#		rsync -r target/site/ ~/Sites/st_chair/javalanche/
 	fi
 fi
 

@@ -11,6 +11,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.google.common.base.Join;
+
 /**
  * 
  * Class that stores a mutation. It stores its type, where it is (was) applied
@@ -58,7 +60,7 @@ public class Mutation implements Serializable {
 	private String className;
 
 	/**
-	 * The linenumber of the mutation, -1 is used when no linenumber is
+	 * The line number of the mutation, -1 is used when no linenumber is
 	 * available.
 	 */
 	private int lineNumber;
@@ -71,7 +73,7 @@ public class Mutation implements Serializable {
 	private MutationTestResult mutationResult;
 
 	private boolean classInit;
-	
+
 	private String addInfo;
 
 	/**
@@ -330,4 +332,9 @@ public class Mutation implements Serializable {
 		return addInfo;
 	}
 
+	public String getCsvString() {
+		String[] entries = { id + "", className, lineNumber + "",
+				mutationForLine + "", mutationType.toString() };
+		return Join.join(",", entries);
+	}
 }

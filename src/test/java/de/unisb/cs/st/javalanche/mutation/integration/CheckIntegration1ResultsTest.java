@@ -18,13 +18,14 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 /**
  * Class checks the results of the integration test. The integration test is a
- * seperate project that is analyzed and executed by the mutation testsing
+ * separate project that is analyzed and executed by the mutation testing
  * framework. (see the corresponding build files in the
  * integrationTestMutation).
  * 
  * @author David Schuler
  * 
  */
+
 public class CheckIntegration1ResultsTest {
 
 	private static final String PACKAGE_NAME = "org.integrationtest1.";
@@ -34,7 +35,7 @@ public class CheckIntegration1ResultsTest {
 
 	}
 
-	@Test
+	// @Test
 	public void checkResultsAllCoveredAndKilled() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -51,7 +52,7 @@ public class CheckIntegration1ResultsTest {
 		session.close();
 	}
 
-	@Test
+	// @Test
 	public void checkResultsAllInOneLine() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -67,7 +68,7 @@ public class CheckIntegration1ResultsTest {
 		session.close();
 	}
 
-	@Test
+	// @Test
 	public void checkResultsAllCoveredNotKilled() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -88,7 +89,7 @@ public class CheckIntegration1ResultsTest {
 		session.close();
 	}
 
-	@Test
+	// @Test
 	public void checkResultsMutationCausesEndlessLoopTest() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();

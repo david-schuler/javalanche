@@ -107,7 +107,7 @@ public class MutationMakeFileGenerator {
 	}
 
 	public static File[] getTaskFiles() {
-		File dir = new File(MutationProperties.RESULT_DIR);
+		File dir = new File(MutationProperties.OUTPUT_DIR);
 		logger.info("Searching for files in directory" + dir);
 		logger.info("Seraching for files starting with: "
 				+ (MutationTaskCreator.MUTATION_TASK_PROJECT_FILE_PREFIX));

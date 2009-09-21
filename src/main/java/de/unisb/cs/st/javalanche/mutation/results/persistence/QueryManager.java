@@ -117,7 +117,7 @@ public class QueryManager {
 	 * @return The Mutation from the database or null if it is not contained.
 	 */
 	public static Mutation getMutationOrNull(Mutation mutation,
-			Session session, Transaction tx) {
+			Session session) {
 		Mutation m = null;
 		try {
 			if (mutation.getId() != null) {
@@ -419,7 +419,10 @@ public class QueryManager {
 				.createQuery("FROM Mutation m  WHERE m.id = (:ids)");
 		query.setParameter("ids", id);
 		List results = query.list();
-		Mutation m = (Mutation) results.get(0);
+		Mutation m = null;
+		if (results.size() > 0) {
+			m = (Mutation) results.get(0);
+		}
 		// Session.
 		tx.commit();
 		session.close();
@@ -479,7 +482,7 @@ public class QueryManager {
 		Transaction tx = session.beginTransaction();
 		int counter = 0;
 		for (Mutation mutation : mutationsToSave) {
-			if (getMutationOrNull(mutation, session, tx) != null) {
+			if (getMutationOrNull(mutation, session) != null) {
 				logger.debug("Not saving mutation. Mutation already in db "
 						+ mutation);
 			} else {

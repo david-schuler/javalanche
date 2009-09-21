@@ -1,8 +1,10 @@
 package de.unisb.cs.st.javalanche.coverage;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+//import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
@@ -14,38 +16,22 @@ public class Tracer {
 	private static Logger logger = Logger.getLogger(Tracer.class);
 
 	private static Tracer trace = null;
-	private HashMap<String, HashMap<Integer, Integer>> classMap = null;
-	private HashMap<String, HashMap<Integer, Integer>> valueMap = null;
-	private HashMap<String, Long> profilerMap = null;
-	// private HashMap<String, Integer> idMap = null;
 
-	private boolean isLineCoverageDeactivated = false;
-	private boolean isDataCoverageDeactivated = false;
+	// private Map<String, Map<Integer, Integer>> classMap = null;
+	// private Map<String, Map<Integer, Integer>> valueMap = null;
+	// private Map<String, Long> profilerMap = null;
+	// private HashMap<String, Integer> idMap = null;
+	// private boolean isLineCoverageDeactivated = false;
+	// private boolean isDataCoverageDeactivated = false;
+
+	public AtomicBoolean tracingDeacivated = new AtomicBoolean();
 
 	private Tracer() {
-	}
-
-	private void setMap() {
-		if (classMap == null) {
-			classMap = CoverageMutationListener.getLineCoverageMap();
-		}
-		if (valueMap == null) {
-			valueMap = CoverageMutationListener.getValueMap();
-		}
-		if (profilerMap == null) {
-			profilerMap = CoverageMutationListener.getProfilerMap();
-		}
-
-		/*
-		 * if (idMap == null) { idMap = TracerTestListener.getIdMap(); }
-		 */
-
 	}
 
 	public static Tracer getInstance() {
 		if (trace == null) {
 			trace = new Tracer();
-			trace.setMap();
 		}
 		return trace;
 	}
@@ -57,23 +43,26 @@ public class Tracer {
 			boolean instrumentLine, boolean instrumentData) {
 		// Integer key = getId(className + "@" + methodName);
 		String key = className + "@" + methodName;
+		ConcurrentMap<String, ConcurrentMap<Integer, Integer>> classMap = CoverageMutationListener.classMapRef
+				.get();
 		if (instrumentLine && !classMap.containsKey(key)) {
-			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>(
-					(int) (1024 * 1.33));
+			ConcurrentMap<Integer, Integer> lineMap = new ConcurrentHashMap<Integer, Integer>();
 			classMap.put(key, lineMap);
 
 		}
+		ConcurrentMap<String, ConcurrentMap<Integer, Integer>> valueMap = CoverageMutationListener.valueMapRef
+				.get();
 		if (instrumentData && !valueMap.containsKey(key)) {
-			valueMap.put(key, new HashMap<Integer, Integer>());
+			valueMap.put(key, new ConcurrentHashMap<Integer, Integer>());
 		}
 
-		if (CoverageMutationListener.getMutationId() == 0) {
-			if (!profilerMap.containsKey(key)) {
-				profilerMap.put(key, 1L);
-			} else {
-				profilerMap.put(key, 1L + profilerMap.get(key));
-			}
-		}
+		// if (CoverageMutationListener.getMutationId() == 0) {
+		// if (!profilerMap.containsKey(key)) {
+		// profilerMap.put(key, 1L);
+		// } else {
+		// profilerMap.put(key, 1L + profilerMap.get(key));
+		// }
+		// }
 	}
 
 	/*
@@ -86,9 +75,8 @@ public class Tracer {
 	/*
 	 * This function is executed for every LineNumber
 	 */
-	public void logLineNumber(int line, String className,
-			String methodName) {
-		if (isLineCoverageDeactivated) {
+	public void logLineNumber(int line, String className, String methodName) {
+		if (tracingDeacivated.get()) {
 			// logger.info("Excluding line " + line + "  " + className + "."
 			// + methodName);
 			return;
@@ -96,13 +84,18 @@ public class Tracer {
 		// Integer key = getId(className + "@" + methodName);
 		// logger.info("Line " + line + "  " + className + "." + methodName);
 		String key = className + "@" + methodName;
+		ConcurrentMap<String, ConcurrentMap<Integer, Integer>> classMap = CoverageMutationListener.classMapRef
+				.get();
 		if (!classMap.containsKey(key)) {
-			HashMap<Integer, Integer> lineMap = new HashMap<Integer, Integer>(
-					(int) (1024 * 1.33));
-			classMap.put(key, lineMap);
+			ConcurrentMap<Integer, Integer> lineMap = new ConcurrentHashMap<Integer, Integer>();
+			ConcurrentMap<Integer, Integer> putIfAbsent = classMap.putIfAbsent(
+					key, lineMap);
+			if (putIfAbsent != null) {
+				lineMap = putIfAbsent;
+			}
 		}
-		HashMap<Integer, Integer> lineMap = classMap.get(key);
-		Integer intline = new Integer(line);
+		Map<Integer, Integer> lineMap = classMap.get(key);
+		Integer intline = Integer.valueOf(line);
 		if (!lineMap.containsKey(intline)) {
 			lineMap.put(intline, 1);
 		} else {
@@ -131,8 +124,9 @@ public class Tracer {
 	}
 
 	public void logAReturn(Object value, String className, String methodName) {
-		if (InstrumentExclude.shouldExcludeReturns(className, methodName)) {
-			return; // TODO handle nulls
+		if (InstrumentExclude.shouldExcludeReturns(className, methodName)
+				|| tracingDeacivated.get()) {
+			return;
 		}
 		if (value == null) {
 			logData(0, className, methodName);
@@ -140,16 +134,18 @@ public class Tracer {
 		}
 		StringBuilder tmp = null;
 		try {
-			setLineCoverageDeactivated(true);
+			// setLineCoverageDeactivated(true);
+			tracingDeacivated.set(true);
 			tmp = new StringBuilder(value.toString());
 		} catch (Throwable t) {
 			InstrumentExclude.addExcludeReturn(className, methodName);
 			logger.warn(
 					"To string for return object throws an exception. Class: "
 							+ className + " MethodName: " + methodName, t);
+			InstrumentExclude.save();
 			return;
 		} finally {
-			setLineCoverageDeactivated(false);
+			tracingDeacivated.set(false);
 		}
 		int index = 0;
 		int position = 0;
@@ -177,16 +173,15 @@ public class Tracer {
 		// }
 	}
 
-	private void logData(int value, String className,
-			String methodName) {
-		if (isDataCoverageDeactivated) {
+	private void logData(int value, String className, String methodName) {
+		if (InstrumentExclude.shouldExcludeReturns(className, methodName)
+				|| tracingDeacivated.get()) {
 			return;
 		}
-
-		// Integer key = getId(className + "@" + methodName);
 		String key = className + "@" + methodName;
-		HashMap<Integer, Integer> tmpMap = valueMap.get(key);
-
+		ConcurrentMap<String, ConcurrentMap<Integer, Integer>> valueMap = CoverageMutationListener.valueMapRef
+				.get();
+		Map<Integer, Integer> tmpMap = valueMap.get(key);
 		if (tmpMap == null) {
 			// logger.warn("Not logging return ");
 			return;
@@ -200,28 +195,18 @@ public class Tracer {
 		}
 	}
 
+	public void deactivateTrace() {
+		tracingDeacivated.set(true);
+	}
+
+	public void activateTrace() {
+		tracingDeacivated.set(false);
+	}
+
 	/*
 	 * private Integer getId(String key) { if (idMap.containsKey(key)) { return
 	 * idMap.get(key); } else { int id = idMap.size() + 1; idMap.put(key, id);
 	 * return id; } }
 	 */
-
-	 boolean isLineCoverageDeactivated() {
-		return isLineCoverageDeactivated;
-	}
-
-	 boolean isDataCoverageDeactivated() {
-		return isDataCoverageDeactivated;
-	}
-
-	 void setLineCoverageDeactivated(
-			boolean isLineCoverageDeactivated) {
-		this.isLineCoverageDeactivated = isLineCoverageDeactivated;
-	}
-
-	 void setDataCoverageDeactivated(
-			boolean isDataCoverageDeactivated) {
-		this.isDataCoverageDeactivated = isDataCoverageDeactivated;
-	}
 
 }

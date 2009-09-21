@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintStream;
@@ -135,8 +136,6 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 
 	private int outcount;
 
-
-
 	private static HashSet<String> loadDifferences() {
 		if (new File(CoverageProperties.TRACE_DIFFERENCES_FILE).exists()) {
 			return XmlIo.get(CoverageProperties.TRACE_DIFFERENCES_FILE);
@@ -164,7 +163,18 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 
 		File dir = new File(path);
 		logger.debug("Loading from " + dir);
-		String[] tests = dir.list();
+		if (!dir.exists()) {
+			logger.warn("No files for mutation: " + dir);
+			return null;
+		}
+		
+		String[] tests = dir.list(new FilenameFilter() {
+
+			public boolean accept(File dir, String name) {
+				return name.endsWith("gz");
+			}
+
+		});
 
 		int numClasses, numLines;
 		String className;
@@ -174,22 +184,22 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		Map<Integer, Integer> lineMap;
 
 		for (String test : tests) {
-			try {
+			String fileName = path + test;
+				try {
 				ois = new ObjectInputStream(new BufferedInputStream(
-						new GZIPInputStream(new FileInputStream(path + test))));
+						new GZIPInputStream(new FileInputStream(fileName))));
 				numClasses = ois.readInt();
-				// logger.info("Number of classes " + numClasses);
 				classMap = new HashMap<String, Map<Integer, Integer>>();
 				for (int i = 0; i < numClasses; i++) {
+					
 					className = ois.readUTF();
+					
 					numLines = ois.readInt();
 					lineMap = new HashMap<Integer, Integer>();
 					for (int j = 0; j < numLines; j++) {
 						lineMap.put(ois.readInt(), ois.readInt());
 					}
 					classMap.put(className, lineMap);
-					// logger.info("Putting entry " + className + " = " +
-					// lineMap);
 				}
 				String key = test;
 				if (test.endsWith(".gz")) {
@@ -198,7 +208,8 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 				map.put(key, classMap);
 				ois.close();
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new RuntimeException("Error reading trace. File name "
+						+ fileName, e);
 			}
 		}
 		return map;
