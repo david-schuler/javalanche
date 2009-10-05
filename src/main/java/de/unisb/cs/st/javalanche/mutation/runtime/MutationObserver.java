@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
 /**
@@ -82,6 +83,11 @@ public class MutationObserver implements MutationTestListener {
 
 	private static long time;
 
+	/**
+	 * Contains all mutations that are reported to have been applied.
+	 */
+	private final static Collection<Mutation> appliedMutations = new HashSet<Mutation>();
+
 	public static final int LIMIT = MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS * 1000;
 
 	/**
@@ -119,6 +125,9 @@ public class MutationObserver implements MutationTestListener {
 		}
 	}
 
+	public static void mutationApplied(Mutation m) {
+		appliedMutations.add(m);
+	}
 	/**
 	 * Returns a summary for all collected test outcomes and writes these to a
 	 * file if a property for the file name was set.
@@ -127,7 +136,7 @@ public class MutationObserver implements MutationTestListener {
 	 */
 	public static String summary(boolean finishedNormal) {
 		RunResult runResult = new RunResult(reportedMutations,
-				touchedMutations, MutationForRun.getAppliedMutations(),
+				touchedMutations, appliedMutations,
 				finishedNormal);
 		return runResult.toString();
 	}
@@ -199,6 +208,45 @@ public class MutationObserver implements MutationTestListener {
 	 */
 	public void testStart(String testName) {
 		actualTestCase.set(testName);
+	}
+
+	/**
+	 * Called at the end of mutation testing. Prints a message, and an error
+	 * message if one or more mutations where not applied.
+	 * 
+	 */
+	// TODO refactor.
+	public static void reportAppliedMutations() {
+		List<Mutation> notApplied = new ArrayList<Mutation>();
+		List<Mutation> mutations = MutationForRun.getFromDefaultLocation()
+				.getMutations();
+		int applied = 0;
+		boolean showMutations = mutations.size() < 5;
+		List<Long> appliedIds = new ArrayList<Long>();
+		for (Mutation m : appliedMutations) {
+			appliedIds.add(m.getId());
+		}
+		for (Mutation m : mutations) {
+			if (appliedIds.contains(m.getId())) {
+				applied++;
+				if (showMutations) {
+					logger.info("Applied Mutation: "
+							+ QueryManager.mutationToShortString(m));
+				}
+			} else {
+				notApplied.add(m);
+			}
+		}
+		logger.info(applied + " Mutations out of " + mutations.size()
+				+ " where applied to bytecode");
+		if (applied < mutations.size() || notApplied.size() > 0) {
+			logger.error("Not all mutations where applied to bytecode");
+			logger.error(appliedMutations);
+			logger.error(mutations);
+			for (Mutation mutation : notApplied) {
+				logger.warn("Mutation not applied " + mutation.getId());
+			}
+		}
 	}
 
 }

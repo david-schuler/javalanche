@@ -18,9 +18,11 @@
 */
 package de.unisb.cs.st.javalanche.mutation.results.persistence;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +41,7 @@ import org.hibernate.Transaction;
 
 import de.unisb.cs.st.ds.util.Formater;
 import de.unisb.cs.st.ds.util.Util;
+import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverage;
@@ -495,7 +498,7 @@ public class QueryManager {
 		return mmutation;
 	}
 
-	public static void saveMutations(List<Mutation> mutationsToSave) {
+	public static void saveMutations(Collection<Mutation> mutationsToSave) {
 		Session session = openSession();
 		Transaction tx = session.beginTransaction();
 		int counter = 0;
@@ -510,7 +513,7 @@ public class QueryManager {
 					session.clear();
 				}
 				try {
-					logger.info(counter + ": Trying to save mutation :"
+					logger.debug(counter + ": Trying to save mutation :"
 							+ mutation);
 					session.save(mutation);
 				} catch (Exception e) {
@@ -1155,6 +1158,27 @@ public class QueryManager {
 		}
 		tx.commit();
 		session.close();
+	}
+
+	/**
+	 * Reads a list of mutation ids from a file and fetches the corresponding
+	 * mutations from the database.
+	 * 
+	 * @param file
+	 *            the file to read from
+	 * @return a list of mutations read from the db.
+	 */
+	public static List<Mutation> getMutationsByFile(File file) {
+		List<Long> idList = Io.getIDsFromFile(file);
+		List<Mutation> returnList = null;
+		if (idList.size() > 0) {
+			returnList = getMutationsFromDbByID(idList
+					.toArray(new Long[0]));
+		} else {
+			returnList = new ArrayList<Mutation>();
+		}
+		return returnList;
+	
 	}
 
 }

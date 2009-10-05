@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -55,25 +56,22 @@ public class CompareTraces {
 		File dir = new File(CoverageProperties.TRACE_RESULT_LINE_DIR);
 		logger.info("Total methods: " + getAllMethods());
 		String[] files = dir.list(new PermutatedFilter());
+		String base = files[new Random().nextInt(files.length)];
 		HashSet<String> diffComplete = new HashSet<String>();
 		int count = 0;
 		int excludePre = InstrumentExclude.numberOfExlusions();
 		for (String file : files) {
 			Set<String> differences = calculateDifferences(EnumSet.of(
-					Mode.LINE, Mode.DATA), "0", file);
+					Mode.LINE, Mode.DATA), base, file);
 			count++;
-			int preValue = diffComplete.size();
 			diffComplete.addAll(differences);
-			logger.info("Added " + (diffComplete.size() - preValue)
-					+ " methods. Total methods added: " + diffComplete.size()
-					+ " Total methods excluded: "
-					+ InstrumentExclude.numberOfExlusions());
-
 		}
-		 System.out.println("Methods that have differences in at least one run:"
-				+ diffComplete.size());
+		// System.out.println("Methods that have differences in at least one run:"
+		// + diffComplete.size());
 		System.out.println("Added exclusions for this run: "
 				+ (InstrumentExclude.numberOfExlusions() - excludePre));
+		System.out.println(" Total methods excluded: "
+				+ InstrumentExclude.numberOfExlusions());
 		InstrumentExclude.save();
 		XmlIo.toXML(diffComplete, CoverageProperties.TRACE_DIFFERENCES_FILE);
 	}

@@ -18,11 +18,12 @@
 */
 package de.unisb.cs.st.javalanche.coverage.distance;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ClassNode {
+public class ClassNode implements Serializable {
 
 	private final String name;
 

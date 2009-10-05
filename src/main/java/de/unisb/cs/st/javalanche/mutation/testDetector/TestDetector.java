@@ -1,27 +1,29 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.testDetector;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +35,6 @@ import com.google.common.base.Join;
 
 import de.unisb.cs.st.ds.util.io.DirectoryFileSource;
 import de.unisb.cs.st.ds.util.io.Io;
-import de.unisb.cs.st.ds.util.io.XmlIo;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.Excludes;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 
@@ -85,12 +86,11 @@ public class TestDetector {
 	}
 
 	private static void scanForTests(String baseDir) throws IOException {
-		Collection<File> filesByExtension = DirectoryFileSource
-				.getFilesByExtension(new File(baseDir), "java");
+		Collection<File> javaFiles = getFiles(baseDir);
 		Heuristic[] heuristics = new Heuristic[] { new InTetsDir(),
 				new ContainsJunitImport(), new ExtendsTest() };
 		Map<String, Integer> map = new HashMap<String, Integer>();
-		for (File file : filesByExtension) {
+		for (File file : javaFiles) {
 			List<String> linesFromFile = Io.getLinesFromFile(file);
 			String join = Join.join(" ", linesFromFile);
 			int matches = 0;
@@ -109,6 +109,22 @@ public class TestDetector {
 		System.out.println(message);
 		updateExcludeFiel(map);
 		// XmlIo.toXML(map, MutationProperties.TEST_MAP_FILE);
+	}
+
+	private static Collection<File> getFiles(String baseDir) throws IOException {
+		File dir = new File(baseDir);
+		File[] dirs = dir.listFiles(new FileFilter() {
+			public boolean accept(File pathname) {
+				return pathname.isDirectory()
+						&& !pathname.toString().endsWith(
+								MutationProperties.OUTPUT_DIR);
+			}
+		});
+		Set<File> result = new HashSet<File>();
+		for (File f : dirs) {
+			result.addAll(DirectoryFileSource.getFilesByExtension(f, "java"));
+		}
+		return result;
 	}
 
 	private static void updateExcludeFiel(Map<String, Integer> map) {

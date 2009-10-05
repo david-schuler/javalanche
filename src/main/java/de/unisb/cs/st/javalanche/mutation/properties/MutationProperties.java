@@ -112,7 +112,7 @@ public class MutationProperties {
 
 	public static final String TEST_SUITE = getProperty(TEST_SUITE_KEY);
 
-	public static final String ACTUAL_MUTATION_KEY = "mutation.actual.mutation";
+	public static final String CURRENT_MUTATION_KEY = "mutation.actual.mutation";
 
 	public static final String NOT_MUTATED = "notMutated";
 
@@ -180,11 +180,6 @@ public class MutationProperties {
 	public static final File EXCLUDE_FILE = new File(OUTPUT_DIR, "exclude.txt");
 
 	public static final int BATCH_SIZE = 1;
-
-	private static final String SINGLE_TASK_MODE_KEY = "single.task.mode";
-
-	public static final boolean SINGLE_TASK_MODE = getPropertyOrDefault(
-			SINGLE_TASK_MODE_KEY, false);
 
 	public static final String CLASSES_TO_MUTATE_KEY = "javalanche.classes.to.mutate";
 

@@ -25,14 +25,19 @@ import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
+import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
+
 public class NegateJumpsClassAdapter extends ClassAdapter {
 
-	public NegateJumpsClassAdapter(ClassVisitor cv) {
-		super(cv);
-	}
-
+	
 	private String className;
 	private Map<Integer, Integer> possibilities = new HashMap<Integer, Integer>();
+	private final MutationManager mm;
+	
+	public NegateJumpsClassAdapter(ClassVisitor cv) {
+		super(cv);
+		mm = new MutationManager();// TODO
+	}
 
 	@Override
 	public void visit(int version, int access, String name, String signature,
@@ -48,7 +53,7 @@ public class NegateJumpsClassAdapter extends ClassAdapter {
 		MethodVisitor superVisitor = super.visitMethod(access, name, desc,
 				signature, exceptions);
 		MethodVisitor actualAdapter = new NegateJumpsMethodAdapter(
-				superVisitor, className, name, possibilities);
+				superVisitor, className, name, possibilities, mm);
 		return actualAdapter;
 	}
 

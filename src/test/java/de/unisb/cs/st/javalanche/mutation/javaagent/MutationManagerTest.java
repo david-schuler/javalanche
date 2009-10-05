@@ -26,12 +26,7 @@ public class MutationManagerTest {
 
 	@Test
 	public void testGetClassesToMutate() {
-		MutationForRun mutationManager = MutationForRun.getInstance();
-		for (Mutation mutation : mutationManager.getMutations()) {
-			Assert.assertNotNull(mutation);
-		}
-		for(String className : mutationManager.getClassNames()){
-			Assert.assertNotNull(className);
-		}
+		MutationForRun mfr = MutationForRun.getFromDefaultLocation();
+		
 	}
 }

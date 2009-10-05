@@ -228,33 +228,7 @@
 		</antcall>
 
 	</target>
-	
-	<target name="runMutationsInvariant" description="* run a given mutation task wiht enabled invariant checkers (Javalanche invariants build file also has to be included)">
-		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
-		<property name="run.mutations.memory" value="-Xmx${javalanche.maxmemory}"/>
-		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=mutation-invariant"/>
-		<property name="run.mutations.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
-		<property name="run.mutations.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
-		<property name="run.mutations.mutation.file" value="-Dmutation.file=${mutation.file}"/>
-		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=result-${mutation.file}"/>
-		<property name="run.mutations.verbose" value="-verbose"/>
-		<property name="run.mutations.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.mutation.runtime.jmx.JmxMutationTestListener"/>
-		
-		<property name="run.mutations.field.file.arg" value="-Djavalanche.invariant.field.file=${field.file}"/>
-		<property name="run.mutations.checker.file" value="-Dinvariant.checker.file=${invariant.checker.file}"/>
-		<property name="run.mutations.verbose.summary" value="-Dverbose.invariant.summary=false"/>
-		<property name="run.mutations.javalanche.invariant.mode" value="-Dinvariant.mode=INVARIANT"/>
-		
-		<path id="run.mutations.classpath.add">
-			<path refid="mutation.classpath"/>
-		</path>
-		
-			<!--${run.mutations.verbose}-->
-		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value=" ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode} ${run.mutations.listener} " />
-			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
-		</antcall>
-	</target>
+
 	
 	
 	<target name="createMutationMakefile" description="* Create a Makefile for the mutation tasks.">

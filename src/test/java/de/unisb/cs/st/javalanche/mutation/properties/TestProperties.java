@@ -23,7 +23,7 @@ public class TestProperties {
 	public static final String ADVICE_CLAZZ = "Advice.clazz";
 
 	public static final String SAMPLE_FILE = "./src/test/resources/Advice.clazz";
-	
+	// static int test;
 //		MutationProperties.ASPECTJ_DIR
 //			+ "/weaver/bin/"
 //			+ TestProperties.SAMPLE_FILE_CLASS_NAME.replace('.', '/')

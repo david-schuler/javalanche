@@ -26,7 +26,7 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 
 public class ConnectionData {
 
-	Set<Tuple> connections = new HashSet<Tuple>();
+	private Set<Tuple> connections = new HashSet<Tuple>();
 
 	public void addConnection(String className1, String methodName1,
 			String desc1, String className2, String methodName2, String desc2) {
@@ -56,6 +56,10 @@ public class ConnectionData {
 
 	public static ConnectionData read() {
 		return XmlIo.get(MutationProperties.CONNECTION_DATA_FILE);
+	}
+
+	public Set<Tuple> getConnections() {
+		return connections;
 	}
 
 }

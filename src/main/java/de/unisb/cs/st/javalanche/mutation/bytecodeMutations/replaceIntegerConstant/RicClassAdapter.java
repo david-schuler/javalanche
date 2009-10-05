@@ -26,14 +26,19 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckMethodAdapter;
 
+import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
+
 public class RicClassAdapter extends ClassAdapter {
 
 	private String className;
 
 	private Map<Integer, Integer> possibilities = new HashMap<Integer, Integer>();
 
+	private final MutationManager mm;
+
 	public RicClassAdapter(ClassVisitor cv) {
 		super(cv);
+		mm = new MutationManager();
 	}
 
 	@Override
@@ -49,6 +54,6 @@ public class RicClassAdapter extends ClassAdapter {
 		MethodVisitor mv = super.visitMethod(access, name, desc, signature,
 				exceptions);
 		return new CheckMethodAdapter(new RicMethodAdapter(mv, className, name,
-				possibilities));
+				possibilities, mm));
 	}
 }

@@ -29,6 +29,7 @@ import com.google.common.base.Join;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 public class MutationMX implements MutationMXMBean {
 
@@ -83,13 +84,13 @@ public class MutationMX implements MutationMXMBean {
 	}
 
 	public String getMutationSummary() {
-		MutationForRun instance = MutationForRun.getInstance();
+		MutationForRun instance = MutationForRun.getFromDefaultLocation();
 		List<Mutation> mutationListInstance = instance.getMutations();
 		List<Mutation> mutationList = new ArrayList<Mutation>();
 		if (MutationProperties.MUTATION_FILE_NAME != null) {
 			File file = new File(MutationProperties.MUTATION_FILE_NAME);
 			if (file.exists()) {
-				mutationList = MutationForRun.getMutationsByFile(file);
+				mutationList = QueryManager.getMutationsByFile(file);
 			}
 		}
 //		int withResult = 0;

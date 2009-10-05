@@ -30,6 +30,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.Arithmeti
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.RemoveMethodCallsMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.RicMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 
 public class MutationsClassAdapter extends ClassAdapter {
 
@@ -43,8 +44,16 @@ public class MutationsClassAdapter extends ClassAdapter {
 
 	private Map<Integer, Integer> removeCallsPossibilities = new HashMap<Integer, Integer>();
 
+	private final MutationManager mutationManager;
+
 	public MutationsClassAdapter(ClassVisitor cv) {
+		this(cv, new MutationManager());
+		
+	}
+
+	public MutationsClassAdapter(ClassVisitor cv, MutationManager mm) {
 		super(cv);
+		this.mutationManager = mm;
 	}
 
 	@Override
@@ -59,13 +68,14 @@ public class MutationsClassAdapter extends ClassAdapter {
 		MethodVisitor mv = super.visitMethod(access, name, desc, signature,
 				exceptions);
 		mv = new CheckMethodAdapter(mv);
-		mv = new RicMethodAdapter(mv, className, name, ricPossibilities);
+		mv = new RicMethodAdapter(mv, className, name, ricPossibilities,
+				mutationManager);
 		mv = new NegateJumpsMethodAdapter(mv, className, name,
-				negatePossibilities);
+				negatePossibilities, mutationManager);
 		mv = new ArithmeticReplaceMethodAdapter(mv, className, name,
-				arithmeticPossibilities);
+				arithmeticPossibilities, mutationManager);
 		mv = new RemoveMethodCallsMethodAdapter(mv, className, name,
-				removeCallsPossibilities);
+				removeCallsPossibilities, mutationManager);
 		return mv;
 	}
 }

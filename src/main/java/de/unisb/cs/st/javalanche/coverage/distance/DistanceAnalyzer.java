@@ -33,7 +33,7 @@ public class DistanceAnalyzer implements MutationAnalyzer {
 	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 
 		ConnectionData data = ConnectionData.read();
-		Hierarchy hierarchy = new Hierarchy();
+		Hierarchy hierarchy = Hierarchy.readFromDefaultLocation();
 		MethodDistances md = new MethodDistances(data, hierarchy);
 		Set<MethodDescription> all = md.getAll();
 		StringBuilder sb = new StringBuilder();

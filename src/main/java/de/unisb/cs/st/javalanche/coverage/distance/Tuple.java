@@ -21,7 +21,9 @@
  */
 package de.unisb.cs.st.javalanche.coverage.distance;
 
-class Tuple {
+import java.io.Serializable;
+
+class Tuple implements Serializable {
 	MethodDescription start;
 	MethodDescription end;
 

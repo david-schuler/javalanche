@@ -21,14 +21,20 @@
  */
 package de.unisb.cs.st.javalanche.coverage.distance;
 
-public class MethodDescription {
+import java.io.Serializable;
+
+public class MethodDescription implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String className;
 	private String methodName;
 	private String desc;
 
 	MethodDescription(String className, String methodName, String desc) {
 		super();
-		this.className = className;
+		this.className = className.replace('/', '.');
 		this.methodName = methodName;
 		this.desc = desc;
 	}

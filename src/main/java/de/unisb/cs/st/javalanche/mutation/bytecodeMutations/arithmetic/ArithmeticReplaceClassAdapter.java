@@ -25,6 +25,8 @@ import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
+import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
+
 /**
  * ClassAdapter for the replacement of arithmetic operatiorns.
  *
@@ -40,6 +42,7 @@ public class ArithmeticReplaceClassAdapter extends ClassAdapter {
 	 */
 	private String className;
 	private Map<Integer, Integer> possibilities = new HashMap<Integer, Integer>();
+	private final MutationManager mm;
 
 	/**
 	 * Constructs a new {@link ArithmeticReplaceClassAdapter}
@@ -50,6 +53,7 @@ public class ArithmeticReplaceClassAdapter extends ClassAdapter {
 	 */
 	public ArithmeticReplaceClassAdapter(ClassVisitor cv) {
 		super(cv);
+		mm = new MutationManager();
 	}
 
 	/*
@@ -75,7 +79,8 @@ public class ArithmeticReplaceClassAdapter extends ClassAdapter {
 	public MethodVisitor visitMethod(int access, String name, String desc,
 			String signature, String[] exceptions) {
 		return new ArithmeticReplaceMethodAdapter(super.visitMethod(access,
-				name, desc, signature, exceptions), className, name, possibilities );
+				name, desc, signature, exceptions), className, name,
+				possibilities, mm);
 	}
 
 }

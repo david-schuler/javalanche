@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.javaagent;
 
 import java.io.File;
@@ -31,16 +31,14 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.cs.st.javalanche.mutation.util.MutationMakeFileGenerator;
 
 /**
- * Singleton class that holds all mutations that should be applied and executed
- * during a run.
+ * Class that holds all mutations that should be applied and executed during a
+ * run.
  * 
  * @author David Schuler
  * 
@@ -50,35 +48,23 @@ public class MutationForRun {
 	private static Logger logger = Logger.getLogger(MutationForRun.class);
 
 	/**
-	 * SingletonHolder is loaded on the first execution of
-	 * Singleton.getInstance() or the first access to SingletonHolder.INSTANCE,
-	 * not before. see
-	 * http://en.wikipedia.org/wiki/Initialization_on_demand_holder_idiom
-	 */
-	private static class SingletonHolder {
-		private static MutationForRun INSTANCE = new MutationForRun();
-	}
-
-	/**
 	 * List that holds the mutations that should be applied for this run (It
 	 * will only contain mutations without results).
 	 */
 	private List<Mutation> mutations;
 
-	/**
-	 * Contains all mutations that are reported to have been applied.
-	 */
-	private Set<Mutation> appliedMutations = new HashSet<Mutation>();
 
 	/**
-	 * @return the instance of this singleton.
+	 * @return an instance that contains all mutations for IDs from a file
+	 *         specified at the command line (see
+	 *         MutationProperties.MUTATION_FILE_NAME_KEY).
 	 */
-	public static MutationForRun getInstance() {
-		return SingletonHolder.INSTANCE;
+	public static MutationForRun getFromDefaultLocation() {
+		return new MutationForRun(MutationProperties.MUTATION_FILE_NAME);
 	}
 
-	private MutationForRun() {
-		mutations = getMutationsForRun();
+	public MutationForRun(String fileName) {
+		mutations = getMutationsForRun(fileName);
 		logger.info("Applying " + mutations.size() + " mutations");
 		List<Long> ids = new ArrayList<Long>();
 		for (Mutation m : mutations) {
@@ -103,7 +89,7 @@ public class MutationForRun {
 
 	/**
 	 * The list of mutations for this run. This list will only contain mutations
-	 * without results, if they already have a result they will not be apllied
+	 * without results, if they already have a result they will not be applied
 	 * again.
 	 * 
 	 * @return the list of mutations for this run.
@@ -117,32 +103,23 @@ public class MutationForRun {
 	 * mutations from the database. Mutations that already have a result are
 	 * filtered such that they get not applied again.
 	 * 
+	 * @param fileName
+	 * 
 	 * @return a list of mutations for this run.
 	 */
-	private static List<Mutation> getMutationsForRun() {
+	private static List<Mutation> getMutationsForRun(String fileName) {
 		List<Mutation> mutationsToReturn = new ArrayList<Mutation>();
-		if (!MutationProperties.SINGLE_TASK_MODE
-				&& MutationProperties.MUTATION_FILE_NAME != null) {
-			logger.debug("Value of mutation file: "
-					+ MutationProperties.MUTATION_FILE_NAME);
+		if (fileName != null) {
 			File file = new File(MutationProperties.MUTATION_FILE_NAME);
 			if (file.exists()) {
 				logger.info("Location of mutation file: "
 						+ file.getAbsolutePath());
-				mutationsToReturn = getMutationsByFile(file);
+				mutationsToReturn = QueryManager.getMutationsByFile(file);
 			} else {
-				logger.warn("Mutation file does not exist " + file);
-			}
-		} else if (MutationProperties.SINGLE_TASK_MODE) {
-			File[] taskFiles = MutationMakeFileGenerator.getTaskFiles();
-			if (taskFiles.length > 0) {
-				mutationsToReturn = getMutationsByFile(taskFiles[0]);
-			}else{
-				logger.warn("No task file found.");
+				logger.warn("Mutation file does not exist: " + file);
 			}
 		} else {
-			logger.warn("Property not found: "
-					+ MutationProperties.MUTATION_FILE_KEY);
+			logger.warn("Passed null as a filename");
 		}
 		filterMutationsWithResult(mutationsToReturn);
 		return mutationsToReturn;
@@ -178,51 +155,15 @@ public class MutationForRun {
 	}
 
 	/**
-	 * Reads a list of mutation ids from a file and fetches the corresponding
-	 * mutations from the database.
-	 * 
-	 * @param file
-	 *            the file to read from
-	 * @return a list of mutations read from the db.
-	 */
-	public static List<Mutation> getMutationsByFile(File file) {
-		List<Long> idList = Io.getIDsFromFile(file);
-		List<Mutation> returnList = null;
-		if (idList.size() > 0) {
-			returnList = QueryManager.getMutationsFromDbByID(idList
-					.toArray(new Long[0]));
-		} else {
-			returnList = new ArrayList<Mutation>();
-		}
-		return returnList;
-
-	}
-
-	/**
-	 * Reinitializes this singleton - used for unit testing.
-	 */
-	public void reinit() {
-		mutations = getMutationsForRun();
-		logger.info("Got " + mutations.size() + " mutations");
-	}
-
-	/**
 	 * 
 	 * @param mutation
 	 *            the mutation to check
 	 * @return true, if the given mutation is a mutation for this run.
 	 */
 	public boolean containsMutation(Mutation mutation) {
-		return hasMutation(mutation);
-	}
-
-	/**
-	 * Helper method for containsMutation.
-	 */
-	private boolean hasMutation(Mutation searchMutation) {
-		if (searchMutation != null) {
+		if (mutation != null) {
 			for (Mutation m : mutations) {
-				if (searchMutation.equalsWithoutId(m)) {
+				if (mutation.equalsWithoutId(m)) {
 					return true;
 				}
 			}
@@ -230,79 +171,4 @@ public class MutationForRun {
 		return false;
 	}
 
-	/**
-	 * Method that is called by the instrumentation classes to signalize that
-	 * the given mutation was applied.
-	 * 
-	 * @param mutation
-	 *            the mutation that was applied.
-	 */
-	public static void mutationApplied(Mutation mutation) {
-		getInstance()._mutationApplied(mutation);
-	}
-
-	private void _mutationApplied(Mutation mutation) {
-		appliedMutations.add(mutation);
-	}
-
-	/**
-	 * Called at the end of mutation testing. Prints a message, and an error
-	 * message if one or more mutations where not applied.
-	 */
-	public void reportAppliedMutations() {
-		List<Mutation> notApplied = new ArrayList<Mutation>();
-		int applied = 0;
-		boolean showMutations = mutations.size() < 5;
-		List<Long> appliedIds = new ArrayList<Long>();
-		for (Mutation m : appliedMutations) {
-			appliedIds.add(m.getId());
-		}
-		for (Mutation m : mutations) {
-			if (appliedIds.contains(m.getId())) {
-				applied++;
-				if (showMutations) {
-					logger.info("Applied Mutation: "
-							+ QueryManager.mutationToShortString(m));
-				}
-			} else {
-				notApplied.add(m);
-			}
-		}
-		logger.info(applied + " Mutations out of " + mutations.size()
-				+ " where applied to bytecode");
-		if (applied < mutations.size() || notApplied.size() > 0) {
-			logger.error("Not all mutations where applied to bytecode");
-			logger.error(appliedMutations);
-			logger.error(mutations);
-			for (Mutation mutation : notApplied) {
-				logger.warn("Mutation not applied " + mutation.getId());
-			}
-		}
-	}
-
-	/**
-	 * @return the number of applied mutations.
-	 */
-	public static int getNumberOfAppliedMutations() {
-		return getInstance().appliedMutations.size();
-	}
-
-	/**
-	 * @return a set of all applied mutations.
-	 */
-	public static Set<Mutation> getAppliedMutations() {
-		return Collections.unmodifiableSet(getInstance().appliedMutations);
-	}
-
-	/**
-	 * @return true, if one or more mutations do not have a result.
-	 */
-	public static boolean hasMutationsWithoutResults() {
-		for (Mutation m : getInstance().getMutations()) {
-			if (m.getMutationResult() == null) {
-				return true;
-			}
-		}
-		return false;
-	}
 }

@@ -34,14 +34,11 @@ import org.hibernate.Transaction;
 import org.junit.Assert;
 
 import de.unisb.cs.st.ds.util.io.Io;
-import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.MutationCoverage;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
-import de.unisb.cs.st.javalanche.mutation.results.TestName;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
@@ -87,7 +84,6 @@ public class ByteCodeTestUtils {
 		mpc.toDB();
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void deleteTestMutationResult(String className) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -157,7 +153,6 @@ public class ByteCodeTestUtils {
 		return testCaseNames;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static String getFileNameForClass(Class clazz) {
 		String result = null;
 		try {
@@ -175,7 +170,6 @@ public class ByteCodeTestUtils {
 	 * @param testClassName
 	 *            The class that test the mutated class.
 	 */
-	@SuppressWarnings("unchecked")
 	public static void testResults(String testClassName) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -203,7 +197,6 @@ public class ByteCodeTestUtils {
 				nonNulls >= mList.size() / 2);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void redefineMutations(String testClassName) {
 		List<Long> ids = new ArrayList<Long>();
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -224,7 +217,6 @@ public class ByteCodeTestUtils {
 		File file = new File(DEFAULT_OUTPUT_FILE);
 		Io.writeFile(sb.toString(), file);
 		MutationProperties.MUTATION_FILE_NAME = file.getAbsolutePath();
-		MutationForRun.getInstance().reinit();
 	}
 
 	public static void addMutations(String filename) {

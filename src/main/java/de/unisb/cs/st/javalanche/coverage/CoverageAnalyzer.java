@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.coverage;
 
 import java.io.BufferedInputStream;
@@ -53,6 +53,9 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 /**
  * @author Bernhard Gruen
  * 
+ */
+/*
+ * -Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.coverage.CoverageAnalyzer
  */
 public class CoverageAnalyzer implements MutationAnalyzer {
 
@@ -185,7 +188,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			logger.warn("No files for mutation: " + dir);
 			return null;
 		}
-		
+
 		String[] tests = dir.list(new FilenameFilter() {
 
 			public boolean accept(File dir, String name) {
@@ -203,15 +206,15 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 
 		for (String test : tests) {
 			String fileName = path + test;
-				try {
+			try {
 				ois = new ObjectInputStream(new BufferedInputStream(
 						new GZIPInputStream(new FileInputStream(fileName))));
 				numClasses = ois.readInt();
 				classMap = new HashMap<String, Map<Integer, Integer>>();
 				for (int i = 0; i < numClasses; i++) {
-					
+
 					className = ois.readUTF();
-					
+
 					numLines = ois.readInt();
 					lineMap = new HashMap<Integer, Integer>();
 					for (int j = 0; j < numLines; j++) {
@@ -219,10 +222,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 					}
 					classMap.put(className, lineMap);
 				}
-				String key = test;
-				if (test.endsWith(".gz")) {
-					key = test.substring(0, test.length() - 3);
-				}
+				String key = stripGz(test);
 				map.put(key, classMap);
 				ois.close();
 			} catch (Exception e) {
@@ -231,6 +231,14 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			}
 		}
 		return map;
+	}
+
+	private static String stripGz(String test) {
+		String key = test;
+		if (test.endsWith(".gz")) {
+			key = test.substring(0, test.length() - 3);
+		}
+		return key;
 	}
 
 	private static Map<String, Map<String, Map<String, Map<Integer, Integer>>>> loadTracePerTest(
@@ -274,10 +282,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			String key = test;
-			if (test.endsWith(".gz")) {
-				key = test.substring(0, test.length() - 3);
-			}
+			String key = stripGz(test);
 			resultMap.put(key, map);
 		}
 		return resultMap;
@@ -635,9 +640,11 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 				if (report != null) {
 					ClassReport classReport = report
 							.getClassReport(mutation.className);
-					classReport.addColumn(COLUMN_NAME);
-					classReport.putEntry(mutation.id, COLUMN_NAME,
-							results.methodsModifiedLine + "");
+					if (classReport != null) {
+						classReport.addColumn(COLUMN_NAME);
+						classReport.putEntry(mutation.id, COLUMN_NAME,
+								results.methodsModifiedLine + "");
+					}
 				}
 			}
 			if (CoverageProperties.TRACE_RETURNS) {
@@ -687,9 +694,10 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			try {
 				ois = new ObjectInputStream(new BufferedInputStream(
 						new GZIPInputStream(new FileInputStream(path + test))));
-				if (originalLineCoverageMaps.containsKey(test)) {
-					processTestLineCoverage(originalLineCoverageMaps.get(test),
-							ois, modifiedTmp);
+				String testName = stripGz(test);
+				if (originalLineCoverageMaps.containsKey(testName)) {
+					processTestLineCoverage(originalLineCoverageMaps
+							.get(testName), ois, modifiedTmp);
 				} else {
 					logger
 							.warn("Got no coverage data of unmutated run for test: "
@@ -829,9 +837,10 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			try {
 				ois = new ObjectInputStream(new BufferedInputStream(
 						new GZIPInputStream(new FileInputStream(path + test))));
-				if (originalDataCoverageMaps.containsKey(test)) {
-					processTestDataCoverage(originalDataCoverageMaps.get(test),
-							ois, modified);
+				String testName = stripGz(test);
+				if (originalDataCoverageMaps.containsKey(testName)) {
+					processTestDataCoverage(originalDataCoverageMaps
+							.get(testName), ois, modified);
 				} else {
 					logger
 							.warn("Got no coverage data of unmutated run for test: "

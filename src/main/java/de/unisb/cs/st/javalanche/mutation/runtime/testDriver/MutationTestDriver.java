@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.runtime.testDriver;
 
 import java.util.ArrayList;
@@ -41,6 +41,7 @@ import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
 import de.unisb.cs.st.javalanche.mutation.results.TestName;
@@ -305,7 +306,6 @@ public abstract class MutationTestDriver {
 	 * Method that runs the tests to scan for mutation possibilities.
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
 	public void scanTests() {
 		logger.info("Running tests to scan for mutations");
 		List<String> allTests = getAllTests();
@@ -379,12 +379,10 @@ public abstract class MutationTestDriver {
 	}
 
 	/**
-	 * Method that runs he mutation testsing. All mutations for this run are
-	 * caried out and their corresponding tests are run.
+	 * Method that runs he mutation testing. All mutations for this run are
+	 * carried out and their corresponding tests are run.
 	 */
 	public void runMutations() {
-		logger.info("Running Mutations "
-				+ MutationForRun.hasMutationsWithoutResults());
 		if (checkMutations()) {
 			return;
 		}
@@ -409,12 +407,16 @@ public abstract class MutationTestDriver {
 			currentMutation = mutationSwitcher.next();
 			totalMutations++;
 			checkClasspath(currentMutation);
-			Set<String> coveredTests = mutationSwitcher.getTests();
+			Set<String> coveredTests = MutationCoverageFile
+					.getCoverageDataId(currentMutation.getId());
 			Set<String> testsForThisRun = coveredTests.size() > 0 ? coveredTests
 					: new HashSet<String>(allTests);
-			System.out.println("Applying " + totalMutations
+			String message = "Applying " + totalMutations
 					+ "th mutation with id " + currentMutation.getId()
-					+ ". Running " + testsForThisRun.size() + " tests");
+					+ ". Running " + testsForThisRun.size() + " tests";
+			System.out.println(message);
+			// Some projects swallow system out (e.g. aspectj)
+			logger.info(message);
 			// Do the mutation test
 			mutationSwitcher.switchOn();
 			mutationStart(currentMutation);
@@ -431,12 +433,15 @@ public abstract class MutationTestDriver {
 		logger.info("Test Runs finished. Run " + totalTests + " tests for "
 				+ totalMutations + " mutations ");
 		System.out.println(MutationObserver.summary(true));
-		MutationForRun.getInstance().reportAppliedMutations();
+		MutationObserver.reportAppliedMutations(); 
+		
 		Runtime.getRuntime().removeShutdownHook(shutDownThread);
 	}
 
 	private boolean checkMutations() {
-		boolean allResults = !MutationForRun.hasMutationsWithoutResults();
+		MutationForRun mfr = MutationForRun.getFromDefaultLocation();
+		int mutationsSize = mfr.getMutations().size();
+		boolean allResults = mutationsSize == 0;
 		if (allResults) {
 			String tag = "ALL_RESULTS";
 			System.out.println(tag);

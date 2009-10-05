@@ -48,8 +48,11 @@ public class DistanceTransformer implements ClassFileTransformer {
 
 		private ClassEntry(String name, Set<String> supers) {
 			super();
-			this.name = name;
-			this.supers = supers;
+			this.name = name.replace('/', '.');
+			this.supers = new HashSet<String>();
+			for (String s : supers) {
+				this.supers.add(s.replace('/', '.'));
+			}
 		}
 
 		@Override

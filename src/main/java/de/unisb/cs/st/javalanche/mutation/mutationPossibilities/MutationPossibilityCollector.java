@@ -21,21 +21,22 @@ package de.unisb.cs.st.javalanche.mutation.mutationPossibilities;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.RicCollectorTransformer;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-
 import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
 
 public class MutationPossibilityCollector {
 
 	Logger logger = Logger.getLogger(MutationPossibilityCollector.class);
 
-	private List<Mutation> possibilities = new ArrayList<Mutation>();
+	private Set<Mutation> possibilities = new HashSet<Mutation>();
 
 	public void addPossibility(Mutation mutationPossibility) {
 		if(possibilities.contains(mutationPossibility)){
@@ -58,27 +59,7 @@ public class MutationPossibilityCollector {
 	public void toDB() {
 		QueryManager.saveMutations(possibilities);
 	}
-
-	public static void generateUnmutated() {
-		List<Mutation> allMutations = QueryManager.getMutations(1000);
-		for (Mutation m : allMutations) {
-			if (!QueryManager.hasUnmutated(m.getClassName(), m.getLineNumber())) {
-				Mutation unmutated = new Mutation(m.getClassName(), m
-						.getLineNumber(), m.getMutationForLine(),
-						MutationType.NO_MUTATION,m.isClassInit());
-				QueryManager.saveMutation(unmutated);
-			}
-		}
-
-	}
-
-	public static void generateTestDataInDB(String classFileName) {
-		FileTransformer ft = new FileTransformer(new File(classFileName));
-		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
-		ft.process(new RicCollectorTransformer(mpc));
-		mpc.toDB();
-	}
-
+	
 	/**
 	 * Returns the number of collected mutation possibilities.
 	 *
@@ -103,6 +84,7 @@ public class MutationPossibilityCollector {
 	}
 
 	public List<Mutation> getPossibilities() {
-		return Collections.unmodifiableList(possibilities);
+		return Collections.unmodifiableList(new ArrayList<Mutation>(
+				possibilities));
 	}
 }

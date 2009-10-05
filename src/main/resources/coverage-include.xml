@@ -104,6 +104,28 @@
 
 		</java>
 	</target>
+	
+		
+	<target name="analyzeManualInv" description="">
+		<java classname="de.unisb.cs.st.javalanche.coverage.experiment.ManualnvariantAnalyzer" maxmemory="${javalanche.maxmemory}" fork="true">
+		<jvmarg line="-Dmutation.package.prefix=${project.prefix}"/>	
+		<classpath>
+				<path refid="mutation.classpath" />
+		</classpath>
+
+		</java>
+	</target>
+
+
+	<target name="makeDistances" description="">
+		<java classname="de.unisb.cs.st.javalanche.coverage.distance.MethodDistances" maxmemory="${javalanche.maxmemory}" fork="true">
+		<jvmarg line="-Dmutation.package.prefix=${project.prefix}"/>	
+		<classpath>
+				<path refid="mutation.classpath" />
+		</classpath>
+
+		</java>
+	</target>
 
 
 </project>

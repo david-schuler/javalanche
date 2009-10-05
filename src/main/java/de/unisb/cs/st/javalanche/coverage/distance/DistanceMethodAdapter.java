@@ -37,7 +37,8 @@ public class DistanceMethodAdapter extends MethodAdapter {
 		this.methodName = methodName;
 		this.description = description;
 		this.connectionData = connectionData;
-
+		connectionData.addConnection(className, methodName, description,
+				className, methodName, description);
 	}
 
 	public void visitMethodInsn(int opcode, String owner, String name,

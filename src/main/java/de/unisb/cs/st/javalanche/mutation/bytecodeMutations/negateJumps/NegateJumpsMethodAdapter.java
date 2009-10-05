@@ -35,15 +35,20 @@ public class NegateJumpsMethodAdapter extends AbstractNegateJumpsAdapter {
 	private static Logger logger = Logger
 			.getLogger(NegateJumpsMethodAdapter.class);
 	
+
+	private final MutationManager mutationManager;
+	
 	public NegateJumpsMethodAdapter(MethodVisitor mv, String className,
-			String methodName, Map<Integer, Integer> possibilities) {
+			String methodName, Map<Integer, Integer> possibilities,
+			MutationManager mutationManager) {
 		super(mv, className, methodName, possibilities);
+		this.mutationManager = mutationManager;
 	}
 
 	@Override
 	protected void handleMutation(Mutation mutation, final Label label,
 			final int opcode) {
-		if (MutationManager.shouldApplyMutation(mutation)) {
+		if (mutationManager.shouldApplyMutation(mutation)) {
 			logger.debug("Applying mutation for line: " + getLineNumber());
 			
 			Mutation dbMutation = QueryManager.getMutation(mutation);

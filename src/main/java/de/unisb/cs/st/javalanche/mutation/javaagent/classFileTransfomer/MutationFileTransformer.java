@@ -79,7 +79,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	private static MutationTransformer mutationTransformer = new MutationTransformer();
 
-	private static MutationForRun mm = MutationForRun.getInstance();
+	private static MutationForRun mm = MutationForRun.getFromDefaultLocation();
 
 	private static Collection<String> classesToMutate = mm.getClassNames();
 
@@ -131,9 +131,8 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			try {
 				String classNameWithDots = className.replace('/', '.');
 				// logger.info(className + " is passed to transformer");
-				if (mutationDecision.shouldBeHandled(classNameWithDots)
-						|| isSystemExitClass(classNameWithDots)) {
-					logger.info("Removing calls to System.exit() from class: "
+				if (mutationDecision.shouldBeHandled(classNameWithDots)) {
+					logger.debug("Removing calls to System.exit() from class: "
 							+ classNameWithDots);
 					classfileBuffer = systemExitTransformer
 							.transformBytecode(classfileBuffer);
@@ -207,9 +206,6 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	 * @return true, if the class contains a call to System.exit()
 	 */
 	private boolean isSystemExitClass(String classNameWithDots) {
-		if (classNameWithDots.toLowerCase().contains("Main")) {
-			logger.info("Checking " + classNameWithDots + " for System exit");
-		}
 		return systemExitClassList.contains(classNameWithDots);
 	}
 

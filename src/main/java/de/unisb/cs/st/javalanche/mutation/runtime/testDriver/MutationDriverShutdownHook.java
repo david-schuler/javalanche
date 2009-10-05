@@ -32,9 +32,9 @@ public class MutationDriverShutdownHook implements Runnable {
 
 	/**
 	 * Creates a knew ShutdownHook for the given {@link MutationTestDriver}.
-	 *
+	 * 
 	 * @param mtd
-	 *            the mutation test dirver the shutdown hook is created for
+	 *            the mutation test driver the shutdown hook is created for
 	 */
 	public MutationDriverShutdownHook(MutationTestDriver mtd) {
 		this.mtd = mtd;

@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic;
 
 import java.util.Map;
@@ -41,9 +41,13 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 public class ArithmeticReplaceMethodAdapter extends
 		AbstractArithmeticMethodAdapter {
 
+	private MutationManager mutationManager;
+
 	public ArithmeticReplaceMethodAdapter(MethodVisitor mv, String className,
-			String methodName, Map<Integer, Integer> possibilities) {
+			String methodName, Map<Integer, Integer> possibilities,
+			MutationManager mutationManager) {
 		super(mv, className, methodName, possibilities);
+		this.mutationManager = mutationManager;
 	}
 
 	private static Logger logger = Logger
@@ -68,7 +72,7 @@ public class ArithmeticReplaceMethodAdapter extends
 	@Override
 	protected void handleMutation(Mutation mutation, int opcode) {
 		logger.debug("Querying mutation " + mutation);
-		if (MutationManager.shouldApplyMutation(mutation)) {
+		if (mutationManager.shouldApplyMutation(mutation)) {
 			Mutation mutationFromDB = QueryManager.getMutation(mutation);
 			MutationCode unMutated = new SingleInsnMutationCode(null, opcode);
 			MutationCode mutated = new SingleInsnMutationCode(mutationFromDB,

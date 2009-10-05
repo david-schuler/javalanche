@@ -34,6 +34,8 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 public class RemoveMethodCallsMethodAdapter extends AbstractRemoveCallsAdapter {
 
+	private final MutationManager mutationManager;
+	
 	private static final class RemoveCall extends MutationCode {
 		private final String name;
 		private final String desc;
@@ -111,17 +113,19 @@ public class RemoveMethodCallsMethodAdapter extends AbstractRemoveCallsAdapter {
 
 	private static Logger logger = Logger
 			.getLogger(RemoveMethodCallsMethodAdapter.class);
-
+	
 	public RemoveMethodCallsMethodAdapter(MethodVisitor mv, String className,
-			String methodName, Map<Integer, Integer> possibilities) {
+			String methodName, Map<Integer, Integer> possibilities,
+			MutationManager mutationManager) {
 		super(mv, className, methodName, possibilities);
+		this.mutationManager = mutationManager;
 	}
 
 
 	@Override
 	protected void handleMutation(Mutation mutation, final int opcode,
 			final String owner, final String name, final String desc) {
-		if (MutationManager.shouldApplyMutation(mutation)) {
+		if (mutationManager.shouldApplyMutation(mutation)) {
 			Mutation dbMutation = QueryManager.getMutation(mutation);
 			MutationCode unMutated = new MutationCode(null) {
 				@Override

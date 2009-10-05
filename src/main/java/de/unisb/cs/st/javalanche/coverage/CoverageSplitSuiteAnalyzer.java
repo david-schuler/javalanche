@@ -29,9 +29,6 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import de.unisb.cs.st.javalanche.mutation.analyze.AnalyzeUtil;
 import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
 import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
