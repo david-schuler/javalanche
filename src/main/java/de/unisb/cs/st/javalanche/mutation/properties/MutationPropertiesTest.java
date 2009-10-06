@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.properties;
 
 import static org.junit.Assert.*;
@@ -25,7 +25,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -33,15 +32,19 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import static de.unisb.cs.st.javalanche.mutation.properties.RunMode.*;
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.matchers.JUnitMatchers.*;
 
-import de.unisb.cs.st.ds.util.io.Io;
+import org.junit.Test;
+import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
 
 public class MutationPropertiesTest {
 
 	private static final String MP_CLASS_NAME = "de.unisb.cs.st.javalanche.mutation.properties.MutationProperties";
 
-	
 	private static class MyClassLoader extends ClassLoader {
 
 		private final ClassLoader parent2;
@@ -51,8 +54,7 @@ public class MutationPropertiesTest {
 			parent2 = parent;
 
 		}
-		
-		
+
 		@Override
 		public InputStream getResourceAsStream(String name) {
 			System.out.println("MyClassLoader.getResourceAsStream()");
@@ -62,7 +64,7 @@ public class MutationPropertiesTest {
 			}
 			return super.getResourceAsStream(name);
 		}
-		
+
 		@Override
 		public Class<?> loadClass(String name) throws ClassNotFoundException {
 			if (MP_CLASS_NAME.equals(name)) {
@@ -100,7 +102,6 @@ public class MutationPropertiesTest {
 		return urlCL;
 	}
 
-	
 	@Test
 	public void testWithOwnClassLoader() throws ClassNotFoundException,
 			MalformedURLException, InstantiationException,
@@ -121,5 +122,21 @@ public class MutationPropertiesTest {
 		assertEquals(Boolean.TRUE, field2.get(null));
 	}
 
+	@Test
+	public void testReleasProperties() {
+		assertFalse(TRACE_BYTECODE);
+		assertTrue(STOP_AFTER_FIRST_FAIL);
+		assertThat(DEFAULT_TIMEOUT_IN_SECONDS, is(10));
+		assertTrue(IGNORE_MESSAGES);
+		assertTrue(IGNORE_EXCEPTION_TRACES);
+		assertThat(SAVE_INTERVAL, is(50));
+		assertFalse(IGNORE_RIC);
+		assertFalse(IGNORE_NEGATE_JUMPS);
+		assertFalse(IGNORE_ARITHMETIC_REPLACE);
+		assertFalse(IGNORE_REMOVE_CALLS);
+		assertFalse(JUNIT4_MODE);
+		assertThat(TEST_PERMUTATIONS, is(10));
+
+	}
 
 }

@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.properties;
 
 import java.io.File;
@@ -83,13 +83,14 @@ public class MutationProperties {
 	public static String IGNORE_MESSAGES_KEY = "javalanche.ignore.test.messages";
 
 	public static boolean IGNORE_MESSAGES = getPropertyOrDefault(
-			IGNORE_MESSAGES_KEY, false);
+			IGNORE_MESSAGES_KEY, true);
 
-	public static String INSERT_ORIGINAL_INSTEAD_OF_MUTATION_KEY = "javalanche.debug.insert.original.code";
+	public static String IGNORE_EXCEPTION_TRACES_KEY = "javalanche.ignore.exception.traces";
 
-	public static boolean INSERT_ORIGINAL_INSTEAD_OF_MUTATION = getPropertyOrDefault(
-			INSERT_ORIGINAL_INSTEAD_OF_MUTATION_KEY, false);
+	public static boolean IGNORE_EXCEPTION_TRACES = getPropertyOrDefault(
+			IGNORE_EXCEPTION_TRACES_KEY, true);
 
+	
 	/**
 	 * 
 	 * The key for the system property that specifies the package prefix of the
@@ -110,11 +111,9 @@ public class MutationProperties {
 	 */
 	public static final String TEST_SUITE_KEY = "mutation.test.suite";
 
-	public static final String TEST_SUITE = getProperty(TEST_SUITE_KEY);
+	public static String TEST_SUITE = getProperty(TEST_SUITE_KEY);
 
 	public static final String CURRENT_MUTATION_KEY = "mutation.actual.mutation";
-
-	public static final String NOT_MUTATED = "notMutated";
 
 	public static final String TEST_TESTSUITE_KEY = "mutation.test.testsuite";
 
@@ -125,29 +124,15 @@ public class MutationProperties {
 	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
 			TRACE_BYTECODE_KEY, false);
 
-	public static final String TEST_FILTER_FILE_NAME_KEY = "mutation.test.filter.map";
-	public static final String TEST_FILTER_FILE_NAME = getProperty(TEST_FILTER_FILE_NAME_KEY);
-
-	public static final boolean SHOULD_FILTER_TESTS = shoudFilterTests();
-
-	public static final String EXPERIMENT_DATA_FILENAME_KEY = "experiment.data.filename";
-
-	public static final String EXPERIMENT_DATA_FILENAME = getProperty(EXPERIMENT_DATA_FILENAME_KEY);
-
-	public static final String MULTIPLE_MAKEFILES_KEY = "mutation.multiple.makefile";
-
-	public static final boolean MULTIPLE_MAKEFILES = getPropertyOrDefault(
-			MULTIPLE_MAKEFILES_KEY, false);
-
 	public static final String STOP_AFTER_FIRST_FAIL_KEY = "javalanche.mutation.stop.after.first.fail";
 
 	public static final boolean STOP_AFTER_FIRST_FAIL = getPropertyOrDefault(
-			STOP_AFTER_FIRST_FAIL_KEY, false);
+			STOP_AFTER_FIRST_FAIL_KEY, true);
 
 	private static final String DEFAULT_TIMEOUT_IN_SECONDS_KEY = "javalanche.mutation.default.timeout";
 
 	public static final int DEFAULT_TIMEOUT_IN_SECONDS = getPropertyOrDefault(
-			DEFAULT_TIMEOUT_IN_SECONDS_KEY, 30);
+			DEFAULT_TIMEOUT_IN_SECONDS_KEY, 10);
 
 	/**
 	 * The save interval in which the mutation results are written to the
@@ -173,13 +158,12 @@ public class MutationProperties {
 	public static final boolean IGNORE_REMOVE_CALLS = getPropertyOrDefault(
 			IGNORE_REMOVE_CALLS_KEY, false);
 
-
 	public static final File TEST_MAP_FILE = new File(OUTPUT_DIR,
 			"testname-map.xml");
 
 	public static final File EXCLUDE_FILE = new File(OUTPUT_DIR, "exclude.txt");
 
-	public static final int BATCH_SIZE = 1;
+	public static final int BATCH_SIZE = 1; // TODO
 
 	public static final String CLASSES_TO_MUTATE_KEY = "javalanche.classes.to.mutate";
 
@@ -207,22 +191,13 @@ public class MutationProperties {
 
 	public static final int TEST_PERMUTATIONS = getPropertyOrDefault(
 			TEST_PERMUTATIONS_KEY, 10);
+
 	public static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
 		return Integer.parseInt(result);
 	}
 
-	private static boolean shoudFilterTests() {
-		if (MutationProperties.TEST_FILTER_FILE_NAME != null) {
-			File filterMapFile = new File(
-					MutationProperties.TEST_FILTER_FILE_NAME);
-			if (filterMapFile.exists()) {
-				logger.info("Applying filters for test cases");
-				return true;
-			}
-		}
-		return false;
-	}
+
 
 	public static boolean getPropertyOrDefault(String key, boolean b) {
 		String property = getProperty(key);
@@ -288,6 +263,42 @@ public class MutationProperties {
 			throw new IllegalStateException("Property not specified. Key: "
 					+ key);
 		}
+	}
+
+	
+	/* Debugging Properties */
+	public static String INSERT_ORIGINAL_INSTEAD_OF_MUTATION_KEY = "javalanche.debug.insert.original.code";
+
+	public static boolean INSERT_ORIGINAL_INSTEAD_OF_MUTATION = getPropertyOrDefault(
+			INSERT_ORIGINAL_INSTEAD_OF_MUTATION_KEY, false);
+
+	/* Properties needed for experiments */
+
+	public static final String MULTIPLE_MAKEFILES_KEY = "mutation.multiple.makefile";
+
+	public static final boolean MULTIPLE_MAKEFILES = getPropertyOrDefault(
+			MULTIPLE_MAKEFILES_KEY, false);
+	
+
+	public static final String TEST_FILTER_FILE_NAME_KEY = "mutation.test.filter.map";
+	public static final String TEST_FILTER_FILE_NAME = getProperty(TEST_FILTER_FILE_NAME_KEY);
+
+	public static final boolean SHOULD_FILTER_TESTS = shoudFilterTests();
+
+	public static final String EXPERIMENT_DATA_FILENAME_KEY = "experiment.data.filename";
+
+	public static final String EXPERIMENT_DATA_FILENAME = getProperty(EXPERIMENT_DATA_FILENAME_KEY);
+
+	private static boolean shoudFilterTests() {
+		if (MutationProperties.TEST_FILTER_FILE_NAME != null) {
+			File filterMapFile = new File(
+					MutationProperties.TEST_FILTER_FILE_NAME);
+			if (filterMapFile.exists()) {
+				logger.info("Applying filters for test cases");
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

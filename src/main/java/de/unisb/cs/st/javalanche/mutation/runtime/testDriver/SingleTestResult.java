@@ -146,4 +146,8 @@ public class SingleTestResult {
 	public String toString() {
 		return outcome + "  " + testMessage.toString();
 	}
+
+	public TestOutcome getOutcome() {
+		return outcome;
+	}
 }

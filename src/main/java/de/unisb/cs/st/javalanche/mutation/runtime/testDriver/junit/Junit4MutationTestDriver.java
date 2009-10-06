@@ -1,37 +1,38 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
-import org.junit.internal.builders.JUnit4Builder;
-import org.junit.internal.runners.TestClassRunner;
+import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.runner.Description;
+import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
@@ -46,6 +47,12 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestRunnabl
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult.TestOutcome;
 
+/**
+ * Allows to use Junit4 Tests for Mutation Testing.
+ * 
+ * @author David Schuler
+ * 
+ */
 public class Junit4MutationTestDriver extends MutationTestDriver {
 
 	private static Logger logger = Logger
@@ -66,7 +73,7 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 			if (t != null) {
 				String message = "Could not initialize junit 4 test suite "
 						+ MutationProperties.TEST_SUITE;
-				logger.warn(message);
+				logger.warn(message, t);
 				throw new RuntimeException(message, t);
 			}
 		}
@@ -78,7 +85,7 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 			InitializationError {
 		Class<?> forName = null;
 		forName = Class.forName(MutationProperties.TEST_SUITE);
-		Runner r = new Suite(forName, new JUnit4Builder());
+		Runner r = new Suite(forName, new AllDefaultPossibilitiesBuilder(false));
 		return r;
 	}
 
@@ -107,19 +114,51 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 		return new ArrayList<String>(allTests.keySet());
 	}
 
-	private static BlockJUnit4ClassRunner getRunner(Description desc) {
+	private static Runner getRunner(Description desc) {
 		String className = getClassName(desc);
-		BlockJUnit4ClassRunner tcr = null;
+		Runner tcr = null;
 		try {
 			Class<?> clazz;
 			clazz = Class.forName(className);
-			tcr = new BlockJUnit4ClassRunner(clazz);
+			Class<? extends Runner> runWithRunner = getRunWithRunner(clazz);
+			Constructor<? extends Runner> constructor = runWithRunner
+					.getConstructor(Class.class);
+			tcr = constructor.newInstance(clazz);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} catch (InitializationError e) {
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		return tcr;
+	}
+
+	private static Class<? extends Runner> getRunWithRunner(Class<?> clazz) {
+		RunWith runWithAnnotation = clazz.getAnnotation(RunWith.class);
+		if (runWithAnnotation == null)
+			return BlockJUnit4ClassRunner.class;
+		Class<? extends Runner> runner = runWithAnnotation.value();
+		if (!runnerImplementsFilterable(runner))
+			return BlockJUnit4ClassRunner.class;
+		return runner;
+	}
+
+	private static boolean runnerImplementsFilterable(
+			Class<? extends Runner> runner) {
+		for (Class<?> interfaze : runner.getInterfaces()) {
+			if (Filterable.class.equals(interfaze))
+				return true;
+		}
+		return false;
 	}
 
 	private static String getClassName(Description desc) {
@@ -131,8 +170,8 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 
 	private static void runTest(final Description desc, RunListener runListener) {
 		try {
-			BlockJUnit4ClassRunner r = getRunner(desc);
-			r.filter(new Filter() {
+			Runner r = getRunner(desc);
+			((Filterable) r).filter(new Filter() {
 
 				@Override
 				public String describe() {
@@ -160,18 +199,42 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 	private static class TestRunListener extends RunListener {
 
 		List<Failure> failures = new ArrayList<Failure>();
+		List<Failure> errors = new ArrayList<Failure>();
+
+		String message;
 
 		@Override
 		public void testFailure(Failure failure) throws Exception {
-			failures.add(failure);
+			Throwable e = failure.getException();
+			// Junit4 does distinguish between failures and errors. Thus, the
+			// type of the exception is checked.
+			if (e instanceof AssertionError) {
+				failures.add(failure);
+			} else {
+				errors.add(failure);
+			}
+			if (failure != null) {
+				message = failure.getMessage();
+				if (!MutationProperties.IGNORE_EXCEPTION_TRACES) {
+					message += "\n" + failure.getTrace();
+				}
+			}
 		}
 
 		public List<Failure> getFailures() {
 			return failures;
 		}
 
-		public void addFailure(Description desc, Exception e) {
-			failures.add(new Failure(desc, e));
+		public void addFailure(Description desc, Exception e) throws Exception {
+			testFailure(new Failure(desc, e));
+		}
+
+		public List<Failure> getErrors() {
+			return errors;
+		}
+
+		public String getMessage() {
+			return message;
 		}
 
 	}
@@ -206,14 +269,13 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 			}
 
 			public SingleTestResult getResult() {
-				String message = "";// TODO
+				String message = runListener.getMessage();
 				TestOutcome outcome = TestOutcome.PASS;
 				if (runListener.getFailures().size() > 0) {
 					outcome = TestOutcome.FAIL;
+				} else if (runListener.getErrors().size() > 0) {
+					outcome = TestOutcome.ERROR;
 				}
-				// else if (result.errorCount() > 0) {
-				// outcome = TestOutcome.ERROR; //TODO
-				// }
 				SingleTestResult res = new SingleTestResult(testName, message,
 						outcome, stopWatch.getTime());
 				return res;
@@ -221,7 +283,12 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 
 			public void setFailed(String message) {
 				Exception e = new Exception(message);
-				runListener.addFailure(allTests.get(testName), e);
+				try {
+					runListener.addFailure(allTests.get(testName), e);
+				} catch (Exception e2) {
+					logger.warn(e);
+					e2.printStackTrace();
+				}
 			}
 
 		};
