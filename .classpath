@@ -28,6 +28,7 @@
   <classpathentry kind="var" path="M2_REPO/daikon/daikon/local/daikon-local.jar"/>
   <classpathentry kind="var" path="M2_REPO/de/unisb/cs/st/adabu2-core/0.4-SNAPSHOT/adabu2-core-0.4-SNAPSHOT.jar" sourcepath="M2_REPO/de/unisb/cs/st/adabu2-core/0.4-SNAPSHOT/adabu2-core-0.4-SNAPSHOT-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/de/unisb/cs/st/adabu2-hoare/0.4-SNAPSHOT/adabu2-hoare-0.4-SNAPSHOT.jar" sourcepath="M2_REPO/de/unisb/cs/st/adabu2-hoare/0.4-SNAPSHOT/adabu2-hoare-0.4-SNAPSHOT-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/easymock/easymock/2.0/easymock-2.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/hsqldb/hsqldb/1.8.0.1/hsqldb-1.8.0.1.jar" sourcepath="M2_REPO/hsqldb/hsqldb/1.8.0.1/hsqldb-1.8.0.1-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/java2html/j2h/1.3.1/j2h-1.3.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jgrapht/jgrapht-jdk1.5/0.7.3/jgrapht-jdk1.5-0.7.3.jar"/>

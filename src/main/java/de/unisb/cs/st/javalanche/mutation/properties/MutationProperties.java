@@ -70,7 +70,7 @@ public class MutationProperties {
 
 	private static final String RUN_MODE_KEY = "mutation.run.mode";
 
-	public static final RunMode RUN_MODE = getRunMode();
+	public static RunMode RUN_MODE = getRunMode();
 
 	public static final String RESULT_FILE_KEY = "mutation.result.file";
 

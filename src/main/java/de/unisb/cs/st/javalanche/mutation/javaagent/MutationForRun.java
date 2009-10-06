@@ -65,7 +65,8 @@ public class MutationForRun {
 
 	public MutationForRun(String fileName) {
 		mutations = getMutationsForRun(fileName);
-		logger.info("Applying " + mutations.size() + " mutations");
+		logger.info("Got " + mutations.size() + " mutations from file: "
+				+ fileName);
 		List<Long> ids = new ArrayList<Long>();
 		for (Mutation m : mutations) {
 			logger.debug("Mutation ID: " + m.getId());
@@ -99,7 +100,7 @@ public class MutationForRun {
 	}
 
 	/**
-	 * Reads a list of mutation ids from a file and fetches the corresponding
+	 * Reads a list of mutation IDs from a file and fetches the corresponding
 	 * mutations from the database. Mutations that already have a result are
 	 * filtered such that they get not applied again.
 	 * 
@@ -110,7 +111,7 @@ public class MutationForRun {
 	private static List<Mutation> getMutationsForRun(String fileName) {
 		List<Mutation> mutationsToReturn = new ArrayList<Mutation>();
 		if (fileName != null) {
-			File file = new File(MutationProperties.MUTATION_FILE_NAME);
+			File file = new File(fileName);
 			if (file.exists()) {
 				logger.info("Location of mutation file: "
 						+ file.getAbsolutePath());
@@ -170,5 +171,7 @@ public class MutationForRun {
 		}
 		return false;
 	}
+	
+	
 
 }
