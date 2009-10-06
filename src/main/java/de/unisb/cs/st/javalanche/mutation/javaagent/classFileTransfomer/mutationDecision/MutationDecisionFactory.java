@@ -22,7 +22,6 @@ import java.util.Collection;
 
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.cs.st.javalanche.mutation.testDetector.TestInfo;
 
 public class MutationDecisionFactory {
 
@@ -44,9 +43,6 @@ public class MutationDecisionFactory {
 			if (classNameWithDots.contains(TEST_PACKAGE)) {
 				return false;
 			}
-			// if (TestInfo.isTest(classNameWithDots)) {
-			// return false;
-			// }
 			if (Excludes.getInstance().shouldExclude(classNameWithDots)) {
 				return false;
 			}
