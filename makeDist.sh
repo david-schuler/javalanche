@@ -34,14 +34,12 @@ mkdir -p ${DIST}/examples/triangleJunit4
 cp ../TriangleJunit4/build.xml ${DIST}/examples/triangleJunit4/ 
 cp -r ../TriangleJunit4/src ${DIST}/examples/triangleJunit4/
 cp -r ../TriangleJunit4/lib ${DIST}/examples/triangleJunit4/
-rm ${DIST}/examples/triangleJunit4/src/triangle/TESTJUNIT4.java
 
 mkdir -p ${DIST}/examples/invariantExample
 cp ../InvariantExample/build.xml ${DIST}/examples/invariantExample/
 cp -r ../InvariantExample/src ${DIST}/examples/invariantExample/
 
 rm ${DIST}/javalanche-mutation-${VERSION}.jar
-rm ${DIST}/lib/junit-4.1.jar
 #rm ${DIST}/lib/daikon-local.jar
 if [  $1 ]; then
  if [ $1 == "tgz"  ]

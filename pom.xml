@@ -13,7 +13,7 @@
 	effectiveness. In particular, Javalanche assesses the impact of individual 
 	mutations to effectively weed out equivalent mutants
 	</description>
-
+	
 	<developers>
 		<developer>
 			<id>schuler</id>
@@ -248,8 +248,8 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-			
+		
+		
 		
 		
 		</plugins>
@@ -280,20 +280,12 @@
 	</reporting>
 	
 	<dependencies>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.7</version>
-<!--			<scope>test</scope> -->
 		</dependency>
-		
-<!--		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.1</version>
-			<scope>test</scope>
-		</dependency>
-	-->
 		
 		<dependency>
 			<groupId>asm</groupId>
@@ -322,7 +314,7 @@
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.2</version>
+			<version>1.2.2</version>
 		</dependency>
 		
 		<dependency>
@@ -440,16 +432,18 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<dependency>
-			<groupId>jgrapht</groupId>
-			<artifactId>jgrapht</artifactId>
+			<groupId>org.jgrapht</groupId>
+			<artifactId>jgrapht-jdk1.5</artifactId>
 			<version>0.7.3</version>
 		</dependency>
 		
+		
 		<dependency>
-			<groupId>easymock</groupId>
+			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
-			<version>2.0</version>
+			<version>2.3</version>
 			<scope>test</scope>
 		</dependency>
 		

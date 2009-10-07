@@ -49,8 +49,9 @@ Documentation
  They can either be set on the command
  line or in <<<javalanche.xml>>>.
  
- The following sections describe the steps during mutation testing.
- Examples for these steps can be found {{{examples.html}here}}.
+ The following sections describe the steps during mutation testing. Examples for
+ these steps can be found {{{example-triangle.html}here}} and
+ {{{example-jaxen.html}here}}. 
  
 ** Setting Up
  
@@ -192,4 +193,19 @@ make -j4
 	
  This task, for example, runs the four task in parallel. 
 
+** Running JUnit 4 Tests
 
+ Javalanche also supports JUnit 4 tests. To this end, Javalanche also needs
+ a test suite that is defined via the <<<@RunWith>>> and <<<@Suite.SuiteClasses>>>
+ annotations. Furthermore,  we have to tell Javalanche that we are running 
+ JUnit 4 tests with the <<javalanche.junit4>> property.
+ Thus, the <<<jvmarg>>> property for the <<<test-javalanche>>> task has to be modified.
+
++-------------------------------+
+<jvmarg line="-Djavalanche.junit4=true ${javalanche.arg.line}" />
++-------------------------------+
+
+ See the {{{example-triangle-junit4.html} Triangle JUnit 4 project}} for a full
+ example on running Javalanche on a JUnit 4 project. 
+
+ 

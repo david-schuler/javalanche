@@ -90,7 +90,6 @@ public class MutationProperties {
 	public static boolean IGNORE_EXCEPTION_TRACES = getPropertyOrDefault(
 			IGNORE_EXCEPTION_TRACES_KEY, true);
 
-	
 	/**
 	 * 
 	 * The key for the system property that specifies the package prefix of the
@@ -192,12 +191,15 @@ public class MutationProperties {
 	public static final int TEST_PERMUTATIONS = getPropertyOrDefault(
 			TEST_PERMUTATIONS_KEY, 10);
 
+	public static final String SINGLE_TASK_MODE_KEY = "javalanche.single.task.mode";
+
+	public static boolean SINGLE_TASK_MODE = getPropertyOrDefault(
+			SINGLE_TASK_MODE_KEY, false);
+
 	public static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
 		return Integer.parseInt(result);
 	}
-
-
 
 	public static boolean getPropertyOrDefault(String key, boolean b) {
 		String property = getProperty(key);
@@ -265,20 +267,27 @@ public class MutationProperties {
 		}
 	}
 
-	
-	/* Debugging Properties */
+	/**
+	 * 
+	 * Debugging Properties
+	 * 
+	 * */
 	public static String INSERT_ORIGINAL_INSTEAD_OF_MUTATION_KEY = "javalanche.debug.insert.original.code";
 
 	public static boolean INSERT_ORIGINAL_INSTEAD_OF_MUTATION = getPropertyOrDefault(
 			INSERT_ORIGINAL_INSTEAD_OF_MUTATION_KEY, false);
 
-	/* Properties needed for experiments */
+	/**
+	 * 
+	 * Properties needed for experiments
+	 * 
+	 * 
+	 * */
 
 	public static final String MULTIPLE_MAKEFILES_KEY = "mutation.multiple.makefile";
 
 	public static final boolean MULTIPLE_MAKEFILES = getPropertyOrDefault(
 			MULTIPLE_MAKEFILES_KEY, false);
-	
 
 	public static final String TEST_FILTER_FILE_NAME_KEY = "mutation.test.filter.map";
 	public static final String TEST_FILTER_FILE_NAME = getProperty(TEST_FILTER_FILE_NAME_KEY);

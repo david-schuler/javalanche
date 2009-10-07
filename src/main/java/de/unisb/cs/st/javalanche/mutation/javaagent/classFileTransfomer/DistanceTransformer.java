@@ -1,31 +1,29 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer;
 
-import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
@@ -33,7 +31,6 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
-import de.unisb.cs.st.javalanche.coverage.distance.ClassNode;
 import de.unisb.cs.st.javalanche.coverage.distance.ConnectionData;
 import de.unisb.cs.st.javalanche.coverage.distance.DistanceClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
@@ -117,12 +114,14 @@ public class DistanceTransformer implements ClassFileTransformer {
 
 	private ConnectionData data = new ConnectionData();
 
+	private AtomicBoolean traceLock = new AtomicBoolean(true);
+
 	public DistanceTransformer() {
 		Runtime r = Runtime.getRuntime();
 		r.addShutdownHook(new Thread() {
 			public void run() {
+				traceLock.set(false);
 				data.save();
-				
 				XmlIo.toXML(classes, MutationProperties.INHERITANCE_DATA_FILE);
 			}
 		});
@@ -135,12 +134,14 @@ public class DistanceTransformer implements ClassFileTransformer {
 			byte[] classfileBuffer) throws IllegalClassFormatException {
 		String classNameWithDots = className.replace('/', '.');
 		Set<String> supers = getSuper(classfileBuffer);
-		classes.add(new ClassEntry(className, supers));
-		if (classNameWithDots.startsWith(MutationProperties.PROJECT_PREFIX)) {
-			ClassReader cr = new ClassReader(classfileBuffer);
-			ClassWriter cw = new ClassWriter(0);
-			ClassVisitor cv = new DistanceClassAdapter(cw, data);
-			cr.accept(cv, ClassReader.SKIP_FRAMES);
+		if (traceLock.get()) {
+			classes.add(new ClassEntry(className, supers));
+			if (classNameWithDots.startsWith(MutationProperties.PROJECT_PREFIX)) {
+				ClassReader cr = new ClassReader(classfileBuffer);
+				ClassWriter cw = new ClassWriter(0);
+				ClassVisitor cv = new DistanceClassAdapter(cw, data);
+				cr.accept(cv, ClassReader.SKIP_FRAMES);
+			}
 		}
 		return classfileBuffer;
 	}

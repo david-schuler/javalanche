@@ -59,7 +59,7 @@ public class TestDetector {
 	private static class InTetsDir implements Heuristic {
 		public boolean matches(File f, String content) {
 			String parent = f.getParent();
-			return parent.contains("test");
+			return parent.contains("/test/") || parent.contains("/tests/");
 		}
 
 	}

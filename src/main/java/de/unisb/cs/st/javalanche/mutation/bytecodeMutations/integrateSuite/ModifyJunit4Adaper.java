@@ -61,7 +61,7 @@ public class ModifyJunit4Adaper extends ClassAdapter {
 			mv.visitCode();
 			mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out",
 					"Ljava/io/PrintStream;");
-			mv.visitLdcInsn("Running modified run method");
+			mv.visitLdcInsn("Running modified JUnit 4 tests");
 			mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println",
 					"(Ljava/lang/String;)V");
 			

@@ -41,6 +41,7 @@ under the License.
 	  <item name="IV-Jaxen-Invariants" href="example-jaxen-invariant.html"/>
 	  <item name="V-Coverage-Impact" href="example-triangle-coverage.html"/>
 	  <item name="VI-Jaxen-Coverage" href="example-jaxen-coverage.html"/>
+      <item name="VII-Triangle-Junit4" href="example-triangle-junit4.html"/>
     </menu>
 	
 	<menu ref="reports"/>

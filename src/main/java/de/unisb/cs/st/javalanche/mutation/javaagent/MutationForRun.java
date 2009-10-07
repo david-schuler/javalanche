@@ -35,6 +35,7 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator;
 
 /**
  * Class that holds all mutations that should be applied and executed during a
@@ -53,14 +54,29 @@ public class MutationForRun {
 	 */
 	private List<Mutation> mutations;
 
-
 	/**
 	 * @return an instance that contains all mutations for IDs from a file
 	 *         specified at the command line (see
 	 *         MutationProperties.MUTATION_FILE_NAME_KEY).
 	 */
 	public static MutationForRun getFromDefaultLocation() {
-		return new MutationForRun(MutationProperties.MUTATION_FILE_NAME);
+		if (MutationProperties.SINGLE_TASK_MODE) {
+			String fileName = findFile();
+			return new MutationForRun(fileName);
+		} else {
+			return new MutationForRun(MutationProperties.MUTATION_FILE_NAME);
+		}
+	}
+
+	private static String findFile() {
+		File f = new File(MutationProperties.OUTPUT_DIR + '/'
+				+ MutationTaskCreator.MUTATION_TASK_PROJECT_FILE_PREFIX
+				+ "-01.txt");
+		if (!f.exists()) {
+			throw new RuntimeException("Did not find file " + f);
+		}
+		logger.info("Found task file " + f);
+		return f.getAbsolutePath();
 	}
 
 	public MutationForRun(String fileName) {
@@ -171,7 +187,5 @@ public class MutationForRun {
 		}
 		return false;
 	}
-	
-	
 
 }

@@ -96,7 +96,6 @@ public class CoverageDataRuntime {
 
 	public static void setTestName(String testName) {
 		CoverageDataRuntime instance = SingletonHolder.instance;
-		System.out.println("CoverageDataRuntime.setTestName() " + testName);
 		instance.testsRun.add(testName);
 
 		if (instance.getTestName() == null) {

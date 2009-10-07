@@ -170,10 +170,11 @@ public class MutationTaskCreator {
 			} else {
 				logger.info("No more mutations. Finishing after file "
 						+ (i - 1));
-				i = i - 1;
+				
 				break;
 			}
 		}
+		i = i - 1;
 		System.out.println("Created " + i + " mutation tasks");
 	}
 

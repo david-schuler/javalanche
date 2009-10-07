@@ -203,7 +203,7 @@
 	
 	
 		
-		<condition property="run.mutations.single.task.mode" value="-Dsingle.task.mode=true" else="-Dsingle.task.mode=false">
+		<condition property="run.mutations.single.task.mode" value="-Djavalanche.single.task.mode=true" else="-Djavalanche.single.task.mode=false">
 			<isset property="single.task.mode"/>
 		</condition>
 		

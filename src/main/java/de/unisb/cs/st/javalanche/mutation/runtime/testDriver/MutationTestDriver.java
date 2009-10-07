@@ -446,7 +446,7 @@ public abstract class MutationTestDriver {
 			String tag = "ALL_RESULTS";
 			System.out.println(tag);
 			logger.info(tag);
-			String message = "All mutations have results - this means they have already been aplied and executed";
+			String message = "All mutations have results - this means they have already been applied and executed";
 			System.out.println(message);
 			logger.info(message);
 		}
