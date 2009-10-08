@@ -1,23 +1,24 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps;
 
+import java.net.URL;
 import java.util.List;
 
 import junit.framework.TestResult;
@@ -30,15 +31,26 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
+
+
+import static de.unisb.cs.st.javalanche.mutation.properties.RunMode.*;
+import static org.easymock.EasyMock.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
+import static org.junit.matchers.JUnitMatchers.*;
+import static org.hamcrest.number.OrderingComparisons.*;
+
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.testclasses.jumps.Jumps;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.testclasses.jumps.JumpsTest;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.MutationTestSuite;
+
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
 
 public class NegateJumpsTest {
 
@@ -56,8 +68,8 @@ public class NegateJumpsTest {
 
 	private static final String UNITTEST_CLASS_NAME = JumpsTest.class.getName();
 
-//	private static final String TEST_CLASS_FILENAME = ByteCodeTestUtils
-//			.getFileNameForClass(TEST_CLASS);
+	// private static final String TEST_CLASS_FILENAME = ByteCodeTestUtils
+	// .getFileNameForClass(TEST_CLASS);
 
 	private static String[] testCaseNames = ByteCodeTestUtils
 			.generateTestCaseNames(UNITTEST_CLASS_NAME, 5);
@@ -66,6 +78,8 @@ public class NegateJumpsTest {
 
 	@Before
 	public void setup() {
+		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
+		ByteCodeTestUtils.deleteCoverageData(TEST_CLASS_NAME);
 		ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
 		ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
 				linenumbers);
@@ -79,15 +93,17 @@ public class NegateJumpsTest {
 
 	@Test
 	public void runTests() {
+		MutationProperties.RUN_MODE = RunMode.MUTATION_TEST;
 		System.setProperty(MutationProperties.RESULT_FILE_KEY,
 				"target/unittestResults.xml");
 		ByteCodeTestUtils.redefineMutations(TEST_CLASS_NAME);
 		MutationTestSuite selectiveTestSuite = new MutationTestSuite();
 		TestSuite suite = new TestSuite(JumpsTest.class);
 		selectiveTestSuite.addTest(suite);
-		System.out.println(TEST_CLASS.hashCode());
 		@SuppressWarnings("unused")
 		Jumps jumps = new Jumps(); // ensure that class is loaded
+		// ClassLoader cl = NegateJumpsTest.class.getClassLoader()
+		CoverageDataRuntime instance = CoverageDataRuntime.getInstance();
 		selectiveTestSuite.run(new TestResult());
 		testResults();
 	}
@@ -109,7 +125,8 @@ public class NegateJumpsTest {
 				nonNulls++;
 				Assert.assertTrue(2 >= singleTestResult.getNumberOfErrors()
 						+ singleTestResult.getNumberOfFailures());
-				Assert.assertTrue("Expected at least one error for mutation:  " + m, 1 <= singleTestResult.getNumberOfErrors()
+				Assert.assertTrue("Expected at least one error for mutation:  "
+						+ m, 1 <= singleTestResult.getNumberOfErrors()
 						+ singleTestResult.getNumberOfFailures());
 
 				Assert.assertTrue(singleTestResult.isTouched());
@@ -117,8 +134,7 @@ public class NegateJumpsTest {
 		}
 		tx.commit();
 		session.close();
-		System.out.println("AAA" + nonNulls);
-		Assert.assertTrue("Expected results from mutations", nonNulls > 5);
+		assertThat(nonNulls, greaterThan(5));
 	}
 
 }

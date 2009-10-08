@@ -8,10 +8,9 @@
 
 Documentation
 
- Javalanche allows mutation testing of Java projects that come with a JUnit 3
- test suite. Below you will find a description of the several task of 
- Javalanche.
- 
+ Javalanche allows mutation testing of Java projects that come with a JUnit 3 or
+ {{{JUnit}JUnit 4}} test suite. Below you will find a description of the several task of
+ Javalanche. 
 
 
 * Installing Javalanche
@@ -193,7 +192,7 @@ make -j4
 	
  This task, for example, runs the four task in parallel. 
 
-** Running JUnit 4 Tests
+** Running {JUnit} 4 Tests
 
  Javalanche also supports JUnit 4 tests. To this end, Javalanche also needs
  a test suite that is defined via the <<<@RunWith>>> and <<<@Suite.SuiteClasses>>>

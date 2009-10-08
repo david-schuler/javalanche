@@ -51,14 +51,16 @@ public class MutationPreMain {
 	static {
 		// DB must be loaded before transform method is entered. Otherwise
 		// program crashes.
-		Mutation someMutation = new Mutation("SomeMutationToAddToTheDb", 23,
-				23, MutationType.ARITHMETIC_REPLACE, false);
-		Mutation mutationFromDb = QueryManager.getMutationOrNull(someMutation);
-		if (mutationFromDb == null) {
-			MutationPossibilityCollector mpc1 = new MutationPossibilityCollector();
-			mpc1.addPossibility(someMutation);
-			mpc1.toDB();
-		}
+		// Mutation someMutation = new Mutation("SomeMutationToAddToTheDb", 23,
+		// 23, MutationType.ARITHMETIC_REPLACE, false);
+		// Mutation mutationFromDb =
+		// QueryManager.getMutationOrNull(someMutation);
+		// if (mutationFromDb == null) {
+		// MutationPossibilityCollector mpc1 = new
+		// MutationPossibilityCollector();
+		// mpc1.addPossibility(someMutation);
+		// mpc1.toDB();
+		// }
 
 	}
 

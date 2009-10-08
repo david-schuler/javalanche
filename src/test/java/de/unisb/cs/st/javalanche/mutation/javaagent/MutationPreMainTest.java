@@ -2,9 +2,8 @@ package de.unisb.cs.st.javalanche.mutation.javaagent;
 
 import static de.unisb.cs.st.javalanche.mutation.properties.RunMode.*;
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.matchers.JUnitMatchers.*;
+import static org.junit.Assert.*;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;

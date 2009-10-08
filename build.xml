@@ -2,15 +2,15 @@
 
 	<!-- Classpath declaration -->
 	<path id="project.classpath">
-		<fileset dir="target/javalanche-mutation-0.1-dist.dir/lib/">
+		<fileset dir="target/javalanche-mutation-0.3.2-dist.dir/lib/">
 		<include name="**/*.jar" />
 			<include name="**/*.zip" />
 		</fileset>
-		<pathelement location="target/javalanche-mutation-0.1-dist.dir/lib/mysql-connector-java-5.0.3.jar" />
+		<pathelement location="target/javalanche-mutation-0.3.2-dist.dir/lib/mysql-connector-java-5.0.3.jar" />
 	</path>
 	
 	<path id="mutation.classpath">
-		<fileset dir="target/javalanche-mutation-0.1-dist.dir/lib/">
+		<fileset dir="target/javalanche-mutation-0.3.2-dist.dir/lib/">
 			<include name="**/*.jar" />
 			<include name="**/*.zip" />
 		</fileset>
@@ -26,9 +26,9 @@
 		<hibernatetool destdir="${basedir}">
 			<classpath>
 				<pathelement path="target/classes/" />
-				<pathelement location="target/javalanche-mutation-0.1-dist.dir/lib/mysql-connector-java-5.1-nightly-20071110-bin.jar" />
+				<pathelement location="target/javalanche-mutation-0.3.2-dist.dir/lib/mysql-connector-java-5.1-nightly-20071110-bin.jar" />
 				<!--<path refid="mutation.classpath" />-->
-				<fileset dir="target/javalanche-mutation-0.1-dist.dir/lib">
+				<fileset dir="target/javalanche-mutation-0.3.2-dist.dir/lib">
 					<exclude name="**/commons-logging-1.1.jar" />
 					<include name="**/*.jar" />
 				</fileset>
@@ -46,9 +46,9 @@
 		<hibernatetool destdir="${basedir}">
 			<classpath>
 				<pathelement path="target/classes/" />
-				<pathelement location="target/javalanche-mutation-0.1-dist.dir/lib/mysql-connector-java-5.1-nightly-20071110-bin.jar" />
+				<pathelement location="target/javalanche-mutation-0.3.2-dist.dir/lib/mysql-connector-java-5.1-nightly-20071110-bin.jar" />
 				<!--<path refid="mutation.classpath" />-->
-				<fileset dir="target/javalanche-mutation-0.1-dist.dir/lib">
+				<fileset dir="target/javalanche-mutation-0.3.2-dist.dir/lib">
 					<exclude name="**/commons-logging-1.1.jar" />
 					<include name="**/*.jar" />
 				</fileset>
@@ -94,7 +94,7 @@
 	
 	
 	<path id="build.classpath">
-		<fileset dir="target/javalanche-mutation-0.1-dist.dir/lib/">
+		<fileset dir="target/javalanche-mutation-0.3.2-dist.dir/lib/">
 			<include name="**/*.jar"/>
 		</fileset>
 		<pathelement location="../adabu2-check-invariants/target/classes/"/>
@@ -188,7 +188,7 @@
         classpath="jarjar-1.0.jar"/>
     <jarjar jarfile="target/uber.jar">
 		<zipfileset>
-				 <fileset dir="target/javalanche-mutation-0.1-dist.dir/lib/">
+				 <fileset dir="target/javalanche-mutation-0.3.2-dist.dir/lib/">
 					<include name="**/*.jar" />
 					<include name="**/*.zip" />
 				</fileset>

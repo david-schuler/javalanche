@@ -28,6 +28,6 @@ public class ReleaseTest {
 	@Test
 	public void testLogLevel() {
 		Level level = Logger.getRootLogger().getLevel();
-		assertThat(level, is(Level.INFO));
+		assertThat(level, is(Level.WARN));
 	}
 }

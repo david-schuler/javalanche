@@ -40,6 +40,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.CollectorByteCodeTra
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.testclasses.MethodCalls;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.testclasses.MethodCallsTest;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
@@ -96,7 +97,7 @@ public class RemoveMethodCallsTest {
 
 	@Test
 	public void runTests() {
-
+		MutationProperties.RUN_MODE = RunMode.MUTATION_TEST;
 		System.setProperty(MutationProperties.RESULT_FILE_KEY,
 				"target/unittestResults.xml");
 		ByteCodeTestUtils.redefineMutations(TEST_CLASS_NAME);

@@ -46,8 +46,9 @@ if [  $1 ]; then
 	then
 		echo "Generating tgz"
 		TAR=javalanche-${VERSION}-bin.tar.gz
-		tar -cvzf ${TAR} javalanche-${VERSION}
+		tar -czf ${TAR} javalanche-${VERSION}
 		cp ${TAR} src/site/builds/
+		cp ${TAR} target/site/builds/
 		SRCDIR=target/javalanche-src/
 		mkdir ${SRCDIR}
 		cp -r src ${SRCDIR}
@@ -60,11 +61,14 @@ if [  $1 ]; then
 		rm -rf ${SRCDIR}/src/site
 		rm -rf ${SRCDIR}/src/main/doc
 		find ${SRCDIR} -name ".svn" | xargs rm -rf 
+		find ${SRCDIR} -name "*~" | xargs rm  
 		cd target
-		tar -cvzf javalanche-${VERSION}-src.tar.gz  javalanche-src/     
+		TAR_SRC=javalanche-${VERSION}-src.tar.gz
+		tar -czf ${TAR_SRC}  javalanche-src/     
+		cp ${TAR_SRC} ../src/site/builds/
+		cp ${TAR_SRC} site/builds/
 		cd ..
-		cp ${TAR} src/site/resources/builds/
-#		rsync -r target/site/ ~/Sites/st_chair/javalanche/
+		rsync  --verbose  --progress --stats --compress --recursive --times --perms --links    target/site/ kubrick:Sites/st_chair/javalanche/ 
 	fi
 fi
 

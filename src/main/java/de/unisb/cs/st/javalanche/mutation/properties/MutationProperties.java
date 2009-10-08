@@ -276,6 +276,8 @@ public class MutationProperties {
 
 	public static boolean INSERT_ORIGINAL_INSTEAD_OF_MUTATION = getPropertyOrDefault(
 			INSERT_ORIGINAL_INSTEAD_OF_MUTATION_KEY, false);
+	
+	public static final boolean QUERY_DB_BEFORE_START = false;
 
 	/**
 	 * 
@@ -297,6 +299,8 @@ public class MutationProperties {
 	public static final String EXPERIMENT_DATA_FILENAME_KEY = "experiment.data.filename";
 
 	public static final String EXPERIMENT_DATA_FILENAME = getProperty(EXPERIMENT_DATA_FILENAME_KEY);
+
+	
 
 	private static boolean shoudFilterTests() {
 		if (MutationProperties.TEST_FILTER_FILE_NAME != null) {
