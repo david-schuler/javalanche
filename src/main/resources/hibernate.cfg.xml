@@ -4,7 +4,6 @@
 
 <hibernate-configuration>
     <session-factory>
-<!--
     	<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 		<property name="hibernate.connection.url">jdbc:mysql://localhost:3308/mutation_test</property>
 		<property name="hibernate.connection.username">mutation</property>
@@ -13,13 +12,14 @@
 		<property name="hibernate.jdbc.batch_size">20</property>
 
 		<property name="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
--->	
+<!--
+	
         <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
         <property name="hibernate.connection.url">jdbc:hsqldb:hsql://localhost/mt</property>
         <property name="hibernate.connection.username">sa</property>
         <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
 		<property name="hibernate.jdbc.batch_size">1</property>
-
+-->
    
         <property name="hibernate.c3p0.min_size">5</property>
         <property name="hibernate.c3p0.max_size">10</property>

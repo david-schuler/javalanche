@@ -31,7 +31,9 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
@@ -44,9 +46,9 @@ import de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator;
  * @author David Schuler
  * 
  */
-public class MutationForRun {
+public class MutationsForRun {
 
-	private static Logger logger = Logger.getLogger(MutationForRun.class);
+	private static Logger logger = Logger.getLogger(MutationsForRun.class);
 
 	/**
 	 * List that holds the mutations that should be applied for this run (It
@@ -59,12 +61,12 @@ public class MutationForRun {
 	 *         specified at the command line (see
 	 *         MutationProperties.MUTATION_FILE_NAME_KEY).
 	 */
-	public static MutationForRun getFromDefaultLocation() {
+	public static MutationsForRun getFromDefaultLocation() {
 		if (MutationProperties.SINGLE_TASK_MODE) {
 			String fileName = findFile();
-			return new MutationForRun(fileName);
+			return new MutationsForRun(fileName);
 		} else {
-			return new MutationForRun(MutationProperties.MUTATION_FILE_NAME);
+			return new MutationsForRun(MutationProperties.MUTATION_FILE_NAME);
 		}
 	}
 
@@ -79,7 +81,7 @@ public class MutationForRun {
 		return f.getAbsolutePath();
 	}
 
-	public MutationForRun(String fileName) {
+	public MutationsForRun(String fileName) {
 		mutations = getMutationsForRun(fileName);
 		logger.info("Got " + mutations.size() + " mutations from file: "
 				+ fileName);
@@ -131,7 +133,7 @@ public class MutationForRun {
 			if (file.exists()) {
 				logger.info("Location of mutation file: "
 						+ file.getAbsolutePath());
-				mutationsToReturn = QueryManager.getMutationsByFile(file);
+				mutationsToReturn = getMutationsByFile(file);
 			} else {
 				logger.warn("Mutation file does not exist: " + file);
 			}
@@ -140,6 +142,27 @@ public class MutationForRun {
 		}
 		filterMutationsWithResult(mutationsToReturn);
 		return mutationsToReturn;
+	}
+	
+	/**
+	 * Reads a list of mutation ids from a file and fetches the corresponding
+	 * mutations from the database.
+	 * 
+	 * @param file
+	 *            the file to read from
+	 * @return a list of mutations read from the db.
+	 */
+	public static List<Mutation> getMutationsByFile(File file) {
+		List<Long> idList = Io.getIDsFromFile(file);
+		List<Mutation> returnList = null;
+		if (idList.size() > 0) {
+			returnList = QueryManager.getMutationsFromDbByID(idList
+					.toArray(new Long[0]));
+		} else {
+			returnList = new ArrayList<Mutation>();
+		}
+		return returnList;
+
 	}
 
 	/**
@@ -186,6 +209,11 @@ public class MutationForRun {
 			}
 		}
 		return false;
+	}
+
+	public String getAddInfo(Long id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

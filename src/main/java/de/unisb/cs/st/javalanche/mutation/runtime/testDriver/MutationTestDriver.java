@@ -18,7 +18,10 @@
  */
 package de.unisb.cs.st.javalanche.mutation.runtime.testDriver;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -28,6 +31,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -35,9 +39,11 @@ import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
+import com.google.common.collect.PrimitiveArrays;
+
 import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.ds.util.io.XmlIo;
-import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
+import de.unisb.cs.st.javalanche.mutation.javaagent.MutationsForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
@@ -53,6 +59,7 @@ import de.unisb.cs.st.javalanche.mutation.runtime.ResultReporter;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit3MutationTestDriver;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestCheckListener;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestListener;
+import de.unisb.cs.st.javalanche.mutation.util.ThreadUtilities;
 import de.unisb.cs.st.javalanche.coverage.CoverageMutationListener;
 
 import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
@@ -68,6 +75,8 @@ import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*
  */
 public abstract class MutationTestDriver {
 
+	private static final String ENDLESS_LOOP_MESSAGE = "Mutated Thread is still running after mutation is switched of.";
+
 	protected static final String SINGLE_TEST_NAME_KEY = "single.test.name";
 
 	private static final String DRIVER_KEY = "mutation.test.driver";
@@ -76,10 +85,12 @@ public abstract class MutationTestDriver {
 
 	private static Logger logger = Logger.getLogger(MutationTestDriver.class);
 
+	final ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
+
 	/**
 	 * Timeout for the test. After this time a test is stopped.
 	 */
-	private long timeout = MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS;
+	protected long timeout = MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS;
 
 	/**
 	 * The mutation that is currently active.
@@ -101,11 +112,11 @@ public abstract class MutationTestDriver {
 	 */
 	private boolean shutdownMethodCalled;
 
-	public static final String RESTART_MESSAGE = "Mutation test thread could not be stopped. Shutting down JVM.";
+	public static final String RESTART_MESSAGE = "Shutting down JVM.";
 
 	/**
-	 * The listeneres that are informed about mutation events. The order in
-	 * which the listeners are called is not specified. However the
+	 * The listeners that are informed about mutation events. The order in which
+	 * the listeners are called is not specified. However, the
 	 * {@link ResultReporter} that stores the results to the database will
 	 * always be called at last.
 	 */
@@ -433,13 +444,13 @@ public abstract class MutationTestDriver {
 		logger.info("Test Runs finished. Run " + totalTests + " tests for "
 				+ totalMutations + " mutations ");
 		System.out.println(MutationObserver.summary(true));
-		MutationObserver.reportAppliedMutations(); 
-		
+		MutationObserver.reportAppliedMutations();
+
 		Runtime.getRuntime().removeShutdownHook(shutDownThread);
 	}
 
 	private boolean checkMutations() {
-		MutationForRun mfr = MutationForRun.getFromDefaultLocation();
+		MutationsForRun mfr = MutationsForRun.getFromDefaultLocation();
 		int mutationsSize = mfr.getMutations().size();
 		boolean allResults = mutationsSize == 0;
 		if (allResults) {
@@ -549,8 +560,7 @@ public abstract class MutationTestDriver {
 	 *            the test to be run
 	 * @return the time needed for executing the test
 	 */
-	protected long runWithTimeout(MutationTestRunnable r) {
-
+	protected long runWithTimeoutOld(MutationTestRunnable r) {
 		// ArrayList<Thread> threadsPre = ThreadUtil.getThreads();
 		ExecutorService service = Executors.newSingleThreadExecutor();
 		Future<?> future = service.submit(r);
@@ -560,7 +570,7 @@ public abstract class MutationTestDriver {
 		String exceptionMessage = null;
 		Throwable capturedThrowable = null;
 		try {
-			logger.debug("Start timed test1: ");
+			logger.debug("Start  test: ");
 			boolean terminated = service.awaitTermination(timeout,
 					TimeUnit.SECONDS);
 			logger.debug("First timeout");
@@ -568,7 +578,7 @@ public abstract class MutationTestDriver {
 			if (!terminated) {
 				service.shutdownNow();
 			}
-			future.get(timeout, TimeUnit.SECONDS);
+			future.get(1, TimeUnit.SECONDS);
 			logger.debug("Second timeout");
 			long time2 = stopWatch.getTime();
 			if (time2 - time1 > 1000) {
@@ -601,29 +611,7 @@ public abstract class MutationTestDriver {
 		stopWatch.stop();
 
 		if (!r.hasFinished()) {
-			r
-					.setFailed("Mutated Thread is still running after mutation is switched of.");
-			if (shutDownThread != null) {
-				Runtime.getRuntime().removeShutdownHook(shutDownThread);
-			}
-			logger.warn(RESTART_MESSAGE);
-			TestMessage tm = new TestMessage(currentTestName, RESTART_MESSAGE,
-					stopWatch.getTime());
-			boolean touched = MutationObserver.getTouchingTestCases().contains(
-					currentTestName);
-			tm.setTouched(touched);
-			setTestMessage(tm);
-			String m;
-			m = "Mutated Thread is still running";
-			logger.warn(m);
-			testEnd(currentTestName);
-			if (currentMutation != null) {
-				mutationEnd(currentMutation);
-			}
-			testsEnd();
-			System.out.println(m);
-			System.out.println("Exiting now");
-			System.exit(10);
+			shutDown(r, stopWatch);
 		}
 		logger.debug("End timed test, it took " + stopWatch.getTime() + " ms");
 		return stopWatch.getTime();
@@ -651,6 +639,117 @@ public abstract class MutationTestDriver {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected long runWithTimeout(MutationTestRunnable r) {
+		long[] preIds = threadMxBean.getAllThreadIds();
+		FutureTask<Object> future = new FutureTask<Object>(Executors
+				.callable(r));
+		Thread thread = new Thread(future);
+		thread.setDaemon(true);
+		logger.debug("Start  test: ");
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+		thread.start();
+		String exceptionMessage = null;
+		Throwable capturedThrowable = null;
+		try {
+			future.get(timeout, TimeUnit.SECONDS);
+			logger.debug("Second timeout");
+		} catch (InterruptedException e) {
+			capturedThrowable = e;
+		} catch (ExecutionException e) {
+			capturedThrowable = e;
+		} catch (TimeoutException e) {
+			exceptionMessage = "Mutation causes test timeout";
+			capturedThrowable = e;
+		} catch (Throwable t) {
+			capturedThrowable = t;
+		} finally {
+			if (capturedThrowable != null) {
+				if (exceptionMessage == null) {
+					exceptionMessage = "Exception caught during test execution.";
+				}
+				r.setFailed(exceptionMessage + " - " + capturedThrowable);
+			}
+		}
+		if (!future.isDone()) {
+			r.setFailed("Mutated Thread is still running after timeout.");
+			switchOfMutation(future);
+		}
+		stopWatch.stop();
+		if (!checkAllFinished(preIds)) {
+			if (MutationProperties.USE_THREAD_STOP) {
+				stopThreads(preIds);
+			} else {
+				shutDown(r, stopWatch);
+			}
+		}
+		logger.debug("End timed test, it took " + stopWatch.getTime() + " ms");
+		return stopWatch.getTime();
+	}
+
+	private void handleMutationRunnable(MutationTestRunnable r,
+			StopWatch stopWatch, String message) {
+		r.setFailed(message);
+		TestMessage tm = new TestMessage(currentTestName, message, stopWatch
+				.getTime());
+		boolean touched = MutationObserver.getTouchingTestCases().contains(
+				currentTestName);
+		tm.setTouched(touched);
+		setTestMessage(tm);
+		testEnd(currentTestName);
+	}
+
+	private void shutDown(MutationTestRunnable r, StopWatch stopWatch) {
+		String message;
+		if (!r.hasFinished()) {
+			message = ENDLESS_LOOP_MESSAGE + RESTART_MESSAGE;
+		} else {
+			message = "Mutation started a thread that continued to run";
+		}
+		handleMutationRunnable(r, stopWatch, message);
+		if (shutDownThread != null) {
+			Runtime.getRuntime().removeShutdownHook(shutDownThread);
+		}
+		logger.warn(RESTART_MESSAGE);
+		if (currentMutation != null) {
+			mutationEnd(currentMutation);
+		}
+		testsEnd();
+		System.out.println("Exiting now");
+		System.exit(10);
+	}
+
+	private void stopThreads(long[] preIds) {
+		Set<Long> threadIds = getThreadIds(preIds);
+		for (Long tid : threadIds) {
+			Thread runningThread = ThreadUtilities.getThread(tid);
+			logger.info("Stopping thread " + runningThread);
+			runningThread.stop();
+		}
+	}
+
+	private Set<Long> getThreadIds(long[] preIds) {
+		long[] allThreadIds = threadMxBean.getAllThreadIds();
+		List<Long> preList = PrimitiveArrays.asList(preIds);
+		Set<Long> result = new HashSet<Long>();
+		for (long tid : allThreadIds) {
+			if (!preList.contains(tid)) {
+				result.add(tid);
+			}
+		}
+		return result;
+	}
+
+	private boolean checkAllFinished(long[] threadIds) {
+		long[] allThreadIds = threadMxBean.getAllThreadIds();
+		if (allThreadIds.length != threadIds.length) {
+			return false;
+		}
+		Arrays.sort(threadIds);
+		Arrays.sort(allThreadIds);
+		return Arrays.equals(threadIds, allThreadIds);
 	}
 
 	/**

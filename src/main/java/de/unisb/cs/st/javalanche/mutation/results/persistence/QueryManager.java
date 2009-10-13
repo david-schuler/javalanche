@@ -1160,25 +1160,6 @@ public class QueryManager {
 		session.close();
 	}
 
-	/**
-	 * Reads a list of mutation ids from a file and fetches the corresponding
-	 * mutations from the database.
-	 * 
-	 * @param file
-	 *            the file to read from
-	 * @return a list of mutations read from the db.
-	 */
-	public static List<Mutation> getMutationsByFile(File file) {
-		List<Long> idList = Io.getIDsFromFile(file);
-		List<Mutation> returnList = null;
-		if (idList.size() > 0) {
-			returnList = getMutationsFromDbByID(idList
-					.toArray(new Long[0]));
-		} else {
-			returnList = new ArrayList<Mutation>();
-		}
-		return returnList;
-	
-	}
+
 
 }

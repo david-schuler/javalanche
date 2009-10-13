@@ -24,7 +24,8 @@ public enum RunMode {
 			"mutation-invariant-per-test"), MUTATION_TEST_COVERAGE(
 			"mutation-coverage"), CREATE_COVERAGE("create-coverage"), OFF("off"), CHECK_INVARIANTS_PER_TEST(
 			"check-per-test"), TEST_PERMUTED("test3"), SCAN_PROJECT(
-			"scan-project"), SCAN_ECLIPSE("scan-eclipse");
+			"scan-project"), SCAN_ECLIPSE("scan-eclipse"), EVOLUTION(
+			"evolution");
 
 	private String key;
 

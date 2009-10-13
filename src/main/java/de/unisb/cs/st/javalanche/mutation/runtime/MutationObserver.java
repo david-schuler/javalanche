@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.log4j.Logger;
 
-import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
+import de.unisb.cs.st.javalanche.mutation.javaagent.MutationsForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
@@ -218,7 +218,7 @@ public class MutationObserver implements MutationTestListener {
 	// TODO refactor.
 	public static void reportAppliedMutations() {
 		List<Mutation> notApplied = new ArrayList<Mutation>();
-		List<Mutation> mutations = MutationForRun.getFromDefaultLocation()
+		List<Mutation> mutations = MutationsForRun.getFromDefaultLocation()
 				.getMutations();
 		int applied = 0;
 		boolean showMutations = mutations.size() < 5;

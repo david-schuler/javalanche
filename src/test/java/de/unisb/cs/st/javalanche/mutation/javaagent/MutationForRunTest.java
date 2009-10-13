@@ -31,7 +31,7 @@ public class MutationForRunTest {
 	private static Mutation m3 = new Mutation(MutationForRunTest.class
 			.getName(), 43, 0, MutationType.NEGATE_JUMP, false);
 
-	private static MutationForRun mfr;
+	private static MutationsForRun mfr;
 
 	private static File f;
 
@@ -46,7 +46,7 @@ public class MutationForRunTest {
 		w.write(m2.getId() + "\n");
 		w.flush();
 		w.close();
-		mfr = new MutationForRun(f.getAbsolutePath());
+		mfr = new MutationsForRun(f.getAbsolutePath());
 
 	}
 
@@ -80,7 +80,7 @@ public class MutationForRunTest {
 	@Test
 	public void testGetFromDefaultLocation() {
 		MutationProperties.MUTATION_FILE_NAME = f.getAbsolutePath();
-		MutationForRun fromDefaultLocation = MutationForRun
+		MutationsForRun fromDefaultLocation = MutationsForRun
 				.getFromDefaultLocation();
 		assertThat(fromDefaultLocation.getMutations(), is(mfr.getMutations()));
 	}

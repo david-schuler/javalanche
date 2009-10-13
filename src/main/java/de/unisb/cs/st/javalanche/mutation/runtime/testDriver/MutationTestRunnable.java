@@ -28,9 +28,9 @@ package de.unisb.cs.st.javalanche.mutation.runtime.testDriver;
 public interface MutationTestRunnable extends Runnable {
 
 	/**
-	 * Returns true, if the test has finshed.
-	 *
-	 * @return true,if the test has finshed
+	 * Returns true, if the test has finished.
+	 * 
+	 * @return true,if the test has finished
 	 */
 	public boolean hasFinished();
 

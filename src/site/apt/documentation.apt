@@ -190,7 +190,7 @@ ant -f javalanche.xml createMutationMakefile
 make -j4
 +-------------------------------+
 	
- This task, for example, runs the four task in parallel. 
+ This task, for example, runs four tasks in parallel. 
 
 ** Running {JUnit} 4 Tests
 

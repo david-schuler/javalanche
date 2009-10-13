@@ -41,7 +41,7 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 public class ArithmeticReplaceMethodAdapter extends
 		AbstractArithmeticMethodAdapter {
 
-	private MutationManager mutationManager;
+	protected MutationManager mutationManager;
 
 	public ArithmeticReplaceMethodAdapter(MethodVisitor mv, String className,
 			String methodName, Map<Integer, Integer> possibilities,
@@ -52,22 +52,6 @@ public class ArithmeticReplaceMethodAdapter extends
 
 	private static Logger logger = Logger
 			.getLogger(ArithmeticReplaceMethodAdapter.class);
-
-	private static class SingleInsnMutationCode extends MutationCode {
-
-		private int opc;
-
-		public SingleInsnMutationCode(Mutation mutation, int opcode) {
-			super(mutation);
-			this.opc = opcode;
-		}
-
-		@Override
-		public void insertCodeBlock(MethodVisitor mv) {
-			mv.visitInsn(opc);
-		}
-
-	}
 
 	@Override
 	protected void handleMutation(Mutation mutation, int opcode) {

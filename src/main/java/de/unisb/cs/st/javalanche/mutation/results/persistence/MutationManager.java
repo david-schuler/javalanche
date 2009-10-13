@@ -20,7 +20,7 @@ package de.unisb.cs.st.javalanche.mutation.results.persistence;
 
 import org.apache.log4j.Logger;
 
-import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
+import de.unisb.cs.st.javalanche.mutation.javaagent.MutationsForRun;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationObserver;
 
@@ -34,13 +34,13 @@ public class MutationManager {
 
 	/**
 	 * If set to true all mutations from the database are applied, otherwise
-	 * only the mutations given by the {@link MutationForRun}
+	 * only the mutations given by the {@link MutationsForRun}
 	 */
 	private boolean applyAllMutation = false;
 
 	private static Logger logger = Logger.getLogger(MutationManager.class);
 
-	private MutationForRun mutationsForRun;
+	private MutationsForRun mutationsForRun;
 
 	public MutationManager() {
 		this(false);
@@ -49,7 +49,7 @@ public class MutationManager {
 
 	public MutationManager(boolean applyAllMutationsInDb) {
 		applyAllMutation = applyAllMutationsInDb;
-		mutationsForRun = MutationForRun.getFromDefaultLocation();
+		mutationsForRun = MutationsForRun.getFromDefaultLocation();
 	}
 
 	public boolean shouldApplyMutation(Mutation mutation) {

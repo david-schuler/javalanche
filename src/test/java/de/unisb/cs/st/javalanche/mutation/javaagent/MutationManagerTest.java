@@ -26,7 +26,7 @@ public class MutationManagerTest {
 
 	@Test
 	public void testGetClassesToMutate() {
-		MutationForRun mfr = MutationForRun.getFromDefaultLocation();
+		MutationsForRun mfr = MutationsForRun.getFromDefaultLocation();
 		
 	}
 }

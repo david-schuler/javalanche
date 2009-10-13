@@ -196,6 +196,11 @@ public class MutationProperties {
 	public static boolean SINGLE_TASK_MODE = getPropertyOrDefault(
 			SINGLE_TASK_MODE_KEY, false);
 
+	public static final String USE_THREAD_STOP_KEY = "javalanche.use.thread.stop";
+
+	public static final boolean USE_THREAD_STOP = getPropertyOrDefault(
+			USE_THREAD_STOP_KEY, true);
+
 	public static final int getPropertyOrDefault(String key, int defaultValue) {
 		String result = getPropertyOrDefault(key, defaultValue + "");
 		return Integer.parseInt(result);
@@ -276,7 +281,7 @@ public class MutationProperties {
 
 	public static boolean INSERT_ORIGINAL_INSTEAD_OF_MUTATION = getPropertyOrDefault(
 			INSERT_ORIGINAL_INSTEAD_OF_MUTATION_KEY, false);
-	
+
 	public static final boolean QUERY_DB_BEFORE_START = false;
 
 	/**
@@ -299,8 +304,6 @@ public class MutationProperties {
 	public static final String EXPERIMENT_DATA_FILENAME_KEY = "experiment.data.filename";
 
 	public static final String EXPERIMENT_DATA_FILENAME = getProperty(EXPERIMENT_DATA_FILENAME_KEY);
-
-	
 
 	private static boolean shoudFilterTests() {
 		if (MutationProperties.TEST_FILTER_FILE_NAME != null) {

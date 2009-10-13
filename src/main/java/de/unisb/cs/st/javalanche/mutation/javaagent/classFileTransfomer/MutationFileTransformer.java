@@ -39,7 +39,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
-import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
+import de.unisb.cs.st.javalanche.mutation.javaagent.MutationsForRun;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecisionFactory;
@@ -82,7 +82,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	private static MutationTransformer mutationTransformer = new MutationTransformer();
 
-	private static MutationForRun mm = MutationForRun.getFromDefaultLocation();
+	private static MutationsForRun mm = MutationsForRun.getFromDefaultLocation();
 
 	private static Collection<String> classesToMutate = mm.getClassNames();
 

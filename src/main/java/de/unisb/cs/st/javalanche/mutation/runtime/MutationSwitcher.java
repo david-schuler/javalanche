@@ -25,7 +25,7 @@ import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
-import de.unisb.cs.st.javalanche.mutation.javaagent.MutationForRun;
+import de.unisb.cs.st.javalanche.mutation.javaagent.MutationsForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
@@ -55,7 +55,7 @@ public class MutationSwitcher {
 	private StopWatch stopWatch = new StopWatch();
 
 	public MutationSwitcher() {
-		mutations = MutationForRun.getFromDefaultLocation().getMutations();
+		mutations = MutationsForRun.getFromDefaultLocation().getMutations();
 		logger.info(mutations);
 		iter = mutations.iterator();
 	}
