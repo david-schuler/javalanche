@@ -1,0 +1,396 @@
+            ------
+            Triangle Example
+            ------
+            David Schuler
+            ------
+            Date
+
+
+Triangle JUnit 4
+
+ The triangleJunit4 project is a simple project that classifies triangles and has a
+ JUnit 4 test suite. 
+ It is located in the <<<examples/triangleJunit4>>> folder of the
+ Javalanche distribution.
+
+* Compiling the project
+
+ Before we start mutation testing the project, we need to compile it. 
+ To this end we use the <<<test>>> task of the project.
+ 
++-------------------------------+
+ant test
++-------------------------------+
+ 
+ Which produces the following output:
+
+* Setting Up
+
+ After we compiled the project, we copy <<<javalanche.xml>>> to this directory.
+
++-------------------------------+
+cp ../../javalanche.xml .
++-------------------------------+
+
+** Editing javalanche.xml
+
+ In order to apply mutation testing Javalanche needs a test suite.
+ The JUnit 4 Test Suite for the project looks as follows:
+
++-------------------------------+
+package triangle.tests;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
+@RunWith(Suite.class)
+@Suite.SuiteClasses( { Triangle1Test.class, Triangle2Test.class,
+		Triangle3Test.class })
+public class TriangleTestSuite {
+
+}
++-------------------------------+
+
+
+ Using this test suite, we can adapt the <<<javalanche.xml>>> file for this
+ project, by setting these properties at the beginning of the file:
+
++-------------------------------+
+<property name="prefix" value="triangle"/>
+<property name="testsuite" value="triangle.tests.TriangleTestSuite"/>
+<property name="javalanche" value="../../"/>
+<property name="cp" value="target/classes"/>
++-------------------------------+
+ 
+ Furthermore, we have to modify the <<<jvmarg>>> property for the <<<test-javalanche>>>
+ task. We have to tell Javalanche that we are running JUnit 4 tests with the 
+ <<javalanche.junit4>> property.
+ 
++-------------------------------+
+<jvmarg line="-Djavalanche.junit4=true ${javalanche.arg.line}" />
++-------------------------------+
+
+** Database setup
+
+
+ Then we start the database:
+
++-------------------------------+
+ant -f javalanche.xml -Djavalanche=../../  startHsql
++-------------------------------+
+
+ and export the database schema:
+
++-------------------------------+
+ant -f javalanche.xml -Djavalanche=../../  schemaexport
++-------------------------------+
+
+
+
+* Checking Tests
+
+ After we setup Javalanche we can test if the test suite behaves as expected
+
++-------------------------------+
+ant -f javalanche.xml testTask1
++-------------------------------+
+
+ Output:
+
++-------------------------------+
+Buildfile: javalanche.xml
+
+testTask1:
+
+test-javalanche:
+    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] Tests run: 18, Failures: 0, Errors: 0, Time elapsed: 0.142 sec
+
+BUILD SUCCESSFUL
+Total time: 1 second
+
+
++-------------------------------+
+
+ The output tells us that all 18 tests passed using the Javalanche test task, 
+ and we can test the Javalanche test runner.
+
++-------------------------------+
+ant -f javalanche.xml testTask2
++-------------------------------+
+
+ Output:
+
++-------------------------------+
+Buildfile: javalanche.xml
+
+testTask2:
+
+test-javalanche:
+    [junit] Integrating RandomPermutationTestSuite
+    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] Running modified JUnit 4 tests
+    [junit] All 18 tests passed 
+    [junit] Tests run: 0, Failures: 0, Errors: 0, Time elapsed: 0.319 sec
+
+BUILD SUCCESSFUL
+Total time: 5 seconds
+
+
++-------------------------------+
+
+
+ Now we can check if the tests are independent of execution frequency and
+ execution order
+
++-------------------------------+
+ant -f javalanche.xml testTask3
++-------------------------------+
+
+ Output: 
+
+
++-------------------------------+
+Buildfile: javalanche.xml
+
+testTask3:
+
+test-javalanche:
+    [junit] Integrating RandomPermutationTestSuite
+    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] Running modified JUnit 4 tests
+    [junit] All 18 tests passed for 10 permutations.
+    [junit] Tests run: 0, Failures: 0, Errors: 0, Time elapsed: 0.631 sec
+
+BUILD SUCCESSFUL
+Total time: 5 seconds
+
++-------------------------------+
+
+
+* Scanning Project
+
+ As all of the tests are working, we can scan the project for test classes
+ 
++-------------------------------+
+ant -f javalanche.xml scanProject
++-------------------------------+
+
+ Output:
+
++-------------------------------+
+Buildfile: javalanche.xml
+
+_scanProject:
+
+test-javalanche:
+    [junit] Scanning project for classes
+    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] Tests run: 18, Failures: 0, Errors: 0, Time elapsed: 0.25 sec
+    [junit] Got 6 classes with prefix: triangle
+
+_scanForTests:
+     [java] Found 4 test files.
+
+scanProject:
+
+BUILD SUCCESSFUL
+Total time: 6 seconds
++-------------------------------+
+
+ Before scanning for mutations, we have a look at the excludes file (<<<mutation-files/exclude.txt>>>).
+
++-------------------------------+
+# triangle.Triangle
+# triangle.TriangleType
+triangle.tests.Triangle1Test
+triangle.tests.Triangle2Test
+triangle.tests.Triangle3Test
+triangle.tests.TriangleTestSuite
++-------------------------------+
+
+ There are two classes that are not excluded. Since TriangleType is a simple Enum, we also exclude
+ it from mutation testing by removing the <<<# >>>.
+
++-------------------------------+
+ant -f javalanche.xml scan
++-------------------------------+
+
+ Output:
+
++-------------------------------+
+Buildfile: javalanche.xml
+
+scan:
+
+test-javalanche:
+    [junit] Scanning for mutations
+    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] Running modified JUnit 4 tests
+    [junit] Tests run: 0, Failures: 0, Errors: 0, Time elapsed: 0.805 sec
+    [junit] Got 0 mutation possibilities before run.
+    [junit] Got 49 mutation possibilities after run.
+    [junit] Added 49 mutation possibilities.
+    [junit] Added 18 tests. Total number of tests for project triangle : 18
+    [junit] 49 (100.00 %) mutations are covered by tests.
+
+BUILD SUCCESSFUL
+Total time: 5 seconds
++-------------------------------+
+
+
+
+* Executing Mutations
+ 
+ Before executing the mutations we have to create a task:
+ 
+ 
++-------------------------------+
+ant -f javalanche.xml createTasks
++-------------------------------+
+
+ Output:
+
++-------------------------------+
+Buildfile: javalanche.xml
+
+createTasks:
+     [java] Task created: /Users/schuler/workspace/mutationTest/javalanche-0.3.2/examples/triangleJunit4/mutation-files/mutation-task-triangle-01.txt
+     [java] Created 1 mutation tasks
+
+BUILD SUCCESSFUL
+Total time: 4 seconds
+
++-------------------------------+
+
+ Using the produced task we can execute the mutations.
+
++-------------------------------+
+ant -f javalanche.xml runMutations \
+-Dmutation.file=./mutation-files/mutation-task-triangle-01.txt
++-------------------------------+
+
+ Output:
+
++-------------------------------+
+Buildfile: javalanche.xml
+
+runMutations:
+
+test-javalanche:
+    [junit] Run mutation testing (without impact detection)
+    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] Running modified JUnit 4 tests
+    [junit] Applying 1th mutation with id 49313. Running 18 tests
+    [junit] Applying 2th mutation with id 49314. Running 16 tests
+    [junit] Applying 3th mutation with id 49315. Running 14 tests
+    [junit] Applying 4th mutation with id 49316. Running 13 tests
+    [junit] Applying 5th mutation with id 49317. Running 13 tests
+    [junit] Applying 6th mutation with id 49318. Running 13 tests
+    [junit] Applying 7th mutation with id 49319. Running 2 tests
+    [junit] Applying 8th mutation with id 49320. Running 2 tests
+    [junit] Applying 9th mutation with id 49321. Running 2 tests
+    [junit] Applying 10th mutation with id 49322. Running 2 tests
+    [junit] Applying 11th mutation with id 49323. Running 13 tests
+    [junit] Applying 12th mutation with id 49324. Running 3 tests
+    [junit] Applying 13th mutation with id 49325. Running 3 tests
+    [junit] Applying 14th mutation with id 49326. Running 3 tests
+    [junit] Applying 15th mutation with id 49327. Running 3 tests
+    [junit] Applying 16th mutation with id 49328. Running 13 tests
+    [junit] Applying 17th mutation with id 49329. Running 4 tests
+    [junit] Applying 18th mutation with id 49330. Running 4 tests
+    [junit] Applying 19th mutation with id 49331. Running 4 tests
+    [junit] Applying 20th mutation with id 49332. Running 4 tests
+    [junit] Applying 21th mutation with id 49333. Running 13 tests
+    [junit] Applying 22th mutation with id 49334. Running 6 tests
+    [junit] Applying 23th mutation with id 49335. Running 6 tests
+    [junit] Applying 24th mutation with id 49336. Running 4 tests
+    [junit] Applying 25th mutation with id 49337. Running 4 tests
+    [junit] Applying 26th mutation with id 49338. Running 2 tests
+    [junit] Applying 27th mutation with id 49339. Running 2 tests
+    [junit] Applying 28th mutation with id 49340. Running 7 tests
+    [junit] Applying 29th mutation with id 49341. Running 7 tests
+    [junit] Applying 30th mutation with id 49342. Running 7 tests
+    [junit] Applying 31th mutation with id 49343. Running 7 tests
+    [junit] Applying 32th mutation with id 49344. Running 6 tests
+    [junit] Applying 33th mutation with id 49345. Running 6 tests
+    [junit] Applying 34th mutation with id 49346. Running 6 tests
+    [junit] Applying 35th mutation with id 49347. Running 6 tests
+    [junit] Applying 36th mutation with id 49348. Running 1 tests
+    [junit] Applying 37th mutation with id 49349. Running 1 tests
+    [junit] Applying 38th mutation with id 49350. Running 5 tests
+    [junit] Applying 39th mutation with id 49351. Running 5 tests
+    [junit] Applying 40th mutation with id 49352. Running 5 tests
+    [junit] Applying 41th mutation with id 49353. Running 5 tests
+    [junit] Applying 42th mutation with id 49354. Running 2 tests
+    [junit] Applying 43th mutation with id 49355. Running 2 tests
+    [junit] Applying 44th mutation with id 49356. Running 3 tests
+    [junit] Applying 45th mutation with id 49357. Running 3 tests
+    [junit] Applying 46th mutation with id 49358. Running 3 tests
+    [junit] Applying 47th mutation with id 49359. Running 3 tests
+    [junit] Applying 48th mutation with id 49360. Running 3 tests
+    [junit] Applying 49th mutation with id 49361. Running 3 tests
+    [junit] ALL_RESULTS
+    [junit] All mutations have results - this means they have already been applied and executed
+    [junit] 49 mutations were applied. 49 Mutation results were recorded. 49 Mutations where actually touched.
+    [junit] Tests run: 0, Failures: 0, Errors: 0, Time elapsed: 3.51 sec
+
+BUILD SUCCESSFUL
+Total time: 8 seconds
+
+
++-------------------------------+
+
+
+ 
+* {Analyzing Results}
+
+ Since all mutations are executed, we can analyze the mutation testing 
+ results.
+ 
++-------------------------------+
+ant -f javalanche.xml analyzeResults
++-------------------------------+
+ 
+ 
++-------------------------------+
+Buildfile: javalanche.xml
+
+analyzeResults:
+     [echo]  Using 2048m memory 
+     [java] Analyzed Results for mutations with prefix: triangle
+     [java] No results for 0 mutations
+     [java] --------------------------------------------------------------------------------
+     [java] Results from de.unisb.cs.st.javalanche.mutation.analyze.MutationResultAnalyzer
+     [java] Total mutations:                                                49 
+     [java] Touched mutations:                                              49 (100.00%)
+     [java] Not touched mutations:                                           0 ( 0.00%)
+     [java] Killed mutations:                                               45 (91.84%)
+     [java] Survived mutations:                                              4 ( 8.16%)
+     [java] Mutation score:                                             91.84% 
+     [java] Mutation score for mutations that were covered:             91.84% 
+     [java] 
+     [java] --------------------------------------------------------------------------------
+     [java] 
+
+BUILD SUCCESSFUL
+Total time: 3 seconds
++-------------------------------+
+
+
+
+ This will also generate an html report for the mutation testing results. 
+ For each tested class the source code (if available) and a a table with 
+ its mutations is reported.
+ For each mutation a table shows its database id, line number, mutation type,
+ whether it is detected or not, and its impact. 
+ If the line number of a mutation is followed by another number in braces, more
+ than one mutation of this type were made in this line. 
+ The number in braces then gives the position of this mutation in the bytecode 
+ for this line (starting from 0)
+
+[img/html_report.png]
+
+
+	 
+ 
