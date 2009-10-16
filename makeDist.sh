@@ -7,7 +7,7 @@ if [  $1 ]; then
  fi
 fi
 mvn -Dmaven.test.skip=true   assembly:assembly
-VERSION=0.3.2
+VERSION=0.3.3
 DIST=javalanche-$VERSION
 mkdir ${DIST}
 
@@ -60,6 +60,7 @@ if [  $1 ]; then
 		rm -rf ${SRCDIR}/src/attic
 		rm -rf ${SRCDIR}/src/site
 		rm -rf ${SRCDIR}/src/main/doc
+		rm -rf ${SRCDIR}/src/main/java/de/unisb/cs/st/javalanche/coverage/experiment
 		find ${SRCDIR} -name ".svn" | xargs rm -rf 
 		find ${SRCDIR} -name "*~" | xargs rm  
 		cd target

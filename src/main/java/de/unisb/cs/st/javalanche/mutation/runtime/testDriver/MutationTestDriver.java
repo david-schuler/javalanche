@@ -18,6 +18,9 @@
  */
 package de.unisb.cs.st.javalanche.mutation.runtime.testDriver;
 
+import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
+import static de.unisb.cs.st.javalanche.mutation.properties.RunMode.*;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
@@ -43,9 +46,9 @@ import com.google.common.collect.PrimitiveArrays;
 
 import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.ds.util.io.XmlIo;
+import de.unisb.cs.st.javalanche.coverage.CoverageMutationListener;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationsForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
-import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
@@ -60,9 +63,6 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit3Mutatio
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestCheckListener;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestListener;
 import de.unisb.cs.st.javalanche.mutation.util.ThreadUtilities;
-import de.unisb.cs.st.javalanche.coverage.CoverageMutationListener;
-
-import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
 
 /**
  * Abstract class that drives the mutation test process. Driver for specific
@@ -158,30 +158,29 @@ public abstract class MutationTestDriver {
 	 */
 	public final void run() {
 		logger.debug("Run Mode" + RUN_MODE);
-		if (RUN_MODE == RunMode.MUTATION_TEST
-				|| RUN_MODE == RunMode.MUTATION_TEST_INVARIANT
-				|| RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST
-				|| RUN_MODE == RunMode.MUTATION_TEST_COVERAGE) {
-			if (RUN_MODE == RunMode.MUTATION_TEST_INVARIANT_PER_TEST) {
+		if (RUN_MODE == MUTATION_TEST || RUN_MODE == MUTATION_TEST_INVARIANT
+				|| RUN_MODE == MUTATION_TEST_INVARIANT_PER_TEST
+				|| RUN_MODE == MUTATION_TEST_COVERAGE || RUN_MODE == EVOLUTION) {
+			if (RUN_MODE == MUTATION_TEST_INVARIANT_PER_TEST) {
 				addMutationTestListener(new InvariantPerTestListener());
 			}
-			if (RUN_MODE == RunMode.MUTATION_TEST_COVERAGE) {
+			if (RUN_MODE == MUTATION_TEST_COVERAGE) {
 				addMutationTestListener(new CoverageMutationListener());
 				// runNormalTests();
 			}
 			listeners.addLast(new ResultReporter());
 			runMutations();
-		} else if (RUN_MODE == RunMode.SCAN || RUN_MODE == RunMode.SCAN_ECLIPSE) {
+		} else if (RUN_MODE == SCAN || RUN_MODE == SCAN_ECLIPSE) {
 			scanTests();
-		} else if (RUN_MODE == RunMode.CHECK_INVARIANTS_PER_TEST) {
+		} else if (RUN_MODE == CHECK_INVARIANTS_PER_TEST) {
 			addMutationTestListener(new InvariantPerTestCheckListener());
 			runNormalTests();
-		} else if (RUN_MODE == RunMode.CREATE_COVERAGE) {
+		} else if (RUN_MODE == CREATE_COVERAGE) {
 			// runNormalTests();
 			// coldRun();
 			addMutationTestListener(new CoverageMutationListener());
 			runPermutedTests();
-		} else if (RUN_MODE == RunMode.TEST_PERMUTED) {
+		} else if (RUN_MODE == TEST_PERMUTED) {
 			runPermutedTests();
 		} else {
 			runNormalTests();
@@ -725,8 +724,10 @@ public abstract class MutationTestDriver {
 		Set<Long> threadIds = getThreadIds(preIds);
 		for (Long tid : threadIds) {
 			Thread runningThread = ThreadUtilities.getThread(tid);
-			logger.info("Stopping thread " + runningThread);
-			runningThread.stop();
+			if (runningThread != null) {
+				logger.info("Stopping thread " + runningThread);
+				runningThread.stop();
+			}
 		}
 	}
 

@@ -18,50 +18,65 @@
  */
 package de.unisb.cs.st.javalanche.coverage;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.log4j.Logger;
 
-
+/**
+ * @author David Schuler TODO Describe trace format.
+ */
 public class CoverageTraceUtil {
 
 	private static final Collection<String> EMPTY_COLLECTION = new ArrayList<String>();
 	private static Logger logger = Logger.getLogger(CoverageTraceUtil.class);
 
+	/**
+	 * Returns the methods that have a difference in their trace data. This is
+	 * the case when a statement of a method from the same test is executed with
+	 * a different frequency (This includes methods executed in only 1 run). A
+	 * test that is contained in only one of the arguments is ignored.
+	 * 
+	 * @param traceData1
+	 *            trace data to compare.
+	 * @param traceData2
+	 *            trace data to compare.
+	 * @return the methods that have a difference in their trace data.
+	 */
 	public static Collection<String> getDifferentMethodsForTests(
-			Map<String, Map<String, Map<Integer, Integer>>> data1T,
-			Map<String, Map<String, Map<Integer, Integer>>> data2T) {
+			Map<String, Map<String, Map<Integer, Integer>>> traceData1,
+			Map<String, Map<String, Map<Integer, Integer>>> traceData2) {
 		Set<String> differences = new HashSet<String>();
-		Set<String> keySet = data1T.keySet();
-		if (data1T == null || data2T == null) {
+		Set<String> keySet = traceData1.keySet();
+		if (traceData1 == null || traceData2 == null) {
 			return EMPTY_COLLECTION;
 		}
 		for (String testKey : keySet) {
-			if (data2T.containsKey(testKey)) {
-				Map<String, Map<Integer, Integer>> data1 = data1T.get(testKey);
-				Map<String, Map<Integer, Integer>> data2 = data2T.get(testKey);
-				Set<String> allMethods = getAllMethods(data1, data2);
+			if (traceData2.containsKey(testKey)) {
+				Map<String, Map<Integer, Integer>> testData1 = traceData1
+						.get(testKey);
+				Map<String, Map<Integer, Integer>> testData2 = traceData2
+						.get(testKey);
 				int diffPre = differences.size();
-				for (String key : allMethods) {
-					if (!InstrumentExclude.shouldExcludeLines(key)) {
-						boolean difference = false;
-						if (data1.containsKey(key) && data2.containsKey(key)) {
-							Map<Integer, Integer> classData1 = data1.get(key);
-							Map<Integer, Integer> classData2 = data2.get(key);
-							difference = compareLines(classData1, classData2);
-						} else {
-							difference = true;
-						}
-						if (difference) {
-							differences.add(key);
-						}
-					}
-				}
+				Collection<String> diffMethods = getDifferentMethods(testData1,
+						testData2);
+				differences.addAll(diffMethods);
 				int newDifferences = differences.size() - diffPre;
 				if (newDifferences > 0) {
 					logger.info("New differences for test" + testKey + "  "
@@ -72,27 +87,38 @@ public class CoverageTraceUtil {
 		return differences;
 	}
 
+	/**
+	 * Returns the methods that have a difference in their trace data. This is
+	 * the case when a statement of a method is executed with a different
+	 * frequency (This includes methods executed in only 1 run).
+	 * 
+	 * @param testData1
+	 *            data to compare.
+	 * @param testData2
+	 *            data to compare.
+	 * @return the methods that have a difference in their trace data.
+	 */
 	public static Collection<String> getDifferentMethods(
-			Map<String, Map<Integer, Integer>> data1,
-			Map<String, Map<Integer, Integer>> data2) {
+			Map<String, Map<Integer, Integer>> testData1,
+			Map<String, Map<Integer, Integer>> testData2) {
 		Set<String> differences = new HashSet<String>();
-		if (data1 == null && data2 == null) {
+		if (testData1 == null && testData2 == null) {
 			return differences;
 		}
-		if (data1 != null && data2 == null) {
-			differences.addAll(data1.keySet());
+		if (testData1 != null && testData2 == null) {
+			differences.addAll(testData1.keySet());
 			return differences;
 		}
-		if (data1 == null && data2 != null) {
-			differences.addAll(data2.keySet());
+		if (testData1 == null && testData2 != null) {
+			differences.addAll(testData2.keySet());
 			return differences;
 		}
-		Set<String> allMethods = getAllMethods(data1, data2);
+		Set<String> allMethods = getAllMethods(testData1, testData2);
 		for (String key : allMethods) {
 			boolean difference = false;
-			if (data1.containsKey(key) && data2.containsKey(key)) {
-				Map<Integer, Integer> classData1 = data1.get(key);
-				Map<Integer, Integer> classData2 = data2.get(key);
+			if (testData1.containsKey(key) && testData2.containsKey(key)) {
+				Map<Integer, Integer> classData1 = testData1.get(key);
+				Map<Integer, Integer> classData2 = testData2.get(key);
 				difference = compareLines(classData1, classData2);
 			} else {
 				difference = true;
@@ -105,9 +131,7 @@ public class CoverageTraceUtil {
 	}
 
 	/**
-	 * @param lineData1
-	 * @param lineData2
-	 * @return True, if there is any line difference.
+	 * @return true, if there is any line difference.
 	 */
 	private static boolean compareLines(Map<Integer, Integer> lineData1,
 			Map<Integer, Integer> lineData2) {
@@ -124,6 +148,9 @@ public class CoverageTraceUtil {
 		return false;
 	}
 
+	/**
+	 * @return all method names from the given trace data.
+	 */
 	private static Set<String> getAllMethods(
 			Map<String, Map<Integer, Integer>> data1,
 			Map<String, Map<Integer, Integer>> data2) {
@@ -179,56 +206,174 @@ public class CoverageTraceUtil {
 		return false;
 	}
 
-	private static Map<String, Map<String, Map<String, Map<Integer, Integer>>>> lineCache = new HashMap<String, Map<String, Map<String, Map<Integer, Integer>>>>();
-	private static Map<String, Map<String, Map<String, Map<Integer, Integer>>>> dataCache = new HashMap<String, Map<String, Map<String, Map<Integer, Integer>>>>();
-
-	public static Map<String, Map<String, Map<Integer, Integer>>> loadLineCoverageTraceCached(
-			String id) {
-		if ("0".equals(id)) {
-			if (lineCache.containsKey(id)) {
-				return lineCache.get(id);
-			}
-			Map<String, Map<String, Map<Integer, Integer>>> result = CoverageAnalyzer
-					.loadLineCoverageTrace(id);
-			lineCache.put(id, result);
-			return result;
-		}
-		return CoverageAnalyzer.loadLineCoverageTrace(id);
-
+	/**
+	 * Convenience method to load all coverage traces from a directory. See
+	 * method loadTracesFromDirectory.
+	 * 
+	 * @param dir
+	 *            name of the directory.
+	 * @return A map containing the coverage traces.
+	 */
+	public static Map<String, Map<String, Map<Integer, Integer>>> loadLineCoverageTrace(
+			String mutation_dir) {
+		return CoverageTraceUtil.loadTracesFromDirectory(new File(
+				CoverageProperties.TRACE_RESULT_LINE_DIR + "/" + mutation_dir));
 	}
 
-	public static Map<String, Map<String, Map<Integer, Integer>>> loadDataCoverageTraceCached(
-			String id) {
-		if ("0".equals(id)) {
-			if (dataCache.containsKey(id)) {
-				return dataCache.get(id);
-			}
-			Map<String, Map<String, Map<Integer, Integer>>> result = CoverageAnalyzer
-					.loadDataCoverageTrace(id);
-			dataCache.put(id, result);
-			return result;
-		}
-		return CoverageAnalyzer.loadDataCoverageTrace(id);
+	/**
+	 * Convenience method to load all data traces from a directory. See method
+	 * loadTracesFromDirectory.
+	 * 
+	 * @param dir
+	 *            name of the directory.
+	 * @return A map containing the data traces.
+	 */
+	public static Map<String, Map<String, Map<Integer, Integer>>> loadDataCoverageTrace(
+			String dir) {
+		return CoverageTraceUtil.loadTracesFromDirectory(new File(
+				CoverageProperties.TRACE_RESULT_DATA_DIR + "/" + dir));
 	}
 
-	public static String getFullMethodName(
-			Map<String, Map<String, Map<Integer, Integer>>> coverageData,
-			String className, int lineNumber) {
-		Collection<Map<String, Map<Integer, Integer>>> values = coverageData
-				.values();
-		for (Map<String, Map<Integer, Integer>> map : values) {
-			Set<String> keySet = map.keySet();
-			for (String string : keySet) {
-				String clazz = string.substring(0, string.indexOf('@'));
-				if (clazz.equals(className)) {
-					Map<Integer, Integer> lines = map.get(string);
-					if (lines.containsKey(lineNumber)) {
-//						int start = string.indexOf('@') + 1;
-						return string;
-					}
+	/**
+	 * Methods writes the coverage results to given file.
+	 * 
+	 * @param classMap
+	 *            the map to write.
+	 * @param testName
+	 *            the name of the test
+	 * @param fileName
+	 *            the name of the file to write
+	 */
+	public static void writeTrace(
+			Map<String, ? extends Map<Integer, Integer>> classMap,
+			String testName, String fileName) {
+		int numClasses = classMap.size();
+		int countClasses = 0;
+		ObjectOutputStream oos = null;
+		String exceptionMessage = "Could not write " + fileName;
+		try {
+			oos = new ObjectOutputStream(new GZIPOutputStream(
+					new FileOutputStream(fileName)));
+			oos.writeInt(numClasses);
+			for (String s : classMap.keySet()) {
+				countClasses++;
+				oos.writeUTF(s);
+				Map<Integer, Integer> lineMap = classMap.get(s);
+				int lineMapSize = lineMap.size();
+				oos.writeInt(lineMapSize);
+				int countLines = 0;
+				for (Entry<Integer, Integer> entry : lineMap.entrySet()) {
+					countLines++;
+					oos.writeInt(entry.getKey().intValue());
+					oos.writeInt(entry.getValue().intValue());
+				}
+				if (countLines != lineMapSize) {
+					logger.warn("Different sizes" + lineMapSize + "  "
+							+ countLines + " " + lineMap);
+					oos.flush();
+					oos.close();
+					writeTrace(classMap, testName, fileName);
+				}
+			}
+		} catch (IOException e) {
+			CoverageMutationListener.logger.warn(exceptionMessage, e);
+			throw new RuntimeException(exceptionMessage, e);
+		} finally {
+			if (oos != null) {
+				try {
+					oos.flush();
+					oos.close();
+				} catch (IOException e) {
+					logger.warn(exceptionMessage, e);
+					throw new RuntimeException(exceptionMessage, e);
 				}
 			}
 		}
-		return "";
+		if (countClasses != numClasses) {
+			logger.warn("Different number of total classes (Writing again) "
+					+ countClasses + " " + numClasses + " " + classMap);
+			writeTrace(classMap, testName, fileName);
+		}
+	}
+
+	/**
+	 * Load trace all trace files (coverage or data) from a given directory.
+	 * 
+	 * Returns a map whose first key is the test name and the value is a map as
+	 * returned by the loadTrace method.
+	 * 
+	 * 
+	 * @param dir
+	 *            the directory to load the traces from.
+	 * @return a map whose first key is the test name and the value is a map as
+	 *         returned by the loadTrace method.
+	 * 
+	 */
+	public static Map<String, Map<String, Map<Integer, Integer>>> loadTracesFromDirectory(
+			File dir) {
+		logger.debug("Loading from " + dir);
+		if (!dir.exists()) {
+			CoverageAnalyzer.logger
+					.warn("No files for mutation. Directory does not exist: "
+							+ dir);
+			return null;
+		}
+		File[] tests = dir.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.endsWith("gz");
+			}
+		});
+		Map<String, Map<String, Map<Integer, Integer>>> result = new HashMap<String, Map<String, Map<Integer, Integer>>>();
+		for (File f : tests) {
+			Map<String, Map<Integer, Integer>> classMap = loadTrace(f);
+			String key = CoverageTraceUtil.stripGz(f.getName());
+			result.put(key, classMap);
+		}
+		return result;
+	}
+
+	/**
+	 * Loads a trace from the given file. Returns a map with key method names as
+	 * keys and an int to int map as value. The key has the from
+	 * className@methodName.
+	 * 
+	 * @param file
+	 *            to read from
+	 * 
+	 * @return a map with key method names as keys and an int to int map as
+	 *         value.
+	 */
+	public static Map<String, Map<Integer, Integer>> loadTrace(File file) {
+		Map<String, Map<Integer, Integer>> classMap = new HashMap<String, Map<Integer, Integer>>();
+		ObjectInputStream ois;
+		try {
+			ois = new ObjectInputStream(new BufferedInputStream(
+					new GZIPInputStream(new FileInputStream(file))));
+
+			int numClasses = ois.readInt();
+			for (int i = 0; i < numClasses; i++) {
+				String className = ois.readUTF();
+				int numLines = ois.readInt();
+				Map<Integer, Integer> lineMap = new HashMap<Integer, Integer>();
+				for (int j = 0; j < numLines; j++) {
+					lineMap.put(ois.readInt(), ois.readInt());
+				}
+				classMap.put(className, lineMap);
+			}
+			ois.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return classMap;
+	}
+
+	static String stripGz(String test) {
+		String key = test;
+		if (test.endsWith(".gz")) {
+			key = test.substring(0, test.length() - 3);
+		}
+		return key;
 	}
 }

@@ -78,9 +78,9 @@ public class CompareTraces {
 
 	private static int getAllMethods() {
 		Map<String, Map<String, Map<Integer, Integer>>> trace1 = CoverageTraceUtil
-				.loadLineCoverageTraceCached("0");
+				.loadLineCoverageTrace("0");
 		Map<String, Map<String, Map<Integer, Integer>>> trace2 = CoverageTraceUtil
-				.loadDataCoverageTraceCached("0");
+				.loadDataCoverageTrace("0");
 		Set<String> methods = new HashSet<String>();
 		addMethods(trace1, methods);
 		addMethods(trace2, methods);
@@ -106,9 +106,9 @@ public class CompareTraces {
 		if (modes.contains(Mode.LINE)) {
 			logger.info("Comparing lines");
 			Map<String, Map<String, Map<Integer, Integer>>> trace1 = CoverageTraceUtil
-					.loadLineCoverageTraceCached(id1);
+					.loadLineCoverageTrace(id1);
 			Map<String, Map<String, Map<Integer, Integer>>> trace2 = CoverageTraceUtil
-					.loadLineCoverageTraceCached(id2);
+					.loadLineCoverageTrace(id2);
 			// logger.info("Line data 1" + trace1);
 			// logger.info("Line data 2" + trace2);
 			Set<String> differences = compare(trace1, trace2);
@@ -121,9 +121,9 @@ public class CompareTraces {
 		if (modes.contains(Mode.DATA)) {
 			logger.info("Comparing data");
 			Map<String, Map<String, Map<Integer, Integer>>> trace1 = CoverageTraceUtil
-					.loadDataCoverageTraceCached(id1);
+					.loadDataCoverageTrace(id1);
 			Map<String, Map<String, Map<Integer, Integer>>> trace2 = CoverageTraceUtil
-					.loadDataCoverageTraceCached(id2);
+					.loadDataCoverageTrace(id2);
 			// logger.info("Return data 1" + trace1);
 			// logger.info("Return data 2" + trace2);
 			Set<String> differences = compare(trace1, trace2);

@@ -27,17 +27,14 @@ import java.lang.instrument.Instrumentation;
 
 import de.unisb.cs.st.javalanche.coverage.CoverageTransformer;
 import de.unisb.cs.st.javalanche.invariants.javaagent.InvariantTransformer;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.EvolutionMutationTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.DistanceTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.EclipseScanner;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.IntegrateTestSuiteTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationScanner;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanProjectTransformer;
-import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
-import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
-import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 /**
  * Class that is used by the java agent. Depending on the {@link RunMode} it is
@@ -129,6 +126,14 @@ public class MutationPreMain {
 				sysout.println("Scanning project from eclipse");
 				addClassFileTransformer(instrumentation, new EclipseScanner());
 				return;
+			} else if (RUN_MODE == EVOLUTION) {
+				sysout
+						.println("Run mutation testing with evolutionary algorithm");
+				addClassFileTransformer(instrumentation,
+						new MutationFileTransformer(
+								new EvolutionMutationTransformer()));
+				return;
+
 			}
 
 		} catch (Throwable t) {

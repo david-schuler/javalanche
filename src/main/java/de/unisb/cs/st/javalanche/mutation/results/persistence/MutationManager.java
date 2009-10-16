@@ -57,22 +57,22 @@ public class MutationManager {
 		if (mutation == null) {
 			logger.warn("Null Mutation");
 			return false;
-		} else if (applyAllMutation) {
+		}
+		Mutation mutationFromDb = QueryManager.getMutationOrNull(mutation);
+		if (applyAllMutation) {
 			result = true;
 		} else if (mutationsForRun.containsMutation(mutation)) {
-			Mutation mutationFromDb = QueryManager.getMutationOrNull(mutation);
 			if (mutationFromDb == null) {
 				logger.warn("Mutation not in db: " + mutation);
 				return false;
 			}
-			logger.debug("Applying mutation: " + mutationFromDb);
 			result = true;
 		}
 		if (result) {
-			MutationObserver.mutationApplied(mutation);
+			logger.debug("Applying mutation: " + mutationFromDb);
+			MutationObserver.mutationApplied(mutationFromDb);
 		}
 		return result;
 	}
-
 
 }

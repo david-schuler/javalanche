@@ -80,9 +80,10 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	}
 
-	private static MutationTransformer mutationTransformer = new MutationTransformer();
+	private final BytecodeTransformer mutationTransformer;
 
-	private static MutationsForRun mm = MutationsForRun.getFromDefaultLocation();
+	private static MutationsForRun mm = MutationsForRun
+			.getFromDefaultLocation();
 
 	private static Collection<String> classesToMutate = mm.getClassNames();
 
@@ -118,6 +119,14 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	private static MutationDecision mutationDecision = MutationDecisionFactory
 			.getStandardMutationDecision(classesToMutate);
+
+	public MutationFileTransformer(BytecodeTransformer mutationTransformer) {
+		this.mutationTransformer = mutationTransformer;
+	}
+
+	public MutationFileTransformer() {
+		this(new MutationTransformer());
+	}
 
 	/*
 	 * (non-Javadoc)

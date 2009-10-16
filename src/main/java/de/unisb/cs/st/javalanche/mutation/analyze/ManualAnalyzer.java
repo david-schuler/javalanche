@@ -19,7 +19,10 @@
 package de.unisb.cs.st.javalanche.mutation.analyze;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -163,6 +166,27 @@ public class ManualAnalyzer implements MutationAnalyzer {
 			}
 		}
 		return ids;
+	}
+
+	public static String getFullMethodName(
+			Map<String, Map<String, Map<Integer, Integer>>> coverageData,
+			String className, int lineNumber) {
+		Collection<Map<String, Map<Integer, Integer>>> values = coverageData
+				.values();
+		for (Map<String, Map<Integer, Integer>> map : values) {
+			Set<String> keySet = map.keySet();
+			for (String string : keySet) {
+				String clazz = string.substring(0, string.indexOf('@'));
+				if (clazz.equals(className)) {
+					Map<Integer, Integer> lines = map.get(string);
+					if (lines.containsKey(lineNumber)) {
+						// int start = string.indexOf('@') + 1;
+						return string;
+					}
+				}
+			}
+		}
+		return "";
 	}
 
 }

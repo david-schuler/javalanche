@@ -46,7 +46,7 @@ public class MutationForRunTest {
 		w.write(m2.getId() + "\n");
 		w.flush();
 		w.close();
-		mfr = new MutationsForRun(f.getAbsolutePath());
+		mfr = new MutationsForRun(f.getAbsolutePath(), true);
 
 	}
 

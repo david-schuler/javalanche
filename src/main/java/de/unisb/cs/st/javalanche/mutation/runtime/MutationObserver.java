@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.runtime;
 
 import java.util.ArrayList;
@@ -128,6 +128,7 @@ public class MutationObserver implements MutationTestListener {
 	public static void mutationApplied(Mutation m) {
 		appliedMutations.add(m);
 	}
+
 	/**
 	 * Returns a summary for all collected test outcomes and writes these to a
 	 * file if a property for the file name was set.
@@ -136,8 +137,7 @@ public class MutationObserver implements MutationTestListener {
 	 */
 	public static String summary(boolean finishedNormal) {
 		RunResult runResult = new RunResult(reportedMutations,
-				touchedMutations, appliedMutations,
-				finishedNormal);
+				touchedMutations, appliedMutations, finishedNormal);
 		return runResult.toString();
 	}
 
@@ -215,13 +215,11 @@ public class MutationObserver implements MutationTestListener {
 	 * message if one or more mutations where not applied.
 	 * 
 	 */
-	// TODO refactor.
 	public static void reportAppliedMutations() {
 		List<Mutation> notApplied = new ArrayList<Mutation>();
-		List<Mutation> mutations = MutationsForRun.getFromDefaultLocation()
-				.getMutations();
+		List<Mutation> mutations = MutationsForRun
+				.getFromDefaultLocation(false).getMutations();
 		int applied = 0;
-		boolean showMutations = mutations.size() < 5;
 		List<Long> appliedIds = new ArrayList<Long>();
 		for (Mutation m : appliedMutations) {
 			appliedIds.add(m.getId());
@@ -229,10 +227,6 @@ public class MutationObserver implements MutationTestListener {
 		for (Mutation m : mutations) {
 			if (appliedIds.contains(m.getId())) {
 				applied++;
-				if (showMutations) {
-					logger.info("Applied Mutation: "
-							+ QueryManager.mutationToShortString(m));
-				}
 			} else {
 				notApplied.add(m);
 			}

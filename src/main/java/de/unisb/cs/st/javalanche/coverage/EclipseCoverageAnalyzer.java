@@ -18,10 +18,7 @@
 */
 package de.unisb.cs.st.javalanche.coverage;
 
-import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
-
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +29,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import de.unisb.cs.st.ds.util.io.Io;
-import de.unisb.cs.st.javalanche.mutation.analyze.AnalyzeMain;
-import de.unisb.cs.st.javalanche.mutation.analyze.MutationAnalyzer;
-import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlAnalyzer;
-import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;

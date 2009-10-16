@@ -22,7 +22,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintStream;
@@ -49,7 +48,6 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
  * Another trick would be to read the whole data in one step and analyze in
  * a second step.
  */
-
 /**
  * @author Bernhard Gruen
  * 
@@ -121,7 +119,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		public int dataModified = 0;
 	}
 
-	private static final Logger logger = Logger
+	static final Logger logger = Logger
 			.getLogger(CoverageAnalyzer.class);
 
 	private static Map<String, Map<String, Map<Integer, Integer>>> originalLineCoverageMaps;
@@ -169,158 +167,70 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 	 * Helper method to load the original (id=0) line and data coverage traces.
 	 */
 	private void loadOriginalTraces() {
-		originalLineCoverageMaps = loadLineCoverageTrace("0");
-		originalDataCoverageMaps = loadDataCoverageTrace("0");
+		originalLineCoverageMaps = CoverageTraceUtil.loadLineCoverageTrace("0");
+		originalDataCoverageMaps = CoverageTraceUtil.loadDataCoverageTrace("0");
 	}
 
-	/*
-	 * *************************************************************************
-	 * Helper method to load an arbitrary trace (line or data coverage)
-	 */
-	private static Map<String, Map<String, Map<Integer, Integer>>> loadTrace(
-			String path, String mutation_dir) {
-		ObjectInputStream ois = null;
-		path += mutation_dir + "/";
-
-		File dir = new File(path);
-		logger.debug("Loading from " + dir);
-		if (!dir.exists()) {
-			logger.warn("No files for mutation: " + dir);
-			return null;
-		}
-
-		String[] tests = dir.list(new FilenameFilter() {
-
-			public boolean accept(File dir, String name) {
-				return name.endsWith("gz");
-			}
-
-		});
-
-		int numClasses, numLines;
-		String className;
-
-		Map<String, Map<String, Map<Integer, Integer>>> map = new HashMap<String, Map<String, Map<Integer, Integer>>>();
-		Map<String, Map<Integer, Integer>> classMap;
-		Map<Integer, Integer> lineMap;
-
-		for (String test : tests) {
-			String fileName = path + test;
-			try {
-				ois = new ObjectInputStream(new BufferedInputStream(
-						new GZIPInputStream(new FileInputStream(fileName))));
-				numClasses = ois.readInt();
-				classMap = new HashMap<String, Map<Integer, Integer>>();
-				for (int i = 0; i < numClasses; i++) {
-
-					className = ois.readUTF();
-
-					numLines = ois.readInt();
-					lineMap = new HashMap<Integer, Integer>();
-					for (int j = 0; j < numLines; j++) {
-						lineMap.put(ois.readInt(), ois.readInt());
-					}
-					classMap.put(className, lineMap);
-				}
-				String key = stripGz(test);
-				map.put(key, classMap);
-				ois.close();
-			} catch (Exception e) {
-				throw new RuntimeException("Error reading trace. File name "
-						+ fileName, e);
-			}
-		}
-		return map;
-	}
-
-	private static String stripGz(String test) {
-		String key = test;
-		if (test.endsWith(".gz")) {
-			key = test.substring(0, test.length() - 3);
-		}
-		return key;
-	}
-
-	private static Map<String, Map<String, Map<String, Map<Integer, Integer>>>> loadTracePerTest(
-			String path, String mutation_dir) {
-		ObjectInputStream ois = null;
-		path += mutation_dir + "/";
-
-		File dir = new File(path);
-		logger.debug("Loading from " + dir);
-		String[] tests = dir.list();
-
-		int numClasses, numLines;
-		String className;
-
-		Map<String, Map<Integer, Integer>> classMap;
-		Map<Integer, Integer> lineMap;
-
-		Map<String, Map<String, Map<String, Map<Integer, Integer>>>> resultMap = new HashMap<String, Map<String, Map<String, Map<Integer, Integer>>>>();
-		for (String test : tests) {
-
-			Map<String, Map<String, Map<Integer, Integer>>> map = new HashMap<String, Map<String, Map<Integer, Integer>>>();
-			try {
-				ois = new ObjectInputStream(new BufferedInputStream(
-						new GZIPInputStream(new FileInputStream(path + test))));
-				numClasses = ois.readInt();
-				// logger.info("Number of classes " + numClasses);
-				classMap = new HashMap<String, Map<Integer, Integer>>();
-				for (int i = 0; i < numClasses; i++) {
-					className = ois.readUTF();
-					numLines = ois.readInt();
-					lineMap = new HashMap<Integer, Integer>();
-					for (int j = 0; j < numLines; j++) {
-						lineMap.put(ois.readInt(), ois.readInt());
-					}
-					classMap.put(className, lineMap);
-					// logger.info("Putting entry " + className + " = " +
-					// lineMap);
-				}
-				map.put(test, classMap);
-				ois.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			String key = stripGz(test);
-			resultMap.put(key, map);
-		}
-		return resultMap;
-	}
-
-	/*
-	 * *************************************************************************
-	 * Helper method to load an arbitrary line coverage trace.
-	 */
-	public static Map<String, Map<String, Map<Integer, Integer>>> loadLineCoverageTrace(
-			String mutation_dir) {
-		return loadTrace(CoverageProperties.TRACE_RESULT_LINE_DIR, mutation_dir);
-	}
+	// static Map<String, Map<String, Map<String, Map<Integer, Integer>>>>
+	// loadTracePerTest(
+	// String path, String mutation_dir) {
+	// ObjectInputStream ois = null;
+	// path += mutation_dir + "/";
+	//
+	// File dir = new File(path);
+	// logger.debug("Loading from " + dir);
+	// String[] tests = dir.list();
+	//
+	// int numClasses, numLines;
+	// String className;
+	//
+	// Map<String, Map<Integer, Integer>> classMap;
+	// Map<Integer, Integer> lineMap;
+	//
+	// Map<String, Map<String, Map<String, Map<Integer, Integer>>>> resultMap =
+	// new HashMap<String, Map<String, Map<String, Map<Integer, Integer>>>>();
+	// for (String test : tests) {
+	//
+	// Map<String, Map<String, Map<Integer, Integer>>> map = new HashMap<String,
+	// Map<String, Map<Integer, Integer>>>();
+	// try {
+	// ois = new ObjectInputStream(new BufferedInputStream(
+	// new GZIPInputStream(new FileInputStream(path + test))));
+	// numClasses = ois.readInt();
+	// // logger.info("Number of classes " + numClasses);
+	// classMap = new HashMap<String, Map<Integer, Integer>>();
+	// for (int i = 0; i < numClasses; i++) {
+	// className = ois.readUTF();
+	// numLines = ois.readInt();
+	// lineMap = new HashMap<Integer, Integer>();
+	// for (int j = 0; j < numLines; j++) {
+	// lineMap.put(ois.readInt(), ois.readInt());
+	// }
+	// classMap.put(className, lineMap);
+	// // logger.info("Putting entry " + className + " = " +
+	// // lineMap);
+	// }
+	// map.put(test, classMap);
+	// ois.close();
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// String key = CoverageTraceUtil.stripGz(test);
+	// resultMap.put(key, map);
+	// }
+	// return resultMap;
+	// }
 
 	/*
 	 * *************************************************************************
 	 * Helper method to load an arbitrary data coverage trace.
 	 */
-	public static Map<String, Map<String, Map<Integer, Integer>>> loadDataCoverageTrace(
-			String mutation_dir) {
-		return loadTrace(CoverageProperties.TRACE_RESULT_DATA_DIR, mutation_dir);
-	}
-
-	public static Map<String, Map<String, Map<String, Map<Integer, Integer>>>> loadLineCoverageTracePerTest(
-			String mutation_dir) {
-		return loadTracePerTest(CoverageProperties.TRACE_RESULT_LINE_DIR,
-				mutation_dir);
-	}
-
-	/*
-	 * *************************************************************************
-	 * Helper method to load an arbitrary data coverage trace.
-	 */
-	public static Map<String, Map<String, Map<String, Map<Integer, Integer>>>> loadDataCoverageTracePerTest(
-			String mutation_dir) {
-		return loadTracePerTest(CoverageProperties.TRACE_RESULT_DATA_DIR,
-				mutation_dir);
-	}
+	// public static Map<String, Map<String, Map<String, Map<Integer,
+	// Integer>>>> loadDataCoverageTracePerTest(
+	// String mutation_dir) {
+	// return loadTracePerTest(CoverageProperties.TRACE_RESULT_DATA_DIR,
+	// mutation_dir);
+	// }
 
 	/*
 	 * *************************************************************************
@@ -694,7 +604,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			try {
 				ois = new ObjectInputStream(new BufferedInputStream(
 						new GZIPInputStream(new FileInputStream(path + test))));
-				String testName = stripGz(test);
+				String testName = CoverageTraceUtil.stripGz(test);
 				if (originalLineCoverageMaps.containsKey(testName)) {
 					processTestLineCoverage(originalLineCoverageMaps
 							.get(testName), ois, modifiedTmp);
@@ -837,7 +747,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			try {
 				ois = new ObjectInputStream(new BufferedInputStream(
 						new GZIPInputStream(new FileInputStream(path + test))));
-				String testName = stripGz(test);
+				String testName = CoverageTraceUtil.stripGz(test);
 				if (originalDataCoverageMaps.containsKey(testName)) {
 					processTestDataCoverage(originalDataCoverageMaps
 							.get(testName), ois, modified);

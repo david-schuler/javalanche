@@ -32,7 +32,6 @@ import org.objectweb.asm.util.TraceClassVisitor;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.Excludes;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
-import de.unisb.cs.st.javalanche.mutation.testDetector.TestInfo;
 
 /**
  * @author Bernhard Gruen

@@ -62,11 +62,16 @@ public class MutationsForRun {
 	 *         MutationProperties.MUTATION_FILE_NAME_KEY).
 	 */
 	public static MutationsForRun getFromDefaultLocation() {
+		return getFromDefaultLocation(true);
+	}
+
+	public static MutationsForRun getFromDefaultLocation(boolean filter) {
 		if (MutationProperties.SINGLE_TASK_MODE) {
 			String fileName = findFile();
-			return new MutationsForRun(fileName);
+			return new MutationsForRun(fileName, filter);
 		} else {
-			return new MutationsForRun(MutationProperties.MUTATION_FILE_NAME);
+			return new MutationsForRun(MutationProperties.MUTATION_FILE_NAME,
+					filter);
 		}
 	}
 
@@ -81,8 +86,8 @@ public class MutationsForRun {
 		return f.getAbsolutePath();
 	}
 
-	public MutationsForRun(String fileName) {
-		mutations = getMutationsForRun(fileName);
+	public MutationsForRun(String fileName, boolean filter) {
+		mutations = getMutationsForRun(fileName, filter);
 		logger.info("Got " + mutations.size() + " mutations from file: "
 				+ fileName);
 		List<Long> ids = new ArrayList<Long>();
@@ -126,7 +131,8 @@ public class MutationsForRun {
 	 * 
 	 * @return a list of mutations for this run.
 	 */
-	private static List<Mutation> getMutationsForRun(String fileName) {
+	private static List<Mutation> getMutationsForRun(String fileName,
+			boolean filter) {
 		List<Mutation> mutationsToReturn = new ArrayList<Mutation>();
 		if (fileName != null) {
 			File file = new File(fileName);
@@ -140,10 +146,12 @@ public class MutationsForRun {
 		} else {
 			logger.warn("Passed null as a filename");
 		}
-		filterMutationsWithResult(mutationsToReturn);
+		if (filter) {
+			filterMutationsWithResult(mutationsToReturn);
+		}
 		return mutationsToReturn;
 	}
-	
+
 	/**
 	 * Reads a list of mutation ids from a file and fetches the corresponding
 	 * mutations from the database.

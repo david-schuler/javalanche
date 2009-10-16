@@ -358,7 +358,7 @@ public class CoverageMutationListenerTest {
 		coverageMutationListener.testStart("TestTest");
 		// coverageMutationListener.serializeHashMap(map, "TestTest");
 		Map<String, Map<String, Map<Integer, Integer>>> load = CoverageTraceUtil
-				.loadLineCoverageTraceCached("0");
+				.loadLineCoverageTrace("0");
 
 		assertEquals(map, load.get("TestTest"));
 	}
