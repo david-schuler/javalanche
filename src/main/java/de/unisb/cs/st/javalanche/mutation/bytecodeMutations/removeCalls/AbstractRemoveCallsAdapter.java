@@ -54,11 +54,12 @@ public abstract class AbstractRemoveCallsAdapter extends
 
 	private void mutate(final int opcode, final String owner,
 			final String name, final String desc) {
-		Mutation queryMutation = new Mutation(className, getLineNumber(),
+		Mutation mutation = new Mutation(className, methodName,
+				getLineNumber(),
 				getPossibilityForLine(), REMOVE_CALL, isClassInit);
 		logger.debug("Found possibility for line " + getLineNumber());
 		addPossibilityForLine();
- 		handleMutation(queryMutation, opcode, owner, name, desc);
+		handleMutation(mutation, opcode, owner, name, desc);
 	}
 
 	protected abstract void handleMutation(Mutation mutation, int opcode,

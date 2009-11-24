@@ -1,54 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-Licensed to the Apache Software Foundation (ASF) under one
-or more contributor license agreements.  See the NOTICE file
-distributed with this work for additional information
-regarding copyright ownership.  The ASF licenses this file
-to you under the Apache License, Version 2.0 (the
-"License"); you may not use this file except in compliance
-with the License.  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied.  See the License for the
-specific language governing permissions and limitations
-under the License.
--->
-
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
-  <body>
-    <menu name="Main">
-      <item name="Introduction" href="index.html"/>
-	  <item name="Download" href="download.html"/>
-    </menu>
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
+	<body>
+		<menu name="Main">
+			<item name="Introduction" href="index.html"/>
+			<item name="Download" href="download.html"/>
+		</menu>
 	
-	 <menu name="Documentation">
-      <item name="Running Javalanche" href="documentation.html"/>
-      <item name="Invariant Checking" href="doc-invariants.html"/>
-	  <item name="Coverage Impact" href="doc-coverage.html"/>
-    </menu>
+		<menu name="Documentation">
+			<item name="Running Javalanche" href="documentation.html"/>
+			<item name="Invariant Checking" href="doc-invariants.html"/>
+			<item name="Coverage Impact" href="doc-coverage.html"/>
+		</menu>
 	
-	 <menu name="Examples">	  
-	  <item name="I-Triangle" href="example-triangle.html"/>
-	  <item name="II-Jaxen" href="example-jaxen.html"/>
-	  <item name="III-Invariants" href="example-invariant.html"/>
-	  <item name="IV-Jaxen-Invariants" href="example-jaxen-invariant.html"/>
-	  <item name="V-Coverage-Impact" href="example-triangle-coverage.html"/>
-	  <item name="VI-Jaxen-Coverage" href="example-jaxen-coverage.html"/>
-      <item name="VII-Triangle-Junit4" href="example-triangle-junit4.html"/>
-    </menu>
+		<menu name="Examples">
+			<item name="I-Triangle" href="example-triangle.html"/>
+			<item name="II-Jaxen" href="example-jaxen.html"/>
+			<item name="III-Invariants" href="example-invariant.html"/>
+			<item name="IV-Jaxen-Invariants" href="example-jaxen-invariant.html"/>
+			<item name="V-Coverage-Impact" href="example-triangle-coverage.html"/>
+			<item name="VI-Jaxen-Coverage" href="example-jaxen-coverage.html"/>
+			<item name="VII-Triangle-Junit4" href="example-triangle-junit4.html"/>
+		</menu>
 	
-	<menu ref="reports"/>
+		<menu ref="reports"/>
+		
+		<menu name="FAQ">
+			<item name="FAQ" href="faq.html"/>
+		</menu>
 	<!--
 	  <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
-      <item name="FAQ" href="faq.html"/>
+
    
     <menu name="Configuration">
       <item name="Internationalization" href="i18n.html"/>
@@ -65,6 +48,6 @@ under the License.
       <item name="Deploying to sourceforge.net" href="/examples/site-deploy-to-sourceforge.net.html"/>
     </menu>
 	-->
-  </body>
+	</body>
 </project>
 

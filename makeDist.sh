@@ -1,14 +1,16 @@
 #! /bin/sh
+VERSION=0.3.3
+DIST=javalanche-$VERSION
+
 if [  $1 ]; then
  if [ $1 == "tgz"  ]
   then
  	mvn clean
 	mvn site
+	rm -r ${DIST}
  fi
 fi
 mvn -Dmaven.test.skip=true   assembly:assembly
-VERSION=0.3.3
-DIST=javalanche-$VERSION
 mkdir ${DIST}
 
 

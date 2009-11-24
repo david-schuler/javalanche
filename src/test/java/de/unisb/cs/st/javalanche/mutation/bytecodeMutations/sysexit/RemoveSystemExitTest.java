@@ -32,7 +32,6 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsCollectorTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.testclasses.SysExit;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.testclasses.SysExitTest;
-import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.MutationTestSuite;
 
 public class RemoveSystemExitTest {
 

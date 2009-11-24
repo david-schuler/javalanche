@@ -117,10 +117,12 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		// The number of data
 		public int dataTotal = 0;
 		public int dataModified = 0;
+
+		public String methodsModifiedLineNames;
+		public String methodsModifiedDataNames;
 	}
 
-	static final Logger logger = Logger
-			.getLogger(CoverageAnalyzer.class);
+	static final Logger logger = Logger.getLogger(CoverageAnalyzer.class);
 
 	private static Map<String, Map<String, Map<Integer, Integer>>> originalLineCoverageMaps;
 	private static Map<String, Map<String, Map<Integer, Integer>>> originalDataCoverageMaps;
@@ -257,6 +259,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 							+ "METHODS_TOTAL;"
 							+ "METHODS_MODIFIED_LINE;METHODS_MODIFIED_DATA;METHODS_MODIFIED_ALL;"
 							+ "METHODS_MODIFIED_LINE_WOS;METHODS_MODIFIED_DATA_WOS;METHODS_MODIFIED_ALL_WOS;"
+							+ "METHODS_MODIFIED_LINE_NAMES;METHODS_MODIFIED_DATA_NAMES;"
 							+ "LINES_TOTAL;LINES_MODIFIED;"
 							+ "DATA_TOTAL;DATA_MODIFIED;"
 							+ "TESTS_TOTAL;TESTS_EXECUTED;"
@@ -278,7 +281,9 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 				+ results.methodsModifiedAll + ";"
 				+ results.methodsModifiedLineWOS + ";"
 				+ results.methodsModifiedDataWOS + ";"
-				+ results.methodsModifiedAllWOS + ";" + results.linesTotal
+				+ results.methodsModifiedAllWOS + ";" + "\""
+				+ results.methodsModifiedLineNames + "\";\""
+				+ results.methodsModifiedDataNames + "\";" + results.linesTotal
 				+ ";" + results.linesModified + ";" + results.dataTotal + ";"
 				+ results.dataModified + ";" + results.testsTotal + ";"
 				+ results.testsExecuted + ";" + mutation.mutationType + ";"
@@ -595,6 +600,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		Map<String, Map<Integer, Boolean>> modified = new HashMap<String, Map<Integer, Boolean>>();
 
 		Map<String, Map<Integer, Boolean>> modifiedTmp = null;
+
 		boolean commit = true;
 		for (String test : mutatedTests) {
 
@@ -645,8 +651,8 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		int linesTotal = 0, linesModified = 0;
 		int methodsTotal = 0, methodsModified = 0;
 
-		HashSet<String> classesTotalHash = new HashSet<String>();
-		HashSet<String> classesModifiedHash = new HashSet<String>();
+		HashSet<String> classesTotalSet = new HashSet<String>();
+		HashSet<String> classesModifiedSet = new HashSet<String>();
 
 		Iterator<String> itModified = modified.keySet().iterator();
 		boolean foundSelf = false;
@@ -687,7 +693,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 						first = false;
 						methodsModified++;
 						modifiedMethodsSet.add(name);
-						classesModifiedHash.add(className);
+						classesModifiedSet.add(className);
 						// System.out.println(className);
 					}
 					linesModified++;
@@ -696,7 +702,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 				linesTotal++;
 			}
 			methodsTotal++;
-			classesTotalHash.add(className);
+			classesTotalSet.add(className);
 		}
 
 		results.testsExecuted = mutatedTests.length;
@@ -713,8 +719,9 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			results.methodsModifiedLineWOS += methodsModified;
 		}
 
-		results.classesTotal += classesTotalHash.size();
-		results.classesModified += classesModifiedHash.size();
+		results.classesTotal += classesTotalSet.size();
+		results.classesModified += classesModifiedSet.size();
+		results.methodsModifiedLineNames = modifiedMethodsSet.toString();
 	}
 
 	/*
@@ -832,6 +839,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		}
 		results.dataTotal += dataTotal;
 		results.dataModified += dataModified;
+		results.methodsModifiedDataNames = modifiedMethodsSet.toString();
 	}
 
 	/*

@@ -40,12 +40,28 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.log4j.Logger;
 
 /**
- * @author David Schuler TODO Describe trace format.
+ * Class that provide methods to read write and compare coverage data.  The
+ * Format of the coverage data is as follows:
+ * 
+ * Map<String, Map<String, Map<Integer, Integer>>>
+ * 
+ * Where the first key is the name of the tests. The second String Key is the
+ * name of the method and the Integer key is the line number an its value
+ * describes how often this line was executed.
+ * 
+ * @author David Schuler
+ * 
  */
 public class CoverageTraceUtil {
 
 	private static final Collection<String> EMPTY_COLLECTION = new ArrayList<String>();
 	private static Logger logger = Logger.getLogger(CoverageTraceUtil.class);
+
+	/**
+	 * Don not instantiate this class.
+	 */
+	private CoverageTraceUtil() {
+	}
 
 	/**
 	 * Returns the methods that have a difference in their trace data. This is

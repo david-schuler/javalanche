@@ -18,6 +18,8 @@
  */
 package de.unisb.cs.st.javalanche.mutation.properties;
 
+import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
@@ -32,14 +34,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.unisb.cs.st.javalanche.mutation.properties.RunMode.*;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.matchers.JUnitMatchers.*;
-
 import org.junit.Test;
-import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
 
 public class MutationPropertiesTest {
 
@@ -89,6 +84,7 @@ public class MutationPropertiesTest {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	private URLClassLoader getUrlClassLoader() throws MalformedURLException {
 		String cp = System.getProperty("java.class.path");
 		String[] entries = cp.split(":");

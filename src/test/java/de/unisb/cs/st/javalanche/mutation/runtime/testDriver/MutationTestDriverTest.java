@@ -2,11 +2,10 @@ package de.unisb.cs.st.javalanche.mutation.runtime.testDriver;
 
 import static org.easymock.EasyMock.*;
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*; //import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -113,7 +112,7 @@ public class MutationTestDriverTest {
 	}
 
 	@Test
-	public void testThreadStartsOtherThread() {
+	public void testThreadStartsOtherThread() throws InterruptedException {
 		MyTestDriver m = new MyTestDriver();
 		MutationTestListener mock = createMock(MutationTestListener.class);
 		m.addMutationTestListener(mock);
@@ -121,6 +120,7 @@ public class MutationTestDriverTest {
 		long[] threadsPre = threadMxBean.getAllThreadIds();
 		EndlessThread e = new EndlessThread();
 		m.runWithTimeout(e);
+		Thread.sleep(500);
 		e.getChild();
 		// assertFalse(e.getChild().hasFinished());
 		assertFalse(e.getChildThread().isAlive());
@@ -133,18 +133,15 @@ public class MutationTestDriverTest {
 	}
 
 	@Test
-	public void testEndlessLoopThread() {
+	public void testEndlessLoopThread() throws InterruptedException {
 		MyTestDriver m = new MyTestDriver();
 		final ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
 		long[] threadsPre = threadMxBean.getAllThreadIds();
 		EndlessThread e = new EndlessThread(1);
 		m.runWithTimeout(e);
+		Thread.sleep(500);
 		long[] threadsPost = threadMxBean.getAllThreadIds();
 		assertThat(threadsPost.length - threadsPre.length, is(0));
 		assertTrue(e.hasFailed());
-	}
-
-	public static void main(String[] args) {
-		new MutationTestDriverTest().testThreadStartsOtherThread();
 	}
 }

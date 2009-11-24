@@ -61,7 +61,8 @@ public abstract class AbstractArithmeticMethodAdapter extends AbstractMutationAd
 	}
 
 	private void mutate(int opcode) {
-		Mutation mutation = new Mutation(className, getLineNumber(),
+		Mutation mutation = new Mutation(className, methodName,
+				getLineNumber(),
 				getPossibilityForLine(),
 				Mutation.MutationType.ARITHMETIC_REPLACE, isClassInit);
 		addPossibilityForLine();
