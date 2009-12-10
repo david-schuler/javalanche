@@ -1,5 +1,5 @@
 #! /bin/sh
-VERSION=0.3.3
+VERSION=0.3.5
 DIST=javalanche-$VERSION
 
 if [  $1 ]; then

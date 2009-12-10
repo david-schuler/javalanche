@@ -41,6 +41,7 @@ public class StepCreator {
 		}
 		tx.commit();
 		session.close();
+
 		// Delete all results - processing must be done earlier.
 		ResultDeleter.deleteAllWithPrefix();
 		logger.info("Deleted results");

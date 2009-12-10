@@ -42,8 +42,8 @@ public abstract class AbstractArithmeticMethodAdapter extends AbstractMutationAd
 			.getReplaceMap();
 
 	public AbstractArithmeticMethodAdapter(MethodVisitor mv, String className,
-			String methodName, Map<Integer, Integer> possibilities) {
-		super(mv, className, methodName, possibilities);
+			String methodName, Map<Integer, Integer> possibilities, String desc) {
+		super(mv, className, methodName, possibilities, desc);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public abstract class AbstractArithmeticMethodAdapter extends AbstractMutationAd
 	}
 
 	private void mutate(int opcode) {
-		Mutation mutation = new Mutation(className, methodName,
+		Mutation mutation = new Mutation(className, getMethodName(),
 				getLineNumber(),
 				getPossibilityForLine(),
 				Mutation.MutationType.ARITHMETIC_REPLACE, isClassInit);

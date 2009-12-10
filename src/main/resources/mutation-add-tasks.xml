@@ -1,0 +1,48 @@
+<project name="additionalTasks">
+
+
+	<target name="printBytecode" description="* print a classes bytecode (specified in property -Dclass.name=)">
+		<echo> Printing bytecode for class: ${class.name} </echo>
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.AsmUtil" fork="true">
+			<sysproperty key="class.name" value="${class.name}" />
+			<classpath>
+			         <pathelement path="${cp}"/>
+					 <path refid="mutation.classpath"/>
+			</classpath>
+		</java>
+	</target>
+	
+	
+	
+	<target name="prepareStep" description="* Produces files for the next step in the evolutionary algorithm.">
+		<java classname="de.unisb.cs.st.javalanche.mutation.evolutionary.StepCreator" maxmemory="${javalanche.maxmemory}" fork="true">
+			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+
+		
+	<target name="doStep" description="* Do a step in the evolutionary algorithm. ">
+		
+		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="run.mutations.memory" value="-Xmx${javalanche.maxmemory}"/>
+		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=evolution"/>
+		<property name="run.mutations.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="run.mutations.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="run.mutations.mutation.file" value="-Dmutation.file=mutation-files/task-file.txt" />
+		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=result-${mutation.file}"/>
+		<property name="run.mutations.verbose" value="-verbose"/>
+		<property name="run.mutations.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.mutation.runtime.jmx.JmxMutationTestListener"/>
+		<path id="run.mutations.classpath.add">
+			<path refid="mutation.classpath"/>
+		</path>
+			<!--${run.mutations.verbose}-->
+		<antcall target="test-javalanche">
+			<param name="javalanche.arg.line" value="  ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.listener} " />
+			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+
+	</target>
+</project>

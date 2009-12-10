@@ -30,8 +30,8 @@ public abstract class AbstractRicMethodAdapter extends AbstractMutationAdapter {
 
 	public AbstractRicMethodAdapter(MethodVisitor mv, String className,
 			String methodName, boolean forwardCalls,
-			Map<Integer, Integer> possibilities) {
-		super(mv, className, methodName, possibilities);
+			Map<Integer, Integer> possibilities, String desc) {
+		super(mv, className, methodName, possibilities, desc);
 		this.forwardCalls = forwardCalls;
 	}
 

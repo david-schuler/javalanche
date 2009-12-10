@@ -54,6 +54,6 @@ public class RicClassAdapter extends ClassAdapter {
 		MethodVisitor mv = super.visitMethod(access, name, desc, signature,
 				exceptions);
 		return new CheckMethodAdapter(new RicMethodAdapter(mv, className, name,
-				possibilities, mm));
+				possibilities, mm, desc));
 	}
 }

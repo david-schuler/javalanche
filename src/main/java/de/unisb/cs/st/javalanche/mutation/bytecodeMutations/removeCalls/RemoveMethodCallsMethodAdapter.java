@@ -116,8 +116,8 @@ public class RemoveMethodCallsMethodAdapter extends AbstractRemoveCallsAdapter {
 	
 	public RemoveMethodCallsMethodAdapter(MethodVisitor mv, String className,
 			String methodName, Map<Integer, Integer> possibilities,
-			MutationManager mutationManager) {
-		super(mv, className, methodName, possibilities);
+			MutationManager mutationManager, String desc) {
+		super(mv, className, methodName, possibilities, desc);
 		this.mutationManager = mutationManager;
 	}
 

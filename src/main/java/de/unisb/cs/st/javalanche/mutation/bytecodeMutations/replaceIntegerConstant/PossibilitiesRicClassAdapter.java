@@ -54,7 +54,7 @@ public class PossibilitiesRicClassAdapter extends ClassAdapter {
 			String signature, String[] exceptions) {
 		actualAdapter = new PossibilitiesRicMethodAdapter(super.visitMethod(
 				access, name, desc, signature, exceptions), className, name,
-				mutationPossibilityCollector, possibilities);
+				mutationPossibilityCollector, possibilities, desc);
 		return actualAdapter;
 
 	}

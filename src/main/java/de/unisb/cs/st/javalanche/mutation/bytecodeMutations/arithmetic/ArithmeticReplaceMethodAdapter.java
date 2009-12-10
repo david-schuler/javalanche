@@ -45,8 +45,8 @@ public class ArithmeticReplaceMethodAdapter extends
 
 	public ArithmeticReplaceMethodAdapter(MethodVisitor mv, String className,
 			String methodName, Map<Integer, Integer> possibilities,
-			MutationManager mutationManager) {
-		super(mv, className, methodName, possibilities);
+			MutationManager mutationManager, String desc) {
+		super(mv, className, methodName, possibilities, desc);
 		this.mutationManager = mutationManager;
 	}
 

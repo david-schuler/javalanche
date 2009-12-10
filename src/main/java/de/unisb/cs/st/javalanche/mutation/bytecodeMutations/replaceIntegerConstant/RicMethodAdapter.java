@@ -127,8 +127,8 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 	public RicMethodAdapter(MethodVisitor mv, String className,
 			String methodName, Map<Integer, Integer> possibilities,
-			MutationManager mutationManager) {
-		super(mv, className.replace('/', '.'), methodName, possibilities);
+			MutationManager mutationManager, String desc) {
+		super(mv, className.replace('/', '.'), methodName, possibilities, desc);
 		this.mutationManager = mutationManager;
 		logger.debug("MethodName:" + methodName);
 	}

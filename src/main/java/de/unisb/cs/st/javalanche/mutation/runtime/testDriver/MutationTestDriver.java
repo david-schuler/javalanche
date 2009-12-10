@@ -366,7 +366,7 @@ public abstract class MutationTestDriver {
 	private boolean coldRun(List<String> allTests) {
 		int counter = 0;
 		int size = allTests.size();
-		logger.info("Start cold run  of tests to get all classes loaded");
+		logger.info("Start cold run of tests to get all classes loaded");
 		List<String> failed = new ArrayList<String>();
 		for (String testName : allTests) {
 			counter++;

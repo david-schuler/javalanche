@@ -138,7 +138,7 @@ done
 ant -f javalanche.xml  createMutationMakefile
 +-------------------------------+
 
- Finally we run <<<make>>> with the <<<-j>>> switch.
+ Finally, we run <<<make>>> with the <<<-j>>> switch.
 
 +-------------------------------+
 make -j4

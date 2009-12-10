@@ -28,12 +28,12 @@ import org.objectweb.asm.MethodVisitor;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 
 /**
- * ClassAdapter for the replacement of arithmetic operatiorns.
- *
+ * ClassAdapter for the replacement of arithmetic operations.
+ * 
  * @see ArithmeticReplaceMethodAdapter
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class ArithmeticReplaceClassAdapter extends ClassAdapter {
 
@@ -80,7 +80,7 @@ public class ArithmeticReplaceClassAdapter extends ClassAdapter {
 			String signature, String[] exceptions) {
 		return new ArithmeticReplaceMethodAdapter(super.visitMethod(access,
 				name, desc, signature, exceptions), className, name,
-				possibilities, mm);
+				possibilities, mm, desc);
 	}
 
 }

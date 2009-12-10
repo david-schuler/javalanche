@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faqs title="Frequently Asked Questions">
+	<part id="Compiling Javalanche">
+		<title>General</title>
+		<faq id="javalanche_faq">
+			
+			<question>Some jars are missing when compiling Javalanche from source, where can I get them?</question>
+			<answer>
+				<p>
+					These missing jars are included in the binary distribution of
+					Javalanche. They can be installed locally via the 
+					<source>mvn install ... </source>
+					command.
+				</p>
+			</answer>
+		</faq>
+		<faq id="testreports">
+			<question>The task <source>testTask1</source> or <source>testTask2</source> fails, what to do?</question>
+			<answer>
+				<p>
+					If ant does not give a reasonable error message, the test results are
+					given in the <source>mutation-files/junit-reports/</source> directory.
+				</p>
+			</answer>
+		</faq>
+		<faq id="maxmemory">
+			<question> Javalanche can not create a Java virtual machine. </question>
+			<answer>
+				<p>
+			Javalanche uses per default the <code>-Xmx</code> to reserve 2048 megabyte
+	of heap space. If this is to much for your system, an errors similar to this 
+	one occurs:
+	<source>[junit] Could not create the Java virtual machine.
+[junit] Error occurred during initialization of VM
+[junit] Could not reserve enough space for object heap</source>
+    
+    The solution is to tell Javalanche to us less memory, with the option
+    <code>-Djavalanche.maxmemory=1024m</code>
+				</p>
+			
+			</answer>
+		
+		</faq>
+	</part>
+</faqs>
+
+
+

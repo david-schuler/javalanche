@@ -45,6 +45,7 @@ public class EvolutionMutationTransformer extends BytecodeTransformer {
 
 	private static Logger logger = Logger
 			.getLogger(EvolutionMutationTransformer.class);
+
 	public static class EvolutionMutationsClassAdapter extends ClassAdapter {
 
 		private String className;
@@ -90,8 +91,7 @@ public class EvolutionMutationTransformer extends BytecodeTransformer {
 			// mv = new NegateJumpsMethodAdapter(mv, className, name,
 			// negatePossibilities, mutationManager);
 			mv = new EvolutionArithmeticReplaceMethodAdapter(mv, className,
-					name,
-					arithmeticPossibilities, mutationManager);
+					name, arithmeticPossibilities, mutationManager, desc);
 			// mv = new RemoveMethodCallsMethodAdapter(mv, className, name,
 			// removeCallsPossibilities, mutationManager);
 			return mv;

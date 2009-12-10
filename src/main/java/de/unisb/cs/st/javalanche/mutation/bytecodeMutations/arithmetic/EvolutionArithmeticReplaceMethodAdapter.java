@@ -24,8 +24,9 @@ public class EvolutionArithmeticReplaceMethodAdapter extends
 
 	public EvolutionArithmeticReplaceMethodAdapter(MethodVisitor mv,
 			String className, String methodName,
-			Map<Integer, Integer> possibilities, MutationManager mutationManager) {
-		super(mv, className, methodName, possibilities, mutationManager);
+			Map<Integer, Integer> possibilities,
+			MutationManager mutationManager, String desc) {
+		super(mv, className, methodName, possibilities, mutationManager, desc);
 	}
 
 	@Override

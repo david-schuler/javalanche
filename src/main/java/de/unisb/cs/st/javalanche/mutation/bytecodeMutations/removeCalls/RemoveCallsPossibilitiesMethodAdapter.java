@@ -34,8 +34,8 @@ public final class RemoveCallsPossibilitiesMethodAdapter extends
 	public RemoveCallsPossibilitiesMethodAdapter(MyAdviceAdapter mv,
 			String className, String methodName,
 			MutationPossibilityCollector mpc,
-			Map<Integer, Integer> possibilities) {
-		super(mv, className, methodName, possibilities);
+			Map<Integer, Integer> possibilities, String desc) {
+		super(mv, className, methodName, possibilities, desc);
 		myAdviceAdapter = mv;
 		this.mpc = mpc;
 	}

@@ -107,9 +107,7 @@ public class EclipseScanner implements ClassFileTransformer {
 				File idFile = new File("mutation-ids-"
 						+ MutationProperties.TEST_SUITE + ".txt");
 				Io.writeFile(sb.toString(), idFile);
-				System.out.println("TESTSETETS");
 			}
-
 		});
 	}
 

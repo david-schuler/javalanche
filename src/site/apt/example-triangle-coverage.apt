@@ -60,7 +60,7 @@ ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dt
  
 * Creating Coverage Data for an Unmutated Run
 
- The coverage data for an the unmutated programm is generated with the <<<createCoverageData>>> task.
+ The coverage data for an the unmutated program is generated with the <<<createCoverageData>>> task.
  
 +-------------------------------+
 ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  createCoverageData

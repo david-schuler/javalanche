@@ -10,10 +10,10 @@ Jaxen
 	
  This example shows the additional steps for running mutation testing with
  invariant testing for jaxen.
- The steps needed for preparin jaxen for mutation testing are described
+ The steps needed for preparing jaxen for mutation testing are described
  {{{example-jaxen.html} here}}.
  In case there are already results in the database without invariant checking,
- they can be delted with <<<deleteResults>>> task.
+ they can be deleted with <<<deleteResults>>> task.
  
 +-------------------------------+
 ant -f javalanche.xml deleteResults
@@ -28,7 +28,7 @@ ant -f javalanche.xml deleteResults
 ant -f javalanche.xml trace
 +-------------------------------+
 
- These filed then have to be converted into the daikon trace format.
+ These filed then have to be converted into the Daikon trace format.
 
 +-------------------------------+
 ant -f javalanche.xml createDaikonFiles
@@ -48,7 +48,7 @@ ant -f javalanche.xml createDaikonScript
 ant -f javalanche.xml createDaikonMakefile
 +-------------------------------+
  
- Using make can the invariants can be inferred from the daikon trace files. 
+ Using make can the invariants can be inferred from the Daikon trace files. 
 
 +-------------------------------+
 make

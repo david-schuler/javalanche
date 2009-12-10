@@ -35,8 +35,8 @@ public abstract class AbstractRemoveCallsAdapter extends
 			.getLogger(AbstractRemoveCallsAdapter.class);
 
 	public AbstractRemoveCallsAdapter(MethodVisitor mv, String className,
-			String methodName, Map<Integer, Integer> possibilities) {
-		super(mv, className, methodName, possibilities);
+			String methodName, Map<Integer, Integer> possibilities, String desc) {
+		super(mv, className, methodName, possibilities, desc);
 	}
 
 
@@ -54,7 +54,7 @@ public abstract class AbstractRemoveCallsAdapter extends
 
 	private void mutate(final int opcode, final String owner,
 			final String name, final String desc) {
-		Mutation mutation = new Mutation(className, methodName,
+		Mutation mutation = new Mutation(className, getMethodName(),
 				getLineNumber(),
 				getPossibilityForLine(), REMOVE_CALL, isClassInit);
 		logger.debug("Found possibility for line " + getLineNumber());

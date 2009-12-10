@@ -51,6 +51,7 @@ public class PossibilitiesArithmeticReplaceClassAdapter extends ClassAdapter {
 			String signature, String[] exceptions) {
 		return new PossibilitiesArithmeticReplaceMethodAdapter(super
 				.visitMethod(access, name, desc, signature, exceptions),
-				className, name, mutationPossibilityCollector, possibilities);
+				className, name, mutationPossibilityCollector, possibilities,
+				desc);
 	}
 }

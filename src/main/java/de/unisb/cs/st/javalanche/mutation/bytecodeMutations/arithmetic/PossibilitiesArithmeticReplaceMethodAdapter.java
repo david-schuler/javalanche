@@ -39,8 +39,8 @@ public class PossibilitiesArithmeticReplaceMethodAdapter extends
 	public PossibilitiesArithmeticReplaceMethodAdapter(MethodVisitor mv,
 			String className, String methodName,
 			MutationPossibilityCollector mpc,
-			Map<Integer, Integer> possibilities) {
-		super(mv, className, className, possibilities);
+			Map<Integer, Integer> possibilities, String desc) {
+		super(mv, className, className, possibilities,desc);
 		this.mpc = mpc;
 	}
 

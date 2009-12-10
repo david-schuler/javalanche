@@ -18,6 +18,7 @@
  */
 package de.unisb.cs.st.javalanche.mutation.results;
 
+import java.io.File;
 import java.io.Serializable;
 
 import javax.persistence.CascadeType;

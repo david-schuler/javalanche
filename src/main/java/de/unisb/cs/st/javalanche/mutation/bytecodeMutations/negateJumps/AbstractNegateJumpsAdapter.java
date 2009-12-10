@@ -32,8 +32,8 @@ public abstract class AbstractNegateJumpsAdapter extends AbstractMutationAdapter
 			.getReplacementMap();
 
 	public AbstractNegateJumpsAdapter(MethodVisitor mv, String className,
-			String methodName, Map<Integer, Integer> possibilities) {
-		super(mv, className, methodName, possibilities);
+			String methodName, Map<Integer, Integer> possibilities, String desc) {
+		super(mv, className, methodName, possibilities, desc);
 
 	}
 
@@ -51,7 +51,7 @@ public abstract class AbstractNegateJumpsAdapter extends AbstractMutationAdapter
 	}
 
 	private void addJumpMutationPossibility(Label label, int opcode) {
-		Mutation mutation = new Mutation(className, methodName,
+		Mutation mutation = new Mutation(className, getMethodName(),
 				getLineNumber(),
 				getPossibilityForLine(), Mutation.MutationType.NEGATE_JUMP,
 				isClassInit);

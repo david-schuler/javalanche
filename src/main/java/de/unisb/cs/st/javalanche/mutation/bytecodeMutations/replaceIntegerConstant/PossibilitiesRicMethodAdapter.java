@@ -33,18 +33,18 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 	public PossibilitiesRicMethodAdapter(MethodVisitor mv, String className,
 			String methodName,
 			MutationPossibilityCollector mutationPossibilityCollector,
-			Map<Integer, Integer> possibilities) {
-		super(mv, className, methodName, true, possibilities);
+			Map<Integer, Integer> possibilities, String desc) {
+		super(mv, className, methodName, true, possibilities, desc);
 		this.mutationPossibilityCollector = mutationPossibilityCollector;
 	}
 
 	private void countMutation(int i) {
 		if (!mutationCode) {
 			int possibilitiesForLine = getPossibilityForLine();
-			Mutation mutationPlus1 = new Mutation(className, methodName,
+			Mutation mutationPlus1 = new Mutation(className, getMethodName(),
 					getLineNumber(), possibilitiesForLine,
 					Mutation.MutationType.RIC_PLUS_1, isClassInit);
-			Mutation mutationMinus1 = new Mutation(className, methodName,
+			Mutation mutationMinus1 = new Mutation(className, getMethodName(),
 					getLineNumber(), possibilitiesForLine,
 					Mutation.MutationType.RIC_MINUS_1, isClassInit);
 
@@ -52,7 +52,8 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 			mutationPossibilityCollector.addPossibility(mutationPlus1);
 			mutationPossibilityCollector.addPossibility(mutationMinus1);
 			if (i != 0) {
-				Mutation mutationZero = new Mutation(className, methodName,
+				Mutation mutationZero = new Mutation(className,
+						getMethodName(),
 						getLineNumber(), possibilitiesForLine,
 						Mutation.MutationType.RIC_ZERO, isClassInit);
 				mutationPossibilityCollector.addPossibility(mutationZero);

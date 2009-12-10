@@ -53,7 +53,7 @@ public class NegateJumpsClassAdapter extends ClassAdapter {
 		MethodVisitor superVisitor = super.visitMethod(access, name, desc,
 				signature, exceptions);
 		MethodVisitor actualAdapter = new NegateJumpsMethodAdapter(
-				superVisitor, className, name, possibilities, mm);
+				superVisitor, className, name, possibilities, mm, desc);
 		return actualAdapter;
 	}
 
