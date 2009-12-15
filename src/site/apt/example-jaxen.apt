@@ -15,7 +15,7 @@ Jaxen
  First we check out Jaxen from the svn (we use revision 1342 in this example).
 
 +-------------------------------+
-svn co -r1342 https://svn.codehaus.org/jaxen/trunk/jaxen/jaxen jaxen
+svn co -r1342 https://svn.codehaus.org/jaxen/trunk/jaxen/ jaxen
 +-------------------------------+
 
  Then we compile Jaxen and run the tests using maven 1.1

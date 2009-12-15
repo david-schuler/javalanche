@@ -24,12 +24,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import de.unisb.cs.st.javalanche.mutation.analyze.html.ClassReport;
 import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 
 public class InvariantAnalyzer implements MutationAnalyzer {
+
+	private static Logger logger = Logger.getLogger(InvariantAnalyzer.class);
 
 	private static final String COLUMN = "Invariant Impact";
 
@@ -60,10 +64,15 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 			if (mutationResult != null) {
 				withResult++;
 				ClassReport classReport = report.getClassReport(mutation.getClassName());
+				if (classReport != null) {
 				classReport.addColumn(COLUMN);
 				classReport.putEntry(mutation.getId(), COLUMN, mutation
 						.getMutationResult().getDifferentViolatedInvariants()
 						+ "");
+				} else {
+					logger.warn("Found no report for class: "
+							+ mutation.getClassName());
+				}
 			}
 			total++;
 		}

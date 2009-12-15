@@ -3,7 +3,7 @@
 	<groupId>de.st.cs.unisb</groupId>
 	<artifactId>javalanche-mutation</artifactId>
 	<packaging>jar</packaging>
-	<version>0.3.5</version>
+	<version>0.3.6</version>
 	<name>Javalanche</name>
 	<url>http://javalanche.org</url>
 	

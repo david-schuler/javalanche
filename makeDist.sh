@@ -1,5 +1,6 @@
 #! /bin/sh
-VERSION=0.3.5
+VERSION=`grep version pom.xml | head -1 | sed -E 's/.*0/0/' | sed -E 's/<.*//'`
+echo "Building version: ${VERSION}"
 DIST=javalanche-$VERSION
 
 if [  $1 ]; then
