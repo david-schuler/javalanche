@@ -21,14 +21,17 @@ package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.runner.Description;
+import org.junit.runner.Request;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -40,6 +43,10 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.RunnerBuilder;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestDriver;
@@ -61,6 +68,9 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 	private Map<String, Description> allTests = new HashMap<String, Description>();
 
 	public Junit4MutationTestDriver() {
+
+		System.out
+				.println("Junit4MutationTestDriver.Junit4MutationTestDriver()");
 		Runner r = null;
 		Throwable t = null;
 		try {
@@ -83,10 +93,70 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 
 	private Runner getTestSuiteRunner() throws ClassNotFoundException,
 			InitializationError {
-		Class<?> forName = null;
-		forName = Class.forName(MutationProperties.TEST_SUITE);
-		Runner r = new Suite(forName, new AllDefaultPossibilitiesBuilder(false));
-		return r;
+		return Junit4Util.getRuner();
+		// Class<?> forName = null;
+		// String testSuite = MutationProperties.TEST_SUITE;
+		// System.out.println("Junit4MutationTestDriver.getTestSuiteRunner()");
+		// Runner r = null;
+		// String addProp = System.getProperty("javalanche.test.methods");
+		// if (addProp != null) {
+		// String[] split = addProp.split(":");
+		// if (addProp != null) {
+		// final Multimap<String, String> methods = new HashMultimap<String,
+		// String>();
+		//
+		// for (String testMethod : split) {
+		// String testClass = Junit4Util.getTestClass(testMethod);
+		// methods.put(testClass, testMethod);
+		// }
+		// RunnerBuilder runnerBuilder = new RunnerBuilder() {
+		// @Override
+		// public Runner runnerForClass(Class<?> testClass)
+		// throws Throwable {
+		//
+		// Request aClass = Request.aClass(testClass);
+		// final Collection<String> methodNames = methods
+		// .get(testClass.getName());
+		// Request filtered = aClass.filterWith(new Filter() {
+		//
+		// @Override
+		// public String describe() {
+		// return "Javalanche test filter";
+		// }
+		//
+		// @Override
+		// public boolean shouldRun(Description description) {
+		// String name = description.getClassName() + "."
+		// + description.getMethodName();
+		// boolean var = methodNames.contains(name);
+		// return var;
+		// }
+		// });
+		// return filtered.getRunner();
+		// }
+		// };
+		// Set<String> keySet = methods.keySet();
+		// List<Class<?>> classes = new ArrayList<Class<?>>();
+		//
+		// for (String className : keySet) {
+		// classes.add(Class.forName(className));
+		// }
+		// r = new Suite(runnerBuilder, classes.toArray(new Class<?>[0]));
+		// } else if (testSuite.startsWith("-c")) {
+		// // Classes
+		// List<Class<?>> classes = new ArrayList<Class<?>>();
+		// for (String className : split) {
+		// Class<?> clazz = Class.forName(className);
+		// classes.add(clazz);
+		// }
+		// r = new Suite(new AllDefaultPossibilitiesBuilder(false),
+		// classes.toArray(new Class[0]));
+		// }
+		// } else {
+		// forName = Class.forName(testSuite);
+		// r = new Suite(forName, new AllDefaultPossibilitiesBuilder(false));
+		// }
+		// return r;
 	}
 
 	private static Map<String, Description> getTests(Runner r) {

@@ -35,16 +35,33 @@
 		<mkdir dir="${javalanche.mutation.output.dir}"/>
 	</target>
 	
-	<target name="testTask1" description="* Test the Javalanche task. The task should behave in the same way as a regular test task.">
+	
+		<target name="testTask1" description="* Test the Javalanche task. The task should behave in the same way as a regular test task.">
+		<property name="test.task.1.memory" value="-Xmx${javalanche.maxmemory}"/> 
+		<property name="test.task.1.mutation.run.mode" value="-Dmutation.run.mode=off"/> 
+		<property name="test.task.1.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="test.task.1.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+	
+		<path id="testTask.javalanche.classpath.add">
+			<path refid="mutation.classpath"/>
+		</path>
+
+		<antcall target="test-javalanche">                                
+			<param name="javalanche.arg.line" value="${test.task.1.memory} ${test.task.1.mutation.run.mode} ${test.task.1.javalanche.package.prefix} ${test.task.1.javalanche.project.test.suite}" />
+			<reference refid="testTask.javalanche.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>  
+	
+	<!--target name="testTask1" description="* Test the Javalanche task. The task should behave in the same way as a regular test task.">
 		<path id="testTask.javalanche.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
 
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value="-Dmutation.run.mode=off" />
+			<param name="javalanche.arg.line" value="-Dmutation.run.mode=off -Dmutation.package.prefix=${project.prefix}" />
 			<reference refid="testTask.javalanche.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
-	</target>
+	</target-->
 
 	
 	<target name="testTask2" description="* Test the Javalanche test runner without any bytecode modifications. All tests should pass in the Javalanche test runner.">

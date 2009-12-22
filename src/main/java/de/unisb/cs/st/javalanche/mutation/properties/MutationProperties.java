@@ -103,7 +103,7 @@ public class MutationProperties {
 
 	/**
 	 * 
-	 * The key for the system property that specifies the the testsuite which
+	 * The key for the system property that specifies the the test suite which
 	 * should be modified
 	 * 
 	 * -dmutation.test.suite=AllTests
@@ -112,11 +112,19 @@ public class MutationProperties {
 
 	public static String TEST_SUITE = getProperty(TEST_SUITE_KEY);
 
+	public static final String TEST_METHODS_KEY = "javalanche.test.methods";
+	public static final String TEST_METHODS = getProperty(TEST_METHODS_KEY);
+
+	public static final String TEST_CLASSES_KEY = "javalanche.test.classes";
+	public static final String TEST_CLASSES = getProperty(TEST_CLASSES_KEY);
+
 	public static final String CURRENT_MUTATION_KEY = "mutation.actual.mutation";
 
-	public static final String TEST_TESTSUITE_KEY = "mutation.test.testsuite";
+	// public static final String TEST_TESTSUITE_KEY =
+	// "mutation.test.testsuite";
 
-	public static final String TEST_TESTSUITE = getProperty(TEST_TESTSUITE_KEY);
+	// public static final String TEST_TESTSUITE =
+	// getProperty(TEST_TESTSUITE_KEY);
 
 	public static final String TRACE_BYTECODE_KEY = "mutation.trace";
 
@@ -174,7 +182,7 @@ public class MutationProperties {
 	public static final boolean JUNIT4_MODE = getPropertyOrDefault(
 			JUNIT4_MODE_KEY, false);
 
-	public static final Object JUNIT4_TEST_ADAPTER = "junit.framework.JUnit4TestAdapter";
+	public static final String JUNIT4_TEST_ADAPTER = "junit.framework.JUnit4TestAdapter";
 
 	public static final String ECLIPSE_RUN_CONFIG_NAME_KEY = "javalanche.eclipse.run.configuration";
 	public static final String ECLIPSE_RUN_CONFIG_NAME = getPropertyOrDefault(
