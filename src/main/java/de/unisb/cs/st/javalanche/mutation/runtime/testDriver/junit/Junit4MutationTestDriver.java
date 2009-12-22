@@ -74,7 +74,7 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 		Runner r = null;
 		Throwable t = null;
 		try {
-			r = getTestSuiteRunner();
+			r = Junit4Util.getRuner();
 		} catch (ClassNotFoundException e) {
 			t = e;
 		} catch (InitializationError e) {
@@ -89,74 +89,6 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 		}
 		allTests = getTests(r);
 		logger.info("All tests" + allTests);
-	}
-
-	private Runner getTestSuiteRunner() throws ClassNotFoundException,
-			InitializationError {
-		return Junit4Util.getRuner();
-		// Class<?> forName = null;
-		// String testSuite = MutationProperties.TEST_SUITE;
-		// System.out.println("Junit4MutationTestDriver.getTestSuiteRunner()");
-		// Runner r = null;
-		// String addProp = System.getProperty("javalanche.test.methods");
-		// if (addProp != null) {
-		// String[] split = addProp.split(":");
-		// if (addProp != null) {
-		// final Multimap<String, String> methods = new HashMultimap<String,
-		// String>();
-		//
-		// for (String testMethod : split) {
-		// String testClass = Junit4Util.getTestClass(testMethod);
-		// methods.put(testClass, testMethod);
-		// }
-		// RunnerBuilder runnerBuilder = new RunnerBuilder() {
-		// @Override
-		// public Runner runnerForClass(Class<?> testClass)
-		// throws Throwable {
-		//
-		// Request aClass = Request.aClass(testClass);
-		// final Collection<String> methodNames = methods
-		// .get(testClass.getName());
-		// Request filtered = aClass.filterWith(new Filter() {
-		//
-		// @Override
-		// public String describe() {
-		// return "Javalanche test filter";
-		// }
-		//
-		// @Override
-		// public boolean shouldRun(Description description) {
-		// String name = description.getClassName() + "."
-		// + description.getMethodName();
-		// boolean var = methodNames.contains(name);
-		// return var;
-		// }
-		// });
-		// return filtered.getRunner();
-		// }
-		// };
-		// Set<String> keySet = methods.keySet();
-		// List<Class<?>> classes = new ArrayList<Class<?>>();
-		//
-		// for (String className : keySet) {
-		// classes.add(Class.forName(className));
-		// }
-		// r = new Suite(runnerBuilder, classes.toArray(new Class<?>[0]));
-		// } else if (testSuite.startsWith("-c")) {
-		// // Classes
-		// List<Class<?>> classes = new ArrayList<Class<?>>();
-		// for (String className : split) {
-		// Class<?> clazz = Class.forName(className);
-		// classes.add(clazz);
-		// }
-		// r = new Suite(new AllDefaultPossibilitiesBuilder(false),
-		// classes.toArray(new Class[0]));
-		// }
-		// } else {
-		// forName = Class.forName(testSuite);
-		// r = new Suite(forName, new AllDefaultPossibilitiesBuilder(false));
-		// }
-		// return r;
 	}
 
 	private static Map<String, Description> getTests(Runner r) {
