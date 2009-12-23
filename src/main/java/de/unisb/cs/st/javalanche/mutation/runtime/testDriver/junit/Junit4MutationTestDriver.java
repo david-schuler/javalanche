@@ -21,17 +21,13 @@ package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
-import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.runner.Description;
-import org.junit.runner.Request;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -41,12 +37,7 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.RunnerBuilder;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestDriver;
@@ -103,12 +94,17 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 			if (children != null && children.size() > 0) {
 				descs.addAll(children);
 			} else {
-				logger.debug("Got test case: " + d);
-				testMap.put(d.toString(), d);
+				String testName = getTestName(d);
+				logger.debug("Got test case: " + testName);
+				testMap.put(testName, d);
 			}
 
 		}
 		return testMap;
+	}
+
+	private static String getTestName(Description d) {
+		return d.getClassName() + "." + d.getMethodName();
 	}
 
 	@Override

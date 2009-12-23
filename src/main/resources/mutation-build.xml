@@ -280,7 +280,7 @@
 				<pathelement path="${cp}" />
 			</classpath>
 			<jvmarg line="-Dinvariant.checker.file=${invariant.checker.file}"/>
-	
+			<jvmarg line="-Dprioritization.dir=${prioritization.dir}"/>
 		</java>
 	</target>
 
