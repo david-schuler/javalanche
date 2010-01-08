@@ -1,9 +1,13 @@
 package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit;
 
+import java.lang.adabu2.Tracer;
+
 import org.junit.Test;
 import org.junit.runner.Description;
+import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
+import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
@@ -51,6 +55,41 @@ public class PlaceholderTestSuite extends Runner {
 
 	@Override
 	public void run(RunNotifier notifier) {
-		getRunner().run(notifier);
+		Runner runner = getRunner();
+		addTraceListener(notifier);
+		runner.run(notifier);
+	}
+
+	private void addTraceListener(RunNotifier notifier) {
+		String property = System.getProperty("javalanche.trace");
+		if (property != null && property.equals("true")) {
+			notifier.addListener(new RunListener() {
+				@Override
+				public void testStarted(Description description)
+						throws Exception {
+					Tracer.setNewMethod(true);
+					super.testStarted(description);
+					System.out
+							.println("PlaceholderTestSuite.run(...).new RunListener() {...}.testStarted()  Running "
+									+ description);
+				}
+
+				@Override
+				public void testRunStarted(Description description)
+						throws Exception {
+					System.out
+							.println("PlaceholderTestSuite.run(...).new RunListener() {...}.testRunStarted()");
+					super.testRunStarted(description);
+				}
+
+				@Override
+				public void testRunFinished(Result result) throws Exception {
+					System.out
+							.println("PlaceholderTestSuite.run(...).new RunListener() {...}.testRunFinished()");
+					Tracer.setTestEnd(true);
+					super.testRunFinished(result);
+				}
+			});
+		}
 	}
 }

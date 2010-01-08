@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
@@ -30,6 +31,10 @@ public class MutationForRunTest {
 
 	private static Mutation m3 = new Mutation(MutationForRunTest.class
 			.getName(), 43, 0, MutationType.NEGATE_JUMP, false);
+
+	private static Mutation mutationWithResult = new Mutation(
+			MutationForRunTest.class.getName(), 55, 0,
+			MutationType.NEGATE_JUMP, false);
 
 	private static MutationsForRun mfr;
 
@@ -47,7 +52,6 @@ public class MutationForRunTest {
 		w.flush();
 		w.close();
 		mfr = new MutationsForRun(f.getAbsolutePath(), true);
-
 	}
 
 	@AfterClass
@@ -83,5 +87,22 @@ public class MutationForRunTest {
 		MutationsForRun fromDefaultLocation = MutationsForRun
 				.getFromDefaultLocation();
 		assertThat(fromDefaultLocation.getMutations(), is(mfr.getMutations()));
+	}
+
+	@Test
+	public void testFilter() throws IOException {
+		MutationTestResult mutationTestResult = new MutationTestResult();
+		mutationWithResult.setMutationResult(mutationTestResult);
+		QueryManager.save(mutationWithResult);
+		File f2 = File.createTempFile("test2", "test2");
+		BufferedWriter w = new BufferedWriter(new FileWriter(f2));
+		w.write(m1.getId() + "\n");
+		w.write(mutationWithResult.getId() + "\n");
+		w.flush();
+		w.close();
+		MutationsForRun mfr2 = new MutationsForRun(f2.getAbsolutePath(), true);
+		List<Mutation> mutations = mfr2.getMutations();
+		assertEquals("Expected mutation with result to be filtered", 1,
+				mutations.size());
 	}
 }

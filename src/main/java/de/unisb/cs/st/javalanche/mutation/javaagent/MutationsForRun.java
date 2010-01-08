@@ -33,7 +33,6 @@ import org.hibernate.Transaction;
 
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
-import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
@@ -203,6 +202,7 @@ public class MutationsForRun {
 	}
 
 	/**
+	 * Checks whether a mutation is a mutation for this run (should be applied).
 	 * 
 	 * @param mutation
 	 *            the mutation to check
@@ -217,11 +217,6 @@ public class MutationsForRun {
 			}
 		}
 		return false;
-	}
-
-	public String getAddInfo(Long id) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

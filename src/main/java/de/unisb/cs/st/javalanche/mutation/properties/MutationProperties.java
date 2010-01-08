@@ -131,7 +131,7 @@ public class MutationProperties {
 	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
 			TRACE_BYTECODE_KEY, false);
 
-	public static final String STOP_AFTER_FIRST_FAIL_KEY = "javalanche.mutation.stop.after.first.fail";
+	public static final String STOP_AFTER_FIRST_FAIL_KEY = "javalanche.stop.after.first.fail";
 
 	public static final boolean STOP_AFTER_FIRST_FAIL = getPropertyOrDefault(
 			STOP_AFTER_FIRST_FAIL_KEY, true);

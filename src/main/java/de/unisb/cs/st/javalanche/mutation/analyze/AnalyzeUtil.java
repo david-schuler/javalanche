@@ -18,10 +18,17 @@
 */
 package de.unisb.cs.st.javalanche.mutation.analyze;
 
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
+import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
 
 /**
  * 
@@ -80,5 +87,33 @@ public class AnalyzeUtil {
 		}
 
 	};
+
+	/**
+	 * Returns a multimap that contains a mapping between the tests and the
+	 * mutations that are detected by the test.
+	 * 
+	 * @param mutations
+	 *            the mutations to check.
+	 * @return the multimap between the tests and mutations.
+	 */
+	public static Multimap<String, Mutation> getDetectedByTest(
+			Iterable<Mutation> mutations) {
+		Multimap<String, Mutation> mm = new HashMultimap<String, Mutation>();
+		for (Mutation mutation : mutations) {
+			if (mutation.isKilled()) {
+				MutationTestResult mutationResult = mutation
+						.getMutationResult();
+				Collection<TestMessage> errors = mutationResult.getErrors();
+				Collection<TestMessage> failures = mutationResult.getFailures();
+				Set<TestMessage> all = new HashSet<TestMessage>(errors);
+				all.addAll(failures);
+				for (TestMessage testMessage : all) {
+					String testCaseName = testMessage.getTestCaseName();
+					mm.put(testCaseName, mutation);
+				}
+			}
+		}
+		return mm;
+	}
 
 }

@@ -19,7 +19,6 @@
 	<classpathentry kind="var" path="M2_REPO/de/unisb/bytecodeTransformer/0.1/bytecodeTransformer-0.1.jar" sourcepath="M2_REPO/de/unisb/bytecodeTransformer/0.1/bytecodeTransformer-0.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/asm/asm/3.0/asm-3.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/sibrelib/sibrelib/local/sibrelib-local.jar"/>
-	<classpathentry kind="var" path="M2_REPO/de/unisb/cs/st/adabu2-tracer/0.4-SNAPSHOT/adabu2-tracer-0.4-SNAPSHOT.jar" sourcepath="M2_REPO/de/unisb/cs/st/adabu2-tracer/0.4-SNAPSHOT/adabu2-tracer-0.4-SNAPSHOT-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/asm/asm-commons/3.1/asm-commons-3.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/asm/asm-tree/3.1/asm-tree-3.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/asm/asm-util/3.1/asm-util-3.1.jar"/>
@@ -48,5 +47,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/hibernate/jtidy/r8-20060801/jtidy-r8-20060801.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jgrapht/jgrapht-jdk1.5/0.7.3/jgrapht-jdk1.5-0.7.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/prefuse/prefuse/beta-20060220/prefuse-beta-20060220.jar" sourcepath="M2_REPO/org/prefuse/prefuse/beta-20060220/prefuse-beta-20060220-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/schuler/.m2/repository/de/unisb/cs/st/adabu2-tracer/0.4-modified/adabu2-tracer-0.4-modified.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
