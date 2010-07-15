@@ -39,28 +39,6 @@ public class CoverageDataTest {
 
 	private static final int TESTS = 680;
 
-	// @Test
-	public void testConnection() {
-		try {
-			Class.forName("org.hsqldb.jdbcDriver");
-		} catch (Exception e) {
-			System.out.println("ERROR: failed to load HSQLDB JDBC driver.");
-			e.printStackTrace();
-			return;
-		}
-		try {
-			Connection c = DriverManager.getConnection(
-					"jdbc:hsqldb:hsql://localhost/mt", "sa", "");
-			assertNotNull(c);
-			c.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
-
-
 
 	// @Test
 	public void testHugeCoverageDataSerialize() {

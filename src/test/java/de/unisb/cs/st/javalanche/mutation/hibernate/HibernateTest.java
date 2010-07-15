@@ -42,7 +42,9 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 public class HibernateTest {
 
 	private static Mutation testMutation = new Mutation("testClass",
-			new Random().nextInt(5000), 0, MutationType.RIC_PLUS_1, false);
+			"testMethod",
+ new Random().nextInt(5000), 0,
+			MutationType.RIC_PLUS_1);
 
 	@BeforeClass
 	public static void hibernateSave() {
@@ -134,21 +136,21 @@ public class HibernateTest {
 		session.close();
 	}
 
-	@Test
-	public void testQueryBoolean() {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		String projectPrefix = "triangle";
-		boolean classInit = true;
-		Query query = session
-				.createQuery("SELECT count(*) FROM Mutation WHERE className LIKE '"
-						+ projectPrefix + "%' AND classInit=" + classInit);
-		List results = query.list();
-		for (Object object : results) {
-			System.out.println("OBJECT " + object);
-		}
-		tx.commit();
-		session.close();
-	}
+	// @Test
+	// public void testQueryBoolean() {
+	// Session session = HibernateUtil.getSessionFactory().openSession();
+	// Transaction tx = session.beginTransaction();
+	// String projectPrefix = "triangle";
+	// boolean classInit = true;
+	// Query query = session
+	// .createQuery("SELECT count(*) FROM Mutation WHERE className LIKE '"
+	// + projectPrefix + "%' AND classInit=" + classInit);
+	// List results = query.list();
+	// for (Object object : results) {
+	// System.out.println("OBJECT " + object);
+	// }
+	// tx.commit();
+	// session.close();
+	// }
 
 }
