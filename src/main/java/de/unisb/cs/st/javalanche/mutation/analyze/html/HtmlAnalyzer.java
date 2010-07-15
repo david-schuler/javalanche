@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.analyze.html;
 
 import java.io.File;
@@ -34,6 +34,7 @@ import com.google.common.collect.Multimap;
 
 import de.unisb.cs.st.ds.util.io.DirectoryFileSource;
 import de.unisb.cs.st.ds.util.io.Io;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
 public class HtmlAnalyzer {
@@ -65,11 +66,7 @@ public class HtmlAnalyzer {
 		String s = className.substring(className.lastIndexOf('.') + 1);
 		s = getClassName(s);
 		for (File f : files) {
-			String name = f.getAbsolutePath();
-			name = name.replace('/', '.');
-			if (name.endsWith(".java")) {
-				name = name.substring(0, name.length() - 5);
-			}
+			String name = getContaingClassName(f);
 			if (name.contains(className)) {
 				List<String> linesFromFile = Io.getLinesFromFile(f);
 				logger.debug("Got file for " + className + "  -  " + f);
@@ -79,15 +76,35 @@ public class HtmlAnalyzer {
 		return Arrays.asList("No source found for " + className);
 	}
 
+	private String getContaingClassName(File f) {
+		String name = f.getAbsolutePath();
+		name = name.replace('/', '.');
+		if (name.endsWith(".java")) {
+			name = name.substring(0, name.length() - 5);
+		}
+		if (name.contains("$")) {
+			int index = name.indexOf('$');
+			name = name.substring(0, index);
+		}
+		return name;
+	}
+
 	private void initFiles() {
+		System.out.println("HtmlAnalyzer.initFiles()");
+		File startDirectory = new File(".");
+		String property = MutationProperties.PROJECT_SOURCE_DIR;
+		if (property != null) {
+			startDirectory = new File(property);
+			logger.info("Using different start dir" + startDirectory);
+			System.out.println("Using different start dir" + startDirectory);
+		}
 		try {
 			Collection<File> javaFiles = DirectoryFileSource
-					.getFilesByExtension(new File("."), "java");
+					.getFilesByExtension(startDirectory, "java");
 			files = new HashSet<File>(javaFiles);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	private String getClassName(Mutation m) {
