@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer;
 
 import java.lang.instrument.ClassFileTransformer;
@@ -50,8 +50,8 @@ public class MutationScanner implements ClassFileTransformer {
 	static {
 		// DB must be loaded before transform method is entered. Otherwise
 		// program crashes.
-		Mutation someMutation = new Mutation("SomeMutationToAddToTheDb", 23,
-				23, MutationType.ARITHMETIC_REPLACE, false);
+		Mutation someMutation = new Mutation("SomeMutationToAddToTheDb", "tm",
+				23, 23, MutationType.ARITHMETIC_REPLACE);
 		Mutation mutationFromDb = QueryManager.getMutationOrNull(someMutation);
 		if (mutationFromDb == null) {
 			MutationPossibilityCollector mpc1 = new MutationPossibilityCollector();
@@ -130,11 +130,10 @@ public class MutationScanner implements ClassFileTransformer {
 				} else {
 					logger.debug("Skipping class " + className);
 				}
-				
+
 				if (BytecodeTasks.shouldIntegrate(classNameWithDots)) {
 					classfileBuffer = BytecodeTasks.integrateTestSuite(
-							classfileBuffer,
-							classNameWithDots);
+							classfileBuffer, classNameWithDots);
 				}
 
 			} catch (Throwable t) {

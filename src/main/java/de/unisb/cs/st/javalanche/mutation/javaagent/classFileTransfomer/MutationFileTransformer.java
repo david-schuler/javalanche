@@ -28,10 +28,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
@@ -48,6 +45,7 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 /**
@@ -68,7 +66,8 @@ public class MutationFileTransformer implements ClassFileTransformer {
 		// program crashes.
 		if (MutationProperties.QUERY_DB_BEFORE_START) {
 			Mutation someMutation = new Mutation("SomeMutationToAddToTheDb",
-					23, 23, MutationType.ARITHMETIC_REPLACE, false);
+					"tm",
+ 23, 23, MutationType.ARITHMETIC_REPLACE);
 			Mutation mutationFromDb = QueryManager
 					.getMutationOrNull(someMutation);
 			if (mutationFromDb == null) {
@@ -164,7 +163,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 						e.printStackTrace();
 					}
 					logger.debug("Class transformed: " + classNameWithDots);
-					String checkClass = checkClass(transformedBytecode);
+					String checkClass = AsmUtil.checkClass(transformedBytecode);
 					if (checkClass != null && checkClass.length() > 0) {
 						logger.warn("Check of class failed: " + checkClass);
 					}
@@ -182,17 +181,6 @@ public class MutationFileTransformer implements ClassFileTransformer {
 			}
 		}
 		return classfileBuffer;
-	}
-
-	private String checkClass(byte[] transformedBytecode) {
-		ClassReader cr = new ClassReader(transformedBytecode);
-		StringWriter sw = new StringWriter();
-		CheckClassAdapter check = new CheckClassAdapter(new ClassWriter(
-				ClassWriter.COMPUTE_MAXS));
-		cr.accept(check, ClassReader.EXPAND_FRAMES);
-		// cr.accept(check,0);
-		// CheckClassAdapter.verify(cr, false, new PrintWriter(sw));
-		return sw.toString();
 	}
 
 	/**
