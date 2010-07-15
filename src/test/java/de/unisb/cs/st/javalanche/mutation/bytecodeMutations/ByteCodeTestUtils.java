@@ -74,7 +74,8 @@ public class ByteCodeTestUtils {
 		// TODO
 	}
 
-	public static void generateTestDataInDB(String classFileName,
+	public static MutationPossibilityCollector generateTestDataInDB(
+			String classFileName,
 			CollectorByteCodeTransformer collectorTransformer) {
 		File classFile = new File(classFileName);
 		FileTransformer ft = new FileTransformer(classFile);
@@ -82,6 +83,7 @@ public class ByteCodeTestUtils {
 		collectorTransformer.setMpc(mpc);
 		ft.process(collectorTransformer);
 		mpc.toDB();
+		return mpc;
 	}
 
 	public static void deleteTestMutationResult(String className) {
