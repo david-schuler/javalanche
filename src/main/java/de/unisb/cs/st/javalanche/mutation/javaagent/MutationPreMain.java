@@ -34,6 +34,7 @@ import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.Integrat
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationScanner;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanProjectTransformer;
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.SysExitTransformer;
 import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 
 /**
@@ -44,22 +45,6 @@ import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
  * 
  */
 public class MutationPreMain {
-
-	static {
-		// DB must be loaded before transform method is entered. Otherwise
-		// program crashes.
-		// Mutation someMutation = new Mutation("SomeMutationToAddToTheDb", 23,
-		// 23, MutationType.ARITHMETIC_REPLACE, false);
-		// Mutation mutationFromDb =
-		// QueryManager.getMutationOrNull(someMutation);
-		// if (mutationFromDb == null) {
-		// MutationPossibilityCollector mpc1 = new
-		// MutationPossibilityCollector();
-		// mpc1.addPossibility(someMutation);
-		// mpc1.toDB();
-		// }
-
-	}
 
 	public static final PrintStream sysout = System.out;
 
@@ -106,6 +91,8 @@ public class MutationPreMain {
 			} else if (RUN_MODE == CHECK_TESTS || RUN_MODE == TEST_PERMUTED) {
 				sysout.println("Integrating RandomPermutationTestSuite");
 				addClassFileTransformer(instrumentation,
+						new SysExitTransformer());
+				addClassFileTransformer(instrumentation,
 						new IntegrateTestSuiteTransformer());
 				return;
 			} else if (RUN_MODE == CREATE_COVERAGE) {
@@ -132,8 +119,9 @@ public class MutationPreMain {
 				addClassFileTransformer(instrumentation,
 						new MutationFileTransformer(
 								new EvolutionMutationTransformer()));
+				addClassFileTransformer(instrumentation,
+						new CoverageTransformer());
 				return;
-
 			}
 
 		} catch (Throwable t) {
