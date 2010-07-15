@@ -27,8 +27,6 @@ import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 
 public class DebugAnalyzer implements MutationAnalyzer {
 
-	private boolean verbose = true;
-
 	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		StringBuffer sb = new StringBuffer();
 		for (Mutation m : mutations) {

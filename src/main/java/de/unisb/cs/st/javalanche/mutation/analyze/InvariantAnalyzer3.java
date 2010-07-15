@@ -97,7 +97,7 @@ public class InvariantAnalyzer3 implements MutationAnalyzer {
 								AnalyzeUtil.formatPercent(violatedCaught,
 										violated), AnalyzeUtil.formatPercent(
 										violatedCaught, killed)));
-		if (false) {
+		if ("a1".equals("a" + 1)) {
 			sb
 					.append("List of mutations that violated invariants and were not caught:\n");
 

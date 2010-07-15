@@ -1,23 +1,24 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.analyze;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,6 +27,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.base.Join;
+
+import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.analyze.html.ClassReport;
 import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
@@ -48,11 +52,26 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 		int violatedNotCaught = 0;
 		int killed = 0;
 		List<Mutation> violatedNotCaughtList = new ArrayList<Mutation>();
+		List<String> csvData = new ArrayList<String>();
+		csvData
+				.add("ID,DETECTED,DIFFERENT INVARIANT VIOLATIONS,TOTAL INVARIANT VIOLATIONS,MUTATION TYPE,CLASS NAME,METHOD NAME,LINE NUMBER,MUTATION FOR LINE");
 		for (Mutation mutation : mutations) {
 			if (mutation.isKilled()) {
 				killed++;
 			}
 			MutationTestResult mutationResult = mutation.getMutationResult();
+			if (mutationResult != null) {
+				String[] array = new String[] { "" + mutation.getId(),
+						"" + mutation.isKilled(),
+						"" + mutationResult.getDifferentViolatedInvariants(),
+						"" + mutationResult.getTotalViolations(),
+						"" + mutation.getMutationType(),
+						"" + mutation.getClassName(), mutation.getMethodName(),
+						"" + mutation.getLineNumber(),
+						"" + mutation.getMutationForLine() };
+				String line = Join.join(",", array);
+				csvData.add(line);
+			}
 			if (mutationResult != null
 					&& mutationResult.getDifferentViolatedInvariants() > 0) {
 				violated++;
@@ -63,12 +82,14 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 			}
 			if (mutationResult != null) {
 				withResult++;
-				ClassReport classReport = report.getClassReport(mutation.getClassName());
+				ClassReport classReport = report.getClassReport(mutation
+						.getClassName());
 				if (classReport != null) {
-				classReport.addColumn(COLUMN);
-				classReport.putEntry(mutation.getId(), COLUMN, mutation
-						.getMutationResult().getDifferentViolatedInvariants()
-						+ "");
+					classReport.addColumn(COLUMN);
+					classReport.putEntry(mutation.getId(), COLUMN, mutation
+							.getMutationResult()
+							.getDifferentViolatedInvariants()
+							+ "");
 				} else {
 					logger.warn("Found no report for class: "
 							+ mutation.getClassName());
@@ -76,6 +97,9 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 			}
 			total++;
 		}
+		Io
+				.writeFile(Join.join("\n", csvData), new File(
+						"invariantResults.csv"));
 		StringBuilder sb = new StringBuilder();
 		sb.append("Total Mutations: " + total);
 		sb.append('\n');

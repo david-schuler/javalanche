@@ -35,7 +35,6 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		int touched = 0;
 		int notTouched = 0;
-		int classInit = 0;
 		List<Mutation> killedList = new ArrayList<Mutation>();
 		List<Mutation> survivedList = new ArrayList<Mutation>();
 		List<Mutation> survivedTouchedList = new ArrayList<Mutation>();
@@ -57,9 +56,6 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 				touched++;
 			} else {
 				notTouched++;
-			}
-			if (mutation.isClassInit()) {
-				classInit++;
 			}
 		}
 		int killed = killedList.size();

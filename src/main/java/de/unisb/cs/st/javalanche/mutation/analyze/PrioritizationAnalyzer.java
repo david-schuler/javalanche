@@ -16,10 +16,13 @@ import com.google.common.base.Join;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.ds.util.io.XmlIo;
 import de.unisb.cs.st.javalanche.coverage.CoverageTraceUtil;
 import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
+import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
 
 public class PrioritizationAnalyzer implements MutationAnalyzer {
 
@@ -27,21 +30,131 @@ public class PrioritizationAnalyzer implements MutationAnalyzer {
 
 	private static final String COVERAGE_PRIORITIZATION_FILE_NAME = "mutationCoveragePrioritization.xml";
 
+	private static final String COVERAGE_PRIORITIZATION_CSV = "mutationCoveragePrioritization.csv";
+
 	private static Logger logger = Logger
 			.getLogger(PrioritizationAnalyzer.class);
 
 	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 		Multimap<String, Mutation> mm = AnalyzeUtil
 				.getDetectedByTest(mutations);
-		List<String> prioritization = prioritize(mm);
-		writePrioritization(prioritization, MUTATION_PRIORITIZATION_FILE_NAME);
-		List<String> coveragePrioritization = prioritizeCoverage(mm);
-		writePrioritization(coveragePrioritization,
-				COVERAGE_PRIORITIZATION_FILE_NAME);
-		StringBuilder sb = new StringBuilder(Join.join("\n", prioritization));
-		sb.append("\nCoverage Results\n");
-		sb.append(Join.join("\n", coveragePrioritization));
-		return sb.toString();
+
+		Map<String, Map<String, Map<Integer, Integer>>> originalTraces = CoverageTraceUtil
+				.loadLineCoverageTrace("0");
+
+		List<String> coverageCsv = new ArrayList<String>();
+		Collection<Mutation> values = mm.values();
+		for (Mutation m : mutations) {
+			StringBuilder line = new StringBuilder();
+			line.append(m.getId());
+			line.append(",");
+			if (m.getMutationResult() == null) {
+				// if (!values.contains(m)) {
+				line.append(false);
+				coverageCsv.add(line.toString());
+				// }
+			} else {
+				MutationTestResult mutationResult = m.getMutationResult();
+				boolean killed = m.isKilled();
+				line.append(killed);
+				line.append(",");
+				String prefix = line.toString();
+				List<TestMessage> passing = mutationResult.getPassing();
+				List<String> passingLines = handleTestMessages(originalTraces,
+						m, false, passing);
+				List<String> combinedLines = combineLines(prefix + "pass,",
+						passingLines);
+				coverageCsv.addAll(combinedLines);
+				Collection<TestMessage> failures = mutationResult.getFailures();
+				List<String> failingLines = handleTestMessages(originalTraces,
+						m, true, failures);
+				coverageCsv
+						.addAll(combineLines(prefix + "fail,", failingLines));
+				Collection<TestMessage> errors = mutationResult.getErrors();
+				List<String> errorLines = handleTestMessages(originalTraces, m,
+						true, errors);
+				coverageCsv.addAll(combineLines(prefix + "error,", errorLines));
+			}
+		}
+
+		// for (String testName : mm.keySet()) {
+		// logger.info("Looking for test: " + testName);
+		// Map<String, Map<Integer, Integer>> origTestTrace = originalTraces
+		// .get(testName);
+		// logger.info("Got " + originalTraces.size() + " method traces");
+		// int diffMethods = 0;
+		// coverageCsv.append(testName);
+		// coverageCsv.append('\n');
+		// for (Mutation m : mm.get(testName)) {
+		// Map<String, Map<String, Map<Integer, Integer>>> coverageTraces =
+		// CoverageTraceUtil
+		// .loadLineCoverageTrace(m.getId() + "");
+		// Map<String, Map<Integer, Integer>> mutationTestTrace = coverageTraces
+		// .get(testName);
+		// Collection<String> differentMethods = CoverageTraceUtil
+		// .getDifferentMethods(origTestTrace, mutationTestTrace);
+		// logger.info("Result for test " + testName + "  " + diffMethods);
+		// coverageCsv.append(testName);
+		// coverageCsv.append(',');
+		// coverageCsv.append(m.getId());
+		// coverageCsv.append(',');
+		// coverageCsv.append(Join.join(",", differentMethods));
+		// coverageCsv.append('\n');
+		// }
+		// }
+		File f = writeFile(Join.join("\n", coverageCsv),
+				COVERAGE_PRIORITIZATION_CSV);
+		return "Stored results in " + f.getAbsolutePath();
+
+	}
+
+	private List<String> combineLines(String prefix, List<String> lines) {
+		List<String> result = new ArrayList<String>();
+		for (String line : lines) {
+			result.add(prefix + line);
+		}
+		return result;
+	}
+
+	private List<String> handleTestMessages(
+			Map<String, Map<String, Map<Integer, Integer>>> originalTraces,
+			Mutation m, boolean killedInTest, Collection<TestMessage> passing) {
+		List<String> list = new ArrayList<String>();
+		for (TestMessage testMessage : passing) {
+			StringBuilder coverageCsv = new StringBuilder();
+			String testName = testMessage.getTestCaseName();
+			Map<String, Map<String, Map<Integer, Integer>>> coverageTraces = CoverageTraceUtil
+					.loadLineCoverageTrace(m.getId() + "");
+			Map<String, Map<Integer, Integer>> mutationTestTrace = coverageTraces
+					.get(testName);
+			Map<String, Map<Integer, Integer>> origTestTrace = originalTraces
+					.get(testName);
+			Collection<String> differentMethods = CoverageTraceUtil
+					.getDifferentMethods(origTestTrace, mutationTestTrace);
+			coverageCsv.append(killedInTest);
+			coverageCsv.append(',');
+			coverageCsv.append(testName);
+			coverageCsv.append(',');
+			coverageCsv.append(Join.join(",", differentMethods));
+			list.add(coverageCsv.toString());
+		}
+		return list;
+	}
+
+	private File writeFile(String content, String fileName) {
+		String dirName = System.getProperty("prioritization.dir");
+		if (dirName != null) {
+			File dir = new File(dirName);
+			if (dir.exists()) {
+				File f = new File(dir, fileName);
+				Io.writeFile(content, f);
+				return f;
+			} else {
+				throw new RuntimeException("Directory does not exist " + dir);
+			}
+		} else {
+			throw new RuntimeException("Property not set: prioritization.dir");
+		}
 	}
 
 	private void writePrioritization(List<String> prioritization,

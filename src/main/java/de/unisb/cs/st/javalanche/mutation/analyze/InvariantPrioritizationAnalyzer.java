@@ -1,12 +1,8 @@
 package de.unisb.cs.st.javalanche.mutation.analyze;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.base.Join;
 import com.google.common.collect.Multimap;
