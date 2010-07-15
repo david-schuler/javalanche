@@ -18,7 +18,9 @@
  */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps;
 
-import java.net.URL;
+import static org.hamcrest.number.OrderingComparisons.*;
+import static org.junit.Assert.*;
+
 import java.util.List;
 
 import junit.framework.TestResult;
@@ -32,14 +34,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-
-import static de.unisb.cs.st.javalanche.mutation.properties.RunMode.*;
-import static org.easymock.EasyMock.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
-import static org.hamcrest.number.OrderingComparisons.*;
-
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.testclasses.jumps.Jumps;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.testclasses.jumps.JumpsTest;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
@@ -49,8 +44,6 @@ import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.runtime.testsuites.MutationTestSuite;
-
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
 
 public class NegateJumpsTest {
 
@@ -94,8 +87,6 @@ public class NegateJumpsTest {
 	@Test
 	public void runTests() {
 		MutationProperties.RUN_MODE = RunMode.MUTATION_TEST;
-		System.setProperty(MutationProperties.RESULT_FILE_KEY,
-				"target/unittestResults.xml");
 		ByteCodeTestUtils.redefineMutations(TEST_CLASS_NAME);
 		MutationTestSuite selectiveTestSuite = new MutationTestSuite();
 		TestSuite suite = new TestSuite(JumpsTest.class);
