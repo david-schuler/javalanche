@@ -35,9 +35,6 @@ public class TestName {
 	@Column(length = 1000)
 	private String name;
 
-	// @ManyToMany
-	// private List<Invariant> invariants = new ArrayList<Invariant>();
-
 	private String project;
 
 	private long duration;

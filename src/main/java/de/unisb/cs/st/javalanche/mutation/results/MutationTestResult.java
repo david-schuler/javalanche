@@ -41,6 +41,8 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
 
+import com.google.common.base.Preconditions;
+
 @Entity
 public class MutationTestResult implements Serializable {
 
@@ -86,8 +88,8 @@ public class MutationTestResult implements Serializable {
 	// { @JoinColumn(name = "mutationTestResult_id") }, inverseJoinColumns =
 	// @JoinColumn(name = "invariant_id"))
 	// @IndexColumn(name = "mapping_id")
-	@Transient
-	private List<Invariant> invariants = new ArrayList<Invariant>();
+	// @Transient
+	// private List<Invariant> invariants = new ArrayList<Invariant>();
 
 	// Temporal(TemporalType.TIME)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -103,9 +105,6 @@ public class MutationTestResult implements Serializable {
 
 	private int totalViolations;
 
-	 @OneToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "MutationTestResult_AddResults")
-	private List<AddResult> addResults = new ArrayList<AddResult>();
 
 	/**
 	 * @return the violatedInvariants
@@ -126,17 +125,8 @@ public class MutationTestResult implements Serializable {
 	 *            the violatedInvariants to set
 	 */
 	public void setViolatedInvariants(int[] violatedInvariants) {
-		// int truncationSize = 100;
-		// if (violatedInvariants.length > truncationSize) {
-		// System.out
-		// .println("MutationTestResult.setViolatedInvariants(): truncating
-		// violated invariants");
-		// this.violatedInvariants = new int[truncationSize];
-		// System.arraycopy(violatedInvariants, 0, this.violatedInvariants, 0,
-		// truncationSize);
-		// } else {
+
 		this.violatedInvariants = violatedInvariants;
-		// }
 	}
 
 	/**
@@ -162,7 +152,6 @@ public class MutationTestResult implements Serializable {
 		this.date = date;
 	}
 
-	@SuppressWarnings("unused")
 	public MutationTestResult() {
 		this.date = new Date();
 	}
@@ -171,6 +160,9 @@ public class MutationTestResult implements Serializable {
 	public MutationTestResult(List<TestMessage> passing,
 			List<TestMessage> failures, List<TestMessage> errors,
 			boolean touched) {
+		Preconditions.checkNotNull(passing);
+		Preconditions.checkNotNull(failures);
+		Preconditions.checkNotNull(errors);
 		this.passing = passing;
 		this.failures = failures;
 		this.errors = errors;
@@ -330,27 +322,27 @@ public class MutationTestResult implements Serializable {
 		this.differentViolatedInvariants = differentViolatedInvariants;
 	}
 
-	public void addInvariant(Invariant invariant) {
-		if (invariants == null) {
-			invariants = new ArrayList<Invariant>();
-		}
-		invariants.add(invariant);
-	}
+//	public void addInvariant(Invariant invariant) {
+//		if (invariants == null) {
+//			invariants = new ArrayList<Invariant>();
+//		}
+//		invariants.add(invariant);
+//	}
 
-	/**
-	 * @return the invariants
-	 */
-	public List<Invariant> getInvariants() {
-		return invariants;
-	}
+//	/**
+//	 * @return the invariants
+	// */
+//	public List<Invariant> getInvariants() {
+//		return invariants;
+//	}
 
-	/**
-	 * @param invariants
-	 *            the invariants to set
-	 */
-	public void setInvariants(List<Invariant> invariants) {
-		this.invariants = invariants;
-	}
+	// /**
+	// * @param invariants
+	// * the invariants to set
+	// */
+	// public void setInvariants(List<Invariant> invariants) {
+	// this.invariants = invariants;
+	// }
 
 	public void addFailure(TestMessage tm) {
 		failures.add(tm);
@@ -370,40 +362,11 @@ public class MutationTestResult implements Serializable {
 			passing.size();
 		if (failures != null)
 			failures.size();
-		if (invariants != null)
-			invariants.size();
+		// if (invariants != null)
+		// invariants.size();
 		if (violatedInvariants != null) {
 			@SuppressWarnings("unused")
 			int length = violatedInvariants.length;
 		}
-	}
-
-	/**
-	 * @return the addResults
-	 */
-	public List<AddResult> getAddResults() {
-		return addResults;
-	}
-
-	
-	public void addResults(AddResult r) {
-		addResults.add(r);
-	}
-
-	/**
-	 * @param addResults
-	 *            the addResults to set
-	 */
-	public void setAddResults(List<AddResult> addResults) {
-		this.addResults = addResults;
-	}
-
-	public <T> T getAddResult(Class<T> clazz) {
-		for (AddResult addResult : addResults) {
-			if (clazz.isInstance(addResult)) {
-				return (T) addResult;
-			}
-		}
-		return null;
 	}
 }

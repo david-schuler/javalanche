@@ -78,8 +78,8 @@ public class TestMessage  implements Serializable{
 		this.id = new Long(0);
 		this.testCaseName = testMessage.testCaseName;
 		this.hasTouched = testMessage.hasTouched;
-		if(!MutationProperties.IGNORE_MESSAGES){
-		this.message = testMessage.message;
+		if (MutationProperties.IGNORE_MESSAGES) {
+			this.message = testMessage.message;
 		}
 		this.duration = 0;
 		// this.duration = testMessage.duration;
@@ -149,7 +149,7 @@ public class TestMessage  implements Serializable{
 
 	@Override
 	public String toString() {
-		return String.format("TestCase: %s Touched: %s Reason: %s",
+		return String.format("TestCase: %s Touched Mutation: %s Reason: %s",
 				testCaseName, hasTouched ? "yes" : "no", message);
 	}
 

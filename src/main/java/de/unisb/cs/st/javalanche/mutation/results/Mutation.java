@@ -18,7 +18,6 @@
  */
 package de.unisb.cs.st.javalanche.mutation.results;
 
-import java.io.File;
 import java.io.Serializable;
 
 import javax.persistence.CascadeType;
@@ -37,6 +36,10 @@ import com.google.common.base.Join;
  * Class that stores a mutation. It stores its type, where it is (was) applied
  * and the results of the tests.
  * 
+ * @author David Schuler
+ * 
+ */
+/**
  * @author David Schuler
  * 
  */
@@ -63,7 +66,18 @@ public class Mutation implements Serializable {
 				"Constant -1"), RIC_ZERO("Replace Constant by 0"), NEGATE_JUMP(
 				"Negate jump condition"), ARITHMETIC_REPLACE(
 				"Replace arithmetic operator"), REMOVE_CALL(
-				"Remove method call");
+				"Remove method call"),
+
+		ADAPTED_JUMP("adapted jump"), ADAPTED_SKIP_ELSE("Skip else block"), ADAPTED_REMOVE_CHECK(
+				"Always executed if block"), ADAPTED_SKIP_IF("Skip if block"), ADAPTED_NEGATE_JUMP_IN_IF(
+				"Negate Jump in if statement only"), ADAPTED_ALWAYS_ELSE(
+				"Always execute else block"), ADAPTED_REPLACE(
+				"Replace variable with default value"), ADAPTED_REPLACE_STORE(
+				"Replace store to variable with default value"), ADAPTED_REPLACE_METHOD_ARG(
+				"Replace argument of a method call"), ADAPTED_REPLACE_ASSIGNMENT(
+				"Replace variable assignment"), ADAPTED_REPLACE_FIELD(
+				"Replace field assignemt"), ADAPTED_REPLACE_RETURN(
+				"Replace variable in return");
 
 		private String desc;
 
@@ -74,28 +88,43 @@ public class Mutation implements Serializable {
 		public String getDesc() {
 			return desc;
 		}
+
 	};
 
+	/**
+	 * Name of the class that contains the mutation.
+	 */
 	private String className;
 
 	/**
-	 * The line number of the mutation, -1 is used when no linenumber is
+	 * Name of the method that contains the mutation.
+	 */
+	private String methodName;
+
+	/**
+	 * The line number of the mutation, -1 is used when no line number is
 	 * available.
 	 */
 	private int lineNumber;
 
+	/**
+	 * When more than one mutation of the same type can be applied for one line
+	 * this field is used. It starts with 0.
+	 */
 	private int mutationForLine;
 
+	/**
+	 * Type of the mutation.
+	 */
 	private MutationType mutationType;
 
+	/**
+	 * Result for applying this mutation.
+	 */
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private MutationTestResult mutationResult;
 
-	private boolean classInit;
-
 	private String addInfo;
-
-	private String methodName;
 
 	/**
 	 * Default constructor needed by Hibernate.
@@ -105,13 +134,15 @@ public class Mutation implements Serializable {
 	}
 
 	public Mutation(String className, String methodName, int line,
-			int mutationForLine, MutationType mutation, boolean classInit) {
+			int mutationForLine, MutationType mutation) {
 		super();
-		if (className == null || line < -1 || mutation == null) {
+		if (className == null || methodName == null || line < -1
+				|| mutation == null || mutationForLine < 0) {
 			throw new IllegalArgumentException(String.format(
-					"Arguments were: %s - %d - %s", className, line, mutation));
+					"Arguments were: %s, %s, %d, %d, %s", className,
+					methodName, line, mutationForLine, mutation));
 		}
-		this.classInit = classInit;
+
 		if (className.contains("/")) {
 			className = className.replace('/', '.');
 		}
@@ -122,26 +153,31 @@ public class Mutation implements Serializable {
 		this.mutationType = mutation;
 	}
 
+	@Deprecated
 	public Mutation(String className, int line, int mutationForLine,
 			MutationType mutation, boolean classInit) {
-		this(className, null, line, mutationForLine, mutation, classInit);
+		this(className, null, line, mutationForLine, mutation);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%d %s %s - %d (%d)- %s \n%s", id, className,
-				isClassInit() ? "in static part" : "not static", lineNumber,
-				mutationForLine, mutationType.toString(),
-				mutationResult == null ? "No Result" : mutationResult
-						.toString());
+		return String
+				.format(
+						"%d %s - %s - %d (%d)- %s \n%s",
+						id,
+						className,
+						methodName,
+						/* isClassInit() ? "in static part" : "not static", */lineNumber,
+						mutationForLine, mutationType.toString(),
+						mutationResult == null ? "No Result" : mutationResult
+								.toString());
 	}
 
 	public String toShortString() {
-		return String.format("%d %s %s - %d (%d)- %s  [%s ]", id, className,
-				isClassInit() ? "in static part" : "not static", lineNumber,
-				mutationForLine, mutationType.toString(),
-				mutationResult == null ? "No Result" : mutationResult
-						.toShortString());
+		return String.format("%d %s - %s - %d (%d)- %s  [%s]", id, className,
+				methodName, lineNumber, mutationForLine, mutationType
+						.toString(), mutationResult == null ? "No Result"
+						: mutationResult.toShortString());
 
 	}
 
@@ -296,13 +332,14 @@ public class Mutation implements Serializable {
 	}
 
 	/**
-	 * Same behaviour as equals without checking for equal ids.
+	 * Same behavior as equals without checking for equal ids, or equal mutation
+	 * results.
 	 * 
 	 * @param comp
 	 *            Mutation to compare.
-	 * @return True, if both objects are equal except of their IDs.
+	 * @return True, if both objects are equal except of their IDs and results.
 	 */
-	public boolean equalsWithoutId(Mutation comp) {
+	public boolean equalsWithoutIdAndResult(Mutation comp) {
 		if (this == comp)
 			return true;
 		if (comp == null)
@@ -319,24 +356,12 @@ public class Mutation implements Serializable {
 			return false;
 		if (mutationForLine != other.mutationForLine)
 			return false;
-		if (mutationResult == null) {
-			if (other.mutationResult != null)
-				return false;
-		} else if (!mutationResult.equals(other.mutationResult))
-			return false;
 		if (mutationType == null) {
 			if (other.mutationType != null)
 				return false;
 		} else if (!mutationType.equals(other.mutationType))
 			return false;
 		return true;
-	}
-
-	/**
-	 * @return the classInit
-	 */
-	public boolean isClassInit() {
-		return classInit;
 	}
 
 	public boolean isKilled() {
@@ -359,10 +384,24 @@ public class Mutation implements Serializable {
 		return addInfo;
 	}
 
+	public static String getCsvHead() {
+		return "ID,CLASS_NAME,METHOD_NAME,LINE_NUMBER,MUTATION_FOR_LINE,MUTATION_TYPE";
+	}
+
 	public String getCsvString() {
-		String[] entries = { id + "", className, lineNumber + "",
-				mutationForLine + "", mutationType.toString() };
-		return Join.join(",", entries);
+		StringBuilder sb = new StringBuilder();
+		sb.append(id);
+		sb.append(',');
+		sb.append(className);
+		sb.append(',');
+		sb.append(methodName);
+		sb.append(',');
+		sb.append(lineNumber);
+		sb.append(',');
+		sb.append(mutationForLine);
+		sb.append(',');
+		sb.append(mutationType.toString());
+		return sb.toString();
 	}
 
 	public String getMethodName() {

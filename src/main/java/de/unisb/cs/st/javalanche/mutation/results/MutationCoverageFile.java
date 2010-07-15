@@ -1,30 +1,32 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.results;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.BiMap;
@@ -32,8 +34,6 @@ import com.google.common.collect.HashBiMap;
 
 import de.unisb.cs.st.ds.util.io.SerializeIo;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
-import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
-import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 public class MutationCoverageFile {
 
@@ -116,6 +116,17 @@ public class MutationCoverageFile {
 
 	public static void reset() {
 		idMap = null;
+		coveredMutations = null;
+	}
+
+	public static void copyCoverageData(long srcId, long destId) {
+		File src = new File(COVERAGE_DIR, "" + srcId);
+		File dest = new File(COVERAGE_DIR, "" + destId);
+		try {
+			FileUtils.copyFile(src, dest);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static long getNumberOfCoveredMutations() {
@@ -150,22 +161,20 @@ public class MutationCoverageFile {
 		return coveredMutations;
 	}
 
+	public static void addCoveredMutations(Set<Long> add) {
+		Set<Long> result = new HashSet<Long>(add);
+		Set<Long> coveredMutations = getCoveredMutations();
+		result.addAll(coveredMutations);
+		SerializeIo.serializeToFile(result, COVERED_FILE);
+		reset();
+	}
+
 	public static void deleteCoverageData() {
 		COVERAGE_DIR.delete();
 	}
 
-	public static void main(String[] args) {
-		// Mutation m = new Mutation(
-		// "xcom.thoughtworks.xstream.converters.extended.StackTraceElementConverter",
-		// 38, 1, MutationType.REMOVE_CALL, false);
-		Mutation m = new Mutation(
-				"xcom.thoughtworks.xstream.io.json.AbstractJsonWriter", 373, 3,
-				MutationType.NEGATE_JUMP, false);
-		Mutation m1 = QueryManager.getMutationOrNull(m);
-		System.out.println(m1.getId());
-		// /scratch/schuler/subjects-check/xstream/xstream
-		System.out.println(QueryManager.getMutationByID(24487l));
-		System.out.println(QueryManager.getMutationByID(24488l));
-		System.out.println(QueryManager.getMutationByID(24489l));
+	public static boolean isCovered(long id) {
+		return getCoveredMutations().contains(id);
 	}
+
 }
