@@ -72,10 +72,6 @@ public class MutationProperties {
 
 	public static RunMode RUN_MODE = getRunMode();
 
-	public static final String RESULT_FILE_KEY = "mutation.result.file";
-
-	public static final String RESULT_FILE = getProperty(RESULT_FILE_KEY);
-
 	public static final String MUTATION_FILE_KEY = "mutation.file";
 
 	public static String MUTATION_FILE_NAME = getProperty(MUTATION_FILE_KEY);
@@ -113,12 +109,12 @@ public class MutationProperties {
 	public static String TEST_SUITE = getProperty(TEST_SUITE_KEY);
 
 	public static final String TEST_METHODS_KEY = "javalanche.test.methods";
-	public static final String TEST_METHODS = getProperty(TEST_METHODS_KEY);
+	public static String TEST_METHODS = getProperty(TEST_METHODS_KEY);
 
 	public static final String TEST_CLASSES_KEY = "javalanche.test.classes";
-	public static final String TEST_CLASSES = getProperty(TEST_CLASSES_KEY);
+	public static String TEST_CLASSES = getProperty(TEST_CLASSES_KEY);
 
-	public static final String CURRENT_MUTATION_KEY = "mutation.actual.mutation";
+	public static final String CURRENT_MUTATION_KEY = "javalanche.current.mutation";
 
 	// public static final String TEST_TESTSUITE_KEY =
 	// "mutation.test.testsuite";
@@ -164,6 +160,14 @@ public class MutationProperties {
 	public static final String IGNORE_REMOVE_CALLS_KEY = "javalanche.ignore.remove.calls";
 	public static final boolean IGNORE_REMOVE_CALLS = getPropertyOrDefault(
 			IGNORE_REMOVE_CALLS_KEY, false);
+
+	public static final String IGNORE_ADAPTED_JUMPS_KEY = "javalanche.ignore.adapted.jumps";
+	public static final boolean IGNORE_ADAPTED_JUMPS = getPropertyOrDefault(
+			IGNORE_ADAPTED_JUMPS_KEY, false);
+
+	public static final String IGNORE_ADAPTED_REPLACE_KEY = "javalanche.ignore.adapted.replace";
+	public static final boolean IGNORE_ADAPTED_REPLACE = getPropertyOrDefault(
+			IGNORE_ADAPTED_REPLACE_KEY, false);
 
 	public static final File TEST_MAP_FILE = new File(OUTPUT_DIR,
 			"testname-map.xml");
@@ -214,17 +218,18 @@ public class MutationProperties {
 		return Integer.parseInt(result);
 	}
 
-	public static boolean getPropertyOrDefault(String key, boolean b) {
+	public static boolean getPropertyOrDefault(String key, boolean defaultValue) {
 		String property = getProperty(key);
-		if (property == null) {
-			return b;
-		} else {
+		if (property != null) {
 			String propertyTrimmed = property.trim().toLowerCase();
 			if (propertyTrimmed.equals("true") || propertyTrimmed.equals("yes")) {
 				return true;
+			} else if (propertyTrimmed.equals("false")
+					|| propertyTrimmed.equals("no")) {
+				return false;
 			}
 		}
-		return false;
+		return defaultValue;
 	}
 
 	private static RunMode getRunMode() {
@@ -324,5 +329,26 @@ public class MutationProperties {
 		}
 		return false;
 	}
+
+	public static final String MUTATION_PRINT_STATEMENTS_ENABLED_KEY = "javalanche.mutation.print.statements";
+
+	/**
+	 * When set true, System.println statements will be inserted that signal
+	 * whether a mutation is covered.
+	 */
+	public static final boolean MUTATION_PRINT_STATEMENTS_ENABLED = getPropertyOrDefault(
+			MUTATION_PRINT_STATEMENTS_ENABLED_KEY, false);
+
+	public static final String PROJECT_SOURCE_DIR_KEY = "javalanche.project.source.dir";
+
+	public static final String PROJECT_SOURCE_DIR = getProperty(PROJECT_SOURCE_DIR_KEY);
+
+	public static final String ADAPTED_TARGET_FILE_NAME_KEY = "javalanche.adapted.target.file";
+	public static final String ADAPTED_TARGET_FILE_NAME = getPropertyOrDefault(
+			ADAPTED_TARGET_FILE_NAME_KEY, "target.xml");
+
+	public static final String ADAPTED_END_FILE_NAME_KEY = "javalanche.adapted.end.file";
+	public static final String ADAPTED_END_FILE_NAME = getPropertyOrDefault(
+			ADAPTED_TARGET_FILE_NAME_KEY, "end.xml");
 
 }
