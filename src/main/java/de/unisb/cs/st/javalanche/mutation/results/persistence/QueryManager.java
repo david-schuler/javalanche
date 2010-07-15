@@ -18,33 +18,24 @@
  */
 package de.unisb.cs.st.javalanche.mutation.results.persistence;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.time.DurationFormatUtils;
-import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import de.unisb.cs.st.ds.util.Formater;
 import de.unisb.cs.st.ds.util.Util;
-import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.MutationCoverage;
+import static de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType.*;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestName;
@@ -226,7 +217,6 @@ public class QueryManager {
 	 *            The number of Mutations to fetch.
 	 * @return The List of fetched Mutations.
 	 */
-	@SuppressWarnings("unchecked")
 	public static List<Mutation> getMutations(int maxResults) {
 		Session session = openSession();
 		Transaction tx = session.beginTransaction();
@@ -249,7 +239,6 @@ public class QueryManager {
 	 *            The name of the class in this form "java.lang.Object"
 	 * @return A list of Mutations for this class.
 	 */
-	@SuppressWarnings("unchecked")
 	public static List<Mutation> getAllMutationsForClass(String className) {
 		Session session = openSession();
 		Transaction tx = session.beginTransaction();
@@ -274,7 +263,7 @@ public class QueryManager {
 		if (mutationInDb != null) {
 			logger.info("Mutation already contained - not saving to db: "
 					+ mutation);
-			assert mutationInDb.equalsWithoutId(mutation) : "Expected mutations to be equal: "
+			assert mutationInDb.equalsWithoutIdAndResult(mutation) : "Expected mutations to be equal: "
 					+ mutation + "   " + mutationInDb;
 		} else {
 			logger.debug("Saving mutation: " + mutation);
@@ -433,8 +422,13 @@ public class QueryManager {
 	 */
 	public static Mutation getMutationByID(Long id) {
 		Session session = openSession();
-		Transaction tx = session.beginTransaction();
+		Mutation m = getMutationByID(id, session);
+		session.close();
+		return m;
+	}
 
+	public static Mutation getMutationByID(Long id, Session session) {
+		Transaction tx = session.beginTransaction();
 		Query query = session
 				.createQuery("FROM Mutation m  WHERE m.id = (:ids)");
 		query.setParameter("ids", id);
@@ -443,37 +437,36 @@ public class QueryManager {
 		if (results.size() > 0) {
 			m = (Mutation) results.get(0);
 		}
-		// Session.
 		tx.commit();
-		session.close();
+
 		return m;
 	}
 
-	/**
-	 * Generates a mutation of type not mutated in the database, if there is
-	 * none in the db. The generated mutation or the one from the db is
-	 * returned.
-	 * 
-	 * @param mutation
-	 *            Mutation to generate a mutation of type not mutated for.
-	 * @return The generated mutation or the mutation from the db.
-	 */
-	public static Mutation generateUnmutated(Mutation mutation) {
-		Mutation unmutated;
-		if (!hasUnmutated(mutation)) {
-			unmutated = new Mutation(mutation.getClassName(), mutation
-					.getLineNumber(), mutation.getMutationForLine(),
-					MutationType.NO_MUTATION, mutation.isClassInit());
-			saveMutation(unmutated);
-		} else {
-			unmutated = getUnmutated(mutation);
-		}
-		return unmutated;
-	}
-
-	private static Mutation getUnmutated(Mutation mutation) {
-		return getUnmutated(mutation.getClassName(), mutation.getLineNumber());
-	}
+	// /**
+	// * Generates a mutation of type not mutated in the database, if there is
+	// * none in the db. The generated mutation or the one from the db is
+	// * returned.
+	// *
+	// * @param mutation
+	// * Mutation to generate a mutation of type not mutated for.
+	// * @return The generated mutation or the mutation from the db.
+	// */
+	// public static Mutation generateUnmutated(Mutation mutation) {
+	// Mutation unmutated;
+	// if (!hasUnmutated(mutation)) {
+	// unmutated = new Mutation(mutation.getClassName(), mutation
+	// .getLineNumber(), mutation.getMutationForLine(),
+	// MutationType.NO_MUTATION, mutation.isClassInit());
+	// saveMutation(unmutated);
+	// } else {
+	// unmutated = getUnmutated(mutation);
+	// }
+	// return unmutated;
+	// }
+	//
+	// private static Mutation getUnmutated(Mutation mutation) {
+	// return getUnmutated(mutation.getClassName(), mutation.getLineNumber());
+	// }
 
 	public static boolean hasUnmutated(Mutation mutation) {
 		return hasUnmutated(mutation.getClassName(), mutation.getLineNumber());
@@ -584,10 +577,11 @@ public class QueryManager {
 		Session session = openSession();
 		Transaction tx = session.beginTransaction();
 		String queryString = "SELECT distinct(m.id) FROM Mutation m"
-				+ " WHERE NOT m.classInit "
-				+ " AND m.mutationResult_id IS NULL "
-				+ " AND m.mutationType != 0" + " AND m.className LIKE '"
-				+ MutationProperties.PROJECT_PREFIX + "%'"; // ORDER BY m.id ";
+				+ " WHERE "
+				// +"NOT m.classInit AND"
+				+ " m.mutationResult_id IS NULL " + " AND m.mutationType != 0"
+				+ " AND m.className LIKE '" + MutationProperties.PROJECT_PREFIX
+				+ "%'"; // ORDER BY m.id ";
 		logger.debug("Executing query: " + queryString);
 		Query query = session.createSQLQuery(queryString);
 		List results = query.list();
@@ -605,310 +599,6 @@ public class QueryManager {
 		session.close();
 		return idList;
 	}
-
-	// /**
-	// * Return a list of mutation ids that have coverage data associated but do
-	// * not have a result yet.
-	// *
-	// * @return a list of mutation ids.
-	// */
-	// public static List<Long> getMutationsIdListFromDb(String prefix, int
-	// limit) {
-	//
-	// Session session = openSession();
-	// Transaction tx = session.beginTransaction();
-	// String queryString = "SELECT distinct(m.id) FROM Mutation m"
-	// + " JOIN MutationCoverage mc ON m.id = mc.mutationId"
-	// +
-	// " JOIN MutationCoverage_TestName mctn ON mc.id = mctn.MutationCoverage_id"
-	// + " JOIN TestName tn ON mctn.testNames_id = tn.id"
-	// + " WHERE tn.name !='NO INFO' " + " AND NOT m.classInit "
-	// + " AND m.mutationResult_id IS NULL "
-	// + " AND m.mutationType != 0" + " AND m.className LIKE '"
-	// + prefix + "%' ORDER BY  m.id ";
-	// if (!MutationProperties.COVERAGE_INFORMATION) {
-	// queryString = "SELECT m.id FROM Mutation m "
-	// + "WHERE  m.mutationresult_id IS NULL "
-	// + "AND NOT m.classInit " + "AND m.mutationType != 0 "
-	// + "AND m.className LIKE '" + prefix + "%' ";
-	// }
-	// logger.debug("Executing query: " + queryString);
-	// Query query = session.createSQLQuery(queryString);
-	// if (limit > 0) {
-	// query.setMaxResults(limit);
-	// }
-	// List results = query.list();
-	// List<Long> idList = new ArrayList<Long>();
-	// for (Object id : results) {
-	// idList.add(Long.valueOf(id.toString()));
-	// }
-	// tx.commit();
-	// session.close();
-	// return idList;
-	// }
-
-	/**
-	 * Save the given coverage data to the database.
-	 * 
-	 * @param coverageData
-	 *            a map that contains the collected coverage data
-	 */
-	private static void saveCoverageResults(Map<Long, Set<String>> coverageData) {
-		logger.info("Start saving coverage data.");
-		logger.info("Size of map: " + coverageData.size());
-		Session session = openSession();
-		Transaction tx = session.beginTransaction();
-		Query query = session.createQuery("from TestName");
-		List<TestName> testNameQueryList = query.list();
-		Map<String, TestName> testNameMap = new HashMap<String, TestName>();
-		for (TestName tn : testNameQueryList) {
-			testNameMap.put(tn.getName(), tn);
-		}
-		Map<Long, MutationCoverage> dbCoverageMap = new HashMap<Long, MutationCoverage>();
-		Query mutationCoverageCountQuery = session
-				.createQuery("select count(*) FROM MutationCoverage");
-		List resultCount = mutationCoverageCountQuery.list();
-		long l = getResultFromCountQuery(resultCount);
-		int setSize = coverageData.keySet().size();
-		if (l > 0 && setSize > 0) {
-			List<Set<Long>> sets;
-			if (setSize > 500) {
-				logger.debug("Splitting key set because it is to large: "
-						+ setSize);
-				// http://opensource.atlassian.com/projects/hibernate/browse/HHH-1985
-				sets = splitSet(coverageData.keySet(), 500);
-			} else {
-				sets = new ArrayList<Set<Long>>();
-				sets.add(coverageData.keySet());
-			}
-			for (Set<Long> set : sets) {
-				Query mutationCoverageQuery = session
-						.createQuery("from MutationCoverage WHERE mutationID IN (:mids)");
-				mutationCoverageQuery.setParameterList("mids", set);
-				List<MutationCoverage> dbResults = mutationCoverageQuery.list();
-				for (MutationCoverage mutationCoverage : dbResults) {
-					dbCoverageMap.put(mutationCoverage.getMutationID(),
-							mutationCoverage);
-				}
-			}
-		}
-		StopWatch stopWatch = new StopWatch();
-		stopWatch.start();
-
-		int saves = 0, flushs = 0;
-		System.out
-				.println("Writting coverage data to the database (This may take a while).");
-		int count = 0, allcount = 0;
-		for (Map.Entry<Long, Set<String>> entry : coverageData.entrySet()) {
-			List<TestName> testNames = new ArrayList<TestName>();
-			Long mutationID = entry.getKey();
-			count++;
-			saves++;
-			for (String testCase : entry.getValue()) {
-				if (testCase == null) {
-					testCase = TEST_CASE_NO_INFO;
-				}
-				TestName testName = null;
-				if (testNameMap != null && testNameMap.containsKey(testCase)) {
-					testName = testNameMap.get(testCase);
-				} else {
-					testName = new TestName(testCase);
-					session.save(testName);
-					testNameMap.put(testCase, testName);
-					saves++;
-				}
-				testNames.add(testName);
-			}
-
-			if (dbCoverageMap.containsKey(mutationID)) {
-				dbCoverageMap.get(mutationID).addTestNames(testNames);
-			} else {
-				MutationCoverage mutationCoverage = new MutationCoverage(
-						mutationID, testNames);
-				session.save(mutationCoverage);
-				saves++;
-			}
-			if (saves > MutationProperties.BATCH_SIZE) {
-				// , same as the JDBC batch size
-				// flush a batch of inserts and release memory:
-				// see
-				// http://www.hibernate.org/hib_docs/reference/en/html/batch.html
-				logger.debug(DurationFormatUtils.formatDurationHMS(stopWatch
-						.getTime())
-						+ "Temporary flush " + flushs + " -  Saves" + saves);
-				saves = 0;
-				long startFlush = System.currentTimeMillis();
-				flushs++;
-				session.flush();
-				session.clear();
-				long timeFlush = System.currentTimeMillis() - startFlush;
-				logger.debug("Flush took: "
-						+ Formater.formatMilliseconds(timeFlush));
-				if (count > 500) {
-					allcount += count;
-					count = 0;
-					String message = String.format("%3.2f percent saved",
-							((allcount * 100.) / coverageData.size()));
-					logger.info(message);
-				}
-				// Does not work for ant
-				// System.out.print('.');
-				// System.out.flush();
-			}
-		}
-		tx.commit();
-		session.close();
-		logger.info("Coverage data saved to db");
-	}
-
-	private static List<Set<Long>> splitSet(Set<Long> keySet, int splitSize) {
-		List<Set<Long>> list = new ArrayList<Set<Long>>();
-		int count = 0;
-		Set<Long> actualSet = null;
-		for (Long l : keySet) {
-			if (count % splitSize == 0) {
-				actualSet = new HashSet<Long>();
-				list.add(actualSet);
-			}
-			actualSet.add(l);
-			count++;
-		}
-		return list;
-	}
-
-	// /**
-	// * Returns the coverage data for given mutation id, or null if it has
-	// none.
-	// *
-	// * @param id
-	// * the id of the mutation.
-	// * @return the coverage data or null
-	// */
-	// public static MutationCoverage getMutationCoverageData(long id) {
-	// logger.debug("Getting coverage data for mutation " + id);
-	// Session session = openSession();
-	// Transaction tx = session.beginTransaction();
-	// Query query = session
-	// .createQuery("from MutationCoverage as m where m.mutationID = :mutation_id");
-	// query.setLong("mutation_id", id);
-	// MutationCoverage mc = (MutationCoverage) query.uniqueResult();
-	// if (mc != null) {
-	// Hibernate.initialize(mc.getTestsNames());
-	// }
-	// tx.commit();
-	// session.close();
-	// // if (mc == null) {
-	// // logger.warn("found no coverage data for mutation with id " + id);
-	// // }
-	//
-	// return mc;
-	// }
-
-	/**
-	 * Delete Coverage data for given set of mutationids. rage data
-	 * 
-	 * @param ids
-	 *            mutation ids that should be deleted.
-	 */
-	@SuppressWarnings("unchecked")
-	public static void deleteCoverageResult(List<Long> ids) {
-		if (ids.size() <= 0) {
-			return;
-		}
-		logger.info("Deleting coverage information for " + ids.size()
-				+ " mutations");
-		Session session = openSession();
-		Transaction tx = session.beginTransaction();
-		List<List<Long>> split = split(ids);
-		for (List<Long> list : split) {
-
-			Query query = session
-					.createQuery("from MutationCoverage as m where m.mutationID IN (:mutation_ids)");
-			query.setParameterList("mutation_ids", list);
-
-			List<MutationCoverage> mcs = query.list();
-			int deletes = 0;
-			for (MutationCoverage mc : mcs) {
-				session.delete(mc);
-				deletes++;
-				if (deletes % 20 == 0) {
-					// http://www.hibernate.org/hib_docs/reference/en/html/batch.html
-					deletes = 0;
-					session.flush();
-					session.clear();
-				}
-			}
-		}
-		tx.commit();
-		session.close();
-	}
-
-	private static List<List<Long>> split(List<Long> ids) {
-		List<List<Long>> idSplit = new ArrayList<List<Long>>();
-		List<Long> actualList = null;
-		int count = 0;
-		for (Long id : ids) {
-			if (count % 1000 == 0) {
-				actualList = new ArrayList<Long>();
-				idSplit.add(actualList);
-			}
-			actualList.add(id);
-			count++;
-		}
-		return idSplit;
-	}
-
-	public static void deleteCoverageResultByMutaiton(List<Mutation> mutations) {
-		List<Long> ids = new ArrayList<Long>();
-		for (Mutation mutation : mutations) {
-			if (mutation.getId() != null) {
-				ids.add(mutation.getId());
-			} else {
-				throw new RuntimeException("Mutation with id null" + mutation);
-			}
-		}
-		deleteCoverageResult(ids);
-	}
-
-	// /**
-	// *
-	// * Add testnames to the database although they did not cover any mutation.
-	// *
-	// * @param testsRun
-	// */
-	// @SuppressWarnings("unchecked")
-	// public static void saveTestsWithNoCoverage(Set<String> testsRun) {
-	// Session session = openSession();
-	// Transaction tx = session.beginTransaction();
-	// Query query = session.createQuery("from TestName");
-	// List<TestName> testNameQueryList = query.list();
-	// List<String> testsToAdd = new ArrayList<String>(testsRun);
-	// for (TestName tn : testNameQueryList) {
-	// testsToAdd.remove(tn.getName());
-	// }
-	// for (String addTest : testsToAdd) {
-	// session.save(new TestName(addTest));
-	// }
-	// tx.commit();
-	// session.close();
-	// }
-	//
-	// public static Set<String> getTestsCollectedData(Mutation mutation) {
-	// MutationCoverage mutationCoverage = getMutationCoverageData(mutation
-	// .getId());
-	// if (mutationCoverage == null) {
-	// return null;
-	// }
-	// List<TestName> testsNames = mutationCoverage.getTestsNames();
-	// Set<String> tests = new HashSet<String>();
-	// for (TestName testName : testsNames) {
-	// String testNameString = testName.getName();
-	// if (!testNameString.equals(TEST_CASE_NO_INFO)) {
-	// tests.add(testNameString);
-	// }
-	// }
-	// return tests;
-	// }
 
 	public static String mutationToShortString(Mutation m) {
 		Session session = openSession();
@@ -937,7 +627,7 @@ public class QueryManager {
 		Transaction tx = session.beginTransaction();
 		Query query = session
 				.createQuery("SELECT count(*) FROM Mutation WHERE className LIKE '"
-						+ projectPrefix + "%' AND classInit=false");
+						+ projectPrefix + "%' ");// AND classInit=false");
 		List results = query.list();
 		long l = getResultFromCountQuery(results);
 		tx.commit();
@@ -1159,7 +849,6 @@ public class QueryManager {
 		session.close();
 	}
 
-
 	public static List<Mutation> getMutationsForProject(String prefix,
 			Session session) {
 		Query query = session
@@ -1167,5 +856,80 @@ public class QueryManager {
 						+ prefix + "%'");
 		List results = query.list();
 		return results;
+	}
+
+	public static List<Mutation> getMutations(String className,
+			MutationType type, int lineNumber) {
+		Session session = openSession();
+		List<Mutation> m = getMutations(className, type, lineNumber, session);
+		session.close();
+		return m;
+	}
+
+	private static List<Mutation> getMutations(String className,
+			MutationType type, int lineNumber, Session session) {
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and  m.mutationType=:type");
+		query.setParameter("name", className);
+		query.setParameter("number", lineNumber);
+		query.setParameter("type", type);
+		List result = query.list();
+		tx.commit();
+		return result;
+	}
+
+	public static List<Mutation> getAdaptedJumpMutations(Mutation mutation) {
+		Session session = openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and  m.mutationType in (:types)");
+		String className = mutation.getClassName();
+		int lineNumber = mutation.getLineNumber();
+		query.setParameter("name", className);
+		query.setParameter("number", lineNumber);
+		query.setParameterList("types", new MutationType[] {
+				ADAPTED_ALWAYS_ELSE, ADAPTED_NEGATE_JUMP_IN_IF,
+				ADAPTED_REMOVE_CHECK, ADAPTED_SKIP_ELSE, ADAPTED_SKIP_IF });
+		List result = query.list();
+		tx.commit();
+		session.close();
+		return result;
+	}
+
+	public static Mutation getReplaceMutation(Mutation mutation) {
+		Session session = openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and m.mutationForLine=:mforl and m.mutationType in (:types)");
+		String className = mutation.getClassName();
+		int lineNumber = mutation.getLineNumber();
+		int forLine = mutation.getMutationForLine();
+		query.setParameter("name", className);
+		query.setParameter("number", lineNumber);
+		query.setParameter("mforl", forLine);
+		query.setParameterList("types", new MutationType[] {
+				ADAPTED_REPLACE_ASSIGNMENT, ADAPTED_REPLACE_FIELD,
+				ADAPTED_REPLACE_METHOD_ARG, ADAPTED_REPLACE_RETURN });
+
+		logger.info(query);
+		Mutation result = (Mutation) query.uniqueResult();
+		tx.commit();
+		session.close();
+		return result;
+	}
+
+	public static void deleteMutations(MutationType mutationType) {
+		Session session = openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("FROM Mutation m  WHERE mutationType=:mType");
+		query.setParameter("mType", mutationType);
+		List results = query.list();
+		for (Object object : results) {
+			session.delete(object);
+		}
+		tx.commit();
+		session.close();
 	}
 }
