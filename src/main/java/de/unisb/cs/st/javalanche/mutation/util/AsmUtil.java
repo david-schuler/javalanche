@@ -30,6 +30,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import de.unisb.cs.st.ds.util.io.Io;
@@ -96,7 +98,7 @@ public class AsmUtil {
 		List<URL> urls = new ArrayList<URL>();
 		for (String string : split) {
 			try {
-				URL url = new File(string).toURL();
+				URL url = new File(string).toURI().toURL();
 				urls.add(url);
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -117,5 +119,16 @@ public class AsmUtil {
 		String className = System.getProperty("class.name");
 		System.out.println("Getting bytecode for class: " + className);
 		System.out.println(classToString(className));
+	}
+
+	public static String checkClass(byte[] transformedBytecode) {
+		ClassReader cr = new ClassReader(transformedBytecode);
+		StringWriter sw = new StringWriter();
+		CheckClassAdapter check = new CheckClassAdapter(new ClassWriter(
+				ClassWriter.COMPUTE_MAXS));
+		cr.accept(check, ClassReader.EXPAND_FRAMES);
+		// cr.accept(check,0);
+		// CheckClassAdapter.verify(cr, false, new PrintWriter(sw));
+		return sw.toString();
 	}
 }
