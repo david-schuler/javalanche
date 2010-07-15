@@ -40,7 +40,7 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.log4j.Logger;
 
 /**
- * Class that provide methods to read write and compare coverage data.  The
+ * Class that provide methods to read write and compare coverage data. The
  * Format of the coverage data is as follows:
  * 
  * Map<String, Map<String, Map<Integer, Integer>>>
@@ -227,13 +227,13 @@ public class CoverageTraceUtil {
 	 * method loadTracesFromDirectory.
 	 * 
 	 * @param dir
-	 *            name of the directory.
+	 *            name of the directory (is the mutation id).
 	 * @return A map containing the coverage traces.
 	 */
 	public static Map<String, Map<String, Map<Integer, Integer>>> loadLineCoverageTrace(
-			String mutation_dir) {
+			String dir) {
 		return CoverageTraceUtil.loadTracesFromDirectory(new File(
-				CoverageProperties.TRACE_RESULT_LINE_DIR + "/" + mutation_dir));
+				CoverageProperties.TRACE_RESULT_LINE_DIR + "/" + dir));
 	}
 
 	/**
@@ -241,7 +241,7 @@ public class CoverageTraceUtil {
 	 * loadTracesFromDirectory.
 	 * 
 	 * @param dir
-	 *            name of the directory.
+	 *            name of the directory (is the mutation id).
 	 * @return A map containing the data traces.
 	 */
 	public static Map<String, Map<String, Map<Integer, Integer>>> loadDataCoverageTrace(
@@ -391,5 +391,23 @@ public class CoverageTraceUtil {
 			key = test.substring(0, test.length() - 3);
 		}
 		return key;
+	}
+
+	public static Map<String, Map<String, Map<String, Map<Integer, Integer>>>> loadLineCoverageTraces(
+			String baseDir) {
+		File dir = new File(baseDir, CoverageProperties.TRACE_RESULT_LINE_DIR);
+		File[] list = dir.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return true;
+			}
+		});
+
+		Map<String, Map<String, Map<String, Map<Integer, Integer>>>> result = new HashMap<String, Map<String, Map<String, Map<Integer, Integer>>>>();
+		for (File file : list) {
+			String key = file.getName();
+			Map<String, Map<String, Map<Integer, Integer>>> coverage = loadLineCoverageTrace(key);
+			result.put(key, coverage);
+		}
+		return result;
 	}
 }

@@ -54,7 +54,7 @@ public final class CoverageProperties {
 	public static final boolean TRACE_LINES = MutationProperties
 			.getPropertyOrDefault(TRACE_LINES_KEY, true);
 
-	public static String EPSILON_KEY = "javalanche.coverage.epsilon";
+	public static final String EPSILON_KEY = "javalanche.coverage.epsilon";
 
 	public static final double EPSILON = MutationProperties
 			.getPropertyOrDefault(EPSILON_KEY, 0);
