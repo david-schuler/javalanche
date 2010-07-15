@@ -164,7 +164,7 @@ public abstract class MutationTestDriver {
 			if (RUN_MODE == MUTATION_TEST_INVARIANT_PER_TEST) {
 				addMutationTestListener(new InvariantPerTestListener());
 			}
-			if (RUN_MODE == MUTATION_TEST_COVERAGE) {
+			if (RUN_MODE == MUTATION_TEST_COVERAGE || RUN_MODE == EVOLUTION) {
 				addMutationTestListener(new CoverageMutationListener());
 				// runNormalTests();
 			}
