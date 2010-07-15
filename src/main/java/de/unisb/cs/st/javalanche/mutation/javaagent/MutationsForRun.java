@@ -78,6 +78,7 @@ public class MutationsForRun {
 		File f = new File(MutationProperties.OUTPUT_DIR + '/'
 				+ MutationTaskCreator.MUTATION_TASK_PROJECT_FILE_PREFIX
 				+ "-01.txt");
+		System.out.println("MutationsForRun.findFile() " + f.getAbsolutePath());
 		if (!f.exists()) {
 			throw new RuntimeException("Did not find file " + f);
 		}
@@ -96,7 +97,7 @@ public class MutationsForRun {
 			ids.add(m.getId());
 		}
 		String join = StringUtils.join(ids.toArray(), ", ");
-		logger.info("Mutation Ids: " + join);
+		logger.debug("Mutation Ids: " + join);
 	}
 
 	/**
@@ -211,7 +212,7 @@ public class MutationsForRun {
 	public boolean containsMutation(Mutation mutation) {
 		if (mutation != null) {
 			for (Mutation m : mutations) {
-				if (mutation.equalsWithoutId(m)) {
+				if (mutation.equalsWithoutIdAndResult(m)) {
 					return true;
 				}
 			}
