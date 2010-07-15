@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.st.cs.unisb</groupId>
 	<artifactId>javalanche-mutation</artifactId>
@@ -6,13 +7,13 @@
 	<version>0.3.6</version>
 	<name>Javalanche</name>
 	<url>http://javalanche.org</url>
-	
+
 	<description> Javalanche is an open source framework for mutation testing 
 	Java programs with a special focus on automation, efficiency, and 
 	effectiveness. In particular, Javalanche assesses the impact of individual 
 	mutations to effectively weed out equivalent mutants
 	</description>
-	
+
 	<developers>
 		<developer>
 			<id>schuler</id>
@@ -23,25 +24,29 @@
 		</developer>
 	</developers>
 
-	<!--properties>
-		<maven.test.error.ignore>true</maven.test.error.ignore>
+	<!--
+		properties> <maven.test.error.ignore>true</maven.test.error.ignore>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
-	</properties-->
-	
-   <!-- 
-   	  <repositories>
-        <repository>
-            <id>public-chair</id>
-            <name>Public Chair Repository</name>
-            <url>http://maven.st.cs.uni-sb.de:8080/archiva/repository/public</url>
-        </repository>
-        <repository>
-            <id>3rdparty-chair</id>
-            <name>3rd Party Chair Repository</name>
-            <url>http://maven.st.cs.uni-sb.de:8080/archiva/repository/3rdparty</url>
-        </repository>
-     </repositories>
+		</properties
 	-->
+
+	<repositories>
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<id>titaniaPublic</id>
+			<name>Titania Public Repositories</name>
+			<url>http://titania.fs.uni-saarland.de/nexus/content/groups/public/</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -52,14 +57,15 @@
 					<target>1.5</target>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<forkMode>pertest</forkMode>
-					
-					<argLine>-javaagent:./target/javaagent.jar -Dinvariant.mode=OFF -Dmutation.run.mode=mutation -Dmutation.coverage.information=false</argLine>
+
+					<argLine>-javaagent:./target/javaagent.jar -Dinvariant.mode=OFF
+						-Dmutation.run.mode=mutation -Dmutation.coverage.information=false</argLine>
 					<useSystemClassLoader>true</useSystemClassLoader>
 					<excludes>
 						<exclude>**/TestProperties.java</exclude>
@@ -72,28 +78,21 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
 				<executions>
-					<!--<execution>
-						<id>site</id>
-						<phase>pre-site</phase>
-						
-						<goals>
-							<goal>clean</goal>
-						</goals>
-					</execution>-->
-					<!--<execution>
-						<id>instrument</id>
-						<phase>site</phase>
-						
-						<goals>
-							<goal>instrument</goal>
-							<goal>cobertura</goal>
-						</goals>
-					</execution>--></executions>
+					<!--
+						<execution> <id>site</id> <phase>pre-site</phase> <goals>
+						<goal>clean</goal> </goals> </execution>
+					-->
+					<!--
+						<execution> <id>instrument</id> <phase>site</phase> <goals>
+						<goal>instrument</goal> <goal>cobertura</goal> </goals>
+						</execution>
+					-->
+				</executions>
 				<configuration>
 					<instrumentation>
 						<excludes>
@@ -104,7 +103,7 @@
 					</instrumentation>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 				<executions>
@@ -128,26 +127,18 @@
 						<exclude>*~</exclude>
 						<exclude>log4j*properties</exclude>
 					</excludes>
-				
+
 				</configuration>
 			</plugin>
-			
-		<!--	<plugin>
-				<groupId>org.codehaus.mojo</groupId>
+
+			<!--
+				<plugin> <groupId>org.codehaus.mojo</groupId>
 				<artifactId>hibernate3-maven-plugin</artifactId>
-				<version>2.0-alpha-2</version>
-				<configuration>
-					<executions>
-						<execution>
-							<phase>process-classes</phase>
-							<goals>
-								<goal>hbm2ddl</goal>
-							</goals>
-						</execution>
-					</executions>
-				</configuration>
-			</plugin>
-	-->
+				<version>2.0-alpha-2</version> <configuration> <executions>
+				<execution> <phase>process-classes</phase> <goals>
+				<goal>hbm2ddl</goal> </goals> </execution> </executions>
+				</configuration> </plugin>
+			-->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
@@ -177,63 +168,30 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-			<!--<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>process-classes</phase>
-						<configuration>
-							<tasks>
-								<ant antfile="${basedir}/build.xml" inheritRefs="true">
-									<target name="generateDDL" />
-								</ant>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>-->
-		<!-- 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>sql-maven-plugin</artifactId>
-				<version>1.0</version>
-				<executions>
-					<execution>
-						<id>create-schema</id>
-						<phase>process-test-resources</phase>
-						<goals>
-							<goal>execute</goal>
-						</goals>
-						<configuration>
-							<autocommit>true</autocommit>
-							<srcFiles>
-								<srcFile>target/generated-sources/schema.ddl</srcFile>
-							</srcFiles>
-						</configuration>
-					</execution>
-		
-					
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>hsqldb</groupId>
-						<artifactId>hsqldb</artifactId>
-						<version>1.8.0.7</version>
-					</dependency>
-				</dependencies>
-				<configuration>
-					<driver>org.hsqldb.jdbcDriver</driver>
-					<username>sa</username>
-					<password></password>
-					<url>jdbc:hsqldb:hsql://localhost</url>
-					<autocommit>true</autocommit>
-					<skip>${maven.test.skip}</skip>
-				</configuration>
-			</plugin>-->
+
+			<!--
+				<plugin> <artifactId>maven-antrun-plugin</artifactId> <executions>
+				<execution> <phase>process-classes</phase> <configuration> <tasks>
+				<ant antfile="${basedir}/build.xml" inheritRefs="true"> <target
+				name="generateDDL" /> </ant> </tasks> </configuration> <goals>
+				<goal>run</goal> </goals> </execution> </executions> </plugin>
+			-->
+			<!--
+				<plugin> <groupId>org.codehaus.mojo</groupId>
+				<artifactId>sql-maven-plugin</artifactId> <version>1.0</version>
+				<executions> <execution> <id>create-schema</id>
+				<phase>process-test-resources</phase> <goals> <goal>execute</goal>
+				</goals> <configuration> <autocommit>true</autocommit> <srcFiles>
+				<srcFile>target/generated-sources/schema.ddl</srcFile> </srcFiles>
+				</configuration> </execution> </executions> <dependencies>
+				<dependency> <groupId>hsqldb</groupId>
+				<artifactId>hsqldb</artifactId> <version>1.8.0.7</version>
+				</dependency> </dependencies> <configuration>
+				<driver>org.hsqldb.jdbcDriver</driver> <username>sa</username>
+				<password></password> <url>jdbc:hsqldb:hsql://localhost</url>
+				<autocommit>true</autocommit> <skip>${maven.test.skip}</skip>
+				</configuration> </plugin>
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -247,75 +205,71 @@
 					</execution>
 				</executions>
 			</plugin>
-		
-		
-		
-		
+
+
+
+
 		</plugins>
-	
-	
+
+
 	</build>
-	
+
 	<reporting>
 		<plugins>
-		<!--plugin>
-		<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-			 </plugin-->
-	<!--
-		<plugin>
-			<artifactId>maven-javadoc-plugin</artifactId>
-		</plugin>
-		<plugin>
-			<groupId>org.codehaus.mojo</groupId>
-			<artifactId>jxr-maven-plugin</artifactId>
-		</plugin>
-	-->
+			<!--
+				plugin> <groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId> </plugin
+			-->
+			<!--
+				<plugin> <artifactId>maven-javadoc-plugin</artifactId> </plugin>
+				<plugin> <groupId>org.codehaus.mojo</groupId>
+				<artifactId>jxr-maven-plugin</artifactId> </plugin>
+			-->
 
-		<!--plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-		</plugin--></plugins>
-	
+			<!--
+				plugin> <artifactId>maven-surefire-plugin</artifactId> </plugin
+			-->
+		</plugins>
+
 	</reporting>
-	
+
 	<dependencies>
-		
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.7</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>asm</groupId>
 			<artifactId>asm-all</artifactId>
 			<version>3.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>1.4</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.3</version>
 		</dependency>
-		
-		<!--<dependency>
-			<groupId>ant</groupId>
-			<artifactId>ant</artifactId>
-			<version>1.6.5</version>
-		</dependency>-->
-		
+
+		<!--
+			<dependency> <groupId>ant</groupId> <artifactId>ant</artifactId>
+			<version>1.6.5</version> </dependency>
+		-->
+
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 			<version>1.2.2</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate</artifactId>
@@ -331,13 +285,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>c3p0</groupId>
 			<artifactId>c3p0</artifactId>
 			<version>0.9.1.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-annotations</artifactId>
@@ -348,74 +302,74 @@
 			<artifactId>hibernate-commons-annotations</artifactId>
 			<version>3.3.0.ga</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-tools</artifactId>
 			<version>3.2.0.beta9a</version>
 		</dependency>
-		
-		
+
+
 		<dependency>
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>nightly</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.prefuse</groupId>
 			<artifactId>prefuse</artifactId>
 			<version>beta-20060220</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>de.unisb</groupId>
 			<artifactId>bytecodeTransformer</artifactId>
 			<version>0.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>de.unisb.cs.st.javalanche.invariants</groupId>
 			<artifactId>invariants</artifactId>
 			<version>0.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>de.st.cs.unisb.ds</groupId>
 			<artifactId>ds-util</artifactId>
 			<version>0.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.google.code.google-collections</groupId>
 			<artifactId>google-collect</artifactId>
 			<version>snapshot-20080530</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>de.unisb.cs.st</groupId>
 			<artifactId>adabu2-tracer</artifactId>
 			<version>0.4-modified</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>java2html</groupId>
 			<artifactId>j2h</artifactId>
 			<version>1.3.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.softevo</groupId>
 			<artifactId>util</artifactId>
@@ -431,32 +385,98 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.jgrapht</groupId>
 			<artifactId>jgrapht-jdk1.5</artifactId>
 			<version>0.7.3</version>
 		</dependency>
-		
-		
+
+
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
 			<version>2.3</version>
 			<!--scope>test</scope-->
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
 			<version>1.1</version>
 		</dependency>
-		
+
 		<!-- TODO dependency needed by adabu -->
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 			<version>3.2.1</version>
 		</dependency>
+
+
+		<dependency>
+			<groupId>org.eclipse.jdt</groupId>
+			<artifactId>core</artifactId>
+			<version>3.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.equinox</groupId>
+			<artifactId>common</artifactId>
+			<version>3.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>runtime</artifactId>
+			<version>3.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>osgi</artifactId>
+			<version>3.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>resources</artifactId>
+			<version>3.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>jobs</artifactId>
+			<version>3.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>contenttype</artifactId>
+			<version>3.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.equinox</groupId>
+			<artifactId>preferences</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>text</artifactId>
+			<version>3.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jdt</groupId>
+			<artifactId>ui</artifactId>
+			<version>3.6.0</version>
+		</dependency>
+		
+				
+		<dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>2.0</version>
+		</dependency>
+		
+
 	</dependencies>
 </project>
