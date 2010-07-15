@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.List;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -19,6 +20,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsClassAdapte
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
@@ -40,8 +42,10 @@ public class GetMutatedByteCode {
 	private void writeBytecode(File src, File dest)
 			throws FileNotFoundException, IOException {
 
-		MutationPossibilityCollector posibilities = getPosiibilities(src);
-		QueryManager.saveMutations(posibilities.getPossibilities());
+		MutationPossibilityCollector posibilities = getPosibilities(src);
+
+		MutationPossibilityCollector posibilities2 = getModifiedPossibilities(posibilities);
+		QueryManager.saveMutations(posibilities2.getPossibilities());
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		ClassReader cr = new ClassReader(new FileInputStream(src));
@@ -60,7 +64,18 @@ public class GetMutatedByteCode {
 		out.close();
 	}
 
-	private MutationPossibilityCollector getPosiibilities(File src)
+	private MutationPossibilityCollector getModifiedPossibilities(
+			MutationPossibilityCollector posibilities) {
+		List<Mutation> possibilities = posibilities.getPossibilities();
+		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
+		for (Mutation mutation : possibilities) {
+			// if(mutation matche criterion)
+			mpc.addPossibility(mutation);
+		}
+		return mpc;
+	}
+
+	private MutationPossibilityCollector getPosibilities(File src)
 			throws IOException, FileNotFoundException {
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
