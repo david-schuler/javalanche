@@ -24,17 +24,17 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 public class MutationForRunTest {
 
 	private static Mutation m1 = new Mutation(MutationForRunTest.class
-			.getName(), 41, 0, MutationType.NEGATE_JUMP, false);
+			.getName(), "testMethod", 41, 0, MutationType.NEGATE_JUMP);
 
 	private static Mutation m2 = new Mutation(MutationForRunTest.class
-			.getName(), 42, 0, MutationType.NEGATE_JUMP, false);
+			.getName(), "testMethod", 42, 0, MutationType.NEGATE_JUMP);
 
 	private static Mutation m3 = new Mutation(MutationForRunTest.class
-			.getName(), 43, 0, MutationType.NEGATE_JUMP, false);
+			.getName(), "testMethod", 43, 0, MutationType.NEGATE_JUMP);
 
 	private static Mutation mutationWithResult = new Mutation(
-			MutationForRunTest.class.getName(), 55, 0,
-			MutationType.NEGATE_JUMP, false);
+			MutationForRunTest.class.getName(), "testMethod", 55, 0,
+			MutationType.NEGATE_JUMP);
 
 	private static MutationsForRun mfr;
 
@@ -45,6 +45,9 @@ public class MutationForRunTest {
 		QueryManager.save(m1);
 		QueryManager.save(m3);
 		QueryManager.save(m2);
+		MutationTestResult mutationTestResult = new MutationTestResult();
+		mutationWithResult.setMutationResult(mutationTestResult);
+		QueryManager.save(mutationWithResult);
 		f = File.createTempFile("test", "test");
 		BufferedWriter w = new BufferedWriter(new FileWriter(f));
 		w.write(m1.getId() + "\n");
@@ -90,10 +93,7 @@ public class MutationForRunTest {
 	}
 
 	@Test
-	public void testFilter() throws IOException {
-		MutationTestResult mutationTestResult = new MutationTestResult();
-		mutationWithResult.setMutationResult(mutationTestResult);
-		QueryManager.save(mutationWithResult);
+	public void testFilterWithResult() throws IOException {
 		File f2 = File.createTempFile("test2", "test2");
 		BufferedWriter w = new BufferedWriter(new FileWriter(f2));
 		w.write(m1.getId() + "\n");
@@ -104,5 +104,79 @@ public class MutationForRunTest {
 		List<Mutation> mutations = mfr2.getMutations();
 		assertEquals("Expected mutation with result to be filtered", 1,
 				mutations.size());
+	}
+
+	@Test
+	public void testFilterWithResultDisable() throws IOException {
+		File f2 = File.createTempFile("test2", "test2");
+		BufferedWriter w = new BufferedWriter(new FileWriter(f2));
+		w.write(m1.getId() + "\n");
+		w.write(mutationWithResult.getId() + "\n");
+		w.flush();
+		w.close();
+		MutationsForRun mfr2 = new MutationsForRun(f2.getAbsolutePath(), false);
+		List<Mutation> mutations = mfr2.getMutations();
+		assertEquals("Expected mutation with result not to be filtered", 2,
+				mutations.size());
+	}
+
+	@Test
+	public void testEmptyFile() throws IOException {
+		File fEmpty = File.createTempFile("testEmpty", "testEmpty");
+		fEmpty.deleteOnExit();
+		assertTrue(fEmpty.exists());
+		MutationsForRun mutationsForRun = new MutationsForRun(fEmpty
+				.getAbsolutePath(), true);
+		List<Mutation> mutations = mutationsForRun.getMutations();
+		assertThat(mutations.size(), is(0));
+	}
+
+	@Test
+	public void testFileDoesNotExist() throws IOException {
+		MutationsForRun mutationsForRun = new MutationsForRun(
+				"non_exisiting_file", true);
+		List<Mutation> mutations = mutationsForRun.getMutations();
+		assertThat(mutations.size(), is(0));
+	}
+
+	@Test
+	public void testNull() throws IOException {
+		MutationsForRun mutationsForRun = new MutationsForRun(null, true);
+		List<Mutation> mutations = mutationsForRun.getMutations();
+		assertThat(mutations.size(), is(0));
+	}
+
+	@Test
+	public void testSingleTask() throws IOException {
+		MutationProperties.SINGLE_TASK_MODE = true;
+		MutationProperties.PROJECT_PREFIX = "org.test";
+		File f = new File("mutation-files/mutation-task-org_test-01.txt");
+		BufferedWriter w = new BufferedWriter(new FileWriter(f));
+		w.write(m1.getId() + "\n");
+		w.write(mutationWithResult.getId() + "\n");
+		w.flush();
+		w.close();
+		MutationsForRun mfr2 = MutationsForRun.getFromDefaultLocation();
+		MutationProperties.PROJECT_PREFIX = null;
+		MutationProperties.SINGLE_TASK_MODE = false;
+		f.delete();
+		List<Mutation> mutations = mfr2.getMutations();
+		assertEquals("Expected mutation with result not to be filtered", 1,
+				mutations.size());
+	}
+
+	@Test
+	public void testSingleTaskNonExistinFile() throws IOException {
+		MutationProperties.SINGLE_TASK_MODE = true;
+		MutationProperties.PROJECT_PREFIX = "org.test2";
+		File f2 = new File("mutation-files/mutation-task-org_test2-01.txt");
+		try {
+			MutationsForRun mfr2 = MutationsForRun.getFromDefaultLocation();
+			fail("Expected exception");
+		} catch (RuntimeException e) {
+			// ok
+		}
+		MutationProperties.PROJECT_PREFIX = null;
+		MutationProperties.SINGLE_TASK_MODE = false;
 	}
 }

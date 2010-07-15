@@ -12,12 +12,14 @@ import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.coverage.CoverageTransformer;
 import de.unisb.cs.st.javalanche.invariants.javaagent.InvariantTransformer;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.EvolutionMutationTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.DistanceTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.EclipseScanner;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.IntegrateTestSuiteTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationScanner;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanProjectTransformer;
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.SysExitTransformer;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 
 public class MutationPreMainTest {
@@ -26,6 +28,7 @@ public class MutationPreMainTest {
 	public void testTransformerIsAdded() {
 		Instrumentation mock = createMock(Instrumentation.class);
 		MutationProperties.RUN_MODE = CHECK_TESTS;
+		mock.addTransformer((ClassFileTransformer) anyObject());
 		mock.addTransformer((ClassFileTransformer) anyObject());
 		replay(mock);
 		MutationPreMain.premain("", mock);
@@ -94,6 +97,7 @@ public class MutationPreMainTest {
 
 	private void checkIntegrateTestSuite() {
 		Instrumentation mock = createMock(Instrumentation.class);
+		mock.addTransformer(isA(SysExitTransformer.class));
 		mock.addTransformer(isA(IntegrateTestSuiteTransformer.class));
 		replay(mock);
 		MutationPreMain.premain("", mock);
@@ -147,5 +151,16 @@ public class MutationPreMainTest {
 		}
 	}
 	
+	
+	@Test
+	public void testEvolutionModeAdded() {
+		Instrumentation mock = createMock(Instrumentation.class);
+		MutationProperties.RUN_MODE = EVOLUTION;
+		mock.addTransformer(isA(MutationFileTransformer.class));
+		replay(mock);
+		System.setProperty(MutationProperties.CLASSES_TO_MUTATE_KEY, "aaa");
+		MutationPreMain.premain("", mock);
+		verify(mock);
+	}
 
 }
