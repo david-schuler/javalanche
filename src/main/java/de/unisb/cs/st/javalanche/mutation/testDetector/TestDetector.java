@@ -76,6 +76,12 @@ public class TestDetector {
 		}
 	}
 
+	private static class TestAnnotation implements Heuristic {
+		public boolean matches(File f, String content) {
+			return content.contains("@Test");
+		}
+	}
+
 	public static void main(String[] args) throws IOException {
 		String property = System.getProperty(JAVALANCHE_TEST_BASE_DIR);
 		String baseDir = property != null ? property : ".";
@@ -88,7 +94,8 @@ public class TestDetector {
 	private static void scanForTests(String baseDir) throws IOException {
 		Collection<File> javaFiles = getFiles(baseDir);
 		Heuristic[] heuristics = new Heuristic[] { new InTetsDir(),
-				new ContainsJunitImport(), new ExtendsTest() };
+				new ContainsJunitImport(), new ExtendsTest(),
+				new TestAnnotation() };
 		Map<String, Integer> map = new HashMap<String, Integer>();
 		for (File file : javaFiles) {
 			List<String> linesFromFile = Io.getLinesFromFile(file);
