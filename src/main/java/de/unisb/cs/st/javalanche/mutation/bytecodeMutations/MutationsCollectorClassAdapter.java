@@ -26,6 +26,8 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckMethodAdapter;
 
+import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.JumpsPossibilitiesMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.replace.ReplacePossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.PossibilitiesArithmeticReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsPossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.MyAdviceAdapter;
@@ -49,6 +51,10 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 	private Map<Integer, Integer> negatePossibilities = new HashMap<Integer, Integer>();
 
 	private Map<Integer, Integer> removeCallsPossibilities = new HashMap<Integer, Integer>();
+
+	private Map<Integer, Integer> jumpsCallsPossibilities = new HashMap<Integer, Integer>();
+
+	private Map<Integer, Integer> replaceCallsPossibilities = new HashMap<Integer, Integer>();
 
 	public MutationsCollectorClassAdapter(ClassVisitor cv,
 			MutationPossibilityCollector mpc) {
@@ -76,7 +82,8 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 		}
 		if (!MutationProperties.IGNORE_NEGATE_JUMPS) {
 			mv = new NegateJumpsPossibilitiesMethodAdapter(mv, className, name,
-					mpc, negatePossibilities, desc);
+					mpc,
+					negatePossibilities, desc);
 		}
 		if (!MutationProperties.IGNORE_ARITHMETIC_REPLACE) {
 			mv = new PossibilitiesArithmeticReplaceMethodAdapter(mv, className,
@@ -86,6 +93,15 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 			mv = new RemoveCallsPossibilitiesMethodAdapter(new MyAdviceAdapter(
 					mv, access, name, desc), className, name, mpc,
 					removeCallsPossibilities, desc);
+		}
+		if (!MutationProperties.IGNORE_ADAPTED_JUMPS) {
+			mv = new JumpsPossibilitiesMethodAdapter(mv, className, name, mpc,
+					jumpsCallsPossibilities, desc);
+		}
+
+		if (!MutationProperties.IGNORE_ADAPTED_REPLACE) {
+			mv = new ReplacePossibilitiesMethodAdapter(mv, className, name,
+					mpc, replaceCallsPossibilities, desc);
 		}
 		return mv;
 	}

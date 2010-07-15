@@ -38,12 +38,6 @@ public class BytecodeTasks {
 
 	private static Logger logger = Logger.getLogger(BytecodeTasks.class);
 
-	/**
-	 * When set true, System.println statements will be inserted that signalize
-	 * whether a mutation is covered.
-	 */
-	private static final boolean PRINT_STATEMENTS_ENABLED = false;
-
 	private BytecodeTasks() {
 	}
 
@@ -99,16 +93,16 @@ public class BytecodeTasks {
 	}
 
 	/**
-	 * Insert calls that signalize whether the mutated code was executed.
+	 * Insert calls that signal whether the mutated code was executed.
 	 * 
 	 * @param mv
-	 *            the methodvisitor to add the statements
+	 *            the method visitor to add the statements
 	 * @param mutation
 	 *            the mutation that is covered or not
 	 */
 	private static void insertMutationTouchedCode(MethodVisitor mv,
 			Mutation mutation) {
-		if (PRINT_STATEMENTS_ENABLED) {
+		if (MutationProperties.MUTATION_PRINT_STATEMENTS_ENABLED) {
 			BytecodeTasks.insertPrintStatements(mv, "Mutation "
 					+ mutation.getMutationVariable() + " - "
 					+ mutation.getMutationType() + " is enabled");
