@@ -43,10 +43,10 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 			int possibilitiesForLine = getPossibilityForLine();
 			Mutation mutationPlus1 = new Mutation(className, getMethodName(),
 					getLineNumber(), possibilitiesForLine,
-					Mutation.MutationType.RIC_PLUS_1, isClassInit);
+					Mutation.MutationType.RIC_PLUS_1);
 			Mutation mutationMinus1 = new Mutation(className, getMethodName(),
 					getLineNumber(), possibilitiesForLine,
-					Mutation.MutationType.RIC_MINUS_1, isClassInit);
+					Mutation.MutationType.RIC_MINUS_1);
 
 			addPossibilityForLine();
 			mutationPossibilityCollector.addPossibility(mutationPlus1);
@@ -55,7 +55,7 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 				Mutation mutationZero = new Mutation(className,
 						getMethodName(),
 						getLineNumber(), possibilitiesForLine,
-						Mutation.MutationType.RIC_ZERO, isClassInit);
+						Mutation.MutationType.RIC_ZERO);
 				mutationPossibilityCollector.addPossibility(mutationZero);
 				if (insertCoverageCalls) {
 					CoverageDataUtil.insertCoverageCalls(mv, mutationZero);

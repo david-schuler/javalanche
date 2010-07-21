@@ -215,7 +215,8 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 	private void longConstant(final long longConstant) {
 		logger.debug("long constant for line: " + getLineNumber());
-		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
+		ConstantMutations cm = getConstantMutations(className, methodName,
+				getLineNumber(),
 				getPossibilityForLine(), isClassInit);
 		addPossibilityForLine();
 		boolean insert = false;
@@ -271,7 +272,8 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 	private void floatConstant(final float floatConstant) {
 		logger.debug("float constant for line: " + getLineNumber());
-		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
+		ConstantMutations cm = getConstantMutations(className, methodName,
+				getLineNumber(),
 				getPossibilityForLine(), isClassInit);
 		addPossibilityForLine();
 
@@ -328,7 +330,8 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 	private void doubleConstant(final double doubleConstant) {
 		logger.debug("double constant for line: " + getLineNumber());
-		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
+		ConstantMutations cm = getConstantMutations(className, methodName,
+				getLineNumber(),
 				getPossibilityForLine(), isClassInit);
 		addPossibilityForLine();
 		boolean insert = false;
@@ -382,7 +385,8 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 	private void intConstant(final int intConstant) {
 		logger.debug("int constant for line: " + getLineNumber());
-		ConstantMutations cm = getConstantMutations(className, getLineNumber(),
+		ConstantMutations cm = getConstantMutations(className, methodName,
+				getLineNumber(),
 				getPossibilityForLine(), isClassInit);
 		addPossibilityForLine();
 		boolean insert = false;
@@ -451,13 +455,14 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	}
 
 	private static ConstantMutations getConstantMutations(String className,
-			int lineNumber, int mutationForLine, boolean isClassInit) {
-		Mutation mutationPlus = new Mutation(className, lineNumber,
-				mutationForLine, MutationType.RIC_PLUS_1, isClassInit);
-		Mutation mutationMinus = new Mutation(className, lineNumber,
-				mutationForLine, MutationType.RIC_MINUS_1, isClassInit);
-		Mutation mutationZero = new Mutation(className, lineNumber,
-				mutationForLine, MutationType.RIC_ZERO, isClassInit);
+			String methodName, int lineNumber, int mutationForLine,
+			boolean isClassInit) {
+		Mutation mutationPlus = new Mutation(className, methodName, lineNumber,
+				mutationForLine, MutationType.RIC_PLUS_1);
+		Mutation mutationMinus = new Mutation(className, methodName,
+				lineNumber, mutationForLine, MutationType.RIC_MINUS_1);
+		Mutation mutationZero = new Mutation(className, methodName, lineNumber,
+				mutationForLine, MutationType.RIC_ZERO);
 		return new ConstantMutations(mutationPlus, mutationMinus, mutationZero);
 
 	}

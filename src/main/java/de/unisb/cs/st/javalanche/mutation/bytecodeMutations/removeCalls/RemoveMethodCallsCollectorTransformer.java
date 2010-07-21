@@ -37,7 +37,6 @@ public class RemoveMethodCallsCollectorTransformer extends CollectorByteCodeTran
 	@Override
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
 		ClassVisitor cc = new CheckClassAdapter(cw);
-		cc = new TraceClassVisitor(cc, new PrintWriter(System.out));
 		return new PossibilitiesRicClassAdapter(cc, mpc);
 	}
 }

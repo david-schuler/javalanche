@@ -53,8 +53,8 @@ public abstract class AbstractNegateJumpsAdapter extends AbstractMutationAdapter
 	private void addJumpMutationPossibility(Label label, int opcode) {
 		Mutation mutation = new Mutation(className, getMethodName(),
 				getLineNumber(),
-				getPossibilityForLine(), Mutation.MutationType.NEGATE_JUMP,
-				isClassInit);
+ getPossibilityForLine(),
+				Mutation.MutationType.NEGATE_JUMP);
 		addPossibilityForLine();
 		handleMutation(mutation, label, opcode);
 	}

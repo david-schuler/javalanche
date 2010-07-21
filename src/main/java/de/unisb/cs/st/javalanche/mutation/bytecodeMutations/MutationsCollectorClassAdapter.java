@@ -81,7 +81,7 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 					ricPossibilities, desc);
 		}
 		if (!MutationProperties.IGNORE_NEGATE_JUMPS) {
-			mv = new Negate	JumpsPossibilitiesMethodAdapter(mv, className, name,
+			mv = new NegateJumpsPossibilitiesMethodAdapter(mv, className, name,
 					mpc,
 					negatePossibilities, desc);
 		}

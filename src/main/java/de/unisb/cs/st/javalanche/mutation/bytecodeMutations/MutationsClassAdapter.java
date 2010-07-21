@@ -27,6 +27,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckMethodAdapter;
 
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.JumpsMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.BytecodeInfo;
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.replace.ReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.ArithmeticReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsMethodAdapter;
@@ -52,14 +53,17 @@ public class MutationsClassAdapter extends ClassAdapter {
 
 	private final MutationManager mutationManager;
 
-	public MutationsClassAdapter(ClassVisitor cv) {
-		this(cv, new MutationManager());
+	private BytecodeInfo lastLineInfo;
 
+	public MutationsClassAdapter(ClassVisitor cv, BytecodeInfo lastLineInfo) {
+		this(cv, new MutationManager(), lastLineInfo);
 	}
 
-	public MutationsClassAdapter(ClassVisitor cv, MutationManager mm) {
+	public MutationsClassAdapter(ClassVisitor cv, MutationManager mm,
+			BytecodeInfo lastLineInfo) {
 		super(cv);
 		this.mutationManager = mm;
+		this.lastLineInfo = lastLineInfo;
 	}
 
 	@Override
@@ -84,7 +88,7 @@ public class MutationsClassAdapter extends ClassAdapter {
 		mv = new RemoveMethodCallsMethodAdapter(mv, className, name,
 				removeCallsPossibilities, mutationManager, desc);
 		mv = new JumpsMethodAdapter(mv, className, name, jumpsPossibilities,
-				mutationManager, desc);
+				mutationManager, desc, lastLineInfo);
 		mv = new ReplaceMethodAdapter(mv, className, name,
 				replacePossibilities, mutationManager, desc);
 
