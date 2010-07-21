@@ -1,7 +1,10 @@
 package de.unisb.cs.st.javalanche.mutation.adaptedMutations;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -18,13 +21,13 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 
-
 public class MutationASTVisitor extends ASTVisitor {
 
 	private final String name;
 
 	private final Document doc;
 
+	private Map<IfStatement, IfStatementInfo> ifStatementMap = new HashMap<IfStatement, IfStatementInfo>();
 	private List<IfStatementInfo> ifStatementInfos = new ArrayList<IfStatementInfo>();
 	private List<MethodCallInfo> methodCallInfos = new ArrayList<MethodCallInfo>();
 	private List<MethodInfo> methodInfos = new ArrayList<MethodInfo>();
@@ -32,6 +35,8 @@ public class MutationASTVisitor extends ASTVisitor {
 	private final List<FieldInfo> fieldInfos = new ArrayList<FieldInfo>();
 	private final List<ReturnInfo> returnInfos = new ArrayList<ReturnInfo>();
 	private int count = 0;
+
+	private List<IfStatement> ifNodes = new ArrayList<IfStatement>();
 
 	public MutationASTVisitor(Document doc, String name) {
 		this.doc = doc;
@@ -52,8 +57,21 @@ public class MutationASTVisitor extends ASTVisitor {
 		} else {
 			ifStatementInfo = new IfStatementInfo(start, end);
 		}
+		Collection<IfStatementInfo> values = ifStatementMap.values();
+		for (IfStatementInfo info : values) {
+			info.setInnerIf(true);
+		}
+		ifStatementMap.put(node, ifStatementInfo);
+		ifNodes.add(node);
 		ifStatementInfos.add(ifStatementInfo);
 		return super.visit(node);
+	}
+
+	@Override
+	public void endVisit(IfStatement node) {
+		ifNodes.remove(node);
+		ifStatementMap.remove(node);
+		super.endVisit(node);
 	}
 
 	private int getStartLineNumber(ASTNode node) {

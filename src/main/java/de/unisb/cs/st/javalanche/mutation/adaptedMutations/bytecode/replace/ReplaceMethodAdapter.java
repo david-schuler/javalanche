@@ -58,7 +58,8 @@ public class ReplaceMethodAdapter extends AbstractReplaceAdapter {
 	protected boolean handleMutation(Mutation mutation, Type type,
 			MutationCode unMutated, boolean fieldInsn, boolean store) {
 		Mutation replaceMutation = QueryManager.getReplaceMutation(mutation);
-		if (mutationManager.shouldApplyMutation(replaceMutation)) {
+		if (replaceMutation != null
+				&& mutationManager.shouldApplyMutation(replaceMutation)) {
 			logger.debug("Applying mutation for line: " + getLineNumber());
 			Mutation dbMutation = replaceMutation;
 			MutationCode mc = getMutationCode(dbMutation, type, fieldInsn,

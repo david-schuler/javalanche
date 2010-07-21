@@ -60,11 +60,13 @@ public class ParseResultAnalyzer {
 						ADAPTED_JUMP, ADAPTED_SKIP_ELSE, className, stmtInfo
 								.getStart(), stmtInfo.getEnd());
 				res.add(desc);
-				AdaptedMutationDescription desc2 = new AdaptedMutationDescription(
-						ADAPTED_JUMP, ADAPTED_ALWAYS_ELSE, className, stmtInfo
-								.getStart(), stmtInfo.getElseStart(), stmtInfo
-								.getEnd());
-				res.add(desc2);
+				if (!stmtInfo.hasInnerIf()) {
+					AdaptedMutationDescription desc2 = new AdaptedMutationDescription(
+							ADAPTED_JUMP, ADAPTED_ALWAYS_ELSE, className,
+							stmtInfo.getStart(), stmtInfo.getElseStart(),
+							stmtInfo.getEnd());
+					res.add(desc2);
+				}
 			}
 			AdaptedMutationDescription desc = new AdaptedMutationDescription(
 					ADAPTED_JUMP, ADAPTED_NEGATE_JUMP_IN_IF, className,
@@ -113,8 +115,8 @@ public class ParseResultAnalyzer {
 		for (AssignmentInfo assignmentInfo : assignmentInfos) {
 			AdaptedMutationDescription desc = new AdaptedMutationDescription(
 					ADAPTED_REPLACE_STORE,
-					MutationType.ADAPTED_REPLACE_ASSIGNMENT,
-					className, assignmentInfo.getLineNumber());
+					MutationType.ADAPTED_REPLACE_ASSIGNMENT, className,
+					assignmentInfo.getLineNumber());
 			res.add(desc);
 		}
 

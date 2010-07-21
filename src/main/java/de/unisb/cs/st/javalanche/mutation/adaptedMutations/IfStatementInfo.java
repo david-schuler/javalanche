@@ -8,7 +8,7 @@ public class IfStatementInfo {
 	private final int end;
 	private final boolean hasElse;
 	private final int elseStart;
-
+	private boolean innerIf;
 	private IfStatementInfo(int ifStart, int end, boolean hasElse, int elseStart) {
 		super();
 		this.ifStart = ifStart;
@@ -53,6 +53,14 @@ public class IfStatementInfo {
 			return -1;
 		}
 		return end;
+	}
+
+	public boolean hasInnerIf() {
+		return innerIf;
+	}
+
+	public void setInnerIf(boolean innerIf) {
+		this.innerIf = innerIf;
 	}
 
 }

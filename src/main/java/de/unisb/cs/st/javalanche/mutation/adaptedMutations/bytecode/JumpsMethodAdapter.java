@@ -24,11 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -41,6 +43,8 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Type.*;
 
 public class JumpsMethodAdapter extends AbstractJumpsAdapter {
 
@@ -54,7 +58,7 @@ public class JumpsMethodAdapter extends AbstractJumpsAdapter {
 
 	private Label elseEndLabel;
 
-	private int elseLine;
+	private Stack<Integer> elseLines = new Stack<Integer>();
 
 	private BiMap<Label, Label> gotoLabelMap = new HashBiMap<Label, Label>();
 
@@ -62,11 +66,17 @@ public class JumpsMethodAdapter extends AbstractJumpsAdapter {
 
 	private Stack<Mutation> alwaysElseMutations = new Stack<Mutation>();
 
+	private List<Label> visitedLabels = new ArrayList<Label>();
+
+	private final BytecodeInfo lastLineInfo;
+
 	public JumpsMethodAdapter(MethodVisitor mv, String className,
 			String methodName, Map<Integer, Integer> possibilities,
-			MutationManager mutationManager, String desc) {
+			MutationManager mutationManager, String desc,
+			BytecodeInfo lastLineInfo) {
 		super(mv, className, methodName, possibilities, desc);
 		this.mutationManager = mutationManager;
+		this.lastLineInfo = lastLineInfo;
 	}
 
 	@Override
@@ -82,6 +92,7 @@ public class JumpsMethodAdapter extends AbstractJumpsAdapter {
 			}
 		}
 		if (shouldApply) {
+
 			logger.debug("Applying mutation for line: " + getLineNumber());
 
 			MutationCode unMutated = new MutationCode(null) {
@@ -93,47 +104,76 @@ public class JumpsMethodAdapter extends AbstractJumpsAdapter {
 			};
 
 			List<MutationCode> mutationCode = new ArrayList<MutationCode>();
-
 			for (final Mutation m2 : mutations) {
-				MutationCode mutated = new MutationCode(m2) {
-
-					@Override
-					public void insertCodeBlock(MethodVisitor mv) {
-						if (jumpReplacementMap.containsKey(opcode)) {
-							MutationType type = m2.getMutationType();
-							if (type == MutationType.ADAPTED_REMOVE_CHECK) {
-								mv.visitInsn(Opcodes.POP2);
-							} else {
-								int insertOpcode = opcode;
-								if (type == MutationType.ADAPTED_NEGATE_JUMP_IN_IF) {
-									insertOpcode = JumpReplacements
-											.getReplacementMap().get(opcode);
-								}
-								if (type == MutationType.ADAPTED_SKIP_IF) {
-									mv.visitInsn(Opcodes.POP2);
-									insertOpcode = Opcodes.GOTO;
-								}
-								if (type == MutationType.ADAPTED_ALWAYS_ELSE) {
-									alwaysElseMutations.push(m2);
-									elseLine = JumpInfo.getTargetLine(mutation);
-								}
-								Label targetLabel = getTargetLabel(m2);
-								mv.visitJumpInsn(insertOpcode, targetLabel);
-							}
-						} else {
-							throw new RuntimeException(
-									"Invalid opcode key for jump Map");
-						}
+				if (mutationManager.shouldApplyMutation(m2)) {
+					final MutationType type = m2.getMutationType();
+					// if (type == MutationType.ADAPTED_SKIP_ELSE) {
+					int targetLine = JumpInfo.getTargetLine(m2);
+					int lastLine = lastLineInfo.getLastLine(className,
+							methodName, desc);
+					if (targetLine > lastLine) {
+						logger
+								.info("Skipping mutation would lead to incorrect bytecode."
+										+ m2);
+						continue;
 					}
+					// }
+					MutationCode mutated = new MutationCode(m2) {
 
-				};
-				mutationCode.add(mutated);
+						@Override
+						public void insertCodeBlock(MethodVisitor mv) {
+							if (jumpReplacementMap.containsKey(opcode)) {
+
+								if (type == MutationType.ADAPTED_REMOVE_CHECK) {
+									mv.visitInsn(getPopOpcode(opcode));
+								} else {
+									int insertOpcode = opcode;
+									if (type == MutationType.ADAPTED_NEGATE_JUMP_IN_IF) {
+										insertOpcode = JumpReplacements
+												.getReplacementMap()
+												.get(opcode);
+									}
+									if (type == MutationType.ADAPTED_SKIP_IF) {
+										mv.visitInsn(getPopOpcode(opcode));
+										insertOpcode = Opcodes.GOTO;
+									}
+									if (type == MutationType.ADAPTED_ALWAYS_ELSE) {
+										alwaysElseMutations.push(m2);
+										elseLines.push(JumpInfo
+												.getTargetLine(mutation));
+									}
+
+									Label targetLabel = getTargetLabel(m2);
+									mv.visitJumpInsn(insertOpcode, targetLabel);
+								}
+							} else {
+								throw new RuntimeException(
+										"Invalid opcode key for jump Map");
+							}
+						}
+
+					};
+					mutationCode.add(mutated);
+				}
 			}
 			BytecodeTasks.insertIfElse(mv, unMutated, mutationCode
 					.toArray(new MutationCode[0]));
 		} else {
 			mv.visitJumpInsn(opcode, label);
 		}
+	}
+
+	private static int getPopOpcode(int opcode) {
+
+		if (opcode == IF_ICMPEQ || opcode == IF_ICMPNE || opcode == IF_ICMPLT
+				|| opcode == IF_ICMPGE || opcode == IF_ICMPGT
+				|| opcode == IF_ICMPLE || opcode == IF_ACMPEQ
+				|| opcode == IF_ACMPNE
+
+		) {
+			return POP2;
+		}
+		return POP;
 	}
 
 	private Label getTargetLabel(Mutation mutation) {
@@ -156,8 +196,10 @@ public class JumpsMethodAdapter extends AbstractJumpsAdapter {
 		if (opcode == Opcodes.GOTO && alwaysElseMutations.size() > 0) {
 			final Label l = new Label();
 			gotoLabelMap.put(label, l);
+			// if (lastLabel != null) {
+			// throw new RuntimeException("Last Label not null");
+			// }
 			lastLabel = l;
-
 			MutationCode unMutated = new MutationCode(null) {
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
@@ -168,7 +210,6 @@ public class JumpsMethodAdapter extends AbstractJumpsAdapter {
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
 					mv.visitJumpInsn(opcode, l);
-
 				}
 			};
 			BytecodeTasks.insertIfElse(mv, unMutated,
@@ -180,32 +221,28 @@ public class JumpsMethodAdapter extends AbstractJumpsAdapter {
 
 	@Override
 	public void visitLineNumber(int line, Label start) {
-		System.out.println("JumpsMethodAdapter.visitLineNumber()");
 		super.visitLineNumber(line, start);
 		for (int l = lastLine; l <= line; l++) {
-			System.out.println("l " + l + "  " + line);
 			if (labelMap.containsKey(l)) {
 				Collection<Label> collection = labelMap.get(l);
-				System.out.println("Collection " + collection + "  "
-						+ collection.size());
 				for (Label target : collection) {
-					System.out.println("Line:" + line);
-					System.out.println(l);
-					System.out.println(start.getOffset());
 					mv.visitLabel(target);
 				}
-				System.out.println(labelMap.containsKey(l));
 				labelMap.removeAll(l);
-				System.out.println(labelMap.containsKey(l));
 			}
 		}
 
-		if (elseLine > 0 && line > elseLine) {
+		if (elseLines.size() > 0 && line > elseLines.peek()) {
 			if (lastLabel != null) {
-				mv.visitLabel(lastLabel);
-				Label keyLabel = gotoLabelMap.inverse().get(lastLabel);
-				gotoLabelMap.remove(keyLabel);
-				alwaysElseMutations.pop();
+				if (!visitedLabels.contains(lastLabel)) {
+					System.out.println("LAST " + lastLabel);
+					System.out.println("LAST " + lastLabel.getClass());
+					mv.visitLabel(lastLabel);
+					Label keyLabel = gotoLabelMap.inverse().get(lastLabel);
+					gotoLabelMap.remove(keyLabel);
+					alwaysElseMutations.pop();
+					elseLines.pop();
+				}
 				lastLabel = null;
 			}
 		}
@@ -218,6 +255,62 @@ public class JumpsMethodAdapter extends AbstractJumpsAdapter {
 		Label gotoLabel = gotoLabelMap.get(label);
 		if (gotoLabel != null) {
 			mv.visitLabel(gotoLabel);
+			visitedLabels.add(gotoLabel);
+			gotoLabelMap.remove(label);
+		}
+		// System.out.println("LABEL " + label);
+		visitedLabels.add(label);
+	}
+
+	@Override
+	public void visitEnd() {
+		if (labelMap.size() > 0) {
+			String message = "Not visited labels for lines in method + "
+					+ className + "." + methodName + " : " + labelMap.keySet()
+					+ "\n" + labelMap;
+			logger.warn(message);
+			throw new RuntimeException(message);
+		}
+		// if (lastLabel != null) {
+		// String message = "Last Label not visited for method + " + className
+		// + "." + methodName + " : " + lastLabel
+		// + "\n Visited labels:" + visitedLabels;
+		// logger.warn(message);
+		// throw new RuntimeException(message);
+		// }
+		super.visitEnd();
+	}
+
+	@Override
+	public void visitCode() {
+
+		super.visitCode();
+		if (!methodName.contains("init")) {
+			Collection<VariableInfo> localVars = lastLineInfo.getLocalVars(
+					className, methodName, desc);
+			for (VariableInfo variableInfo : localVars) {
+
+				Type type = variableInfo.getType();
+				if (variableInfo.getIndex() == 0) {
+					continue;// TODO
+				}
+				if (type.equals(INT_TYPE) || type.equals(SHORT_TYPE)
+						|| type.equals(CHAR_TYPE) || type.equals(BOOLEAN_TYPE)
+						|| type.equals(BYTE_TYPE)) {
+					mv.visitInsn(ICONST_0);
+				} else if (type.equals(FLOAT_TYPE)) {
+					mv.visitInsn(FCONST_0);
+				} else if (type.equals(DOUBLE_TYPE)) {
+					mv.visitInsn(DCONST_0);
+				} else if (type.equals(LONG_TYPE)) {
+					mv.visitInsn(LCONST_0);
+				} else {
+					assert type.equals(OBJECT);
+					mv.visitInsn(ACONST_NULL);
+				}
+				int storeOpcode = type.getOpcode(ISTORE);
+				mv.visitVarInsn(storeOpcode, variableInfo.getIndex());
+			}
 		}
 	}
 }
