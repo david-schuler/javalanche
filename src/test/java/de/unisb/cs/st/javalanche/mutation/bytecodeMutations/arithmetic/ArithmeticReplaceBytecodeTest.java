@@ -18,12 +18,8 @@
  */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic;
 
-import static org.junit.Assert.*;
-
 import java.lang.reflect.Method;
-import java.util.List;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BaseBytecodeTest;
@@ -39,11 +35,6 @@ public class ArithmeticReplaceBytecodeTest extends BaseBytecodeTest {
 		verbose = true;
 		clazz = prepareTest();
 	}
-
-	// @BeforeClass
-	// public void setUpClass() throws Exception {
-	//
-	// }
 
 	@Test
 	public void testM1() throws Exception {
@@ -82,31 +73,3 @@ public class ArithmeticReplaceBytecodeTest extends BaseBytecodeTest {
 	}
 
 }
-//
-// @Before
-// public void setup() {
-// ByteCodeTestUtils.generateCoverageData(TEST_CLASS_NAME, testCaseNames,
-// linenumbers);
-// ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
-// }
-//
-// @After
-// public void tearDown() {
-// ByteCodeTestUtils.deleteTestMutationResult(TEST_CLASS_NAME);
-// ByteCodeTestUtils.deleteCoverageData(TEST_CLASS_NAME);
-// }
-//
-// @Test
-// public void runTests() {
-// MutationProperties.RUN_MODE = RunMode.MUTATION_TEST;
-// ByteCodeTestUtils.redefineMutations(TEST_CLASS_NAME);
-// MutationTestSuite selectiveTestSuite = new MutationTestSuite();
-// TestSuite suite = new TestSuite(ArithmeticTest.class);
-// selectiveTestSuite.addTest(suite);
-// @SuppressWarnings("unused")
-// Arithmetic a = new Arithmetic();
-// selectiveTestSuite.run(new TestResult());
-// ByteCodeTestUtils.testResults(TEST_CLASS_NAME);
-// }
-//
-// }
