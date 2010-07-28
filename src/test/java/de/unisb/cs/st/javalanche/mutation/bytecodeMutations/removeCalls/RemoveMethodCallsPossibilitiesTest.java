@@ -32,7 +32,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorClassAdapter;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.testclasses.MethodCalls;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.classes.RemoveCallsTEMPLATE;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
@@ -41,7 +41,7 @@ public class RemoveMethodCallsPossibilitiesTest {
 
 	@Test
 	public void testForOneClass() throws Exception {
-		File file = getFileForClass(MethodCalls.class);
+		File file = getFileForClass(RemoveCallsTEMPLATE.class);
 		ClassReader cr = new ClassReader(new FileInputStream(file));
 		ClassWriter cw = new ClassWriter(0);
 		MutationPossibilityCollector mutationPossibilityCollector = new MutationPossibilityCollector();
@@ -53,7 +53,8 @@ public class RemoveMethodCallsPossibilitiesTest {
 		int possibilityCount = getRemoveCallMutations(possibilies);
 		int expectedMutations = 4;
 		assertEquals("Expecting different number of mutations for class "
-				+ MethodCalls.class, expectedMutations, possibilityCount);
+				+ RemoveCallsTEMPLATE.class, expectedMutations,
+				possibilityCount);
 	}
 
 	@Test
