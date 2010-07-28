@@ -28,7 +28,7 @@ import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class RemoveSystemExitTransformer extends BytecodeTransformer {
 
-	private static class RemoveSystemExitClassAdapter extends ClassAdapter {
+	public static class RemoveSystemExitClassAdapter extends ClassAdapter {
 
 		public RemoveSystemExitClassAdapter(ClassVisitor cv) {
 			super(cv);

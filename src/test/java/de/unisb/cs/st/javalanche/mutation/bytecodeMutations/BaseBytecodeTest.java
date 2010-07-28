@@ -30,6 +30,8 @@ import org.softevo.util.collections.ArrayList;
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.BytecodeInfo;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorClassAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer.RemoveSystemExitClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
@@ -94,8 +96,9 @@ public class BaseBytecodeTest {
 		}
 		ClassReader cr = new ClassReader(bytes);
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-		MutationsClassAdapter cv = new MutationsClassAdapter(cw,
+		ClassVisitor cv = new MutationsClassAdapter(cw,
 				new BytecodeInfo());
+		cv = new RemoveSystemExitTransformer.RemoveSystemExitClassAdapter(cv);
 		cr.accept(cv, ClassReader.SKIP_FRAMES);
 		byte[] result = cw.toByteArray();
 		if (verbose) {
