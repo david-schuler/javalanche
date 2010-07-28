@@ -218,12 +218,29 @@ public class BaseBytecodeTest {
 
 	}
 
+	protected void checkUnmutated(Object expectedOutput, Method method,
+			Class<?> clazz) throws Exception {
+		Object instance = clazz.newInstance();
+		Object invoke = method.invoke(instance);
+		assertEquals("Expected different result for unmutated run of method "
+				+ method + ".", expectedOutput, invoke);
+
+	}
+
 	protected void checkUnmutated(int input, Object expectedOutput,
 			Method method, Class<?> clazz) throws Exception {
 		Object instance = clazz.newInstance();
 		Object invoke = method.invoke(instance, input);
 		assertEquals("Expected different result for unmutated run of method "
 				+ method + " with input " + input + ".", expectedOutput, invoke);
+	}
+
+	protected void checkMutation(int lineNumber, MutationType type,
+			int mutationForLine, Object expectedResult, Method method,
+			Class<?> clazz) throws Exception {
+		checkMutation(lineNumber, type, mutationForLine, new Object[0],
+				expectedResult, method, clazz);
+
 	}
 
 	protected void checkMutation(int lineNumber, MutationType type,
