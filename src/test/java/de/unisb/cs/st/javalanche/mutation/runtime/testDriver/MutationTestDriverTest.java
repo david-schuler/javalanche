@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.junit.Test;
 
-import com.google.common.collect.PrimitiveArrays;
 
 public class MutationTestDriverTest {
 
@@ -125,8 +125,8 @@ public class MutationTestDriverTest {
 		// assertFalse(e.getChild().hasFinished());
 		assertFalse(e.getChildThread().isAlive());
 		long[] threadsPost = threadMxBean.getAllThreadIds();
-		List<Long> pre = PrimitiveArrays.asList(threadsPre);
-		List<Long> post = PrimitiveArrays.asList(threadsPost);
+		Long[] pre = ArrayUtils.toObject(threadsPre);
+		Long[] post = ArrayUtils.toObject(threadsPost);
 		// assertThat(pre, eq(post));
 		assertThat(pre, equalTo(post));
 		assertFalse(e.hasFailed());
