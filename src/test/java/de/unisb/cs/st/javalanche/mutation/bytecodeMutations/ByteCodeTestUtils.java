@@ -56,7 +56,7 @@ import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
 @SuppressWarnings("unchecked")
 public class ByteCodeTestUtils {
 
-	private static final String DEFAULT_OUTPUT_FILE = "redefine-ids.txt";
+	public static final String DEFAULT_OUTPUT_FILE = "redefine-ids.txt";
 
 	private static Logger logger = Logger.getLogger(ByteCodeTestUtils.class);
 
