@@ -31,7 +31,7 @@ import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.CheckMethodAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
-import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.JumpsMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.JumpsMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.ArithmeticReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.EvolutionArithmeticReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.RemoveMethodCallsMethodAdapter;

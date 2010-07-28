@@ -12,9 +12,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import com.google.common.base.Join;
 
-import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.JumpInfo;
+import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.JumpInfo;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
@@ -42,6 +41,9 @@ public class ParseResultAnalyzer {
 				.getIfStatementInfos();
 		String className = astParseResult.getClassName();
 		for (IfStatementInfo stmtInfo : ifStatementInfos) {
+			if (stmtInfo.isInTryBlock()) {
+				continue;
+			}
 			if (!stmtInfo.hasElse()) {
 
 				AdaptedMutationDescription desc = new AdaptedMutationDescription(
@@ -60,7 +62,7 @@ public class ParseResultAnalyzer {
 						ADAPTED_JUMP, ADAPTED_SKIP_ELSE, className, stmtInfo
 								.getStart(), stmtInfo.getEnd());
 				res.add(desc);
-				if (!stmtInfo.hasInnerIf()) {
+				if (!stmtInfo.hasInnerIf() && !stmtInfo.hasBreak()) {
 					AdaptedMutationDescription desc2 = new AdaptedMutationDescription(
 							ADAPTED_JUMP, ADAPTED_ALWAYS_ELSE, className,
 							stmtInfo.getStart(), stmtInfo.getElseStart(),

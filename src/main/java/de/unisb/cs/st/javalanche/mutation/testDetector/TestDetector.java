@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
-import com.google.common.base.Join;
+import com.google.common.base.Joiner;
 
 import de.unisb.cs.st.ds.util.io.DirectoryFileSource;
 import de.unisb.cs.st.ds.util.io.Io;
@@ -99,7 +99,7 @@ public class TestDetector {
 		Map<String, Integer> map = new HashMap<String, Integer>();
 		for (File file : javaFiles) {
 			List<String> linesFromFile = Io.getLinesFromFile(file);
-			String join = Join.join(" ", linesFromFile);
+			String join = Joiner.on(" ").join(linesFromFile);
 			int matches = 0;
 			for (Heuristic h : heuristics) {
 				if (h.matches(file, join)) {

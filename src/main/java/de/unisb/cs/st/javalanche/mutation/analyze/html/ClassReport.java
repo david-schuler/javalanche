@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
-import com.google.common.base.Join;
+import com.google.common.base.Joiner;
 
 public class ClassReport {
 
@@ -138,7 +138,7 @@ public class ClassReport {
 				"<script type=\"text/javascript\" src=\"prettify.js\"></script>",
 				"</head>", "<body onload=\"prettyPrint()\">",
 				"<h2>Javalanche report for class:<br/> " + className + " </h2>" };
-		return Join.join("\n", head);
+		return Joiner.on("\n").join(head);
 	}
 
 	public void addColumn(String columnName) {

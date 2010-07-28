@@ -12,7 +12,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import com.google.common.base.Join;
+import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -102,7 +102,7 @@ public class PrioritizationAnalyzer implements MutationAnalyzer {
 		// coverageCsv.append('\n');
 		// }
 		// }
-		File f = writeFile(Join.join("\n", coverageCsv),
+		File f = writeFile(Joiner.on("\n").join(coverageCsv),
 				COVERAGE_PRIORITIZATION_CSV);
 		return "Stored results in " + f.getAbsolutePath();
 
@@ -135,7 +135,7 @@ public class PrioritizationAnalyzer implements MutationAnalyzer {
 			coverageCsv.append(',');
 			coverageCsv.append(testName);
 			coverageCsv.append(',');
-			coverageCsv.append(Join.join(",", differentMethods));
+			coverageCsv.append(Joiner.on(",").join(differentMethods));
 			list.add(coverageCsv.toString());
 		}
 		return list;
@@ -320,7 +320,7 @@ public class PrioritizationAnalyzer implements MutationAnalyzer {
 	}
 
 	private Multimap<String, Mutation> copy(Multimap<String, Mutation> mm) {
-		Multimap<String, Mutation> result = new HashMultimap<String, Mutation>();
+		Multimap<String, Mutation> result = HashMultimap.create();
 		result.putAll(mm);
 		return result;
 	}

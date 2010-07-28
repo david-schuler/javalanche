@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.base.Join;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Multimap;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
@@ -24,7 +24,7 @@ public class InvariantPrioritizationAnalyzer implements MutationAnalyzer {
 		writePrioritization(invariantPrioritization,
 				INVARIANT_PRIORITIZATION_FILE_NAME);
 		System.out.println(mm);
-		return Join.join("\n", invariantPrioritization);
+		return Joiner.on("\n").join(invariantPrioritization);
 	}
 
 	private void writePrioritization(List<String> prioritization,

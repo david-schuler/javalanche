@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.apache.commons.lang.time.StopWatch;
 
-import com.google.common.base.Join;
+import com.google.common.base.Joiner;
 
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationsForRun;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
@@ -65,7 +65,7 @@ public class MutationMX implements MutationMXMBean {
 	}
 
 	public String getMutations() {
-		return Join.join(",", mutations);
+		return Joiner.on(',').join(mutations);
 	}
 
 	public int getNumberOfMutations() {

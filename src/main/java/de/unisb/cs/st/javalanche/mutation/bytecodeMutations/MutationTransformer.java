@@ -25,7 +25,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
-import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.BytecodeInfo;
+import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.BytecodeInfo;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;

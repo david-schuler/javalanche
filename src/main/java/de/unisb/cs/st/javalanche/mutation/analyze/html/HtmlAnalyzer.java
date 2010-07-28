@@ -45,7 +45,7 @@ public class HtmlAnalyzer {
 
 	public HtmlReport analyze(Iterable<Mutation> mutations) {
 		HtmlReport report = new HtmlReport();
-		Multimap<String, Mutation> map = new HashMultimap<String, Mutation>();
+		Multimap<String, Mutation> map = HashMultimap.create();
 		for (Mutation m : mutations) {
 			map.put(getClassName(m), m);
 		}

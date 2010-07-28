@@ -29,8 +29,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.base.Join;
-
 /**
  * 
  * Class that stores a mutation. It stores its type, where it is (was) applied

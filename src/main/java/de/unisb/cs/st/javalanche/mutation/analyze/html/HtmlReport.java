@@ -36,7 +36,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
-import com.google.common.base.Join;
+import com.google.common.base.Joiner;
 
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
@@ -118,7 +118,7 @@ public class HtmlReport {
 				"</noframes>", "</frameset>", "</html>"
 
 		};
-		Io.writeFile(Join.join("\n", content), new File(REPORT_DIR,
+		Io.writeFile(Joiner.on("\n").join(content), new File(REPORT_DIR,
 				"index.html"));
 	}
 

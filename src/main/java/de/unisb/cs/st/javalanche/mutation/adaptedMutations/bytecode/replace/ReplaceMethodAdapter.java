@@ -43,7 +43,7 @@ public class ReplaceMethodAdapter extends AbstractReplaceAdapter {
 
 	private final MutationManager mutationManager;
 
-	private Multimap<Integer, Label> labelMap = new HashMultimap<Integer, Label>();
+	private Multimap<Integer, Label> labelMap = HashMultimap.create();
 
 	private int lastLine;
 

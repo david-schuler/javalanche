@@ -26,7 +26,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckMethodAdapter;
 
-import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.JumpsPossibilitiesMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.JumpsPossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.replace.ReplacePossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.PossibilitiesArithmeticReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsPossibilitiesMethodAdapter;

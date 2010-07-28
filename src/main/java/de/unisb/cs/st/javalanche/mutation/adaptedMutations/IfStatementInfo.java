@@ -9,6 +9,9 @@ public class IfStatementInfo {
 	private final boolean hasElse;
 	private final int elseStart;
 	private boolean innerIf;
+	private boolean hasBreak;
+	private boolean inTryBlock;
+
 	private IfStatementInfo(int ifStart, int end, boolean hasElse, int elseStart) {
 		super();
 		this.ifStart = ifStart;
@@ -61,6 +64,22 @@ public class IfStatementInfo {
 
 	public void setInnerIf(boolean innerIf) {
 		this.innerIf = innerIf;
+	}
+
+	public void setBreak(boolean b) {
+		hasBreak = b;
+	}
+
+	public boolean hasBreak() {
+		return hasBreak;
+	}
+
+	public void setInTryBlock(boolean b) {
+		inTryBlock = b;
+	}
+
+	public boolean isInTryBlock() {
+		return inTryBlock;
 	}
 
 }

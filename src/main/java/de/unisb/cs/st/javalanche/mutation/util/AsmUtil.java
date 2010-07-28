@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2009 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2009 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.util;
 
 import java.io.File;
@@ -38,9 +38,9 @@ import de.unisb.cs.st.ds.util.io.Io;
 
 /**
  * BYtecode related Utility class
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class AsmUtil {
 
@@ -54,7 +54,7 @@ public class AsmUtil {
 
 	/**
 	 * Returns a string representation of a class given as a byte array.
-	 *
+	 * 
 	 * @param classBytes
 	 *            the bytes of the class
 	 * @return a string representation of the class
@@ -75,11 +75,10 @@ public class AsmUtil {
 
 	private static String classNameToString(String className) {
 		logger.info("Name of resource: " + className);
-//		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+		// ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 		ClassLoader classLoader = AsmUtil.class.getClassLoader();
-//		ClassLoader classLoader = getClassLoaderFromClasspath();
-		URL resource = classLoader
-				.getResource(className);
+		// ClassLoader classLoader = getClassLoaderFromClasspath();
+		URL resource = classLoader.getResource(className);
 		logger.info("Location of class file: " + resource);
 		File f = new File(resource.getFile());
 		try {
@@ -126,9 +125,11 @@ public class AsmUtil {
 		StringWriter sw = new StringWriter();
 		CheckClassAdapter check = new CheckClassAdapter(new ClassWriter(
 				ClassWriter.COMPUTE_MAXS));
-		cr.accept(check, ClassReader.EXPAND_FRAMES);
+		// cr.accept(check, ClassReader.EXPAND_FRAMES);
+		// original classes
 		// cr.accept(check,0);
-		// CheckClassAdapter.verify(cr, false, new PrintWriter(sw));
+		// CheckClassAdapter.verify(cr, false, new PrintWriter(sw)); TODO
+		// reports failure on
 		return sw.toString();
 	}
 }

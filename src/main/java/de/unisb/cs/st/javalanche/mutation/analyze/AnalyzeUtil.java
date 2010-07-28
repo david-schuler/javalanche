@@ -98,7 +98,7 @@ public class AnalyzeUtil {
 	 */
 	public static Multimap<String, Mutation> getDetectedByTest(
 			Iterable<Mutation> mutations) {
-		Multimap<String, Mutation> mm = new HashMultimap<String, Mutation>();
+		Multimap<String, Mutation> mm = HashMultimap.create();
 		for (Mutation mutation : mutations) {
 			if (mutation.isKilled()) {
 				MutationTestResult mutationResult = mutation

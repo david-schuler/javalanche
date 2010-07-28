@@ -66,8 +66,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 		// program crashes.
 		if (MutationProperties.QUERY_DB_BEFORE_START) {
 			Mutation someMutation = new Mutation("SomeMutationToAddToTheDb",
-					"tm",
- 23, 23, MutationType.ARITHMETIC_REPLACE);
+					"tm", 23, 23, MutationType.ARITHMETIC_REPLACE);
 			Mutation mutationFromDb = QueryManager
 					.getMutationOrNull(someMutation);
 			if (mutationFromDb == null) {
@@ -165,7 +164,9 @@ public class MutationFileTransformer implements ClassFileTransformer {
 					logger.debug("Class transformed: " + classNameWithDots);
 					String checkClass = AsmUtil.checkClass(transformedBytecode);
 					if (checkClass != null && checkClass.length() > 0) {
-						logger.warn("Check of class failed: " + checkClass);
+						logger.warn("Check of class failed: "
+								+ classNameWithDots);
+						logger.warn("Message: " + checkClass);
 					}
 					return transformedBytecode;
 				}

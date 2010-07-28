@@ -5,10 +5,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
+
+import javax.management.RuntimeErrorException;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
+import org.eclipse.jdt.core.dom.BreakStatement;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IfStatement;
@@ -16,10 +21,13 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
+
+import sun.security.action.GetLongAction;
 
 public class MutationASTVisitor extends ASTVisitor {
 
@@ -34,6 +42,8 @@ public class MutationASTVisitor extends ASTVisitor {
 	private final List<AssignmentInfo> assignmentInfos = new ArrayList<AssignmentInfo>();
 	private final List<FieldInfo> fieldInfos = new ArrayList<FieldInfo>();
 	private final List<ReturnInfo> returnInfos = new ArrayList<ReturnInfo>();
+
+	private Stack<TryStatement> tryBlocks = new Stack<TryStatement>();
 	private int count = 0;
 
 	private List<IfStatement> ifNodes = new ArrayList<IfStatement>();
@@ -56,6 +66,9 @@ public class MutationASTVisitor extends ASTVisitor {
 
 		} else {
 			ifStatementInfo = new IfStatementInfo(start, end);
+		}
+		if (tryBlocks.size() > 0) {
+			ifStatementInfo.setInTryBlock(true);
 		}
 		Collection<IfStatementInfo> values = ifStatementMap.values();
 		for (IfStatementInfo info : values) {
@@ -186,5 +199,34 @@ public class MutationASTVisitor extends ASTVisitor {
 
 	public List<ReturnInfo> getReturnInfos() {
 		return returnInfos;
+	}
+
+	@Override
+	public boolean visit(TryStatement node) {
+		System.out.println("MutationASTVisitor.visit() TRY "
+				+ getStartLineNumber(node));
+		System.out.println("MutationASTVisitor.visit() TRY "
+				+ getEndLineNumber(node));
+		tryBlocks.push(node);
+		return super.visit(node);
+	}
+
+	@Override
+	public void endVisit(TryStatement node) {
+		TryStatement pop = tryBlocks.pop();
+		if (!pop.equals(node)) {
+			throw new RuntimeException("Expected other try statement");
+		}
+		super.endVisit(node);
+	}
+
+	@Override
+	public boolean visit(BreakStatement node) {
+		Collection<IfStatementInfo> values = ifStatementMap.values();
+
+		for (IfStatementInfo info : values) {
+			info.setBreak(true);
+		}
+		return super.visit(node);
 	}
 }

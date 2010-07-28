@@ -101,7 +101,7 @@ public class Junit4Util {
 	}
 
 	private static Multimap<String, String> getMethodMap(String[] testMethods) {
-		final Multimap<String, String> methods = new HashMultimap<String, String>();
+		final Multimap<String, String> methods = HashMultimap.create();
 		for (String testMethod : testMethods) {
 			String testClass = getTestClass(testMethod);
 			methods.put(testClass, testMethod);

@@ -130,7 +130,7 @@ public class MutationProperties {
 	public static final String STOP_AFTER_FIRST_FAIL_KEY = "javalanche.stop.after.first.fail";
 
 	public static final boolean STOP_AFTER_FIRST_FAIL = getPropertyOrDefault(
-			STOP_AFTER_FIRST_FAIL_KEY, true);
+			STOP_AFTER_FIRST_FAIL_KEY, false);
 
 	private static final String DEFAULT_TIMEOUT_IN_SECONDS_KEY = "javalanche.mutation.default.timeout";
 
@@ -163,11 +163,11 @@ public class MutationProperties {
 
 	public static final String IGNORE_ADAPTED_JUMPS_KEY = "javalanche.ignore.adapted.jumps";
 	public static final boolean IGNORE_ADAPTED_JUMPS = getPropertyOrDefault(
-			IGNORE_ADAPTED_JUMPS_KEY, false);
+			IGNORE_ADAPTED_JUMPS_KEY, true);
 
 	public static final String IGNORE_ADAPTED_REPLACE_KEY = "javalanche.ignore.adapted.replace";
 	public static final boolean IGNORE_ADAPTED_REPLACE = getPropertyOrDefault(
-			IGNORE_ADAPTED_REPLACE_KEY, false);
+			IGNORE_ADAPTED_REPLACE_KEY, true);
 
 	public static final File TEST_MAP_FILE = new File(OUTPUT_DIR,
 			"testname-map.xml");
@@ -351,4 +351,11 @@ public class MutationProperties {
 	public static final String ADAPTED_END_FILE_NAME = getPropertyOrDefault(
 			ADAPTED_TARGET_FILE_NAME_KEY, "end.xml");
 
+	public static final String LAST_LINE_INFO_FILE_KEY = "javalanche.last.line.file";
+	public static final String LAST_LINE_INFO_FILE = getPropertyOrDefault(
+			LAST_LINE_INFO_FILE_KEY, OUTPUT_DIR + "/lastLine.xml");
+
+	public static final String IGNORE_PREFIX_KEY = "javalanche.ignore.prefix";
+	public static String IGNORE_PREFIX = getPropertyOrDefault(
+			IGNORE_PREFIX_KEY, "");
 }

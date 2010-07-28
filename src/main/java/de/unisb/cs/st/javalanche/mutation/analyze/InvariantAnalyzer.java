@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.google.common.base.Join;
+import com.google.common.base.Joiner;
 
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.analyze.html.ClassReport;
@@ -69,7 +69,7 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 						"" + mutation.getClassName(), mutation.getMethodName(),
 						"" + mutation.getLineNumber(),
 						"" + mutation.getMutationForLine() };
-				String line = Join.join(",", array);
+				String line = Joiner.on(",").join(array);
 				csvData.add(line);
 			}
 			if (mutationResult != null
@@ -97,9 +97,8 @@ public class InvariantAnalyzer implements MutationAnalyzer {
 			}
 			total++;
 		}
-		Io
-				.writeFile(Join.join("\n", csvData), new File(
-						"invariantResults.csv"));
+		Io.writeFile(Joiner.on("\n").join(csvData), new File(
+				"invariantResults.csv"));
 		StringBuilder sb = new StringBuilder();
 		sb.append("Total Mutations: " + total);
 		sb.append('\n');

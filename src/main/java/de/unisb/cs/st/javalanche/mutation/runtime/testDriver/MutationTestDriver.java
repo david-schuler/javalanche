@@ -38,11 +38,10 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
-
-import com.google.common.collect.PrimitiveArrays;
 
 import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.ds.util.io.XmlIo;
@@ -733,7 +732,7 @@ public abstract class MutationTestDriver {
 
 	private Set<Long> getThreadIds(long[] preIds) {
 		long[] allThreadIds = threadMxBean.getAllThreadIds();
-		List<Long> preList = PrimitiveArrays.asList(preIds);
+		List<Long> preList = Arrays.asList(ArrayUtils.toObject(preIds));
 		Set<Long> result = new HashSet<Long>();
 		for (long tid : allThreadIds) {
 			if (!preList.contains(tid)) {

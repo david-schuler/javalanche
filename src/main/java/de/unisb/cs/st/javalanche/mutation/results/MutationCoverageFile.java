@@ -103,7 +103,7 @@ public class MutationCoverageFile {
 	private static BiMap<String, Integer> getAllTests(
 			Collection<Set<String>> values) {
 		int key = 0;
-		BiMap<String, Integer> result = new HashBiMap<String, Integer>();
+		BiMap<String, Integer> result = HashBiMap.create();
 		for (Set<String> tests : values) {
 			for (String test : tests) {
 				if (!result.containsKey(test)) {

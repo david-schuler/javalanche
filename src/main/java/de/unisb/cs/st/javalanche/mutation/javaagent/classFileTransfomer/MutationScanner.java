@@ -23,8 +23,12 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
 import org.apache.log4j.Logger;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 
 import de.unisb.cs.st.ds.util.Util;
+import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.BytecodeInfo;
+import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.LastLineClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationScannerTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
@@ -46,6 +50,8 @@ public class MutationScanner implements ClassFileTransformer {
 			mpc);
 
 	private MutationDecision md = MutationDecisionFactory.SCAN_DECISION;
+
+	private static BytecodeInfo lastLineInfo = new BytecodeInfo();
 
 	static {
 		// DB must be loaded before transform method is entered. Otherwise
@@ -74,6 +80,7 @@ public class MutationScanner implements ClassFileTransformer {
 		runtime.addShutdownHook(new Thread() {
 			@Override
 			public void run() {
+				lastLineInfo.write();
 				String message1 = String.format(
 						"Got %d mutation possibilities before run.",
 						mutationPossibilitiesPre);
@@ -119,6 +126,13 @@ public class MutationScanner implements ClassFileTransformer {
 				String classNameWithDots = className.replace('/', '.');
 				logger.debug(classNameWithDots);
 				if (md.shouldBeHandled(classNameWithDots)) {
+
+					ClassReader cr = new ClassReader(classfileBuffer);
+
+					ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+					LastLineClassAdapter cv = new LastLineClassAdapter(cw,
+							lastLineInfo);
+					cr.accept(cv, ClassReader.SKIP_FRAMES);
 					classfileBuffer = mutationScannerTransformer
 							.transformBytecode(classfileBuffer);
 					logger.info(mpc.size()
@@ -127,6 +141,7 @@ public class MutationScanner implements ClassFileTransformer {
 
 					mpc.updateDB();
 					mpc.clear();
+
 				} else {
 					logger.debug("Skipping class " + className);
 				}
