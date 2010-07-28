@@ -203,6 +203,8 @@ public class MutationPropertiesTest {
 		assertFalse(IGNORE_REMOVE_CALLS);
 		assertFalse(JUNIT4_MODE);
 		assertThat(TEST_PERMUTATIONS, is(10));
+		assertTrue(IGNORE_ADAPTED_JUMPS);
+		assertTrue(IGNORE_ADAPTED_REPLACE);
 	}
 
 }

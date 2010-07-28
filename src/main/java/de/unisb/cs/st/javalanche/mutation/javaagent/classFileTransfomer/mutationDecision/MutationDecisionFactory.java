@@ -40,7 +40,7 @@ public class MutationDecisionFactory {
 					|| classNameWithDots
 							.startsWith("org.mozilla.javascript.gen.c")
 					|| (MutationProperties.IGNORE_PREFIX.length() > 0 && classNameWithDots
-							.startsWith(MutationProperties.IGNORE_PREFIX))) {
+							.matches(MutationProperties.IGNORE_PREFIX))) {
 				return false;
 			}
 			if (classNameWithDots.contains(TEST_PACKAGE)) {

@@ -4,7 +4,7 @@
 	<groupId>de.st.cs.unisb</groupId>
 	<artifactId>javalanche-mutation</artifactId>
 	<packaging>jar</packaging>
-	<version>0.3.6</version>
+	<version>0.3.7</version>
 	<name>Javalanche</name>
 	<url>http://javalanche.org</url>
 
@@ -333,23 +333,22 @@
 			<artifactId>bytecodeTransformer</artifactId>
 			<version>0.1</version>
 		</dependency>
-
 		<dependency>
 			<groupId>de.unisb.cs.st.javalanche.invariants</groupId>
 			<artifactId>invariants</artifactId>
 			<version>0.1</version>
 		</dependency>
-
 		<dependency>
 			<groupId>de.st.cs.unisb.ds</groupId>
 			<artifactId>ds-util</artifactId>
-			<version>0.1</version>
+			<version>0.3</version>
 		</dependency>
 
+				
 		<dependency>
-			<groupId>com.google.code.google-collections</groupId>
-			<artifactId>google-collect</artifactId>
-			<version>snapshot-20080530</version>
+			<groupId>com.google.collections</groupId>
+			<artifactId>google-collections</artifactId>
+			<version>1.0</version>
 		</dependency>
 
 		<dependency>

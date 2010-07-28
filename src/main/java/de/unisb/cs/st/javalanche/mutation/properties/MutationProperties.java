@@ -130,7 +130,7 @@ public class MutationProperties {
 	public static final String STOP_AFTER_FIRST_FAIL_KEY = "javalanche.stop.after.first.fail";
 
 	public static final boolean STOP_AFTER_FIRST_FAIL = getPropertyOrDefault(
-			STOP_AFTER_FIRST_FAIL_KEY, false);
+			STOP_AFTER_FIRST_FAIL_KEY, true);
 
 	private static final String DEFAULT_TIMEOUT_IN_SECONDS_KEY = "javalanche.mutation.default.timeout";
 
