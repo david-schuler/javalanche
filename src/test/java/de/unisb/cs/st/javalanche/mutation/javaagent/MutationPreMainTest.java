@@ -157,6 +157,7 @@ public class MutationPreMainTest {
 		Instrumentation mock = createMock(Instrumentation.class);
 		MutationProperties.RUN_MODE = EVOLUTION;
 		mock.addTransformer(isA(MutationFileTransformer.class));
+		mock.addTransformer(isA(CoverageTransformer.class));
 		replay(mock);
 		System.setProperty(MutationProperties.CLASSES_TO_MUTATE_KEY, "aaa");
 		MutationPreMain.premain("", mock);
