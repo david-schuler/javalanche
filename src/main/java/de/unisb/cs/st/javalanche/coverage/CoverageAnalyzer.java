@@ -76,7 +76,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			mc.id = m.getId();
 			// mc.shortString = m.toShortString();
 			mc.killed = m.isKilled();
-			mc.classInit = m.isClassInit();
+			//mc.classInit = m.isClassInit();
 			mc.className = m.getClassName();
 			mc.lineNumber = m.getLineNumber();
 			mc.mutationForLine = m.getMutationForLine();
