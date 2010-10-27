@@ -15,6 +15,7 @@ import com.google.common.base.Joiner;
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.BytecodeInfo;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
 
@@ -59,7 +60,7 @@ public class TestElseIf extends BaseTestJump {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
 		MutationsClassAdapter cv = new MutationsClassAdapter(cw, BytecodeInfo
-				.read());
+				.read(), new MutationManager());
 		cr.accept(cv, ClassReader.SKIP_FRAMES);
 		byte[] result = cw.toByteArray();
 		String transformed = AsmUtil.checkClass(result);

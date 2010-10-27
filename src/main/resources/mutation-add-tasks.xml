@@ -68,13 +68,13 @@
 	</target>
 	
 	
-	<target name="evaluate" description="* evaluate different schemes. As specified in property id.file">
+	<target name="evaluate" description="* evaluate different schemes files, as specified in property -Did.file. The revision is specified with the property -Drevision">
 		<java classname="de.unisb.cs.st.javalanche.mutation.adaptedMutations.analyze.TestPrioritizer" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
 			<sysproperty key="javalanche.project.source.dir" value="src/java" /> <!--TODO-->
 						
 			<sysproperty key="evalutation.file" value="/scratch/schuler/projects/project-extractor/report/evaluation-data.csv" /> <!--TODO-->
-			<sysproperty key="revision" value="1229" /> <!--TODO-->
+			<sysproperty key="revision" value="${revision}" /> <!--TODO-->
 			<sysproperty key="mutation.file.list" value="${id.file}" /> <!--TODO-->
 			<classpath>
 				<path refid="mutation.classpath" />

@@ -12,6 +12,7 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.hibernate.classic.Session;
 
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
@@ -22,19 +23,25 @@ public class CsvWriter {
 	private static Logger logger = Logger.getLogger(CsvWriter.class);
 
 	public static void main(String[] args) throws IOException {
-		Set<Long> covered = MutationCoverageFile.getCoveredMutations();
-		List<Long> mutationIds = QueryManager.getMutationsWithoutResult(
-				covered, 0);
-		logger.info("Got " + mutationIds.size() + " mutation ids.");
+		// Set<Long> covered = MutationCoverageFile.getCoveredMutations();
+		// List<Long> mutationIds = QueryManager.getMutationsWithoutResult(
+		// covered, 0);
+
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		List<Mutation> mutations = QueryManager.getMutationsForProject(
+				MutationProperties.PROJECT_PREFIX, session);
+
+		logger.info("Got " + mutations.size() + " mutation ids.");
 		List<String> lines = new ArrayList<String>();
 		lines.add(Mutation.getCsvHead());
-		Session session = HibernateUtil.getSessionFactory().openSession();
 		int counter = 0;
 		int flushs = 0;
 		StopWatch stp = new StopWatch();
-		for (Long id : mutationIds) {
-			Mutation mutation = QueryManager.getMutationByID(id, session);
-			lines.add(mutation.getCsvString());
+		for (Mutation mutation : mutations) {
+			// Mutation mutation = QueryManager.getMutationByID(id, session);
+			if (mutation.isKilled()) {
+				lines.add(mutation.getCsvString());
+			}
 			counter++;
 			if (counter > 20) {
 				counter = 0;

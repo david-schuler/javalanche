@@ -21,6 +21,11 @@ package de.unisb.cs.st.javalanche.mutation.runtime.testDriver;
 import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
 import static de.unisb.cs.st.javalanche.mutation.properties.RunMode.*;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
@@ -38,10 +43,13 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
+
+import sun.java2d.pipe.BufferedPaints;
 
 import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.ds.util.io.XmlIo;
@@ -128,9 +136,34 @@ public abstract class MutationTestDriver {
 
 	private Thread shutDownThread;
 
+	private Long lastId;
+
+	private FileWriter controlFileWriter;
+
 	public static void main(String[] args) throws ClassNotFoundException,
 			InstantiationException, IllegalAccessException {
 		runFromProperty();
+	}
+
+	public MutationTestDriver() {
+		// File dir = new File(MutationProperties.OUTPUT_DIR);
+		lastId = 0l;
+		try {
+			String s = MutationProperties.MUTATION_FILE_NAME;
+			File controlFile = new File(s + "-control");
+			if (controlFile.exists()) {
+				List readLines;
+				readLines = FileUtils.readLines(controlFile);
+				if (readLines.size() > 0) {
+					String lastLine = (String) readLines
+							.get(readLines.size() - 1);
+					lastId = Long.valueOf(lastLine);
+				}
+			}
+			controlFileWriter = new FileWriter(controlFile);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -414,6 +447,14 @@ public abstract class MutationTestDriver {
 		testsStart();
 		while (mutationSwitcher.hasNext()) {
 			currentMutation = mutationSwitcher.next();
+			writeId(currentMutation);
+			boolean shouldRun = checkId(currentMutation);
+			if (!shouldRun) {
+				logger.warn("Skipping mutation. That caused JVM to go down: "
+						+ currentMutation);
+				setShutdownResult(currentMutation);
+				continue;
+			}
 			totalMutations++;
 			checkClasspath(currentMutation);
 			Set<String> coveredTests = MutationCoverageFile
@@ -445,6 +486,29 @@ public abstract class MutationTestDriver {
 		MutationObserver.reportAppliedMutations();
 
 		Runtime.getRuntime().removeShutdownHook(shutDownThread);
+	}
+
+	private void setShutdownResult(Mutation m) {
+		MutationTestResult mr = new MutationTestResult();
+		TestMessage t = new TestMessage("No Test",
+				"Mutation caused JVM breakdown", 0);
+		List<TestMessage> errors = new ArrayList<TestMessage>();
+		errors.add(t);
+		mr.setErrors(errors);
+		QueryManager.updateMutation(m, mr);
+	}
+
+	private boolean checkId(Mutation m) {
+		return !m.getId().equals(lastId);
+	}
+
+	private void writeId(Mutation m) {
+		try {
+			controlFileWriter.write(m.getId() + "\n");
+			controlFileWriter.flush();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private boolean checkMutations() {

@@ -263,10 +263,12 @@ public class QueryManager {
 		if (mutationInDb != null) {
 			logger.info("Mutation already contained - not saving to db: "
 					+ mutation);
+
 			assert mutationInDb.equalsWithoutIdAndResult(mutation) : "Expected mutations to be equal: "
 					+ mutation + "   " + mutationInDb;
 		} else {
 			logger.debug("Saving mutation: " + mutation);
+			// logger.info("Mehtod name: " + mutation.getMethodName().length());
 			save(mutation);
 		}
 	}

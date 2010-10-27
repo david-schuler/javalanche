@@ -31,6 +31,11 @@ public class MutationProperties {
 
 	private static Logger logger = Logger.getLogger(MutationProperties.class);
 
+	public static final String PROPERTIES_FILE_KEY = "javalanche.properties.file";
+
+	// public static final String PROPERTIES_FILE = getPropertyOrDefault(
+	// PROPERTIES_FILE_KEY, "javalanche.properties");
+
 	public static final String PROPERTIES_FILE = "javalanche.properties";
 
 	public static final Properties PROPERTIES = getProperties();
@@ -116,12 +121,6 @@ public class MutationProperties {
 
 	public static final String CURRENT_MUTATION_KEY = "javalanche.current.mutation";
 
-	// public static final String TEST_TESTSUITE_KEY =
-	// "mutation.test.testsuite";
-
-	// public static final String TEST_TESTSUITE =
-	// getProperty(TEST_TESTSUITE_KEY);
-
 	public static final String TRACE_BYTECODE_KEY = "mutation.trace";
 
 	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
@@ -130,7 +129,7 @@ public class MutationProperties {
 	public static final String STOP_AFTER_FIRST_FAIL_KEY = "javalanche.stop.after.first.fail";
 
 	public static final boolean STOP_AFTER_FIRST_FAIL = getPropertyOrDefault(
-			STOP_AFTER_FIRST_FAIL_KEY, true);
+			STOP_AFTER_FIRST_FAIL_KEY, false);
 
 	private static final String DEFAULT_TIMEOUT_IN_SECONDS_KEY = "javalanche.mutation.default.timeout";
 
@@ -162,11 +161,11 @@ public class MutationProperties {
 			IGNORE_REMOVE_CALLS_KEY, false);
 
 	public static final String IGNORE_ADAPTED_JUMPS_KEY = "javalanche.ignore.adapted.jumps";
-	public static final boolean IGNORE_ADAPTED_JUMPS = getPropertyOrDefault(
+	public static boolean IGNORE_ADAPTED_JUMPS = getPropertyOrDefault(
 			IGNORE_ADAPTED_JUMPS_KEY, true);
 
 	public static final String IGNORE_ADAPTED_REPLACE_KEY = "javalanche.ignore.adapted.replace";
-	public static final boolean IGNORE_ADAPTED_REPLACE = getPropertyOrDefault(
+	public static boolean IGNORE_ADAPTED_REPLACE = getPropertyOrDefault(
 			IGNORE_ADAPTED_REPLACE_KEY, true);
 
 	public static final File TEST_MAP_FILE = new File(OUTPUT_DIR,
@@ -312,13 +311,13 @@ public class MutationProperties {
 	public static final String TEST_FILTER_FILE_NAME_KEY = "mutation.test.filter.map";
 	public static final String TEST_FILTER_FILE_NAME = getProperty(TEST_FILTER_FILE_NAME_KEY);
 
-	public static final boolean SHOULD_FILTER_TESTS = shoudFilterTests();
+	public static final boolean SHOULD_FILTER_TESTS = shouldFilterTests();
 
 	public static final String EXPERIMENT_DATA_FILENAME_KEY = "experiment.data.filename";
 
 	public static final String EXPERIMENT_DATA_FILENAME = getProperty(EXPERIMENT_DATA_FILENAME_KEY);
 
-	private static boolean shoudFilterTests() {
+	private static boolean shouldFilterTests() {
 		if (MutationProperties.TEST_FILTER_FILE_NAME != null) {
 			File filterMapFile = new File(
 					MutationProperties.TEST_FILTER_FILE_NAME);

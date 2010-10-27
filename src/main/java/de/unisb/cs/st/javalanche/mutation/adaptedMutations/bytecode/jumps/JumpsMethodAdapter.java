@@ -238,6 +238,9 @@ public class JumpsMethodAdapter extends AbstractJumpsAdapter {
 			} else {
 				// } else {
 				l = new Label();
+				System.out
+						.println("JumpsMethodAdapter.visitJumpInsn() Setting last label "
+								+ className + " " + methodName + " ");
 				lastLabel = l;
 				// }
 				gotoLabelMap.put(label, l);

@@ -114,7 +114,7 @@ public class TestDetector {
 		String message = "Found " + map.size() + " test files.";
 		logger.info(message);
 		System.out.println(message);
-		updateExcludeFiel(map);
+		updateExcludeFile(map);
 		// XmlIo.toXML(map, MutationProperties.TEST_MAP_FILE);
 	}
 
@@ -134,7 +134,7 @@ public class TestDetector {
 		return result;
 	}
 
-	private static void updateExcludeFiel(Map<String, Integer> map) {
+	private static void updateExcludeFile(Map<String, Integer> map) {
 		Set<Entry<String, Integer>> entrySet = map.entrySet();
 		for (Entry<String, Integer> entry : entrySet) {
 			if (entry.getValue() > 0) {
@@ -153,14 +153,15 @@ public class TestDetector {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		String name = fileName.replace('/', '.');
+		String sep = System.getProperty("file.separator");
+		String name = fileName.replace(sep, ".");
 		int index = name.lastIndexOf(MutationProperties.PROJECT_PREFIX);
 		if (index >= 0 && name.toLowerCase().endsWith("java")) {
 			name = name.substring(index, name.length() - 5);
 		} else if (name.lastIndexOf('.') >= 0
 				&& name.toLowerCase().endsWith("java")) {
-			name = fileName.substring(fileName.lastIndexOf('/') + 1, fileName
-					.length() - 5);
+			name = fileName.substring(fileName.lastIndexOf('/') + 1,
+					fileName.length() - 5);
 		}
 		logger.debug(name);
 		return name;

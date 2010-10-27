@@ -65,6 +65,9 @@ public class HtmlAnalyzer {
 		}
 		String s = className.substring(className.lastIndexOf('.') + 1);
 		s = getClassName(s);
+		logger.debug("Looking for content of class " + className + " in "
+				+ files.size() + " files.");
+		logger.debug("Files: " + files);
 		for (File f : files) {
 			String name = getContaingClassName(f);
 			if (name.contains(className)) {
@@ -78,7 +81,8 @@ public class HtmlAnalyzer {
 
 	private String getContaingClassName(File f) {
 		String name = f.getAbsolutePath();
-		name = name.replace('/', '.');
+		String sep = System.getProperty("file.separator");
+		name = name.replace(sep, ".");
 		if (name.endsWith(".java")) {
 			name = name.substring(0, name.length() - 5);
 		}

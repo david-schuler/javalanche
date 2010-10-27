@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
+import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
@@ -60,8 +61,6 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 
 	public Junit4MutationTestDriver() {
 
-		System.out
-				.println("Junit4MutationTestDriver.Junit4MutationTestDriver()");
 		Runner r = null;
 		Throwable t = null;
 		try {
@@ -118,32 +117,49 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 		try {
 			Class<?> clazz;
 			clazz = Class.forName(className);
+			logger.info("Creating Runner for " + className);
 			Class<? extends Runner> runWithRunner = getRunWithRunner(clazz);
 			Constructor<? extends Runner> constructor = runWithRunner
 					.getConstructor(Class.class);
 			tcr = constructor.newInstance(clazz);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
+			// e.printStackTrace();
 		} catch (SecurityException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
+			// e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
+			// e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
+			// e.printStackTrace();
 		} catch (InstantiationException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
+			// e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
+			// e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.warn("Invocation Exception ", e);
+			throw new RuntimeException(e);
+			// e.printStackTrace();
 		}
 		return tcr;
 	}
 
 	private static Class<? extends Runner> getRunWithRunner(Class<?> clazz) {
 		RunWith runWithAnnotation = clazz.getAnnotation(RunWith.class);
-		if (runWithAnnotation == null)
-			return BlockJUnit4ClassRunner.class;
+		if (runWithAnnotation == null) {
+			AllDefaultPossibilitiesBuilder builder = new AllDefaultPossibilitiesBuilder(
+					true);
+			try {
+				return builder.runnerForClass(clazz).getClass();
+			} catch (Throwable e) {
+				throw new RuntimeException(e);
+			}
+			// return BlockJUnit4ClassRunner.class;
+		}
 		Class<? extends Runner> runner = runWithAnnotation.value();
 		if (!runnerImplementsFilterable(runner))
 			return BlockJUnit4ClassRunner.class;

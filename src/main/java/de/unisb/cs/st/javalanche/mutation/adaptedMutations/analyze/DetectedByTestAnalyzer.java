@@ -18,7 +18,7 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
 
-//analyzeResults -Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.mutation.adaptedMutations.analyze.DetectedByTestAnalyzer 
+//analyzeResults -Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.mutation.adaptedMutations.analyze.DetectedByTestAnalyzer  -Djavalanche.maxmemory=5g 
 public class DetectedByTestAnalyzer implements MutationAnalyzer {
 
 	private static final String NO_TEST = "NO_TEST";

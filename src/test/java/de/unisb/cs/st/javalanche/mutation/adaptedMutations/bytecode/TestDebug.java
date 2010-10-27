@@ -25,6 +25,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsClassAdapte
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
 
 public class TestDebug {
@@ -73,7 +74,8 @@ public class TestDebug {
 		// MutationTransformer m = new MutationTransformer();
 		// m.transformBytecode(bytes);
 		ClassVisitor cv = new CheckClassAdapter(cw);
-		cv = new MutationsClassAdapter(cv, BytecodeInfo.read());
+		cv = new MutationsClassAdapter(cv, BytecodeInfo.read(),
+				new MutationManager());
 		cr.accept(cv, ClassReader.SKIP_FRAMES);
 		byte[] result = cw.toByteArray();
 		System.out.println(result.length + "  " + bytes.length);

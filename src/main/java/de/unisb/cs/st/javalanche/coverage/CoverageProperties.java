@@ -48,7 +48,7 @@ public final class CoverageProperties {
 
 	private static final String TRACE_RETRURNS_KEY = "javalanche.trace.returns";
 	public static final boolean TRACE_RETURNS = MutationProperties
-			.getPropertyOrDefault(TRACE_RETRURNS_KEY, false);
+			.getPropertyOrDefault(TRACE_RETRURNS_KEY, true);
 
 	private static final String TRACE_LINES_KEY = "javalanche.trace.lines";
 	public static final boolean TRACE_LINES = MutationProperties

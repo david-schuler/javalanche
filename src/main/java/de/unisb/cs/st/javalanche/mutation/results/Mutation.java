@@ -21,6 +21,7 @@ package de.unisb.cs.st.javalanche.mutation.results;
 import java.io.Serializable;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -97,6 +98,7 @@ public class Mutation implements Serializable {
 	/**
 	 * Name of the method that contains the mutation.
 	 */
+	@Column(length = 1000)
 	private String methodName;
 
 	/**

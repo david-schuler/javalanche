@@ -14,6 +14,7 @@ import org.softevo.util.collections.ArrayList;
 import au.com.bytecode.opencsv.CSVReader;
 import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.ds.util.prioritization.Prioritizer;
+import de.unisb.cs.st.ds.util.prioritization.Prioritizer.Mode;
 
 public class AnalyzeFiles {
 
@@ -40,7 +41,8 @@ public class AnalyzeFiles {
 				}
 			}
 		}
-		List<String> prioritize = Prioritizer.prioritize(data);
+		List<String> prioritize = Prioritizer.prioritize(data,
+				Mode.REPEAT_AFTER_SATISFIED);
 
 	}
 

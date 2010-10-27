@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,14 +14,24 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.ds.util.prioritization.Prioritizer;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
+import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
+import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
 import de.unisb.cs.st.javalanche.mutation.results.TestName;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 public class TestPrioritizer {
@@ -33,21 +44,138 @@ public class TestPrioritizer {
 	private static final String MUTATION_FILE_KEY = "mutation.file.list";
 
 	public static void main(String[] args) throws IOException {
+		// analyzeTests();
+		doExperiment();
+	}
+
+	private static void analyzeTests() throws IOException {
+		Map<String, Set<Long>> detectedByTestCase = DetectedByTestAnalyzer
+				.getDetectedByTestCaseMap();
+		List<TestName> testsForProject = QueryManager.getTestsForProject();
+		Set<String> tests = new HashSet<String>();
+		for (TestName testName : testsForProject) {
+			tests.add(testName.getName());
+		}
+
+		String fileName = Util.getPropertyOrFail(EVALUATION_DATA_FILE_KEY);
+		File evaluationFile = new File(fileName);
+		int expectedRevision = Integer.parseInt(Util
+				.getPropertyOrFail(REVISION_KEY));
+		Map<String, Integer> detectingTestCases = getDetectingTestCases(
+				evaluationFile, expectedRevision);
+		Set<String> keySet = detectingTestCases.keySet();
+		logger.info("Tests size" + tests.size());
+		for (String key : keySet) {
+			if (!tests.contains(key)) {
+				logger.warn("Test not contained in db " + key);
+			}
+		}
+		Set<Long> coveredMutations = MutationCoverageFile.getCoveredMutations();
+		Set<String> allTests = new HashSet<String>();
+		Multimap<String, Long> testMap = HashMultimap.create();
+		for (Long id : coveredMutations) {
+			Set<String> testsForId = MutationCoverageFile.getCoverageDataId(id);
+			allTests.addAll(testsForId);
+			for (String testName : testsForId) {
+				testMap.put(testName, id);
+			}
+		}
+		Multimap<String, Long> detectingTests = HashMultimap.create();
+		Session session = HibernateUtil.openSession();
+		// Session session =
+		// HibernateServerUtil.getSessionFactory(Server.KUBRICK).openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("FROM Mutation WHERE className LIKE 'org.jaxen%'");
+		@SuppressWarnings("unchecked")
+		List<Mutation> mutations = query.list();
+
+		for (Mutation mutation : mutations) {
+			if (mutation.isKilled()) {
+				MutationTestResult mutationResult = mutation
+						.getMutationResult();
+				List<TestMessage> all = new ArrayList<TestMessage>();
+				Collection<TestMessage> errors = mutationResult.getErrors();
+				Collection<TestMessage> failures = mutationResult.getFailures();
+				all.addAll(errors);
+				all.addAll(failures);
+				for (TestMessage testMessage : all) {
+					String testCaseName = testMessage.getTestCaseName();
+					detectingTests.put(testCaseName, mutation.getId());
+				}
+			}
+		}
+		tx.commit();
+		session.close();
+
+		logger.info("Test that cover mutations " + allTests.size());
+		for (String key : keySet) {
+			if (!testMap.containsKey(key)) {
+				logger.warn("Test is not covering any mutation: " + key);
+			}
+			if (key.contains("XPathReader")) {
+				logger.info("Ids for " + key + " - " + testMap.get(key).size());
+			}
+		}
+		logger.info("Test that detect mutations " + allTests.size());
+		for (String key : testMap.keySet()) {
+			if (!detectingTests.containsKey(key)) {
+				logger.warn("Test is not detecting any mutation: " + key);
+			}
+			// if (key.contains("XPathReader")) {
+			int covered = testMap.get(key).size();
+			int detected = detectingTests.get(key).size();
+			logger.info("Test: " + key + " covers " + covered + " and detects "
+					+ detected + " Mutations (" + ((double) detected) / covered
+					+ "%)");
+			// }
+		}
+	}
+
+	private static void doExperiment() throws IOException {
 		List<File> mutationFiles = getMutationFiles();
 		List<String> result = new ArrayList<String>();
+		result.add("file_name,percent,bugs,bugs_percent");
 		int expectedRevision = Integer.parseInt(Util
 				.getPropertyOrFail(REVISION_KEY));
 		String fileName = Util.getPropertyOrFail(EVALUATION_DATA_FILE_KEY);
 		File evaluationFile = new File(fileName);
 		Map<String, Set<Long>> detectedByTestCase = DetectedByTestAnalyzer
 				.getDetectedByTestCaseMap();
+		handleMap(detectedByTestCase);
+
+		Map<String, Integer> detectingTestCase = getDetectingTestCases(
+				evaluationFile, expectedRevision);
+		// System.out.println("TestPrioritizer.doExperiment()");
+		// System.out.println(Joiner.on('\n').join(detectedByTestCase.keySet()));
+		// System.out.println(Joiner.on('\n').join(detectingTestCase.keySet()));
+		// if (true) {
+		// throw new RuntimeException();
+		// }
 		for (File mutationFile : mutationFiles) {
 			logger.info("Analyzing file: " + mutationFile);
-			result.addAll(evaluatePrioritization(evaluationFile,
+			result.addAll(evaluatePrioritization(detectingTestCase,
 					expectedRevision, mutationFile, detectedByTestCase));
 			logger.info("Finished analyzing file: " + mutationFile);
 		}
 		FileUtils.writeLines(new File("evaluationresults.csv"), result);
+	}
+
+	private static void handleMap(Map<String, Set<Long>> map) {
+		Set<String> keys = new HashSet(map.keySet());
+		for (String key : keys) {
+			if (!key.startsWith("org.jaxen")) {
+				String newKey = getNewKey(key);
+				Set<Long> remove = map.remove(key);
+				map.put(newKey, remove);
+			}
+		}
+	}
+
+	public static String getNewKey(String key) {
+		int i = key.indexOf("jaxen");
+		String result = "org." + key.substring(i);
+		return result;
 	}
 
 	private static List<File> getMutationFiles() {
@@ -72,9 +200,10 @@ public class TestPrioritizer {
 		return files;
 	}
 
-	private static List<String> evaluatePrioritization(File evaluationFile,
-			int expectedRevision, File mutationFile,
-			Map<String, Set<Long>> detectedByTestCase) throws IOException {
+	private static List<String> evaluatePrioritization(
+			Map<String, Integer> detectingTestCase, int expectedRevision,
+			File mutationFile, Map<String, Set<Long>> detectedByTestCase)
+			throws IOException {
 
 		logger.info("Test that detect mutations " + detectedByTestCase.size()
 				+ " tests");
@@ -85,8 +214,6 @@ public class TestPrioritizer {
 		List<String> prioritization = getPrioritization(detectedByTestCase,
 				mutations, allTests);
 		logger.info("Prioritization size " + prioritization.size() + " tests");
-		Map<String, Integer> detectingTestCase = getDetectingTestCases(
-				evaluationFile, expectedRevision);
 
 		return evaluate(mutationFile, prioritization, detectingTestCase);
 	}
@@ -96,9 +223,13 @@ public class TestPrioritizer {
 		List<String> allTests = new ArrayList<String>();
 		for (TestName testName : testsForProject) {
 			String s = testName.getName();
+			if (!s.startsWith("org.jaxen")) {
+				s = getNewKey(s);
+			}
 			allTests.add(s);
 		}
 		Collections.shuffle(allTests);
+
 		return allTests;
 	}
 
@@ -181,7 +312,8 @@ public class TestPrioritizer {
 			list.add("-2l");
 		}
 		logger.info("Prioritization for " + data.size() + " entries");
-		List<String> prioritize = Prioritizer.prioritize(data);
+		List<String> prioritize = Prioritizer.prioritize(data,
+				Prioritizer.Mode.REPEAT_AFTER_SATISFIED);
 		return prioritize;
 	}
 

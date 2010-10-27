@@ -43,7 +43,6 @@ import de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator;
  * run.
  * 
  * @author David Schuler
- * 
  */
 public class MutationsForRun {
 
@@ -78,7 +77,8 @@ public class MutationsForRun {
 		File f = new File(MutationProperties.OUTPUT_DIR + '/'
 				+ MutationTaskCreator.MUTATION_TASK_PROJECT_FILE_PREFIX
 				+ "-01.txt");
-		System.out.println("MutationsForRun.findFile() " + f.getAbsolutePath());
+		// System.out.println("MutationsForRun.findFile() " +
+		// f.getAbsolutePath());
 		if (!f.exists()) {
 			throw new RuntimeException("Did not find file " + f);
 		}
@@ -89,7 +89,7 @@ public class MutationsForRun {
 	public MutationsForRun(String fileName, boolean filter) {
 		mutations = getMutationsForRun(fileName, filter);
 		logger.info("Got " + mutations.size() + " mutations from file: "
-				+ fileName);
+				+ fileName);// + " Trace " + Util.getStackTraceString()
 		List<Long> ids = new ArrayList<Long>();
 		for (Mutation m : mutations) {
 			logger.debug("Mutation ID: " + m.getId());
@@ -190,9 +190,8 @@ public class MutationsForRun {
 			for (Mutation m : mutations) {
 				session.load(m, m.getId());
 				if (m.getMutationResult() != null) {
-					logger
-							.debug("Found mutation that already has a mutation result "
-									+ m);
+					logger.debug("Found mutation that already has a mutation result "
+							+ m);
 					toRemove.add(m);
 				}
 			}

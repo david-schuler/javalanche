@@ -55,8 +55,9 @@ public class MutationsClassAdapter extends ClassAdapter {
 
 	private BytecodeInfo bytecodeInfo;
 
-	public MutationsClassAdapter(ClassVisitor cv, BytecodeInfo lastLineInfo) {
-		this(cv, new MutationManager(), lastLineInfo);
+	public MutationsClassAdapter(ClassVisitor cv, BytecodeInfo lastLineInfo,
+			MutationManager mm) {
+		this(cv, mm, lastLineInfo);
 	}
 
 	public MutationsClassAdapter(ClassVisitor cv, MutationManager mm,

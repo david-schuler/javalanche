@@ -1,5 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.st.cs.unisb</groupId>
 	<artifactId>javalanche-mutation</artifactId>
@@ -7,13 +7,13 @@
 	<version>0.3.7</version>
 	<name>Javalanche</name>
 	<url>http://javalanche.org</url>
-
+	
 	<description> Javalanche is an open source framework for mutation testing 
 	Java programs with a special focus on automation, efficiency, and 
 	effectiveness. In particular, Javalanche assesses the impact of individual 
 	mutations to effectively weed out equivalent mutants
 	</description>
-
+	
 	<developers>
 		<developer>
 			<id>schuler</id>
@@ -29,7 +29,7 @@
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 		</properties
 	-->
-
+	
 	<repositories>
 		<repository>
 			<releases>
@@ -46,7 +46,7 @@
 			<layout>default</layout>
 		</repository>
 	</repositories>
-
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -57,28 +57,29 @@
 					<target>1.5</target>
 				</configuration>
 			</plugin>
-
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<forkMode>pertest</forkMode>
-
+					<!--forkMode>pertest</forkMode-->
+					<!--
 					<argLine>-javaagent:./target/javaagent.jar -Dinvariant.mode=OFF
 						-Dmutation.run.mode=mutation -Dmutation.coverage.information=false</argLine>
+					-->
 					<useSystemClassLoader>true</useSystemClassLoader>
 					<excludes>
 						<exclude>**/TestProperties.java</exclude>
 						<exclude>**/TestUtil.java</exclude>
-						<exclude>**/CheckIntegration1ResultsTest.java</exclude>
-						<exclude>**/TestJtopasClass.java</exclude>
-						<exclude>**/TestLangUtil.java</exclude>
-						<exclude>**/TestLangUtil$TestClassLoader*</exclude>
-						<exclude>**/TestJtopasClass$TestingClassLoader*</exclude>
+						<exclude>**/BaseBytecodeTest.java</exclude>
+						<exclude>**/TestDebug.java</exclude>
+						<exclude>**/TestSettingsTest.java</exclude>
+						<exclude>**/TestDebug3.java</exclude>
+
 					</excludes>
 				</configuration>
 			</plugin>
-
+			
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
@@ -91,8 +92,7 @@
 						<execution> <id>instrument</id> <phase>site</phase> <goals>
 						<goal>instrument</goal> <goal>cobertura</goal> </goals>
 						</execution>
-					-->
-				</executions>
+					--></executions>
 				<configuration>
 					<instrumentation>
 						<excludes>
@@ -103,7 +103,7 @@
 					</instrumentation>
 				</configuration>
 			</plugin>
-
+			
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 				<executions>
@@ -127,7 +127,7 @@
 						<exclude>*~</exclude>
 						<exclude>log4j*properties</exclude>
 					</excludes>
-
+				
 				</configuration>
 			</plugin>
 
@@ -208,12 +208,12 @@
 
 
 
-
+		
 		</plugins>
 
-
+	
 	</build>
-
+	
 	<reporting>
 		<plugins>
 			<!--
@@ -228,31 +228,30 @@
 
 			<!--
 				plugin> <artifactId>maven-surefire-plugin</artifactId> </plugin
-			-->
-		</plugins>
-
+			--></plugins>
+	
 	</reporting>
-
+	
 	<dependencies>
-
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.7</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>asm</groupId>
 			<artifactId>asm-all</artifactId>
 			<version>3.1</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>1.4</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -263,13 +262,13 @@
 			<dependency> <groupId>ant</groupId> <artifactId>ant</artifactId>
 			<version>1.6.5</version> </dependency>
 		-->
-
+		
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 			<version>1.2.2</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate</artifactId>
@@ -285,13 +284,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>c3p0</groupId>
 			<artifactId>c3p0</artifactId>
 			<version>0.9.1.1</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-annotations</artifactId>
@@ -302,32 +301,32 @@
 			<artifactId>hibernate-commons-annotations</artifactId>
 			<version>3.3.0.ga</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-tools</artifactId>
 			<version>3.2.0.beta9a</version>
 		</dependency>
 
-
+		
 		<dependency>
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.1</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>nightly</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.prefuse</groupId>
 			<artifactId>prefuse</artifactId>
 			<version>beta-20060220</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>de.unisb</groupId>
 			<artifactId>bytecodeTransformer</artifactId>
@@ -341,34 +340,34 @@
 		<dependency>
 			<groupId>de.st.cs.unisb.ds</groupId>
 			<artifactId>ds-util</artifactId>
-			<version>0.3</version>
+			<version>0.3.1</version>
 		</dependency>
-
 				
+		
 		<dependency>
 			<groupId>com.google.collections</groupId>
 			<artifactId>google-collections</artifactId>
 			<version>1.0</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>de.unisb.cs.st</groupId>
 			<artifactId>adabu2-tracer</artifactId>
 			<version>0.4-modified</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>java2html</groupId>
 			<artifactId>j2h</artifactId>
 			<version>1.3.1</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.softevo</groupId>
 			<artifactId>util</artifactId>
@@ -384,21 +383,21 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.jgrapht</groupId>
 			<artifactId>jgrapht-jdk1.5</artifactId>
 			<version>0.7.3</version>
 		</dependency>
 
-
+		
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
 			<version>2.3</version>
 			<!--scope>test</scope-->
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
@@ -412,7 +411,7 @@
 			<version>3.2.1</version>
 		</dependency>
 
-
+		
 		<dependency>
 			<groupId>org.eclipse.jdt</groupId>
 			<artifactId>core</artifactId>
@@ -468,14 +467,18 @@
 			<artifactId>ui</artifactId>
 			<version>3.6.0</version>
 		</dependency>
+		<!--dependency>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+			<version>1.1-beta-12</version>
+		</dependency-->
 		
-				
 		<dependency>
 			<groupId>net.sf.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
 			<version>2.0</version>
 		</dependency>
-		
 
+	
 	</dependencies>
 </project>

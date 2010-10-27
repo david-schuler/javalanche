@@ -37,6 +37,7 @@ import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibil
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationObserver;
 import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
@@ -97,7 +98,8 @@ public class BaseBytecodeTest {
 		ClassReader cr = new ClassReader(bytes);
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		ClassVisitor cv = new MutationsClassAdapter(cw,
-				new BytecodeInfo());
+ new BytecodeInfo(),
+				new MutationManager());
 		cv = new RemoveSystemExitTransformer.RemoveSystemExitClassAdapter(cv);
 		cr.accept(cv, ClassReader.SKIP_FRAMES);
 		byte[] result = cw.toByteArray();
