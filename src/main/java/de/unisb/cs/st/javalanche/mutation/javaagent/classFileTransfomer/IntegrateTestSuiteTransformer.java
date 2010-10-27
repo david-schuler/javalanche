@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2009 Saarland University
+* Copyright (C) 2010 Saarland University
 * 
 * This file is part of Javalanche.
 * 
