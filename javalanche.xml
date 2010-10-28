@@ -12,9 +12,7 @@
 
 	<property name="project.prefix" value="${prefix}"/>
 	<property name="project.test.suite" value="${testsuite}"/>
-	
-	<!--<property name="javalanche.location" value="/Users/schuler/workspace/mutationTest/" /> -->
-	
+<!--<property name="javalanche.location" value="/Users/schuler/workspace/javalanche/" /> -->
 	<property name="javalanche.location" value="${javalanche}" />
 	<property name="javalanche.dist.dir" value="${javalanche}" />
 	

@@ -16,7 +16,6 @@
 	
 	  
 	<path id="mutation.classpath">
-		<!--pathelement path="/Users/schuler/workspace/mutationTest/target/classes/" /-->
 		<pathelement path="${javalanche.dist.dir}/src/main/resources"/>
 		<fileset dir="${mutation.jars.dir}" includes="*.jar">
 		  <include name="**/*.jar"/>
@@ -52,32 +51,18 @@
 		</antcall>
 	</target>  
 	
-	<!--target name="testTask1" description="* Test the Javalanche task. The task should behave in the same way as a regular test task.">
-		<path id="testTask.javalanche.classpath.add">
-			<path refid="mutation.classpath"/>
-		</path>
-
-		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value="-Dmutation.run.mode=off -Dmutation.package.prefix=${project.prefix}" />
-			<reference refid="testTask.javalanche.classpath.add" torefid="javalanche.classpath.add"/>
-		</antcall>
-	</target-->
-
-	
 	<target name="testTask2" description="* Test the Javalanche test runner without any bytecode modifications. All tests should pass in the Javalanche test runner.">
 		<property name="test.task.2.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="test.task.2.memory" value="-Xmx${javalanche.maxmemory}"/>
 		<property name="test.task.2.mutation.run.mode" value="-Dmutation.run.mode=test1"/>
 		<property name="test.task.2.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="test.task.2.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
-		<property name="test.task.2.verbose" value="-verbose"/>
 		
 		<path id="test.task.2.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
 		
 		<antcall target="test-javalanche">
-			<!--${test.task.2.verbose}-->
 			<param name="javalanche.arg.line" value="  ${test.task.2.mutation.javaagent} ${test.task.2.memory} ${test.task.2.mutation.run.mode} ${test.task.2.javalanche.package.prefix} ${test.task.2.javalanche.project.test.suite} " />
 			<reference refid="test.task.2.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
@@ -90,21 +75,19 @@
 		<property name="test.task.3.mutation.run.mode" value="-Dmutation.run.mode=test3"/>
 		<property name="test.task.3.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="test.task.3.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
-		<property name="test.task.3.verbose" value="-verbose"/>
 		
 		<path id="test.task.3.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
 		
 		<antcall target="test-javalanche">
-			<!--${test.task.3.verbose}-->
 			<param name="javalanche.arg.line" value="  ${test.task.3.mutation.javaagent} ${test.task.3.memory} ${test.task.3.mutation.run.mode} ${test.task.3.javalanche.package.prefix} ${test.task.3.javalanche.project.test.suite} " />
 			<reference refid="test.task.3.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>
 
 	<target name="scanProject" depends="_scanProject,_scanForTests" description="* Scan this project for classes to mutate and tests, that are not mutated. A different start directroy can be supplied with property -Djavalanche.test.base.dir=. ">
-	<!-- To this end the subdirectories of the current directorry are searched for tests.   The format of the exclude file is described in the documentation. This task produces an exclude file : mutation-files/exclude.txt.-->
+	<!-- To this end the subdirectories of the current directory are searched for tests.   The format of the exclude file is described in the documentation. This task produces an exclude file : mutation-files/exclude.txt.-->
 	</target>
 	<target name="_scanProject">
 		<property name="scan.project.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>

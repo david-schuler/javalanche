@@ -33,7 +33,7 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.cs.st.javalanche.mutation.util.HandleUnsafeMutations;
+//import de.unisb.cs.st.javalanche.mutation.util.HandleUnsafeMutations;
 
 /**
  * Creates Mutation tasks that can later be executed on multiple JVMs
@@ -209,8 +209,8 @@ public class MutationTaskCreator {
 
 	public static void main(String[] args) {
 		MutationProperties.checkProperty(MutationProperties.PROJECT_PREFIX_KEY);
-		HandleUnsafeMutations.handleUnsafeMutations(HibernateUtil
-				.getSessionFactory());
+//		HandleUnsafeMutations.handleUnsafeMutations(HibernateUtil
+//				.getSessionFactory());
 		createMutationTasks();
 	}
 

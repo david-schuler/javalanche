@@ -59,24 +59,27 @@ public class HtmlAnalyzer {
 		return report;
 	}
 
-	private Iterable<String> getClassContent(String className) {
+	private Iterable<String> getClassContent(String fullClassName) {
 		if (files == null) {
 			initFiles();
 		}
-		String s = className.substring(className.lastIndexOf('.') + 1);
-		s = getClassName(s);
-		logger.debug("Looking for content of class " + className + " in "
+		String className = fullClassName.substring(fullClassName
+				.lastIndexOf('.') + 1);
+		className = getClassName(className);
+		logger.debug("Looking for content of class " + fullClassName + " in "
 				+ files.size() + " files.");
 		logger.debug("Files: " + files);
 		for (File f : files) {
 			String name = getContaingClassName(f);
-			if (name.contains(className)) {
+			if (name.endsWith(className)) {
 				List<String> linesFromFile = Io.getLinesFromFile(f);
-				logger.debug("Got file for " + className + "  -  " + f);
+				logger.debug("Got file " + f + "for class " + fullClassName);
 				return linesFromFile;
 			}
 		}
-		return Arrays.asList("No source found for " + className);
+		String msg = "No source found for " + fullClassName;
+		logger.debug(msg);
+		return Arrays.asList(msg);
 	}
 
 	private String getContaingClassName(File f) {
