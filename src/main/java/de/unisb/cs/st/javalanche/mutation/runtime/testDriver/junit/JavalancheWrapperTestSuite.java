@@ -1,6 +1,6 @@
 package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit;
 
-import java.lang.adabu2.Tracer;
+//import java.lang.adabu2.Tracer;
 
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -11,15 +11,12 @@ import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
-import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
-
-@RunWith(PlaceholderTestSuite.class)
-public class PlaceholderTestSuite extends Runner {
+@RunWith(JavalancheWrapperTestSuite.class)
+public class JavalancheWrapperTestSuite extends Runner {
 
 	private Runner r;
 
-	public PlaceholderTestSuite(Class<?> c) {
+	public JavalancheWrapperTestSuite(Class<?> c) {
 		// if (MutationProperties.TEST_CLASSES == null
 		// && MutationProperties.TEST_METHODS == null) {
 		// throw new IllegalStateException(
@@ -28,7 +25,6 @@ public class PlaceholderTestSuite extends Runner {
 		// "Either property %s or %s has to be set when running this test suite",
 		// TEST_CLASSES_KEY, TEST_METHODS_KEY));
 		// }
-		System.out.println("PlaceholderTestSuite.PlaceholderTestSuite()");
 	}
 
 	@Test
@@ -68,26 +64,20 @@ public class PlaceholderTestSuite extends Runner {
 				@Override
 				public void testStarted(Description description)
 						throws Exception {
-					Tracer.setNewMethod(true);
+					// Tracer.setNewMethod(true);
 					super.testStarted(description);
-					System.out
-							.println("PlaceholderTestSuite.run(...).new RunListener() {...}.testStarted()  Running "
-									+ description);
+
 				}
 
 				@Override
 				public void testRunStarted(Description description)
 						throws Exception {
-					System.out
-							.println("PlaceholderTestSuite.run(...).new RunListener() {...}.testRunStarted()");
 					super.testRunStarted(description);
 				}
 
 				@Override
 				public void testRunFinished(Result result) throws Exception {
-					System.out
-							.println("PlaceholderTestSuite.run(...).new RunListener() {...}.testRunFinished()");
-					Tracer.setTestEnd(true);
+					// Tracer.setTestEnd(true);
 					super.testRunFinished(result);
 				}
 			});

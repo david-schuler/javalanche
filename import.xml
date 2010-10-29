@@ -2,7 +2,8 @@
 
 	<dirname property="javalanche.dir" file="${ant.file.javalanche-import}" />
 	<property name="lib.dir" value="${javalanche.dist.dir}/lib/" />
-
+	<property name="javalanche.wrapper.testsuite" value="de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.PlaceholderTestSuite" />
+	
 
 	<path id="mutation.classpath">
 		<pathelement path="src/main/resources"/>
@@ -21,7 +22,7 @@
 	</target>
 	
 	
-	<target name="startHsql" depends="">
+	<target name="startHsql" depends="" description="* Starts a HSQL database.">
 		<java classname="org.hsqldb.Server" fork="true" spawn="true">
 			<arg line="-database.0 file:${javalanche.dir}/db-data/mutation_test -dbname.0 mt" />
 			<classpath>
@@ -30,13 +31,12 @@
 		</java>
 	</target>
 	
-	<target name="stopHsql">
+	<target name="stopHsql" description="* Stops the HSQL database.">
 		<sql classpathref="mutation.classpath" driver="org.hsqldb.jdbcDriver" 
 		url="jdbc:hsqldb:hsql://127.0.0.1/mt" userid="sa" password="" autocommit="true">SHUTDOWN</sql>
 	</target>
 	
-	
-	<property name="proj.shortname" value="jvl-mu"/>
+	<property name="proj.shortname" value="javalanche"/>
 
 	<!-- Hibernate Tools import TODO -->
 	<taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" classpathref="mutation.classpath" />
