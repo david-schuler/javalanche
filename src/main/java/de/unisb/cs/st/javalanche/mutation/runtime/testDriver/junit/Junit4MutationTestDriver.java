@@ -64,7 +64,7 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 		Runner r = null;
 		Throwable t = null;
 		try {
-			r = Junit4Util.getRuner();
+			r = Junit4Util.getRunner();
 		} catch (ClassNotFoundException e) {
 			t = e;
 		} catch (InitializationError e) {

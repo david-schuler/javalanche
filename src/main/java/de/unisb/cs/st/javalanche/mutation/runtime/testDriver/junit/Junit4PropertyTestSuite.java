@@ -44,7 +44,7 @@ public class Junit4PropertyTestSuite extends Runner {
 	private Runner getRunner() {
 		if (r == null) {
 			try {
-				r = Junit4Util.getRuner();
+				r = Junit4Util.getRunner();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (InitializationError e) {

@@ -121,7 +121,7 @@ public class MutationProperties {
 
 	public static final String CURRENT_MUTATION_KEY = "javalanche.current.mutation";
 
-	public static final String TRACE_BYTECODE_KEY = "mutation.trace";
+	public static final String TRACE_BYTECODE_KEY = "javalanche.trace.bytecode";
 
 	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
 			TRACE_BYTECODE_KEY, false);

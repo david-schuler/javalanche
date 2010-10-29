@@ -1,5 +1,6 @@
 package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
+import org.junit.internal.runners.SuiteMethod;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
@@ -24,7 +26,7 @@ public class Junit4Util {
 
 	private static Logger logger = Logger.getLogger(Junit4Util.class);
 
-	public static Runner getRuner() throws ClassNotFoundException,
+	public static Runner getRunner() throws ClassNotFoundException,
 			InitializationError {
 		Class<?> forName = null;
 		String testSuite = MutationProperties.TEST_SUITE;
@@ -37,9 +39,35 @@ public class Junit4Util {
 		} else {
 			logger.info("Getting test suite for name: " + testSuite);
 			forName = Class.forName(testSuite);
-			r = new Suite(forName, new AllDefaultPossibilitiesBuilder(false));
+			try {
+				Method suite = getSuiteMethod(forName);
+				if (suite != null) {
+					r = new SuiteMethod(forName);
+				} else {
+					r = new AllDefaultPossibilitiesBuilder(false)
+							.runnerForClass(forName);
+				}
+				if (r == null) {
+					r = new Suite(forName, new AllDefaultPossibilitiesBuilder(
+							false));
+				}
+			} catch (Throwable e) {
+				// e.printStackTrace();
+				throw new RuntimeException(e);
+			}
 		}
 		return r;
+	}
+
+	private static Method getSuiteMethod(Class<?> forName) {
+		Method[] methods = forName.getMethods();
+		for (Method method : methods) {
+			if (method.getName().equals("suite")
+					&& method.getParameterTypes().length == 0) {
+				return method;
+			}
+		}
+		return null;
 	}
 
 	private static Runner getClassesRunner(String testClasses)
@@ -51,8 +79,8 @@ public class Junit4Util {
 			Class<?> clazz = Class.forName(className);
 			classes.add(clazz);
 		}
-		r = new Suite(new AllDefaultPossibilitiesBuilder(false), classes
-				.toArray(new Class[0]));
+		r = new Suite(new AllDefaultPossibilitiesBuilder(false),
+				classes.toArray(new Class[0]));
 		return r;
 	}
 

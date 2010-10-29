@@ -20,14 +20,15 @@ public class PlaceholderTestSuite extends Runner {
 	private Runner r;
 
 	public PlaceholderTestSuite(Class<?> c) {
-		if (MutationProperties.TEST_CLASSES == null
-				&& MutationProperties.TEST_METHODS == null) {
-			throw new IllegalStateException(
-					String
-							.format(
-									"Either property %s or %s has to be set when running this test suite",
-									TEST_CLASSES_KEY, TEST_METHODS_KEY));
-		}
+		// if (MutationProperties.TEST_CLASSES == null
+		// && MutationProperties.TEST_METHODS == null) {
+		// throw new IllegalStateException(
+		// String
+		// .format(
+		// "Either property %s or %s has to be set when running this test suite",
+		// TEST_CLASSES_KEY, TEST_METHODS_KEY));
+		// }
+		System.out.println("PlaceholderTestSuite.PlaceholderTestSuite()");
 	}
 
 	@Test
@@ -43,7 +44,7 @@ public class PlaceholderTestSuite extends Runner {
 	private Runner getRunner() {
 		if (r == null) {
 			try {
-				r = Junit4Util.getRuner();
+				r = Junit4Util.getRunner();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (InitializationError e) {
