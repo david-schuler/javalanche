@@ -2,17 +2,24 @@ package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 
+import com.google.common.base.Joiner;
+
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.Junit3Suite;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.Junit3TestCase2;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.Junit4Suite;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.Junit4TestCase2;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.TestCaseForJunit4Test;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.TestCaseForJunitTest;
 
 public class JavalancheWrapperTestSuiteTest {
 
@@ -36,8 +43,12 @@ public class JavalancheWrapperTestSuiteTest {
 
 
 	private void testHelper(Class<?> testClass, int expecedTests) {
+		testHelper(new Class<?>[] { testClass }, expecedTests);
+	}
+
+	private void testHelper(Class<?>[] testClasses, int expecedTests) {
 		String back = MutationProperties.TEST_SUITE;
-		MutationProperties.TEST_SUITE = testClass.getName();
+		MutationProperties.TEST_SUITE = getTestNames(testClasses);
 		JavalancheWrapperTestSuite javalancheWrapperTestSuite = new JavalancheWrapperTestSuite(
 				null);
 		RunNotifier notifier = new RunNotifier();
@@ -48,10 +59,25 @@ public class JavalancheWrapperTestSuiteTest {
 		MutationProperties.TEST_SUITE = back;
 	}
 
+	private String getTestNames(Class<?>[] testClasses) {
+		List<String> names = new ArrayList<String>();
+		for (Class<?> testClass : testClasses) {
+			names.add(testClass.getName());
+		}
+		return Joiner.on(':').join(names);
+	}
+
 	@Test
 	public void testJunit3Test() {
 		testHelper(Junit3TestCase2.class, 3);
 	}
+
+	@Test
+	public void testMultipleJunit3Test() {
+		testHelper(new Class<?>[] { Junit3TestCase2.class,
+				TestCaseForJunitTest.class }, 6);
+	}
+
 	@Test
 	public void testJunit3Suite() {
 		testHelper(Junit3Suite.class, 6);
@@ -61,6 +87,13 @@ public class JavalancheWrapperTestSuiteTest {
 	public void testJunit4Test() {
 		testHelper(Junit4TestCase2.class, 4);
 	}
+
+	@Test
+	public void testMultipleJunit4Test() {
+		testHelper(new Class<?>[] { Junit4TestCase2.class,
+				TestCaseForJunit4Test.class }, 7);
+	}
+
 	@Test
 	public void testJunit4Suite() {
 		testHelper(Junit4Suite.class, 7);

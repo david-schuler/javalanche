@@ -24,6 +24,7 @@ import java.util.Map;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.util.CheckMethodAdapter;
 
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.BytecodeInfo;
@@ -33,6 +34,8 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.Arithmeti
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.RemoveMethodCallsMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.RicMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ProjectVariables;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ReplaceVariablesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 
 public class MutationsClassAdapter extends ClassAdapter {
@@ -51,9 +54,13 @@ public class MutationsClassAdapter extends ClassAdapter {
 
 	private Map<Integer, Integer> replacePossibilities = new HashMap<Integer, Integer>();
 
+	private Map<Integer, Integer> replaceVariablePossibilities = new HashMap<Integer, Integer>();
+
 	private final MutationManager mutationManager;
 
 	private BytecodeInfo bytecodeInfo;
+
+	private ProjectVariables projectVariables = ProjectVariables.read();
 
 	public MutationsClassAdapter(ClassVisitor cv, BytecodeInfo lastLineInfo,
 			MutationManager mm) {
@@ -82,8 +89,7 @@ public class MutationsClassAdapter extends ClassAdapter {
 		mv = new RicMethodAdapter(mv, className, name, ricPossibilities,
 				mutationManager, desc);
 		mv = new NegateJumpsMethodAdapter(mv, className, name,
-				negatePossibilities,
-				mutationManager, desc);
+				negatePossibilities, mutationManager, desc);
 		mv = new ArithmeticReplaceMethodAdapter(mv, className, name,
 				arithmeticPossibilities, mutationManager, desc);
 		mv = new RemoveMethodCallsMethodAdapter(mv, className, name,
@@ -92,7 +98,17 @@ public class MutationsClassAdapter extends ClassAdapter {
 				mutationManager, desc, bytecodeInfo);
 		mv = new ReplaceMethodAdapter(mv, className, name,
 				replacePossibilities, mutationManager, desc);
-
+		ReplaceVariablesMethodAdapter rvAdapter = new ReplaceVariablesMethodAdapter(
+				mv, className, name, replaceVariablePossibilities, desc,
+				mutationManager,
+				projectVariables.getStaticVariables(className),
+				projectVariables.getClassVariables(className));
+		mv = rvAdapter;
+		AnalyzerAdapter analyzerAdapter = new AnalyzerAdapter(className,
+				access, name, desc, mv);
+		rvAdapter.setAnlyzeAdapter(analyzerAdapter);
+		mv = analyzerAdapter;
 		return mv;
 	}
+
 }

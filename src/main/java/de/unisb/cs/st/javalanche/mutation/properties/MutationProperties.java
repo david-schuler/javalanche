@@ -123,8 +123,8 @@ public class MutationProperties {
 
 	public static final String TRACE_BYTECODE_KEY = "javalanche.trace.bytecode";
 
-	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
-			TRACE_BYTECODE_KEY, false);
+	public static boolean TRACE_BYTECODE = getPropertyOrDefault(
+			TRACE_BYTECODE_KEY, true);
 
 	public static final String STOP_AFTER_FIRST_FAIL_KEY = "javalanche.stop.after.first.fail";
 
@@ -159,6 +159,10 @@ public class MutationProperties {
 	public static final String IGNORE_REMOVE_CALLS_KEY = "javalanche.ignore.remove.calls";
 	public static final boolean IGNORE_REMOVE_CALLS = getPropertyOrDefault(
 			IGNORE_REMOVE_CALLS_KEY, false);
+
+	public static final String IGNORE_REPLACE_VARIABLES_KEY = "javalanche.ignore.replace.variables";
+	public static final boolean IGNORE_REPLACE_VARIABLES = getPropertyOrDefault(
+			IGNORE_REPLACE_VARIABLES_KEY, false);
 
 	public static final String IGNORE_ADAPTED_JUMPS_KEY = "javalanche.ignore.adapted.jumps";
 	public static boolean IGNORE_ADAPTED_JUMPS = getPropertyOrDefault(
@@ -355,6 +359,7 @@ public class MutationProperties {
 			LAST_LINE_INFO_FILE_KEY, OUTPUT_DIR + "/lastLine.xml");
 
 	public static final String IGNORE_PREFIX_KEY = "javalanche.ignore.prefix";
+
 	public static String IGNORE_PREFIX = getPropertyOrDefault(
 			IGNORE_PREFIX_KEY, "");
 }

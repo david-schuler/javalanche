@@ -33,6 +33,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorCl
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer.RemoveSystemExitClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanVariablesTransformer;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
@@ -54,6 +55,7 @@ public class BaseBytecodeTest {
 	protected final String testClassName;
 
 	protected boolean verbose;
+
 	protected static String[] testCaseNames;
 
 	protected static final File OUT_DIR = new File("target/tmp/");
@@ -114,6 +116,10 @@ public class BaseBytecodeTest {
 
 	private List<Mutation> scan(File classFile) throws IOException {
 		byte[] b = FileUtils.readFileToByteArray(classFile);
+		ScanVariablesTransformer sTransformer = new ScanVariablesTransformer();
+		sTransformer.scanClass(className.replace('.', '/'), b);
+		sTransformer.write();
+
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		ClassVisitor cc = new CheckClassAdapter(cw);

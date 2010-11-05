@@ -36,6 +36,8 @@ public class Junit4Util {
 			r = getMethodsRunner(MutationProperties.TEST_METHODS);
 		} else if (MutationProperties.TEST_CLASSES != null) {
 			r = getClassesRunner(MutationProperties.TEST_CLASSES);
+		} else if (testSuite.contains(":")) {
+			r = getClassesRunner(testSuite);
 		} else {
 			logger.info("Getting test suite for name: " + testSuite);
 			forName = Class.forName(testSuite);

@@ -34,6 +34,7 @@ import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.Integrat
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationScanner;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanProjectTransformer;
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanVariablesTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.SysExitTransformer;
 import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 
@@ -106,7 +107,9 @@ public class MutationPreMain {
 			} else if (RUN_MODE == SCAN_PROJECT) {
 				sysout.println("Scanning project for classes");
 				addClassFileTransformer(instrumentation,
-						new DistanceTransformer());
+						new DistanceTransformer());	
+				addClassFileTransformer(instrumentation,
+						new ScanVariablesTransformer());
 				addClassFileTransformer(instrumentation,
 						new ScanProjectTransformer());
 				return;

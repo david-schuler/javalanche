@@ -1,8 +1,8 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>de.st.cs.unisb</groupId>
-	<artifactId>javalanche-mutation</artifactId>
+	<groupId>de.unisb.cs.st</groupId>
+	<artifactId>javalanche</artifactId>
 	<packaging>jar</packaging>
 	<version>0.3.7</version>
 	<name>Javalanche</name>
@@ -481,4 +481,13 @@
 
 	
 	</dependencies>
+	
+	
+	<distributionManagement>
+		<repository>
+			<id>stchair</id>
+			<name>Titania</name>
+			<url>http://titania.fs.uni-saarland.de/nexus/content/repositories/stchair/</url>
+		</repository>
+	</distributionManagement>
 </project>

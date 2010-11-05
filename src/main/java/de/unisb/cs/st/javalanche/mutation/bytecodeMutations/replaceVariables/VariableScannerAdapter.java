@@ -16,30 +16,27 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant;
+package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.Opcodes;
+import org.softevo.util.collections.ArrayList;
 
-public class PossibilitiesRicClassAdapter extends ClassAdapter {
-
-	private PossibilitiesRicMethodAdapter actualAdapter;
+public class VariableScannerAdapter extends ClassAdapter {
 
 	private String className;
 
-	private MutationPossibilityCollector mutationPossibilityCollector;
+	private List<VariableInfo> staticVariables = new ArrayList<VariableInfo>();
 
-	private Map<Integer, Integer> possibilities = new HashMap<Integer, Integer>();
+	private List<VariableInfo> classVariables = new ArrayList<VariableInfo>();
 
-	public PossibilitiesRicClassAdapter(ClassVisitor cv,
-			MutationPossibilityCollector collector) {
+	public VariableScannerAdapter(ClassVisitor cv) {
 		super(cv);
-		this.mutationPossibilityCollector = collector;
+
 	}
 
 	@Override
@@ -50,18 +47,25 @@ public class PossibilitiesRicClassAdapter extends ClassAdapter {
 	}
 
 	@Override
-	public MethodVisitor visitMethod(int access, String name, String desc,
-			String signature, String[] exceptions) {
-		actualAdapter = new PossibilitiesRicMethodAdapter(super.visitMethod(
-				access, name, desc, signature, exceptions), className, name,
-				mutationPossibilityCollector, possibilities, desc);
-		return actualAdapter;
-
+	public FieldVisitor visitField(int access, String name, String desc,
+			String signature, Object value) {
+		if ((access & Opcodes.ACC_STATIC) != 0) {
+			staticVariables.add(new VariableInfo(name, desc));
+		} else {
+			classVariables.add(new VariableInfo(name, desc));
+		}
+		return super.visitField(access, name, desc, signature, value);
 	}
 
-	@Override
-	public void visitEnd() {
-		super.visitEnd();
+	public String getClassName() {
+		return className;
 	}
 
+	public List<VariableInfo> getStaticVariables() {
+		return staticVariables;
+	}
+
+	public List<VariableInfo> getClassVariables() {
+		return classVariables;
+	}
 }

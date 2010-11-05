@@ -16,19 +16,24 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant;
+package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.commons.AnalyzerAdapter;
+import org.softevo.util.collections.ArrayList;
+
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 
-public class PossibilitiesRicClassAdapter extends ClassAdapter {
-
-	private PossibilitiesRicMethodAdapter actualAdapter;
+public class ReplaceVariablesClassAdapter extends ClassAdapter {
 
 	private String className;
 
@@ -36,7 +41,13 @@ public class PossibilitiesRicClassAdapter extends ClassAdapter {
 
 	private Map<Integer, Integer> possibilities = new HashMap<Integer, Integer>();
 
-	public PossibilitiesRicClassAdapter(ClassVisitor cv,
+	private List<VariableInfo> staticVariables = new ArrayList<VariableInfo>();
+
+	private MutationManager mm = new MutationManager();
+
+	private ProjectVariables projectVariables = ProjectVariables.read();
+
+	public ReplaceVariablesClassAdapter(ClassVisitor cv,
 			MutationPossibilityCollector collector) {
 		super(cv);
 		this.mutationPossibilityCollector = collector;
@@ -52,16 +63,15 @@ public class PossibilitiesRicClassAdapter extends ClassAdapter {
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String desc,
 			String signature, String[] exceptions) {
-		actualAdapter = new PossibilitiesRicMethodAdapter(super.visitMethod(
-				access, name, desc, signature, exceptions), className, name,
-				mutationPossibilityCollector, possibilities, desc);
-		return actualAdapter;
-
-	}
-
-	@Override
-	public void visitEnd() {
-		super.visitEnd();
+		ReplaceVariablesMethodAdapter actualAdapter = new ReplaceVariablesMethodAdapter(
+				super.visitMethod(access, name, desc, signature, exceptions),
+				className, name, possibilities, desc, mm,
+				projectVariables.getStaticVariables(className),
+				projectVariables.getClassVariables(className));
+		AnalyzerAdapter analyzerAdapter = new AnalyzerAdapter(className,
+				access, name, desc, actualAdapter);
+		actualAdapter.setAnlyzeAdapter(analyzerAdapter);
+		return analyzerAdapter;
 	}
 
 }

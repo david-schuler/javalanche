@@ -87,7 +87,7 @@
 	</target>
 
 	<target name="scanProject" depends="_scanProject,_scanForTests" description="* Scan this project for classes to mutate and tests, that are not mutated. A different start directroy can be supplied with property -Djavalanche.test.base.dir=. ">
-	<!-- To this end the subdirectories of the current directory are searched for tests.   The format of the exclude file is described in the documentation. This task produces an exclude file : mutation-files/exclude.txt.-->
+	<!-- To this end the subdirectories of the current directory are searched for tests.  The format of the exclude file is described in the documentation. This task produces an exclude file : mutation-files/exclude.txt.-->
 	</target>
 	<target name="_scanProject">
 		<property name="scan.project.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
@@ -254,10 +254,15 @@
 	<condition property="analyze.add" value="-Djavalanche.mutation.analyzers=${javalanche.mutation.analyzers}" else="">
 		<isset property="javalanche.mutation.analyzers"/>
 	</condition>
-	  
+	 
+	<condition property="source.add" value="-Djavalanche.project.source.dir=${javalanche.project.source.dir}" else="">
+		<isset property="javalanche.project.source.dir"/>
+	</condition>
+	 
 		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.AnalyzeMain" maxmemory="${javalanche.maxmemory}" fork="true">
 			<jvmarg value="-Dmutation.package.prefix=${project.prefix}" />
 			<jvmarg line="${analyze.add}" />
+			<jvmarg line="${source.add}" />
 			<classpath>
 				<path refid="mutation.classpath" />
 				<pathelement path="${cp}" />

@@ -45,7 +45,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "className",
 		"lineNumber", "mutationForLine", "mutationType" }) })
-public class Mutation implements Serializable {
+public class Mutation implements Serializable, Comparable<Mutation> {
 
 	/**
 	 *
@@ -65,9 +65,9 @@ public class Mutation implements Serializable {
 				"Constant -1"), RIC_ZERO("Replace Constant by 0"), NEGATE_JUMP(
 				"Negate jump condition"), ARITHMETIC_REPLACE(
 				"Replace arithmetic operator"), REMOVE_CALL(
-				"Remove method call"),
-
-		ADAPTED_JUMP("adapted jump"), ADAPTED_SKIP_ELSE("Skip else block"), ADAPTED_REMOVE_CHECK(
+				"Remove method call"), REPLACE_VARIABLE(
+				"Replace variable reference"), ADAPTED_JUMP("adapted jump"), ADAPTED_SKIP_ELSE(
+				"Skip else block"), ADAPTED_REMOVE_CHECK(
 				"Always executed if block"), ADAPTED_SKIP_IF("Skip if block"), ADAPTED_NEGATE_JUMP_IN_IF(
 				"Negate Jump in if statement only"), ADAPTED_ALWAYS_ELSE(
 				"Always execute else block"), ADAPTED_REPLACE(
@@ -162,13 +162,14 @@ public class Mutation implements Serializable {
 	@Override
 	public String toString() {
 		return String
-				.format(
-						"%d %s - %s - %d (%d)- %s \n%s",
+				.format("%d %s - %s - %d (%d) - %s %s\n%s",
 						id,
 						className,
 						methodName,
 						/* isClassInit() ? "in static part" : "not static", */lineNumber,
-						mutationForLine, mutationType.toString(),
+						mutationForLine,
+						mutationType.toString(),
+						addInfo == null ? "" : "- " + addInfo,
 						mutationResult == null ? "No Result" : mutationResult
 								.toString());
 	}
@@ -410,5 +411,25 @@ public class Mutation implements Serializable {
 
 	public void setMethodName(String methodName) {
 		this.methodName = methodName;
+	}
+
+	public int compareTo(Mutation o) {
+		if (this.equals(o)) {
+			return 0;
+		}
+		if (o == null) {
+			return 1;
+		}
+		int comp = getClassName().compareTo(o.getClassName());
+		if (comp != 0) {
+			return comp;
+		}
+		if (getLineNumber() != o.getLineNumber()) {
+			return (getLineNumber() < o.getLineNumber() ? -1 : 1);
+		}
+		if (getMutationForLine() != o.getMutationForLine()) {
+			return (getMutationForLine() < o.getMutationForLine() ? -1 : 1);
+		}
+		return 0;
 	}
 }
