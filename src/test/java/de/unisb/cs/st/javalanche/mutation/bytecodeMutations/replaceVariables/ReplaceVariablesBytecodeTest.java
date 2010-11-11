@@ -24,7 +24,6 @@ import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BaseBytecodeTest;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.ReplaceVariables1TEMPLATE;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 
 public class ReplaceVariablesBytecodeTest extends BaseBytecodeTest {
@@ -34,7 +33,6 @@ public class ReplaceVariablesBytecodeTest extends BaseBytecodeTest {
 	public ReplaceVariablesBytecodeTest() throws Exception {
 		super(ReplaceVariables1TEMPLATE.class);
 		verbose = true;
-		MutationProperties.TRACE_BYTECODE = true;
 		clazz = prepareTest();
 	}
 

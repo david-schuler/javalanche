@@ -24,6 +24,7 @@ public class TestSettingsTest {
 		while (rootCl.getParent() != null) {
 			rootCl = rootCl.getParent();
 		}
+
 		URL resource = rootCl.getResource(JAVA_LANG_CLASS);
 		assertThat(JAVA_LANG_CLASS + " has to be on the boot classpath",
 				resource, notNullValue());

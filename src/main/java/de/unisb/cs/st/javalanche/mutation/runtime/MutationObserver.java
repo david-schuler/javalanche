@@ -119,7 +119,7 @@ public class MutationObserver implements MutationTestListener {
 				time = System.currentTimeMillis();
 			} else {
 				if (System.currentTimeMillis() - time > LIMIT) {
-					throw new RuntimeException("Mutation exceeded time limit");
+					throw new RuntimeException(MutationProperties.MUTATION_TIME_LIMIT_MESSAGE);
 				}
 			}
 		}

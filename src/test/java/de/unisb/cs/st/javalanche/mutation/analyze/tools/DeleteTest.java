@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2010 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2010 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.analyze.tools;
 
 import static org.junit.Assert.*;
@@ -28,21 +28,20 @@ import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.MutationCoverage;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
 import de.unisb.cs.st.javalanche.mutation.results.TestName;
-import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 public class DeleteTest<T> {
 
 	private static final String TEST_PREFIX = "test.test";
 	private Mutation m;
-	
+
 	@Test
 	public void testDeleteResult() {
-		 setUp();
+		setUp();
 		List<TestMessage> passing = Arrays.asList(new TestMessage(
 				"test.test.a", "pass", 3l));
 		List<TestMessage> failing = Arrays.asList(new TestMessage(
@@ -72,8 +71,8 @@ public class DeleteTest<T> {
 
 	@Before
 	public void setUp() {
-		m = new Mutation(TEST_PREFIX + " .Test", 1, 2,
-				MutationType.ARITHMETIC_REPLACE, false);
+		m = new Mutation(TEST_PREFIX + " .Test", "test", 1, 2,
+				MutationType.ARITHMETIC_REPLACE);
 		Mutation dbMutation = QueryManager.getMutationOrNull(m);
 		if (dbMutation != null) {
 			QueryManager.delete(dbMutation);
@@ -104,19 +103,17 @@ public class DeleteTest<T> {
 
 	@Test
 	public void testDeleteCoverageMutation() {
-		 setUp();
+		setUp();
 		MutationTestResult mutationTestResult = new MutationTestResult();
 		m.setMutationResult(mutationTestResult);
 		QueryManager.saveMutation(m);
 		TestName testName = new TestName(TEST_PREFIX + "Testa", TEST_PREFIX, 1l);
 		List<TestName> asList = Arrays.asList(testName);
 
-		
 		QueryManager.save(testName);
-		
+
 		assertTrue(mutationTestResult.getId() != 0);
 		assertTrue(testName.getId() != 0);
-
 
 		String backup = MutationProperties.PROJECT_PREFIX;
 		MutationProperties.PROJECT_PREFIX = TEST_PREFIX;
@@ -124,6 +121,6 @@ public class DeleteTest<T> {
 		MutationProperties.PROJECT_PREFIX = backup;
 		expectDelete(mutationTestResult.getId(), MutationTestResult.class);
 		expectDelete(testName.getId(), TestName.class);
-		
+
 	}
 }

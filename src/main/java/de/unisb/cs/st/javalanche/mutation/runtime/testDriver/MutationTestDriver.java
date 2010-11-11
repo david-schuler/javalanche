@@ -723,7 +723,8 @@ public abstract class MutationTestDriver {
 		} catch (ExecutionException e) {
 			capturedThrowable = e;
 		} catch (TimeoutException e) {
-			exceptionMessage = "Mutation causes test timeout";
+			exceptionMessage = MutationProperties.MUTATION_TIME_LIMIT_MESSAGE
+					+ "Mutation causes test timeout";
 			capturedThrowable = e;
 		} catch (Throwable t) {
 			capturedThrowable = t;
@@ -736,7 +737,8 @@ public abstract class MutationTestDriver {
 			}
 		}
 		if (!future.isDone()) {
-			r.setFailed("Mutated Thread is still running after timeout.");
+			r.setFailed(MutationProperties.MUTATION_TIME_LIMIT_MESSAGE
+					+ "Mutated Thread is still running after timeout.");
 			switchOfMutation(future);
 		}
 		stopWatch.stop();

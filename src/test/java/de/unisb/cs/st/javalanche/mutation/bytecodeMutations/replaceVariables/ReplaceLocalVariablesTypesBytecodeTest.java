@@ -23,9 +23,7 @@ import java.lang.reflect.Method;
 import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BaseBytecodeTest;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.ReplaceVariables4TEMPLATE;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.ReplaceVariables5TEMPLATE;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 
 public class ReplaceLocalVariablesTypesBytecodeTest extends BaseBytecodeTest {
@@ -35,7 +33,6 @@ public class ReplaceLocalVariablesTypesBytecodeTest extends BaseBytecodeTest {
 	public ReplaceLocalVariablesTypesBytecodeTest() throws Exception {
 		super(ReplaceVariables5TEMPLATE.class);
 		verbose = true;
-		MutationProperties.TRACE_BYTECODE = true;
 		clazz = prepareTest();
 	}
 

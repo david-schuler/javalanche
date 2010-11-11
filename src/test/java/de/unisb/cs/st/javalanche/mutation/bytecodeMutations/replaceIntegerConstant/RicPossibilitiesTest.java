@@ -18,24 +18,21 @@
 */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
+import static de.unisb.cs.st.javalanche.mutation.properties.TestProperties.*;
 import static junit.framework.Assert.*;
 
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
-import de.unisb.cs.st.javalanche.mutation.properties.TestProperties;
 
 public class RicPossibilitiesTest {
 
 	@Test
 	public void testForOneClass() throws Exception {
-		File file = new File(TestProperties.SAMPLE_FILE);
-		ClassReader cr = new ClassReader(new FileInputStream(file));
+		byte[] classBytes = ADVICE_CLASS.getClassBytes();
+		ClassReader cr = new ClassReader(classBytes);
 		ClassWriter cw = new ClassWriter(0);
 		MutationPossibilityCollector mutationPossibilityCollector = new MutationPossibilityCollector();
 		PossibilitiesRicClassAdapter possibilitiesRicClassAdapter = new PossibilitiesRicClassAdapter(
@@ -46,14 +43,5 @@ public class RicPossibilitiesTest {
 		assertEquals("Expecting " + expectedMutations + " mutations",
 				mutationPossibilityCollector.size(), expectedMutations);
 	}
-
-	private static class HelperLoader extends ClassLoader {
-
-		public void define(String className, byte[] bytecode) {
-			defineClass(className, bytecode, 0, bytecode.length);
-		}
-
-	}
-
 
 }

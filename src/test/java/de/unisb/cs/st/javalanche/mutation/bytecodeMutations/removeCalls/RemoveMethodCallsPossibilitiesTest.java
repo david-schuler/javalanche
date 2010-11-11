@@ -33,9 +33,11 @@ import org.objectweb.asm.ClassWriter;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.classes.RemoveCallsTEMPLATE;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.sysexit.classes.SystemExitTEMPLATE;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.testutil.TestUtil;
 
 public class RemoveMethodCallsPossibilitiesTest {
 
@@ -62,14 +64,8 @@ public class RemoveMethodCallsPossibilitiesTest {
 		String className = "./target/test-classes/"
 				+ "de/unisb/cs/st/javalanche/mutation/bytecodeMutations/sysexit/classes/SystemExitTEMPLATE.class";
 		File f = new File(className);
-		ClassReader cr = new ClassReader(new FileInputStream(f));
-		ClassWriter cw = new ClassWriter(0);
-		MutationPossibilityCollector mutationPossibilityCollector = new MutationPossibilityCollector();
-		MutationsCollectorClassAdapter mcca = new MutationsCollectorClassAdapter(
-				cw, mutationPossibilityCollector);
-		cr.accept(mcca, ClassReader.SKIP_FRAMES);
-		List<Mutation> possibilies = mutationPossibilityCollector
-				.getPossibilities();
+		List<Mutation> possibilies = TestUtil.getMutations(f,
+				SystemExitTEMPLATE.class.getCanonicalName());
 		int possibilityCount = getRemoveCallMutations(possibilies);
 		int expectedMutations = 1;
 		assertEquals("Expecting different number of mutations for class "
@@ -81,6 +77,7 @@ public class RemoveMethodCallsPossibilitiesTest {
 		int possibilityCount = 0;
 		for (Mutation mutation : mutations) {
 			if (mutation.getMutationType().equals(MutationType.REMOVE_CALL)) {
+				System.out.println(mutation);
 				possibilityCount++;
 
 			}

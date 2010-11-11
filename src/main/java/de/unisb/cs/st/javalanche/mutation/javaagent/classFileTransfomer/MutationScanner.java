@@ -18,19 +18,26 @@
  */
 package de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.util.TraceClassVisitor;
 
 import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.BytecodeInfo;
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.LastLineClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationScannerTransformer;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsClassAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorClassAdapter;
+import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecisionFactory;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
@@ -38,7 +45,9 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
 
 public class MutationScanner implements ClassFileTransformer {
 
@@ -52,6 +61,8 @@ public class MutationScanner implements ClassFileTransformer {
 	private MutationDecision md = MutationDecisionFactory.SCAN_DECISION;
 
 	private static BytecodeInfo lastLineInfo = new BytecodeInfo();
+
+	private MutationManager mm = new MutationManager();
 
 	static {
 		// DB must be loaded before transform method is entered. Otherwise
@@ -127,14 +138,24 @@ public class MutationScanner implements ClassFileTransformer {
 				logger.debug(classNameWithDots);
 				if (md.shouldBeHandled(classNameWithDots)) {
 
-					ClassReader cr = new ClassReader(classfileBuffer);
+					computeBytecodeInfo(classfileBuffer);
 
 					ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-					LastLineClassAdapter cv = new LastLineClassAdapter(cw,
-							lastLineInfo);
-					cr.accept(cv, ClassReader.SKIP_FRAMES);
-					classfileBuffer = mutationScannerTransformer
-							.transformBytecode(classfileBuffer);
+
+					ClassVisitor cv = cw;
+					// cv = new CheckClassAdapter(cw);
+					if (MutationProperties.TRACE_BYTECODE) {
+						cv = new TraceClassVisitor(cv, new PrintWriter(
+								MutationPreMain.sysout));
+					}
+					cv = new MutationsCollectorClassAdapter(cv, mpc);
+					ClassReader cr = new ClassReader(classfileBuffer);
+					cr.accept(cv, ClassReader.EXPAND_FRAMES);
+					classfileBuffer = cw.toByteArray();
+
+					AsmUtil.checkClass2(classfileBuffer);
+					// classfileBuffer = mutationScannerTransformer
+					// .transformBytecode(classfileBuffer);
 					logger.info(mpc.size()
 							+ " mutation possibilities found for class "
 							+ className);
@@ -161,6 +182,13 @@ public class MutationScanner implements ClassFileTransformer {
 			}
 		}
 		return classfileBuffer;
+	}
+
+	private void computeBytecodeInfo(byte[] classfileBuffer) {
+		ClassReader cr = new ClassReader(classfileBuffer);
+		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+		LastLineClassAdapter cv = new LastLineClassAdapter(cw, lastLineInfo);
+		cr.accept(cv, ClassReader.EXPAND_FRAMES);
 	}
 
 }

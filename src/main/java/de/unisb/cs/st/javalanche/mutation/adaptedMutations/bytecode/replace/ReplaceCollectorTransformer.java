@@ -35,7 +35,7 @@ public class ReplaceCollectorTransformer extends CollectorByteCodeTransformer{
 
 	@Override
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
-		ClassVisitor cc = new CheckClassAdapter(cw);
-		return new ReplacePossibilitiesClassAdapter(cc, mpc);
+		// ClassVisitor cc = new CheckClassAdapter(cw);
+		return new ReplacePossibilitiesClassAdapter(cw, mpc);
 	}
 }

@@ -60,6 +60,10 @@ public class TestDebug2 {
 	@Test
 	public void test() throws Exception {
 
+	}
+
+	public void oldTest() throws Exception {
+
 		MutationProperties.PROJECT_PREFIX = "xorg.jaxen";
 		MutationProperties.IGNORE_ADAPTED_REPLACE = false;
 		MutationProperties.IGNORE_ADAPTED_JUMPS = false;

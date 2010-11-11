@@ -35,7 +35,7 @@ public class JumpsCollectorTransformer extends CollectorByteCodeTransformer{
 
 	@Override
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
-		ClassVisitor cc = new CheckClassAdapter(cw);
-		return new JumpsPossibilitiesClassAdapter(cc, mpc);
+		// ClassVisitor cc = new CheckClassAdapter(cw);
+		return new JumpsPossibilitiesClassAdapter(cw, mpc);
 	}
 }

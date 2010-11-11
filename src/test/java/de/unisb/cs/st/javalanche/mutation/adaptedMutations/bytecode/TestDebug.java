@@ -34,6 +34,11 @@ public class TestDebug {
 	private String className = "de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.DebugTEMPLATE";
 
 	@Test
+	public void test1() {
+
+	}
+
+	// @Test
 	public void test() throws Exception {
 
 

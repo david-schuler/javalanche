@@ -1,5 +1,5 @@
 <projectDescription>
-  <name>javalanche-mutation</name>
+  <name>javalanche</name>
   <comment>Javalanche is an open source framework for mutation testing 
 	Java programs with a special focus on automation, efficiency, and 
 	effectiveness. In particular, Javalanche assesses the impact of individual 

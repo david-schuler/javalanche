@@ -15,7 +15,7 @@ mvn -Dmaven.test.skip=true   assembly:assembly
 mkdir ${DIST}
 
 
-cp -r target/javalanche-mutation-${VERSION}-dist.dir/ ${DIST}/
+cp -r target/javalanche-${VERSION}-dist.dir/ ${DIST}/
 
 cp javalanche.xml ${DIST}/
 cp import.xml ${DIST}/
@@ -42,7 +42,7 @@ mkdir -p ${DIST}/examples/invariantExample
 cp ../InvariantExample/build.xml ${DIST}/examples/invariantExample/
 cp -r ../InvariantExample/src ${DIST}/examples/invariantExample/
 
-rm ${DIST}/javalanche-mutation-${VERSION}.jar
+rm ${DIST}/javalanche-${VERSION}.jar
 #rm ${DIST}/lib/daikon-local.jar
 if [  $1 ]; then
  if [ $1 == "tgz"  ]

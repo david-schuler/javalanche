@@ -132,4 +132,11 @@ public class AsmUtil {
 		// reports failure on
 		return sw.toString();
 	}
+
+	public static void checkClass2(byte[] classfileBuffer) {
+		ClassReader cr2 = new ClassReader(classfileBuffer);
+		CheckClassAdapter check = new CheckClassAdapter(new ClassWriter(
+				ClassWriter.COMPUTE_MAXS));
+		cr2.accept(check, ClassReader.EXPAND_FRAMES);
+	}
 }

@@ -41,8 +41,8 @@ public class DeleteTest {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		Mutation m = new Mutation("Test", 99, 0, MutationType.NO_MUTATION,
-				false);
+		Mutation m = new Mutation("Test", "testMethod", 99, 0,
+				MutationType.NO_MUTATION);
 
 		MutationTestResult mutationTestResult = new MutationTestResult();
 		m.setMutationResult(mutationTestResult);

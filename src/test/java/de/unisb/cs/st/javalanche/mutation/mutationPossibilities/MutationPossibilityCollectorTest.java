@@ -1,8 +1,7 @@
 package de.unisb.cs.st.javalanche.mutation.mutationPossibilities;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
 
 import java.util.List;
 
@@ -12,20 +11,21 @@ import org.junit.Test;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-
 public class MutationPossibilityCollectorTest {
+
+	private static final String NAME = MutationPossibilityCollectorTest.class
+			.getName();
+
+	private static final String METHOD_NAME = "method1";
 
 	private MutationPossibilityCollector mpc;
 
-	Mutation m1 = new Mutation(
-			MutationPossibilityCollectorTest.class.getName(), 41, 0,
-			MutationType.NEGATE_JUMP, false);
-	Mutation m2 = new Mutation(
-			MutationPossibilityCollectorTest.class.getName(), 42, 0,
-			MutationType.NEGATE_JUMP, false);
-	Mutation m3 = new Mutation(
-			MutationPossibilityCollectorTest.class.getName(), 43, 0,
-			MutationType.NEGATE_JUMP, false);
+	Mutation m1 = new Mutation(NAME, METHOD_NAME, 41, 0,
+			MutationType.NEGATE_JUMP);
+	Mutation m2 = new Mutation(NAME, METHOD_NAME, 42, 0,
+			MutationType.NEGATE_JUMP);
+	Mutation m3 = new Mutation(NAME, METHOD_NAME, 43, 0,
+			MutationType.NEGATE_JUMP);
 
 	@Before
 	public void setUp() {
@@ -40,7 +40,7 @@ public class MutationPossibilityCollectorTest {
 		assertThat("Size ", mpc.size(), is(1));
 		mpc.addPossibility(m2);
 		assertThat("Size ", mpc.size(), is(2));
-	
+
 	}
 
 	@Test
@@ -51,7 +51,7 @@ public class MutationPossibilityCollectorTest {
 		mpc.clear();
 		assertThat("Size ", mpc.size(), is(0));
 	}
-	
+
 	@Test
 	public void testToDb() {
 		QueryManager.delete(m1);
@@ -72,7 +72,7 @@ public class MutationPossibilityCollectorTest {
 		QueryManager.delete(m1);
 		QueryManager.delete(m2);
 	}
-	
+
 	@Test
 	public void updateDb() {
 		QueryManager.delete(m1);
@@ -94,7 +94,6 @@ public class MutationPossibilityCollectorTest {
 		QueryManager.delete(m2);
 	}
 
-	
 	@Test
 	public void testGetMutations() {
 		mpc.addPossibility(m1);

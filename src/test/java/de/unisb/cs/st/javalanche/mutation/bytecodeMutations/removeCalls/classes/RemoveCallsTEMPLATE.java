@@ -47,7 +47,6 @@ public class RemoveCallsTEMPLATE {
 		if (getBoolean()) {
 			i *= 2;
 		}
-		System.out.println("A");
 		return result;
 	}
 

@@ -1,8 +1,7 @@
 package de.unisb.cs.st.javalanche.mutation.javaagent;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,8 +16,8 @@ import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 public class MutationForRunTest {

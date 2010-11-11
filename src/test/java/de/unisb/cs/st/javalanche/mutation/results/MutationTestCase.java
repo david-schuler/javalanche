@@ -13,10 +13,8 @@ import org.junit.Test;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.matchers.JUnitMatchers.*;
 import static org.junit.Assert.*;
-
+import static org.hamcrest.Matchers.*;
 public class MutationTestCase {
 
 	private static final String TEST_METHOD = "TestMethod";

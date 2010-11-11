@@ -19,6 +19,7 @@ import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.Integrat
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationScanner;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanProjectTransformer;
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanVariablesTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.SysExitTransformer;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 
@@ -120,6 +121,7 @@ public class MutationPreMainTest {
 		Instrumentation mock = createMock(Instrumentation.class);
 		MutationProperties.RUN_MODE = SCAN_PROJECT;
 		mock.addTransformer(isA(DistanceTransformer.class));
+		mock.addTransformer(isA(ScanVariablesTransformer.class));
 		mock.addTransformer(isA(ScanProjectTransformer.class));
 		replay(mock);
 		MutationPreMain.premain("", mock);
@@ -150,8 +152,7 @@ public class MutationPreMainTest {
 			// OK
 		}
 	}
-	
-	
+
 	@Test
 	public void testEvolutionModeAdded() {
 		Instrumentation mock = createMock(Instrumentation.class);

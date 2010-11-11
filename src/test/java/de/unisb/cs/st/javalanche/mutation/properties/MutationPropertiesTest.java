@@ -19,9 +19,8 @@
 package de.unisb.cs.st.javalanche.mutation.properties;
 
 import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.matchers.JUnitMatchers.*;
 import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -116,7 +115,7 @@ public class MutationPropertiesTest {
 			MalformedURLException, InstantiationException,
 			IllegalAccessException, SecurityException, NoSuchFieldException {
 		ClassLoader cl = new MyClassLoader(getUrlClassLoader(),
-				"mutation.trace=true\n");
+				"javalanche.trace.bytecode=true\n");
 		Class<?> loadClass = cl.loadClass(MP_CLASS_NAME);
 		Field field2 = loadClass.getField("TRACE_BYTECODE");
 		assertEquals(Boolean.TRUE, field2.get(null));

@@ -2,7 +2,7 @@
 
 	<dirname property="javalanche.dir" file="${ant.file.javalanche-import}" />
 	<property name="lib.dir" value="${javalanche.dist.dir}/lib/" />
-	<property name="javalanche.wrapper.testsuite" value="de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.PlaceholderTestSuite" />
+	<property name="javalanche.wrapper.testsuite" value="de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.JavalancheWrapperTestSuite" />
 	
 
 	<path id="mutation.classpath">

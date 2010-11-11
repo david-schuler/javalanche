@@ -157,10 +157,12 @@ public class MutationFileTransformer implements ClassFileTransformer {
 					try {
 						transformedBytecode = mutationTransformer
 								.transformBytecode(classfileBuffer);
+
 					} catch (Exception e) {
 						logger.info("Exception thrown: " + e);
 						e.printStackTrace();
 					}
+					AsmUtil.checkClass2(transformedBytecode);
 					logger.debug("Class transformed: " + classNameWithDots);
 					String checkClass = AsmUtil.checkClass(transformedBytecode);
 					if (checkClass != null && checkClass.length() > 0) {

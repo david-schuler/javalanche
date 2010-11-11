@@ -124,12 +124,12 @@ public class MutationProperties {
 	public static final String TRACE_BYTECODE_KEY = "javalanche.trace.bytecode";
 
 	public static boolean TRACE_BYTECODE = getPropertyOrDefault(
-			TRACE_BYTECODE_KEY, true);
+			TRACE_BYTECODE_KEY, false);
 
 	public static final String STOP_AFTER_FIRST_FAIL_KEY = "javalanche.stop.after.first.fail";
 
 	public static final boolean STOP_AFTER_FIRST_FAIL = getPropertyOrDefault(
-			STOP_AFTER_FIRST_FAIL_KEY, false);
+			STOP_AFTER_FIRST_FAIL_KEY, true);
 
 	private static final String DEFAULT_TIMEOUT_IN_SECONDS_KEY = "javalanche.mutation.default.timeout";
 
@@ -161,7 +161,7 @@ public class MutationProperties {
 			IGNORE_REMOVE_CALLS_KEY, false);
 
 	public static final String IGNORE_REPLACE_VARIABLES_KEY = "javalanche.ignore.replace.variables";
-	public static final boolean IGNORE_REPLACE_VARIABLES = getPropertyOrDefault(
+	public static boolean IGNORE_REPLACE_VARIABLES = getPropertyOrDefault(
 			IGNORE_REPLACE_VARIABLES_KEY, false);
 
 	public static final String IGNORE_ADAPTED_JUMPS_KEY = "javalanche.ignore.adapted.jumps";
@@ -362,4 +362,6 @@ public class MutationProperties {
 
 	public static String IGNORE_PREFIX = getPropertyOrDefault(
 			IGNORE_PREFIX_KEY, "");
+
+	public static final String MUTATION_TIME_LIMIT_MESSAGE = "Mutation exceeded time limit";
 }

@@ -122,7 +122,8 @@ public class BaseBytecodeTest {
 
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-		ClassVisitor cc = new CheckClassAdapter(cw);
+		ClassVisitor cc = cw;
+		// ClassVisitor cc = new CheckClassAdapter(cw);
 		if (MutationProperties.TRACE_BYTECODE) {
 			cc = new TraceClassVisitor(cc, new PrintWriter(
 					MutationPreMain.sysout));

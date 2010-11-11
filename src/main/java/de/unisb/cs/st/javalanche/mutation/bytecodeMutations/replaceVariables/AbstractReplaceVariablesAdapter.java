@@ -44,8 +44,7 @@ public abstract class AbstractReplaceVariablesAdapter extends
 
 	private AnalyzerAdapter anlyzeAdapter;
 
-	public AbstractReplaceVariablesAdapter(MethodVisitor mv,
- String className,
+	public AbstractReplaceVariablesAdapter(MethodVisitor mv, String className,
 			String methodName, Map<Integer, Integer> possibilities,
 			String desc, List<VariableInfo> staticVariables,
 			List<VariableInfo> classVariables) {
@@ -101,9 +100,11 @@ public abstract class AbstractReplaceVariablesAdapter extends
 			replaceLocals = getLocals(DOUBLE, var);
 		} else if (opcode == ALOAD) {
 			logger.info(var);
-			Object type = anlyzeAdapter.locals.get(var);
-			replaceLocals = getLocals(type, var);
-
+			List locals = anlyzeAdapter.locals;
+			if (locals != null) {
+				Object type = locals.get(var);
+				replaceLocals = getLocals(type, var);
+			}
 		}
 		if (replaceLocals != null && replaceLocals.size() > 0) {
 			insert = mutateLocal(opcode, var, replaceLocals);
@@ -116,11 +117,13 @@ public abstract class AbstractReplaceVariablesAdapter extends
 	private List<Integer> getLocals(Object type, int var) {
 		List<Integer> resultPos = new ArrayList<Integer>();
 		List locals = anlyzeAdapter.locals;
-		logger.info(methodName + "   " + locals);
-		for (int i = 0; i < locals.size(); i++) {
-			Object o = locals.get(i);
-			if (i != var && o.equals(type)) {
-				resultPos.add(i);
+		if (locals != null) {
+			logger.debug(methodName + "   " + locals);
+			for (int i = 0; i < locals.size(); i++) {
+				Object o = locals.get(i);
+				if (i != var && o.equals(type)) {
+					resultPos.add(i);
+				}
 			}
 		}
 		return resultPos;
