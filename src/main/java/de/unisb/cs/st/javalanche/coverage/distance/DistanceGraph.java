@@ -44,6 +44,8 @@ public class DistanceGraph {
 		DijkstraShortestPath<MethodDescription, DefaultEdge> sp = new DijkstraShortestPath<MethodDescription, DefaultEdge>(
 				g, start, end);
 		double pathLength = sp.getPathLength();
+		System.out.println("DistanceGraph.getDistance() "
+				+ sp.getPathEdgeList());
 		if (pathLength == Double.POSITIVE_INFINITY) {
 			pathLength = 0;
 			Set<String> allSupers = hierarchy.getAllSupers(end.getClassName());

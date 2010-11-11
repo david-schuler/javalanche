@@ -63,9 +63,8 @@ public class Hierarchy implements Serializable {
 		return classNode.getAllSupers();
 	}
 
-	private static Map<String, ClassNode> read(String fileName) {
+	public static Hierarchy fromSet(Set<ClassEntry> entries) {
 		Map<String, ClassNode> result = new HashMap<String, ClassNode>();
-		Set<ClassEntry> entries = XmlIo.get(fileName);
 		for (ClassEntry classEntry : entries) {
 			ClassNode cn = result.get(classEntry.getName());
 			if (cn == null) {
@@ -78,18 +77,19 @@ public class Hierarchy implements Serializable {
 				if (classNode == null) {
 					classNode = new ClassNode(s);
 					result.put(s, classNode);
-					
+
 				}
 				supers.add(classNode);
 			}
 			cn.setSupers(supers);
 		}
-		return result;
+		return new Hierarchy(result);
 	}
 
 	public static Hierarchy readFromDefaultLocation() {
-		Map<String, ClassNode> map = read(MutationProperties.INHERITANCE_DATA_FILE);
-		return new Hierarchy(map);
+		Set<ClassEntry> entries = XmlIo
+				.get(MutationProperties.INHERITANCE_DATA_FILE);
+		return fromSet(entries);
 	}
 
 }

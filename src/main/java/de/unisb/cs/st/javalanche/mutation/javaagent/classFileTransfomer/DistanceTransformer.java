@@ -154,4 +154,12 @@ public class DistanceTransformer implements ClassFileTransformer {
 		return cv.getSupers();
 	}
 
+	public ConnectionData getConnectionData() {
+		return data;
+	}
+
+	public Set<ClassEntry> getClasses() {
+		return classes;
+	}
+
 }
