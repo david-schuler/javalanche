@@ -1,5 +1,6 @@
 package de.unisb.cs.st.javalanche.coverage.distance;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -8,7 +9,6 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +18,6 @@ import de.unisb.cs.st.javalanche.coverage.distance.classes.B2;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.DistanceTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.DistanceTransformer.ClassEntry;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
-import static org.hamcrest.Matchers.*;
 
 public class DistanceTest {
 

@@ -57,6 +57,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<!--forkMode>pertest</forkMode-->
+					<argLine>-Xbootclasspath/a:javalanche-mutation-bootclasspath.jar</argLine>
 					<!--
 					<argLine>-javaagent:./target/javaagent.jar -Dinvariant.mode=OFF
 						-Dmutation.run.mode=mutation -Dmutation.coverage.information=false</argLine>
@@ -67,8 +68,13 @@
 						<exclude>**/TestUtil.java</exclude>
 						<exclude>**/BaseBytecodeTest.java</exclude>
 						<exclude>**/TestDebug.java</exclude>
-						<exclude>**/TestSettingsTest.java</exclude>
+						<!--exclude>**/TestSettingsTest.java</exclude-->
 						<exclude>**/TestDebug3.java</exclude>
+   					  <exclude>**/TestDebug2$MCL*</exclude>
+					  <exclude>**/TestContent1$InnerClass*</exclude>
+					  <exclude>**/TestProperties$TestClass*</exclude>
+					  <exclude>**/TestContent*java</exclude>
+					  
 					</excludes>
 				</configuration>
 			</plugin>
@@ -306,6 +312,13 @@
 			<groupId>de.unisb</groupId>
 			<artifactId>bytecodeTransformer</artifactId>
 			<version>0.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm</artifactId>
+				</exclusion>
+			</exclusions>
+			
 		</dependency>
 		<dependency>
 			<groupId>de.unisb.cs.st.javalanche.invariants</groupId>
@@ -316,6 +329,11 @@
 					<groupId>daikon</groupId>
 					<artifactId>daikon</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm-all</artifactId>
+				</exclusion>
+
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -338,6 +356,24 @@
 			<groupId>de.unisb.cs.st</groupId>
 			<artifactId>adabu2-tracer</artifactId>
 			<version>0.4-modified</version>
+			<exclusions>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm-commons</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm-tree</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm-util</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>

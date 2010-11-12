@@ -18,7 +18,7 @@ Documentation
  You need to download an unpack the latest release (see
  {{{download.html}Downloads}}). The Release contains Javalanche and all its 
  dependencies.
- In order to run Javalanche, you will also need {{{http://ant.apache.org/}
+ In order to run Javalanche, you need Java 6 and you will also need {{{http://ant.apache.org/}
  ant}}, which is not included in the release.
  
 * Running Javalanche
@@ -112,7 +112,7 @@ Documentation
  mutations that are covered by tests and do not have results yet.
 	
  The task <<<runMutations>>> executes the mutations. The task file has to be
- specified in an additional parameter (<<<-Dmutation.task>>>). 
+ specified in an additional parameter (<<<-Dmutation.file>>>). 
  
 ** Analyzing Results
 
