@@ -44,7 +44,7 @@ public class HibernateTest {
 	private static Mutation testMutation = new Mutation("testClass",
 			"testMethod",
  new Random().nextInt(5000), 0,
-			MutationType.RIC_PLUS_1);
+			MutationType.REPLACE_CONSTANT);
 
 	@BeforeClass
 	public static void hibernateSave() {

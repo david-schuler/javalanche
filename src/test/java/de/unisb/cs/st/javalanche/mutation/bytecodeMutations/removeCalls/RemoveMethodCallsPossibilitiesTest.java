@@ -20,21 +20,13 @@ package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls;
 
 import static junit.framework.Assert.*;
 
-import java.awt.Toolkit;
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 
 import org.junit.Test;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
 
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorClassAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.classes.RemoveCallsTEMPLATE;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.sysexit.classes.SystemExitTEMPLATE;
-import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.testutil.TestUtil;
@@ -43,53 +35,29 @@ public class RemoveMethodCallsPossibilitiesTest {
 
 	@Test
 	public void testForOneClass() throws Exception {
-		File file = getFileForClass(RemoveCallsTEMPLATE.class);
-		ClassReader cr = new ClassReader(new FileInputStream(file));
-		ClassWriter cw = new ClassWriter(0);
-		MutationPossibilityCollector mutationPossibilityCollector = new MutationPossibilityCollector();
-		MutationsCollectorClassAdapter mcca = new MutationsCollectorClassAdapter(
-				cw, mutationPossibilityCollector);
-		cr.accept(mcca, 0);
-		List<Mutation> possibilies = mutationPossibilityCollector
-				.getPossibilities();
-		int possibilityCount = getRemoveCallMutations(possibilies);
+		Class<RemoveCallsTEMPLATE> clazz = RemoveCallsTEMPLATE.class;
+		ByteCodeTestUtils.deleteMutations(clazz.getCanonicalName());
+		List<Mutation> possibilities = TestUtil
+				.getMutationsForClazzOnClasspath(clazz);
+		int possibilityCount = TestUtil.filterMutations(possibilities,
+				MutationType.REMOVE_CALL).size();
 		int expectedMutations = 4;
 		assertEquals("Expecting different number of mutations for class "
-				+ RemoveCallsTEMPLATE.class, expectedMutations,
-				possibilityCount);
+				+ clazz, expectedMutations, possibilityCount);
 	}
 
 	@Test
 	public void testIgnoreSystemExit() throws Exception {
-		String className = "./target/test-classes/"
-				+ "de/unisb/cs/st/javalanche/mutation/bytecodeMutations/sysexit/classes/SystemExitTEMPLATE.class";
-		File f = new File(className);
-		List<Mutation> possibilies = TestUtil.getMutations(f,
-				SystemExitTEMPLATE.class.getCanonicalName());
-		int possibilityCount = getRemoveCallMutations(possibilies);
+		Class<SystemExitTEMPLATE> clazz = SystemExitTEMPLATE.class;
+		ByteCodeTestUtils.deleteMutations(clazz.getCanonicalName());
+		List<Mutation> possibilities = TestUtil
+				.getMutationsForClazzOnClasspath(clazz);
+		int possibilityCount = TestUtil.filterMutations(possibilities,
+				MutationType.REMOVE_CALL).size();
 		int expectedMutations = 1;
 		assertEquals("Expecting different number of mutations for class "
-				+ className, expectedMutations, possibilityCount);
+				+ clazz, expectedMutations, possibilityCount);
 
 	}
 
-	private int getRemoveCallMutations(List<Mutation> mutations) {
-		int possibilityCount = 0;
-		for (Mutation mutation : mutations) {
-			if (mutation.getMutationType().equals(MutationType.REMOVE_CALL)) {
-				System.out.println(mutation);
-				possibilityCount++;
-
-			}
-		}
-		return possibilityCount;
-	}
-
-	private File getFileForClass(Class clazz) throws URISyntaxException {
-		String className = clazz.getName();
-		String resourceName = className.replace('.', '/') + ".class";
-		URL systemResource = ClassLoader.getSystemResource(resourceName);
-		File file = new File(systemResource.toURI());
-		return file;
-	}
 }

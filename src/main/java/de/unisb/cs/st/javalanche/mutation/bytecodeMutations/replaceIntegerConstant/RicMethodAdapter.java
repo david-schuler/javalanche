@@ -216,8 +216,9 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	private void longConstant(final long longConstant) {
 		logger.debug("long constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, methodName,
-				getLineNumber(),
-				getPossibilityForLine(), isClassInit);
+				getLineNumber(), getPossibilityForLine(), isClassInit,
+				new String[] { (longConstant + 1) + "",
+						(longConstant - 1) + "", "0" });
 		addPossibilityForLine();
 		boolean insert = false;
 		MutationCode unmutated = new MutationCode(null) {
@@ -262,8 +263,8 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		}
 		if (insert) {
 			logger.debug("Applying mutations for line: " + getLineNumber());
-			BytecodeTasks.insertIfElse(mv, unmutated, mutationCode
-					.toArray(new MutationCode[0]));
+			BytecodeTasks.insertIfElse(mv, unmutated,
+					mutationCode.toArray(new MutationCode[0]));
 		} else {
 			logger.debug("Applying no mutation for line: " + getLineNumber());
 			super.visitLdcInsn(new Long(longConstant));
@@ -273,8 +274,9 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	private void floatConstant(final float floatConstant) {
 		logger.debug("float constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, methodName,
-				getLineNumber(),
-				getPossibilityForLine(), isClassInit);
+				getLineNumber(), getPossibilityForLine(), isClassInit,
+				new String[] { (floatConstant + 1) + "",
+						(floatConstant - 1) + "", "0" });
 		addPossibilityForLine();
 
 		boolean insert = false;
@@ -320,8 +322,8 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		}
 		if (insert) {
 			logger.debug("Applying mutations for line: " + getLineNumber());
-			BytecodeTasks.insertIfElse(mv, unmutated, mutationCode
-					.toArray(new MutationCode[0]));
+			BytecodeTasks.insertIfElse(mv, unmutated,
+					mutationCode.toArray(new MutationCode[0]));
 		} else {
 			logger.debug("Applying no mutation for line: " + getLineNumber());
 			super.visitLdcInsn(new Float(floatConstant));
@@ -331,8 +333,9 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	private void doubleConstant(final double doubleConstant) {
 		logger.debug("double constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, methodName,
-				getLineNumber(),
-				getPossibilityForLine(), isClassInit);
+				getLineNumber(), getPossibilityForLine(), isClassInit,
+				new String[] { (doubleConstant + 1) + "",
+						(doubleConstant - 1) + "", "0" });
 		addPossibilityForLine();
 		boolean insert = false;
 		MutationCode unmutated = new MutationCode(null) {
@@ -375,8 +378,8 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		}
 		if (insert) {
 			logger.debug("Applying mutations for line: " + getLineNumber());
-			BytecodeTasks.insertIfElse(mv, unmutated, mutationCode
-					.toArray(new MutationCode[0]));
+			BytecodeTasks.insertIfElse(mv, unmutated,
+					mutationCode.toArray(new MutationCode[0]));
 		} else {
 			logger.debug("Applying no mutation for line: " + getLineNumber());
 			super.visitLdcInsn(new Double(doubleConstant));
@@ -386,8 +389,9 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 	private void intConstant(final int intConstant) {
 		logger.debug("int constant for line: " + getLineNumber());
 		ConstantMutations cm = getConstantMutations(className, methodName,
-				getLineNumber(),
-				getPossibilityForLine(), isClassInit);
+				getLineNumber(), getPossibilityForLine(), isClassInit,
+				new String[] { (intConstant + 1) + "", (intConstant - 1) + "",
+						"0" });
 		addPossibilityForLine();
 		boolean insert = false;
 		MutationCode unmutated = new MutationCode(null) {
@@ -433,8 +437,8 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		}
 		if (insert) {
 			logger.debug("Applying mutations for line: " + getLineNumber());
-			BytecodeTasks.insertIfElse(mv, unmutated, mutationCode
-					.toArray(new MutationCode[0]));
+			BytecodeTasks.insertIfElse(mv, unmutated,
+					mutationCode.toArray(new MutationCode[0]));
 		} else {
 			logger.debug("Applying no mutation for line: " + getLineNumber());
 			super.visitLdcInsn(new Integer(intConstant));
@@ -456,13 +460,16 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 	private static ConstantMutations getConstantMutations(String className,
 			String methodName, int lineNumber, int mutationForLine,
-			boolean isClassInit) {
+			boolean isClassInit, String[] values) {
 		Mutation mutationPlus = new Mutation(className, methodName, lineNumber,
-				mutationForLine, MutationType.RIC_PLUS_1);
+				mutationForLine, MutationType.REPLACE_CONSTANT);
+		mutationPlus.setOperatorAddInfo(values[0]);
 		Mutation mutationMinus = new Mutation(className, methodName,
-				lineNumber, mutationForLine, MutationType.RIC_MINUS_1);
+				lineNumber, mutationForLine, MutationType.REPLACE_CONSTANT);
+		mutationMinus.setOperatorAddInfo(values[1]);
 		Mutation mutationZero = new Mutation(className, methodName, lineNumber,
-				mutationForLine, MutationType.RIC_ZERO);
+				mutationForLine, MutationType.REPLACE_CONSTANT);
+		mutationZero.setOperatorAddInfo(values[2]);
 		return new ConstantMutations(mutationPlus, mutationMinus, mutationZero);
 
 	}

@@ -25,33 +25,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationScannerTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorClassAdapter;
-import de.unisb.cs.st.javalanche.mutation.debug.MissedMutationTest;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanVariablesTransformer;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 
-import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
-
 public class TestUtil {
 
-	public static void getMutationsForClazzOnClasspath(String fileName) {
-		InputStream is = MissedMutationTest.class.getClassLoader()
+	public static List<Mutation> getMutationsForClazzOnClasspath(Class<?> clazz)
+			throws IOException {
+		String fileName = clazz.getCanonicalName().replace('.', '/') + ".class";
+		InputStream is = TestUtil.class.getClassLoader()
 				.getResourceAsStream(fileName);
-		try {
-			MutationPossibilityCollector mpc = new MutationPossibilityCollector();
-			BytecodeTransformer bt = new MutationScannerTransformer(mpc);
-			bt.transformBytecode(new ClassReader(is));
-			mpc.toDB();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		byte[] byteArray = IOUtils.toByteArray(is);
+		return getMutations(byteArray, clazz.getCanonicalName());
 	}
+
 
 	public static List<Mutation> getMutations(byte[] classBytes,
 			String className) {

@@ -38,13 +38,9 @@ import javax.persistence.UniqueConstraint;
  * @author David Schuler
  * 
  */
-/**
- * @author David Schuler
- * 
- */
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "className",
-		"lineNumber", "mutationForLine", "mutationType" }) })
+		"lineNumber", "mutationForLine", "mutationType", "operatorAddInfo" }) })
 public class Mutation implements Serializable, Comparable<Mutation> {
 
 	/**
@@ -61,8 +57,7 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 	static int mutionIdGenerator = 0;
 
 	public enum MutationType {
-		NO_MUTATION("No mutation"), RIC_PLUS_1("Constant +1"), RIC_MINUS_1(
-				"Constant -1"), RIC_ZERO("Replace Constant by 0"), NEGATE_JUMP(
+		NO_MUTATION("No mutation"), REPLACE_CONSTANT("Replace a constant"), NEGATE_JUMP(
 				"Negate jump condition"), ARITHMETIC_REPLACE(
 				"Replace arithmetic operator"), REMOVE_CALL(
 				"Remove method call"), REPLACE_VARIABLE(
@@ -126,6 +121,10 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 
 	private String addInfo;
 
+	private String operatorAddInfo;
+
+	private Long baseMutationId;
+
 	/**
 	 * Default constructor needed by Hibernate.
 	 */
@@ -162,14 +161,16 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 	@Override
 	public String toString() {
 		return String
-				.format("%d %s - %s - %d (%d) - %s %s\n%s",
+				.format("%d %s - %s - %d (%d) - %s%s%s\n%s",
 						id,
 						className,
 						methodName,
 						/* isClassInit() ? "in static part" : "not static", */lineNumber,
 						mutationForLine,
 						mutationType.toString(),
-						addInfo == null ? "" : "- " + addInfo,
+						operatorAddInfo == null ? "" : "(" + operatorAddInfo
+								+ ")",
+						addInfo == null ? "" : " - " + addInfo,
 						mutationResult == null ? "No Result" : mutationResult
 								.toString());
 	}
@@ -431,5 +432,21 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 			return (getMutationForLine() < o.getMutationForLine() ? -1 : 1);
 		}
 		return 0;
+	}
+
+	public String getOperatorAddInfo() {
+		return operatorAddInfo;
+	}
+
+	public void setOperatorAddInfo(String operatorAddInfo) {
+		this.operatorAddInfo = operatorAddInfo;
+	}
+
+	public void setBaseMutationId(Long baseMutationId) {
+		this.baseMutationId = baseMutationId;
+	}
+
+	public Long getBaseMutationId() {
+		return baseMutationId;
 	}
 }

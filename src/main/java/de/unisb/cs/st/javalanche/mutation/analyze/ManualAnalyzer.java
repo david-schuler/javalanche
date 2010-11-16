@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2010 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2010 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.analyze;
 
 import java.util.ArrayList;
@@ -38,46 +38,48 @@ public class ManualAnalyzer implements MutationAnalyzer {
 
 	private List<Mutation> nonEquivalents = new ArrayList<Mutation>() {
 		{
-			add(new Mutation("org.jaxen.saxpath.base.Verifier", 278, 0,
-					RIC_MINUS_1, false));
-			add(new Mutation("org.jaxen.expr.DefaultStep", 159, 0, REMOVE_CALL,
-					false));
-			add(new Mutation("org.jaxen.pattern.LocationPathPattern", 103, 0,
-					REMOVE_CALL, false));
-			add(new Mutation("org.jaxen.function.ext.LocaleFunctionSupport",
-					98, 0, NEGATE_JUMP, false));
-			add(new Mutation("org.jaxen.saxpath.base.XPathReader", 131, 1,
-					REMOVE_CALL, false));
-			add(new Mutation("org.jaxen.function.NumberFunction", 210, 0,
-					RIC_MINUS_1, false));
-			add(new Mutation("org.jaxen.JaxenRuntimeException", 66, 1,
-					RIC_MINUS_1, false));
-			add(new Mutation("org.jaxen.XPathSyntaxException", 135, 0,
-					RIC_MINUS_1, false));
-			add(new Mutation("org.jaxen.Context", 101, 0, RIC_MINUS_1, false));
-			add(new Mutation("org.jaxen.expr.DefaultMultiplyExpr", 75, 2,
-					REMOVE_CALL, false));
+			// add(new Mutation("org.jaxen.saxpath.base.Verifier", 278, 0,
+			// RIC_MINUS_1, false));
+			// add(new Mutation("org.jaxen.expr.DefaultStep", 159, 0,
+			// REMOVE_CALL,
+			// false));
+			// add(new Mutation("org.jaxen.pattern.LocationPathPattern", 103, 0,
+			// REMOVE_CALL, false));
+			// add(new Mutation("org.jaxen.function.ext.LocaleFunctionSupport",
+			// 98, 0, NEGATE_JUMP, false));
+			// add(new Mutation("org.jaxen.saxpath.base.XPathReader", 131, 1,
+			// REMOVE_CALL, false));
+			// add(new Mutation("org.jaxen.function.NumberFunction", 210, 0,
+			// RIC_MINUS_1, false));
+			// add(new Mutation("org.jaxen.JaxenRuntimeException", 66, 1,
+			// RIC_MINUS_1, false));
+			// add(new Mutation("org.jaxen.XPathSyntaxException", 135, 0,
+			// RIC_MINUS_1, false));
+			// add(new Mutation("org.jaxen.Context", 101, 0, RIC_MINUS_1,
+			// false));
+			// add(new Mutation("org.jaxen.expr.DefaultMultiplyExpr", 75, 2,
+			// REMOVE_CALL, false));
 
 		}
 	};
 	private List<Mutation> equivalents = new ArrayList<Mutation>() {
 		{
-			add(new Mutation("org.jaxen.dom.DocumentNavigator", 360, 0,
-					REMOVE_CALL, false));
-			add(new Mutation("org.jaxen.pattern.UnionPattern", 62, 1,
-					RIC_PLUS_1, false));
-			add(new Mutation("org.jaxen.dom.NamespaceNode", 147, 0,
-					REMOVE_CALL, false));
-			add(new Mutation("org.jaxen.expr.NodeComparator", 147, 0,
-					RIC_PLUS_1, false));
-			add(new Mutation("org.jaxen.pattern.PatternParser", 104, 0,
-					REMOVE_CALL, false));
-			add(new Mutation("org.jaxen.expr.DefaultLocationPath", 147, 0,
-					RIC_ZERO, false));
-			add(new Mutation("org.jaxen.xom.DocumentNavigator", 377, 0,
-					RIC_ZERO, false));
-			add(new Mutation("org.jaxen.xom.DocumentNavigator$IndexIterator",
-					217, 1, RIC_ZERO, false));
+			// add(new Mutation("org.jaxen.dom.DocumentNavigator", 360, 0,
+			// REMOVE_CALL, false));
+			// add(new Mutation("org.jaxen.pattern.UnionPattern", 62, 1,
+			// RIC_PLUS_1, false));
+			// add(new Mutation("org.jaxen.dom.NamespaceNode", 147, 0,
+			// REMOVE_CALL, false));
+			// add(new Mutation("org.jaxen.expr.NodeComparator", 147, 0,
+			// RIC_PLUS_1, false));
+			// add(new Mutation("org.jaxen.pattern.PatternParser", 104, 0,
+			// REMOVE_CALL, false));
+			// add(new Mutation("org.jaxen.expr.DefaultLocationPath", 147, 0,
+			// RIC_ZERO, false));
+			// add(new Mutation("org.jaxen.xom.DocumentNavigator", 377, 0,
+			// RIC_ZERO, false));
+			// add(new Mutation("org.jaxen.xom.DocumentNavigator$IndexIterator",
+			// 217, 1, RIC_ZERO, false));
 
 		}
 	};
@@ -85,10 +87,10 @@ public class ManualAnalyzer implements MutationAnalyzer {
 	private List<Mutation> undecided = new ArrayList<Mutation>() {
 		{
 
-			add(new Mutation("org.jaxen.saxpath.base.XPathLexer", 491, 0,
-					REMOVE_CALL, false));
-			add(new Mutation("org.jaxen.jdom.DocumentNavigator", 256, 0,
-					REMOVE_CALL, false));
+			// add(new Mutation("org.jaxen.saxpath.base.XPathLexer", 491, 0,
+			// REMOVE_CALL, false));
+			// add(new Mutation("org.jaxen.jdom.DocumentNavigator", 256, 0,
+			// REMOVE_CALL, false));
 
 		}
 	};

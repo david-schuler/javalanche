@@ -31,6 +31,8 @@ import org.apache.log4j.Logger;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 import de.unisb.cs.st.ds.util.io.SerializeIo;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
@@ -43,6 +45,8 @@ public class MutationCoverageFile {
 			MutationProperties.OUTPUT_DIR + "/coverage-data/");
 
 	private static BiMap<String, Integer> idMap;
+
+	private static Multimap<Long, Long> baseMutations = HashMultimap.create();
 
 	private static final File FILE_MAP = new File(COVERAGE_DIR, "file-map.ser");
 
@@ -69,13 +73,25 @@ public class MutationCoverageFile {
 			}
 			if (ids.size() > 0) {
 				coveredMutations.add(entry.getKey());
+				Collection<Long> collection = baseMutations.get(entry.getKey());
+				if (collection.size() > 0) {
+					coveredMutations.addAll(collection);
+				}
 			}
-			SerializeIo.serializeToFile(ids, new File(COVERAGE_DIR, ""
-					+ entry.getKey()));
+			SerializeIo.serializeToFile(ids,
+					new File(COVERAGE_DIR, "" + entry.getKey()));
 		}
 		logger.info("Saving Ids of Covered Mutations "
 				+ coveredMutations.size());
 		SerializeIo.serializeToFile(coveredMutations, COVERED_FILE);
+
+	}
+
+	public static Set<String> getCoverageData(Mutation m) {
+		if (m.getBaseMutationId() != null) {
+			return getCoverageDataId(m.getBaseMutationId());
+		}
+		return getCoverageDataId(m.getId());
 
 	}
 
@@ -177,4 +193,8 @@ public class MutationCoverageFile {
 		return getCoveredMutations().contains(id);
 	}
 
+	public static void addDerivedMutation(long baseMutation,
+			long derviedMutation) {
+		baseMutations.put(baseMutation, derviedMutation);
+	}
 }

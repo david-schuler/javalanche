@@ -247,8 +247,7 @@ public abstract class MutationTestDriver {
 					+ counter
 					+ " / "
 					+ size
-					+ ") Running test:  "
-					+ testName);
+					+ ") Running test:  " + testName);
 			MutationTestRunnable runnable = getTestRunnable(testName);
 			testStart(testName);
 			stopWatch.reset();
@@ -256,9 +255,8 @@ public abstract class MutationTestDriver {
 			runWithTimeout(runnable);
 			SingleTestResult result = runnable.getResult();
 			logger.info("Test took "
-					+ DurationFormatUtils
-							.formatDurationHMS(stopWatch.getTime()) + " "
-					+ testName);
+					+ DurationFormatUtils.formatDurationHMS(stopWatch.getTime())
+					+ " " + testName);
 			if (!result.hasPassed()) {
 				allPass = false;
 				failing.add(result);
@@ -458,7 +456,7 @@ public abstract class MutationTestDriver {
 			totalMutations++;
 			checkClasspath(currentMutation);
 			Set<String> coveredTests = MutationCoverageFile
-					.getCoverageDataId(currentMutation.getId());
+					.getCoverageData(currentMutation);
 			Set<String> testsForThisRun = coveredTests.size() > 0 ? coveredTests
 					: new HashSet<String>(allTests);
 			String message = "Applying " + totalMutations
@@ -584,9 +582,8 @@ public abstract class MutationTestDriver {
 			result.setTouched(touched);
 			resultsForMutation.add(result);
 			if (MutationProperties.STOP_AFTER_FIRST_FAIL && !result.hasPassed()) {
-				logger
-						.info("Test failed for mutation not running more tests. Test: "
-								+ testName);
+				logger.info("Test failed for mutation not running more tests. Test: "
+						+ testName);
 				TestMessage testMessage = result.getTestMessage();
 				logger.info("Message: " + testMessage.getMessage());
 				break;
@@ -705,8 +702,8 @@ public abstract class MutationTestDriver {
 
 	protected long runWithTimeout(MutationTestRunnable r) {
 		long[] preIds = threadMxBean.getAllThreadIds();
-		FutureTask<Object> future = new FutureTask<Object>(Executors
-				.callable(r));
+		FutureTask<Object> future = new FutureTask<Object>(
+				Executors.callable(r));
 		Thread thread = new Thread(future);
 		thread.setDaemon(true);
 		logger.debug("Start  test: ");
@@ -756,8 +753,8 @@ public abstract class MutationTestDriver {
 	private void handleMutationRunnable(MutationTestRunnable r,
 			StopWatch stopWatch, String message) {
 		r.setFailed(message);
-		TestMessage tm = new TestMessage(currentTestName, message, stopWatch
-				.getTime());
+		TestMessage tm = new TestMessage(currentTestName, message,
+				stopWatch.getTime());
 		boolean touched = MutationObserver.getTouchingTestCases().contains(
 				currentTestName);
 		tm.setTouched(touched);

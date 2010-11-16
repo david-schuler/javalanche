@@ -24,6 +24,8 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
 
 public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
@@ -41,30 +43,54 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 	private void countMutation(int i) {
 		if (!mutationCode) {
 			int possibilitiesForLine = getPossibilityForLine();
+
 			Mutation mutationPlus1 = new Mutation(className, getMethodName(),
 					getLineNumber(), possibilitiesForLine,
-					Mutation.MutationType.RIC_PLUS_1);
+					Mutation.MutationType.REPLACE_CONSTANT);
+			mutationPlus1.setOperatorAddInfo((i + 1) + "");
+			mutationPlus1.setAddInfo("Replace " + i + " with " + (i + 1));
+			QueryManager.saveMutation(mutationPlus1);
+			Long id = mutationPlus1.getId();
+			if (id == null) {
+				id = QueryManager.getMutation(mutationPlus1).getId();
+			}
+
 			Mutation mutationMinus1 = new Mutation(className, getMethodName(),
 					getLineNumber(), possibilitiesForLine,
-					Mutation.MutationType.RIC_MINUS_1);
+					Mutation.MutationType.REPLACE_CONSTANT);
 
+			mutationMinus1.setOperatorAddInfo((i - 1) + "");
+			mutationMinus1.setAddInfo("Replace " + i + " with " + (i - 1));
+			mutationMinus1.setBaseMutationId(id);
+
+			QueryManager.saveMutation(mutationMinus1);
+			if (mutationMinus1.getId() != null) {
+				MutationCoverageFile.addDerivedMutation(id,
+						mutationMinus1.getId());
+			}
 			addPossibilityForLine();
 			mutationPossibilityCollector.addPossibility(mutationPlus1);
 			mutationPossibilityCollector.addPossibility(mutationMinus1);
-			if (i != 0) {
+			if (i != 0 && i != 1 && i != -1) {
 				Mutation mutationZero = new Mutation(className,
-						getMethodName(),
-						getLineNumber(), possibilitiesForLine,
-						Mutation.MutationType.RIC_ZERO);
+						getMethodName(), getLineNumber(), possibilitiesForLine,
+						Mutation.MutationType.REPLACE_CONSTANT);
+				mutationZero.setAddInfo("Replace " + i + " with " + 0);
+				mutationZero.setBaseMutationId(id);
+				mutationZero.setOperatorAddInfo("0");
+				QueryManager.saveMutation(mutationZero);
 				mutationPossibilityCollector.addPossibility(mutationZero);
-				if (insertCoverageCalls) {
-					CoverageDataUtil.insertCoverageCalls(mv, mutationZero);
+				if (mutationZero.getId() != null) {
+					MutationCoverageFile.addDerivedMutation(id,
+							mutationZero.getId());
 				}
+				// if (insertCoverageCalls) {
+				// CoverageDataUtil.insertCoverageCalls(mv, mutationZero);
+				// }
 			}
 			if (insertCoverageCalls) {
 				CoverageDataUtil.insertCoverageCalls(mv, mutationPlus1);
-				CoverageDataUtil.insertCoverageCalls(mv, mutationMinus1);
-
+				// CoverageDataUtil.insertCoverageCalls(mv, mutationMinus1);
 			}
 		}
 	}

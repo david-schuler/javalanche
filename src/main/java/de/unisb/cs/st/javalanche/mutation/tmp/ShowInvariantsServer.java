@@ -46,80 +46,86 @@ public class ShowInvariantsServer {
 
 	private static List<Mutation> top12 = new ArrayList<Mutation>() {
 		{
-			add(new Mutation("org.jaxen.Context", 102, 0, RIC_MINUS_1, false));
-
-
-			add(new Mutation("org.jaxen.saxpath.base.XPathLexer", 615, 1,
-					RIC_ZERO, false));
-
-			add(new Mutation("org.jaxen.saxpath.base.XPathLexer", 615, 1,
-					RIC_MINUS_1, false));
-
-			add(new Mutation("org.jaxen.saxpath.base.XPathReader", 1082, 0,
-					RIC_PLUS_1, false));
-			add(new Mutation("org.jaxen.pattern.LocationPathPattern", 107, 0,
-					NEGATE_JUMP, false));
-			add(new Mutation("org.jaxen.expr.DefaultLocationPath", 126, 0,
-					RIC_MINUS_1, false));
-			add(new Mutation("org.jaxen.expr.DefaultLocationPath", 126, 0,
-					RIC_PLUS_1, false));
-			add(new Mutation("org.jaxen.JaxenRuntimeException", 140, 0,
-					RIC_PLUS_1, false));
-			add(new Mutation("org.jaxen.JaxenRuntimeException", 140, 0,
-					NEGATE_JUMP, false));
-			add(new Mutation("org.jaxen.saxpath.base.XPathLexer", 274, 0,
-					RIC_MINUS_1, false));
-			add(new Mutation("org.jaxen.saxpath.base.XPathLexer", 274, 0,
-					RIC_ZERO, false));
-
-			add(new Mutation("org.jaxen.saxpath.base.XPathLexer", 649, 0, ARITHMETIC_REPLACE, false));
+			// add(new Mutation("org.jaxen.Context", 102, 0, RIC_MINUS_1,
+			// false));
+			//
+			//
+			// add(new Mutation("org.jaxen.saxpath.base.XPathLexer", 615, 1,
+			// RIC_ZERO, false));
+			//
+			// add(new Mutation("org.jaxen.saxpath.base.XPathLexer", 615, 1,
+			// RIC_MINUS_1, false));
+			//
+			// add(new Mutation("org.jaxen.saxpath.base.XPathReader", 1082, 0,
+			// RIC_PLUS_1, false));
+			// add(new Mutation("org.jaxen.pattern.LocationPathPattern", 107, 0,
+			// NEGATE_JUMP, false));
+			// add(new Mutation("org.jaxen.expr.DefaultLocationPath", 126, 0,
+			// RIC_MINUS_1, false));
+			// add(new Mutation("org.jaxen.expr.DefaultLocationPath", 126, 0,
+			// RIC_PLUS_1, false));
+			// add(new Mutation("org.jaxen.JaxenRuntimeException", 140, 0,
+			// RIC_PLUS_1, false));
+			// add(new Mutation("org.jaxen.JaxenRuntimeException", 140, 0,
+			// NEGATE_JUMP, false));
+			// add(new Mutation("org.jaxen.saxpath.base.XPathLexer", 274, 0,
+			// RIC_MINUS_1, false));
+			// add(new Mutation("org.jaxen.saxpath.base.XPathLexer", 274, 0,
+			// RIC_ZERO, false));
+			//
+			// add(new Mutation("org.jaxen.saxpath.base.XPathLexer", 649, 0,
+			// ARITHMETIC_REPLACE, false));
 
 		}
 	};
 
 	private static List<Mutation> nonEquivalents = new ArrayList<Mutation>() {
 		{
-			add(new Mutation("org.jaxen.saxpath.base.Verifier", 278, 0,
-					RIC_MINUS_1, false));
-			add(new Mutation("org.jaxen.expr.DefaultStep", 159, 0, REMOVE_CALL,
-					false));
-			add(new Mutation("org.jaxen.pattern.LocationPathPattern", 103, 0,
-					REMOVE_CALL, false));
-			add(new Mutation("org.jaxen.function.ext.LocaleFunctionSupport",
-					98, 0, NEGATE_JUMP, false));
-			add(new Mutation("org.jaxen.saxpath.base.XPathReader", 131, 1,
-					REMOVE_CALL, false));
-			add(new Mutation("org.jaxen.function.NumberFunction", 210, 0,
-					RIC_MINUS_1, false));
-			add(new Mutation("org.jaxen.JaxenRuntimeException", 66, 1,
-					RIC_MINUS_1, false));
-			add(new Mutation("org.jaxen.XPathSyntaxException", 135, 0,
-					RIC_MINUS_1, false));
-			add(new Mutation("org.jaxen.Context", 101, 0, RIC_MINUS_1, false));
-			add(new Mutation("org.jaxen.expr.DefaultMultiplyExpr", 75, 2,
-					REMOVE_CALL, false));
+			// // add(new Mutation("org.jaxen.saxpath.base.Verifier", 278, 0,
+			// // RIC_MINUS_1, false));
+			// // add(new Mutation("org.jaxen.expr.DefaultStep", 159, 0,
+			// REMOVE_CALL,
+			// // false));
+			// // add(new Mutation("org.jaxen.pattern.LocationPathPattern", 103,
+			// 0,
+			// // REMOVE_CALL, false));
+			// // add(new
+			// Mutation("org.jaxen.function.ext.LocaleFunctionSupport",
+			// // 98, 0, NEGATE_JUMP, false));
+			// // add(new Mutation("org.jaxen.saxpath.base.XPathReader", 131, 1,
+			// // REMOVE_CALL, false));
+			// // add(new Mutation("org.jaxen.function.NumberFunction", 210, 0,
+			// // RIC_MINUS_1, false));
+			// // add(new Mutation("org.jaxen.JaxenRuntimeException", 66, 1,
+			// // RIC_MINUS_1, false));
+			// // add(new Mutation("org.jaxen.XPathSyntaxException", 135, 0,
+			// // RIC_MINUS_1, false));
+			// // add(new Mutation("org.jaxen.Context", 101, 0, RIC_MINUS_1,
+			// false));
+			// // add(new Mutation("org.jaxen.expr.DefaultMultiplyExpr", 75, 2,
+			// // REMOVE_CALL, false));
 
 		}
 	};
 
 	private List<Mutation> equivalents = new ArrayList<Mutation>() {
 		{
-			add(new Mutation("org.jaxen.dom.DocumentNavigator", 360, 0,
-					REMOVE_CALL, false));
-			add(new Mutation("org.jaxen.pattern.UnionPattern", 62, 1,
-					RIC_PLUS_1, false));
-			add(new Mutation("org.jaxen.dom.NamespaceNode", 147, 0,
-					REMOVE_CALL, false));
-			add(new Mutation("org.jaxen.expr.NodeComparator", 147, 0,
-					RIC_PLUS_1, false));
-			add(new Mutation("org.jaxen.pattern.PatternParser", 104, 0,
-					REMOVE_CALL, false));
-			add(new Mutation("org.jaxen.expr.DefaultLocationPath", 147, 0,
-					RIC_ZERO, false));
-			add(new Mutation("org.jaxen.xom.DocumentNavigator", 377, 0,
-					RIC_ZERO, false));
-			add(new Mutation("org.jaxen.xom.DocumentNavigator$IndexIterator",
-					217, 1, RIC_ZERO, false));
+			// add(new Mutation("org.jaxen.dom.DocumentNavigator", 360, 0,
+			// REMOVE_CALL, false));
+			// add(new Mutation("org.jaxen.pattern.UnionPattern", 62, 1,
+			// RIC_PLUS_1, false));
+			// add(new Mutation("org.jaxen.dom.NamespaceNode", 147, 0,
+			// REMOVE_CALL, false));
+			// add(new Mutation("org.jaxen.expr.NodeComparator", 147, 0,
+			// RIC_PLUS_1, false));
+			// add(new Mutation("org.jaxen.pattern.PatternParser", 104, 0,
+			// REMOVE_CALL, false));
+			// add(new Mutation("org.jaxen.expr.DefaultLocationPath", 147, 0,
+			// RIC_ZERO, false));
+			// add(new Mutation("org.jaxen.xom.DocumentNavigator", 377, 0,
+			// RIC_ZERO, false));
+			// add(new Mutation("org.jaxen.xom.DocumentNavigator$IndexIterator",
+			// 217, 1, RIC_ZERO, false));
 
 		}
 	};

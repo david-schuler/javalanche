@@ -71,7 +71,7 @@ public class ShowMutation {
 		for (Mutation mutation : mutations) {
 			System.out.println((count++) + "  " + mutation);
 			System.out.println("TestCases for mutation: "
-					+ MutationCoverageFile.getCoverageDataId(mutation.getId())
+					+ MutationCoverageFile.getCoverageData(mutation)
 							.size());
 			boolean coveredMutation = QueryManager.isCoveredMutation(mutation);
 			System.out.println("Is covered: " + coveredMutation);

@@ -15,7 +15,7 @@ mvn -Dmaven.test.skip=true   assembly:assembly
 mkdir ${DIST}
 
 
-cp -r target/javalanche-${VERSION}-dist.dir/ ${DIST}/
+cp -r target/javalanche-${VERSION}-dist/ ${DIST}/
 
 cp javalanche.xml ${DIST}/
 cp import.xml ${DIST}/

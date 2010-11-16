@@ -54,7 +54,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		List<Mutation> coveredMutations = new ArrayList<Mutation>();
 		for (Mutation m : mutations) {
 			Set<String> testsCollectedData = MutationCoverageFile
-					.getCoverageDataId(m.getId());
+					.getCoverageData(m);
 			if (testsCollectedData == null || testsCollectedData.size() == 0) {
 				// sb.append("\nMutation not covered: " + m);
 			} else {

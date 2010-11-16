@@ -33,7 +33,7 @@ public class DebugAnalyzer implements MutationAnalyzer {
 			MutationTestResult mutationResult = m.getMutationResult();
 			sb.append(m.toShortString()).append('\n');
 			Set<String> testsCollectedData = MutationCoverageFile
-					.getCoverageDataId(m.getId());
+					.getCoverageData(m);
 			if (testsCollectedData == null || testsCollectedData.size() == 0) {
 				sb.append("not covered\n");
 

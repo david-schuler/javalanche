@@ -19,13 +19,8 @@ public class TestScan {
 		String className = ADVICE_CLASS.getClassName();
 		byte[] classBytes = ADVICE_CLASS.getClassBytes();
 		List<Mutation> mutations = TestUtil.getMutations(classBytes, className);
-		int s1 = TestUtil.filterMutations(mutations, MutationType.RIC_ZERO)
+		int res = TestUtil.filterMutations(mutations, MutationType.REPLACE_CONSTANT)
 				.size();
-		int s2 = TestUtil.filterMutations(mutations, MutationType.RIC_PLUS_1)
-				.size();
-		int s3 = TestUtil.filterMutations(mutations, MutationType.RIC_MINUS_1)
-				.size();
-		Integer res = s1 + s2 + s3;
 		assertThat(res, greaterThan(40));
 	}
 

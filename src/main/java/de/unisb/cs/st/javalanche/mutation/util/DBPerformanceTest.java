@@ -113,8 +113,8 @@ public class DBPerformanceTest {
 		if (mutations == null) {
 			mutations = new ArrayList<Mutation>();
 			for (int i = 0; i < LIMIT; i++) {
-				mutations.add(new Mutation(PREFIX + i, i, i % 4,
-						MutationType.RIC_MINUS_1, false));
+				mutations.add(new Mutation(PREFIX + i, "M" + i, i, i % 4,
+						MutationType.REPLACE_CONSTANT));
 			}
 		}
 		return mutations;

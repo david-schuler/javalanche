@@ -41,7 +41,7 @@ public class DisplayCoverageData {
 				+ " mutations from the db");
 		for (Mutation mutation : mutationListFromDb) {
 			Set<String> coverageData = MutationCoverageFile
-					.getCoverageDataId(mutation.getId());
+					.getCoverageData(mutation);
 			if (coverageData != null && coverageData.size() > 0) {
 				System.out.printf("%03d tests for mutation %d\n", coverageData
 						.size(), mutation.getId());

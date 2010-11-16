@@ -99,8 +99,7 @@ public class BaseBytecodeTest {
 		}
 		ClassReader cr = new ClassReader(bytes);
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-		ClassVisitor cv = new MutationsClassAdapter(cw,
- new BytecodeInfo(),
+		ClassVisitor cv = new MutationsClassAdapter(cw, new BytecodeInfo(),
 				new MutationManager());
 		cv = new RemoveSystemExitTransformer.RemoveSystemExitClassAdapter(cv);
 		cr.accept(cv, ClassReader.SKIP_FRAMES);
@@ -223,10 +222,11 @@ public class BaseBytecodeTest {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ByteArrayOutputStream err = new ByteArrayOutputStream();
-		int result = compiler.run(null, out, err, "-g", outFile
-				.getAbsolutePath());
-		assertEquals("Compiler failed:\nOut:" + out.toString() + "\nErr:"
-				+ err.toString(), 0, result);
+		int result = compiler.run(null, out, err, "-g",
+				outFile.getAbsolutePath());
+		assertEquals(
+				"Compiler failed:\nOut:" + out.toString() + "\nErr:"
+						+ err.toString(), 0, result);
 
 	}
 
@@ -271,7 +271,29 @@ public class BaseBytecodeTest {
 			InstantiationException {
 		Mutation queryMutation = new Mutation(className, method.getName(),
 				lineNumber, mutationForLine, type);
-		Mutation m = QueryManager.getMutation(queryMutation);
+		checkMutation(queryMutation, input, expectedResult, method, clazz);
+	}
+
+	protected void checkMutation(Mutation mutation, Object input,
+			Object expectedResult, Method method, Class<?> clazz)
+			throws IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException, InstantiationException {
+		checkMutation(mutation, new Object[] { input }, expectedResult, method,
+				clazz);
+	}
+
+	protected void checkMutation(Mutation mutation, Object expectedResult,
+			Method method, Class<?> clazz) throws IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException,
+			InstantiationException {
+		checkMutation(mutation, new Object[0], expectedResult, method, clazz);
+	}
+
+	protected void checkMutation(Mutation mutation, Object[] input,
+			Object expectedResult, Method method, Class<?> clazz)
+			throws IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException, InstantiationException {
+		Mutation m = QueryManager.getMutation(mutation);
 		System.setProperty(m.getMutationVariable(), "true");
 		mutationObserver.mutationStart(m);
 		Object instance = clazz.newInstance();

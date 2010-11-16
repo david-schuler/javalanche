@@ -43,7 +43,7 @@ public class HtmlAnalyzerTest {
 	private void checkClass(String className, String checkValue) {
 		HtmlAnalyzer a = new HtmlAnalyzer();
 		Mutation m = new Mutation(className, "testM", 4, 1,
-				MutationType.RIC_ZERO);
+				MutationType.REPLACE_CONSTANT);
 		List<Mutation> mutations = Arrays.asList(m);
 		HtmlReport analyze = a.analyze(mutations);
 		ClassReport classReport = analyze.getClassReport(className);

@@ -108,13 +108,24 @@ public class QueryManager {
 			m = (Mutation) session.get(Mutation.class, mutation.getId());
 		}
 		if (m == null) {
-			Query query = session
-					.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and m.mutationForLine=:mforl and m.mutationType=:type");
-			query.setParameter("name", mutation.getClassName());
-			query.setParameter("number", mutation.getLineNumber());
-			query.setParameter("type", mutation.getMutationType());
-			query.setParameter("mforl", mutation.getMutationForLine());
-			m = (Mutation) query.uniqueResult();
+			if (mutation.getOperatorAddInfo() != null) {
+				Query query = session
+						.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and m.mutationForLine=:mforl and m.mutationType=:type and m.operatorAddInfo=:add");
+				query.setParameter("name", mutation.getClassName());
+				query.setParameter("number", mutation.getLineNumber());
+				query.setParameter("type", mutation.getMutationType());
+				query.setParameter("mforl", mutation.getMutationForLine());
+				query.setParameter("add", mutation.getOperatorAddInfo());
+				m = (Mutation) query.uniqueResult();
+			} else {
+				Query query = session
+						.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and m.mutationForLine=:mforl and m.mutationType=:type");
+				query.setParameter("name", mutation.getClassName());
+				query.setParameter("number", mutation.getLineNumber());
+				query.setParameter("type", mutation.getMutationType());
+				query.setParameter("mforl", mutation.getMutationForLine());
+				m = (Mutation) query.uniqueResult(); // TODO
+			}
 		}
 		tx.commit();
 		return m;
@@ -179,8 +190,7 @@ public class QueryManager {
 			Mutation mutationFromDB = (Mutation) session.get(Mutation.class,
 					mutation.getId());
 			if (mutationFromDB.getMutationResult() != null) {
-				logger
-						.warn("Mutation already has a test result - not storing the given result");
+				logger.warn("Mutation already has a test result - not storing the given result");
 				logger.warn("Mutation:" + mutationFromDB);
 				logger.warn("Result (that is not stored): " + mutation);
 				session.setReadOnly(mutationFromDB, true);
@@ -360,8 +370,7 @@ public class QueryManager {
 	 *         case.
 	 */
 	public static boolean isCoveredMutation(Mutation mutation) {
-		Set<String> tests = MutationCoverageFile.getCoverageDataId(mutation
-				.getId());
+		Set<String> tests = MutationCoverageFile.getCoverageData(mutation);
 		return tests.size() > 0;
 	}
 
