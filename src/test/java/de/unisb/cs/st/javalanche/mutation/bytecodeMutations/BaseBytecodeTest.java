@@ -113,7 +113,7 @@ public class BaseBytecodeTest {
 		FileUtils.writeByteArrayToFile(classFile, result);
 	}
 
-	private List<Mutation> scan(File classFile) throws IOException {
+	protected List<Mutation> scan(File classFile) throws IOException {
 		byte[] b = FileUtils.readFileToByteArray(classFile);
 		ScanVariablesTransformer sTransformer = new ScanVariablesTransformer();
 		sTransformer.scanClass(className.replace('.', '/'), b);

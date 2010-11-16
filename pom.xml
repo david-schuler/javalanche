@@ -342,9 +342,9 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>de.st.cs.unisb.ds</groupId>
+			<groupId>de.unisb.cs.st</groupId>
 			<artifactId>ds-util</artifactId>
-			<version>0.3.1</version>
+			<version>0.3.2</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.hamcrest</groupId>

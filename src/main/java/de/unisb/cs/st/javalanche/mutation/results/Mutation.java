@@ -61,8 +61,9 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 				"Negate jump condition"), ARITHMETIC_REPLACE(
 				"Replace arithmetic operator"), REMOVE_CALL(
 				"Remove method call"), REPLACE_VARIABLE(
-				"Replace variable reference"), ADAPTED_JUMP("adapted jump"), ADAPTED_SKIP_ELSE(
-				"Skip else block"), ADAPTED_REMOVE_CHECK(
+				"Replace variable reference"),
+
+		ADAPTED_JUMP("adapted jump"), ADAPTED_SKIP_ELSE("Skip else block"), ADAPTED_REMOVE_CHECK(
 				"Always executed if block"), ADAPTED_SKIP_IF("Skip if block"), ADAPTED_NEGATE_JUMP_IN_IF(
 				"Negate Jump in if statement only"), ADAPTED_ALWAYS_ELSE(
 				"Always execute else block"), ADAPTED_REPLACE(
@@ -271,67 +272,7 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 		this.mutationForLine = mutationForLine;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int PRIME = 31;
-		int result = 1;
-		result = PRIME * result
-				+ ((className == null) ? 0 : className.hashCode());
-		result = PRIME * result + ((id == null) ? 0 : id.hashCode());
-		result = PRIME * result + lineNumber;
-		result = PRIME * result + mutationForLine;
-		result = PRIME * result
-				+ ((mutationResult == null) ? 0 : mutationResult.hashCode());
-		result = PRIME * result
-				+ ((mutationType == null) ? 0 : mutationType.hashCode());
-		return result;
-	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final Mutation other = (Mutation) obj;
-		if (className == null) {
-			if (other.className != null)
-				return false;
-		} else if (!className.equals(other.className))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (lineNumber != other.lineNumber)
-			return false;
-		if (mutationForLine != other.mutationForLine)
-			return false;
-		if (mutationResult == null) {
-			if (other.mutationResult != null)
-				return false;
-		} else if (!mutationResult.equals(other.mutationResult))
-			return false;
-		if (mutationType == null) {
-			if (other.mutationType != null)
-				return false;
-		} else if (!mutationType.equals(other.mutationType))
-			return false;
-		return true;
-	}
 
 	/**
 	 * Same behavior as equals without checking for equal ids, or equal mutation
@@ -448,5 +389,81 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 
 	public Long getBaseMutationId() {
 		return baseMutationId;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((addInfo == null) ? 0 : addInfo.hashCode());
+		result = prime * result
+				+ ((baseMutationId == null) ? 0 : baseMutationId.hashCode());
+		result = prime * result
+				+ ((className == null) ? 0 : className.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + lineNumber;
+		result = prime * result
+				+ ((methodName == null) ? 0 : methodName.hashCode());
+		result = prime * result + mutationForLine;
+		result = prime * result
+				+ ((mutationResult == null) ? 0 : mutationResult.hashCode());
+		result = prime * result
+				+ ((mutationType == null) ? 0 : mutationType.hashCode());
+		result = prime * result
+				+ ((operatorAddInfo == null) ? 0 : operatorAddInfo.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Mutation other = (Mutation) obj;
+		if (addInfo == null) {
+			if (other.addInfo != null)
+				return false;
+		} else if (!addInfo.equals(other.addInfo))
+			return false;
+		if (baseMutationId == null) {
+			if (other.baseMutationId != null)
+				return false;
+		} else if (!baseMutationId.equals(other.baseMutationId))
+			return false;
+		if (className == null) {
+			if (other.className != null)
+				return false;
+		} else if (!className.equals(other.className))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (lineNumber != other.lineNumber)
+			return false;
+		if (methodName == null) {
+			if (other.methodName != null)
+				return false;
+		} else if (!methodName.equals(other.methodName))
+			return false;
+		if (mutationForLine != other.mutationForLine)
+			return false;
+		if (mutationResult == null) {
+			if (other.mutationResult != null)
+				return false;
+		} else if (!mutationResult.equals(other.mutationResult))
+			return false;
+		if (mutationType != other.mutationType)
+			return false;
+		if (operatorAddInfo == null) {
+			if (other.operatorAddInfo != null)
+				return false;
+		} else if (!operatorAddInfo.equals(other.operatorAddInfo))
+			return false;
+		return true;
 	}
 }

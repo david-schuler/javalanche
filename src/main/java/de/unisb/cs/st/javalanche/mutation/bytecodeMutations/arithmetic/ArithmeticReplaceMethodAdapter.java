@@ -18,14 +18,17 @@
  */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.MethodVisitor;
+import org.softevo.util.collections.ArrayList;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationCode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
@@ -56,13 +59,22 @@ public class ArithmeticReplaceMethodAdapter extends
 	@Override
 	protected void handleMutation(Mutation mutation, int opcode) {
 		logger.debug("Querying mutation " + mutation);
-		if (mutationManager.shouldApplyMutation(mutation)) {
-			Mutation mutationFromDB = QueryManager.getMutation(mutation);
-			MutationCode unMutated = new SingleInsnMutationCode(null, opcode);
-			MutationCode mutated = new SingleInsnMutationCode(mutationFromDB,
-					replaceMap.get(opcode));
+		List<Mutation> mutations = QueryManager.getMutations(
+				className.replace('/', '.'), methodName + desc,
+				mutation.getLineNumber(), mutation.getMutationForLine(),
+				MutationType.ARITHMETIC_REPLACE);
+		MutationCode unMutated = new SingleInsnMutationCode(null, opcode);
+		List<MutationCode> mutationCode = new ArrayList<MutationCode>();
+		for (Mutation m : mutations) {
+			if (mutationManager.shouldApplyMutation(m)) {
+				MutationCode mutated = new SingleInsnMutationCode(m,
+						Integer.parseInt(m.getOperatorAddInfo()));
+				mutationCode.add(mutated);
+			}
+		}
+		if (mutationCode.size() > 0) {
 			BytecodeTasks.insertIfElse(mv, unMutated,
-					new MutationCode[] { mutated });
+					mutationCode.toArray(new MutationCode[0]));
 		} else {
 			mv.visitInsn(opcode);
 		}

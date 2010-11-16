@@ -943,4 +943,21 @@ public class QueryManager {
 		tx.commit();
 		session.close();
 	}
+
+	public static List<Mutation> getMutations(String className,
+			String methodName, int lineNumber, int forLine, MutationType type) {
+		Session session = openSession();
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("from Mutation as m where m.className=:cname and m.methodName=:mname and m.lineNumber=:number and m.mutationForLine=:mforl and m.mutationType=:type");
+		query.setParameter("cname", className);
+		query.setParameter("mname", methodName);
+		query.setParameter("number", lineNumber);
+		query.setParameter("mforl", forLine);
+		query.setParameter("type", type);
+		List<Mutation> result = query.list();
+		tx.commit();
+		session.close();
+		return result;
+	}
 }
