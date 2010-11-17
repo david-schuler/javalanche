@@ -19,9 +19,9 @@
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.classes;
 
 public class ArithmeticTEMPLATE {
-	static {
-		System.out.println("Arithmetic - test class loaded");
-	}
+
+
+
 
 	public int m1(int i) {
 		return i + i;
@@ -43,6 +43,22 @@ public class ArithmeticTEMPLATE {
 
 	public boolean m5(int i) {
 		return i % 10 == 0;
+	}
+
+	public double m6(double d) {
+		return d + d;
+	}
+
+	public float m7(float f) {
+		return f + f;
+	}
+
+	public long m8(long l) {
+		return l + l;
+	}
+
+	public long m9(long l) {
+		return l >> 2;
 	}
 
 }

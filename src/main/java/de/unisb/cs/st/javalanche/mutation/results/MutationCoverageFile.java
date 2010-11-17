@@ -29,6 +29,8 @@ import java.util.Map.Entry;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
+import sun.nio.cs.ext.ISCII91;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
@@ -196,5 +198,12 @@ public class MutationCoverageFile {
 	public static void addDerivedMutation(long baseMutation,
 			long derviedMutation) {
 		baseMutations.put(baseMutation, derviedMutation);
+		if (isCovered(baseMutation)) {
+			coveredMutations.add(derviedMutation);
+		}
+	}
+
+	public static void update() {
+		SerializeIo.serializeToFile(coveredMutations, COVERED_FILE);
 	}
 }

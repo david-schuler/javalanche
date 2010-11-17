@@ -83,6 +83,21 @@
 	</target>
 	
 	
+	
+	<target name="addMutations" description="* Create additional mutations of type 'Replace Constant' and 'Replace Arithmetic Operator'.">
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.AddMutations" maxmemory="${javalanche.maxmemory}" fork="true">
+			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
+			<sysproperty key="javalanche.project.source.dir" value="src/java" /> <!--TODO-->
+			<sysproperty key="evalutation.file" value="/scratch/schuler/projects/project-extractor/report/evaluation-data.csv" /> <!--TODO-->
+			<sysproperty key="revision" value="${revision}" /> <!--TODO-->
+			<sysproperty key="mutation.file.list" value="${id.file}" /> <!--TODO-->
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+	
+	
 
 
 </project>

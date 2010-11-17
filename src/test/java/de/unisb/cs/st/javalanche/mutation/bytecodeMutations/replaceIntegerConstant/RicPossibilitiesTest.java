@@ -43,4 +43,5 @@ public class RicPossibilitiesTest {
 		assertEquals("Expecting " + expectedMutations + " mutations",
 				expectedMutations, filterMutations.size());
 	}
+
 }
