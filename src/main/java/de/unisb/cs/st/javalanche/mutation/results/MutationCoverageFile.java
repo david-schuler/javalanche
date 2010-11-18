@@ -23,13 +23,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-
-import sun.nio.cs.ext.ISCII91;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;

@@ -7,11 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import javax.management.RuntimeErrorException;
-
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.BreakStatement;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
@@ -26,8 +23,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
-
-import sun.security.action.GetLongAction;
 
 public class MutationASTVisitor extends ASTVisitor {
 
