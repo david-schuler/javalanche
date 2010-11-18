@@ -16,7 +16,7 @@
 	
 	  
 	<path id="mutation.classpath">
-		<pathelement path="${javalanche.dist.dir}/target/classes"/>
+		<!--pathelement path="${javalanche.dist.dir}/target/classes"/-->
 		<pathelement path="${javalanche.dist.dir}/src/main/resources"/>
 		<fileset dir="${mutation.jars.dir}" includes="*.jar">
 		  <include name="**/*.jar"/>
