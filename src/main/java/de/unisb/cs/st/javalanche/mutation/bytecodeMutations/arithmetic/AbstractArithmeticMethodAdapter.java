@@ -65,6 +65,8 @@ public abstract class AbstractArithmeticMethodAdapter extends
 				getLineNumber(),
 				getPossibilityForLine(),
 				Mutation.MutationType.ARITHMETIC_REPLACE);
+		mutation.setAddInfo("Replace " + opcode + " with "
+				+ ReplaceMap.getReplaceMap().get(opcode) + "");
 		mutation.setOperatorAddInfo(ReplaceMap.getReplaceMap().get(opcode) + "");
 		addPossibilityForLine();
 		handleMutation(mutation, opcode);
