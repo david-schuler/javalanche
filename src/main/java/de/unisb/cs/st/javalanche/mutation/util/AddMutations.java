@@ -2,8 +2,6 @@ package de.unisb.cs.st.javalanche.mutation.util;
 
 import static org.objectweb.asm.Opcodes.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -24,6 +22,13 @@ import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
+/**
+ * Class that adds additional mutations for a project. The additional mutations
+ * are of type REPLACE_CONSTANT and ARITHMETIC_REPLACE.
+ * 
+ * @author David Schuler
+ * 
+ */
 public class AddMutations {
 
 	private static final Logger logger = Logger.getLogger(AddMutations.class);
@@ -33,34 +38,23 @@ public class AddMutations {
 	private static SessionFactory sessionFactory = HibernateUtil
 			.getSessionFactory();
 
-	private static final int[] integerOpcodes = new int[] { IADD, ISUB, IMUL, IDIV, IREM, ISHL, ISHR, IUSHR, IAND, IOR, IXOR };
+	private static final int[] integerOpcodes = new int[] { IADD, ISUB, IMUL,
+			IDIV, IREM, ISHL, ISHR, IUSHR, IAND, IOR, IXOR };
 
-	private static final int[] longOpcodes = new int[] { LADD, LSUB, LMUL, LDIV, LREM, LAND, LOR, LXOR };
+	private static final int[] longOpcodes = new int[] { LADD, LSUB, LMUL,
+			LDIV, LREM, LAND, LOR, LXOR };
 
 	private static final int[] longShiftOpcodes = new int[] { LSHL, LSHR, LUSHR };
-	
-	private static final int[] floatOpcodes = new int[] { FADD, FSUB, FMUL, FDIV, FREM };
 
-	private static final int[] doubleOpcodes = new int[] { DADD, DSUB, DMUL, DDIV, DREM };
+	private static final int[] floatOpcodes = new int[] { FADD, FSUB, FMUL,
+			FDIV, FREM };
 
-	private List<Mutation> insertAdditionalMutations(Mutation m) {
-		List<Mutation> result = new ArrayList<Mutation>();
-		String operatorAddInfo = m.getOperatorAddInfo();
-		int operator = Integer.parseInt(operatorAddInfo);
-		int[] replaceOperators = getReplaceOperators(operator);
-		for (int op : replaceOperators) {
-			Mutation m2 = new Mutation(m.getClassName(), m.getMethodName(),
-					m.getLineNumber(), m.getMutationForLine(),
-					m.getMutationType());
-			m2.setOperatorAddInfo(op + "");
-			QueryManager.saveMutation(m2);
-			result.add(m2);
-		}
-		return result;
-	}
+	private static final int[] doubleOpcodes = new int[] { DADD, DSUB, DMUL,
+			DDIV, DREM };
 
-
-
+	/**
+	 * Adds new mutations of type REPLACE_CONSTANT for project.
+	 */
 	public static void addReplaceConstantMutations() {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
@@ -69,11 +63,11 @@ public class AddMutations {
 				.createQuery("from Mutation as m where className LIKE '"
 						+ projectPrefix + "%' and m.mutationType=:type");
 		query.setParameter("type", MutationType.REPLACE_CONSTANT);
+		@SuppressWarnings("unchecked")
 		List<Mutation> results = query.list();
 		for (Mutation m : results) {
 			if (MutationCoverageFile.isCovered(m.getId())
 					&& m.getBaseMutationId() == null) {
-				System.out.println(m);
 				String addInfo = m.getAddInfo();
 				int originalValue = getOriginalValue(addInfo);
 				System.out.println(originalValue);
@@ -85,9 +79,7 @@ public class AddMutations {
 					m2.setOperatorAddInfo(val + "");
 					m2.setAddInfo("Replace " + originalValue + " with " + val);
 					m2.setBaseMutationId(m.getId());
-					System.out
-							.println("AddMutations.addMutations() - Adding mutation"
-									+ m2);
+
 					logger.info("Adding mutation" + m2);
 					QueryManager.saveMutation(m2);
 					MutationCoverageFile.addDerivedMutation(m.getId(),
@@ -101,6 +93,10 @@ public class AddMutations {
 		MutationCoverageFile.update();
 	}
 
+	/**
+	 * Adds mutations of type ARITHMETIC_REPLACE for this project.
+	 * 
+	 */
 	public static void addArithmeticReplaceMutations() {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
@@ -109,11 +105,11 @@ public class AddMutations {
 				.createQuery("from Mutation as m where className LIKE '"
 						+ projectPrefix + "%' and m.mutationType=:type");
 		query.setParameter("type", MutationType.ARITHMETIC_REPLACE);
+		@SuppressWarnings("unchecked")
 		List<Mutation> results = query.list();
 		for (Mutation m : results) {
 			if (MutationCoverageFile.isCovered(m.getId())
 					&& m.getBaseMutationId() == null) {
-				System.out.println(m);
 				String addInfo = m.getAddInfo();
 				int originalValue = getOriginalValue(addInfo);
 				System.out.println(originalValue);
@@ -125,9 +121,6 @@ public class AddMutations {
 					m2.setOperatorAddInfo(val + "");
 					m2.setAddInfo("Replace " + originalValue + " with " + val);
 					m2.setBaseMutationId(m.getId());
-					System.out
-							.println("AddMutations.addMutations() - Adding mutation"
-									+ m2);
 					logger.info("Adding mutation" + m2);
 					QueryManager.saveMutation(m2);
 					MutationCoverageFile.addDerivedMutation(m.getId(),

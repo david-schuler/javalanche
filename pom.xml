@@ -72,18 +72,17 @@
 						<exclude>**/TestDebug.java</exclude>
 						<!--exclude>**/TestSettingsTest.java</exclude-->
 						<exclude>**/TestDebug3.java</exclude>
-   					  <exclude>**/TestDebug2$MCL*</exclude>
-					  <exclude>**/TestContent1$InnerClass*</exclude>
-					  <exclude>**/TestProperties$TestClass*</exclude>
-					  <exclude>**/TestContent*java</exclude>
-					  
+						<exclude>**/TestDebug2$MCL*</exclude>
+						<exclude>**/TestContent1$InnerClass*</exclude>
+						<exclude>**/TestProperties$TestClass*</exclude>
+						<exclude>**/TestContent*java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
-			    <version>2.4</version>
+				<version>2.4</version>
 				<executions>
 					<!--
 						<execution> <id>site</id> <phase>pre-site</phase> <goals>
@@ -323,7 +322,6 @@
 					<artifactId>asm</artifactId>
 				</exclusion>
 			</exclusions>
-			
 		</dependency>
 		<dependency>
 			<groupId>de.unisb.cs.st.javalanche.invariants</groupId>
@@ -338,7 +336,14 @@
 					<groupId>asm</groupId>
 					<artifactId>asm-all</artifactId>
 				</exclusion>
-
+				<exclusion>
+					<groupId>de.unisb.cs.st</groupId>
+					<artifactId>adabu2-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>de.unisb.cs.st</groupId>
+					<artifactId>adabu2-hoare</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
