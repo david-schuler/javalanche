@@ -84,7 +84,6 @@ public class MutationCoverageFile {
 		logger.info("Saving Ids of Covered Mutations "
 				+ coveredMutations.size());
 		SerializeIo.serializeToFile(coveredMutations, COVERED_FILE);
-
 	}
 
 	public static Set<String> getCoverageData(Mutation m) {
@@ -190,14 +189,15 @@ public class MutationCoverageFile {
 	}
 
 	public static boolean isCovered(long id) {
-		return getCoveredMutations().contains(id);
+		Set<Long> covered = getCoveredMutations();
+		return covered != null && getCoveredMutations().contains(id);
 	}
 
 	public static void addDerivedMutation(long baseMutation,
-			long derviedMutation) {
-		baseMutations.put(baseMutation, derviedMutation);
+			long derivedMutation) {
+		baseMutations.put(baseMutation, derivedMutation);
 		if (isCovered(baseMutation)) {
-			coveredMutations.add(derviedMutation);
+			coveredMutations.add(derivedMutation);
 		}
 	}
 
