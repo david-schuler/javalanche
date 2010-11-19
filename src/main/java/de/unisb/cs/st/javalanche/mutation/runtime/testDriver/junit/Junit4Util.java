@@ -30,7 +30,6 @@ public class Junit4Util {
 			InitializationError {
 		Class<?> forName = null;
 		String testSuite = MutationProperties.TEST_SUITE;
-		System.out.println("Junit4MutationTestDriver.getTestSuiteRunner()");
 		Runner r = null;
 		if (MutationProperties.TEST_METHODS != null) {
 			r = getMethodsRunner(MutationProperties.TEST_METHODS);

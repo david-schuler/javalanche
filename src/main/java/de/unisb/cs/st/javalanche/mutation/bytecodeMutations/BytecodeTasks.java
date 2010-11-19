@@ -161,15 +161,9 @@ public class BytecodeTasks {
 	}
 
 	public static boolean shouldIntegrate(String classNameWithDots) {
-		if (MutationProperties.JUNIT4_MODE) {
-			if (classNameWithDots
-					.equals(MutationProperties.JUNIT4_TEST_ADAPTER)) {
-				return true;
-			}
-		} else {
-			return compareWithSuiteProperty(classNameWithDots);
-		}
-		return false;
+		// return classNameWithDots.equals(JavalancheWrapperTestSuite.class
+		// .getCanonicalName());
+		return false; // TODO
 	}
 
 	private static boolean compareWithSuiteProperty(String classNameWithDots) {

@@ -34,6 +34,9 @@ public class JavalancheWrapperTestSuite extends Runner {
 
 	@Override
 	public Description getDescription() {
+		System.out
+				.println("JavalancheWrapperTestSuite.getDescription() Number of tests: "
+						+ getRunner().getDescription().testCount());
 		return getRunner().getDescription();
 	}
 
@@ -52,9 +55,11 @@ public class JavalancheWrapperTestSuite extends Runner {
 
 	@Override
 	public void run(RunNotifier notifier) {
-		Runner runner = getRunner();
-		addTraceListener(notifier);
-		runner.run(notifier);
+		Junit4MutationTestDriver driver = new Junit4MutationTestDriver();
+		driver.run();
+		// Runner runner = getRunner();
+		// addTraceListener(notifier);
+		// runner.run(notifier);
 	}
 
 	private void addTraceListener(RunNotifier notifier) {

@@ -389,7 +389,7 @@ public class JumpsMethodAdapter extends AbstractJumpsAdapter {
 				} else if (type.equals(LONG_TYPE)) {
 					mv.visitInsn(LCONST_0);
 				} else {
-					assert type.equals(OBJECT);
+					assert type.getSort() == OBJECT || type.getSort() == ARRAY;
 					mv.visitInsn(ACONST_NULL);
 				}
 				int storeOpcode = type.getOpcode(ISTORE);
