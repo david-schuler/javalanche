@@ -364,4 +364,9 @@ public class MutationProperties {
 			IGNORE_PREFIX_KEY, "");
 
 	public static final String MUTATION_TIME_LIMIT_MESSAGE = "Mutation exceeded time limit";
+
+	public static final String ENABLE_ADAPTED_MUTATIONS_KEY = "javalanche.enable.adapted.mutations";
+
+	public static final boolean ENABLE_ADAPTED_MUTATIONS = getPropertyOrDefault(
+			ENABLE_ADAPTED_MUTATIONS_KEY, false);;
 }
