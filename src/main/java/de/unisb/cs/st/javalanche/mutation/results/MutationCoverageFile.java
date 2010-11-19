@@ -190,7 +190,7 @@ public class MutationCoverageFile {
 
 	public static boolean isCovered(long id) {
 		Set<Long> covered = getCoveredMutations();
-		return covered != null && getCoveredMutations().contains(id);
+		return covered != null && covered.contains(id);
 	}
 
 	public static void addDerivedMutation(long baseMutation,
