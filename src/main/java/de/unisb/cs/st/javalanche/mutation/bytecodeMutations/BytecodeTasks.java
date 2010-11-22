@@ -133,45 +133,46 @@ public class BytecodeTasks {
 				"println", "(Ljava/lang/String;)V");
 	}
 
-	public static byte[] integrateTestSuite(byte[] classfileBuffer,
-			String classNameWithDots) {
-		if (!shouldIntegrate(classNameWithDots)) {
-			throw new IllegalArgumentException("Should not integrate in "
-					+ classNameWithDots);
-		}
-		byte[] result = null;
-		if (MutationProperties.JUNIT4_MODE) {
-			if (classNameWithDots
-					.equals(MutationProperties.JUNIT4_TEST_ADAPTER)) {
-				logger
-						.info("Integrating in Junit 4 suite "
-								+ classNameWithDots);
-				result = IntegrateSuiteTransformer
-						.modifyJunit4Adapter(classfileBuffer);
-			}
-		} else {
-			logger.info("Integrating in Junit 3 suite " + classNameWithDots);
-			BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer
-					.getIntegrateTransformer();
-			result = integrateSuiteTransformer
-					.transformBytecode(classfileBuffer);
+	// public static byte[] integrateTestSuite(byte[] classfileBuffer,
+	// String classNameWithDots) {
+	// if (!shouldIntegrate(classNameWithDots)) {
+	// throw new IllegalArgumentException("Should not integrate in "
+	// + classNameWithDots);
+	// }
+	// byte[] result = null;
+	// if (MutationProperties.JUNIT4_MODE) {
+	// if (classNameWithDots
+	// .equals(MutationProperties.JUNIT4_TEST_ADAPTER)) {
+	// logger
+	// .info("Integrating in Junit 4 suite "
+	// + classNameWithDots);
+	// result = IntegrateSuiteTransformer
+	// .modifyJunit4Adapter(classfileBuffer);
+	// }
+	// } else {
+	// logger.info("Integrating in Junit 3 suite " + classNameWithDots);
+	// BytecodeTransformer integrateSuiteTransformer = IntegrateSuiteTransformer
+	// .getIntegrateTransformer();
+	// result = integrateSuiteTransformer
+	// .transformBytecode(classfileBuffer);
+	//
+	// }
+	// return result;
+	// }
 
-		}
-		return result;
-	}
+	// public static boolean shouldIntegrate(String classNameWithDots) {
+	// // return classNameWithDots.equals(JavalancheWrapperTestSuite.class
+	// // .getCanonicalName());
+	// return false; // TODO
+	// }
 
-	public static boolean shouldIntegrate(String classNameWithDots) {
-		// return classNameWithDots.equals(JavalancheWrapperTestSuite.class
-		// .getCanonicalName());
-		return false; // TODO
-	}
-
-	private static boolean compareWithSuiteProperty(String classNameWithDots) {
-		boolean result = false;
-		String testSuiteName = MutationProperties.TEST_SUITE;
-		if (testSuiteName != null && classNameWithDots.contains(testSuiteName)) {
-			result = true;
-		}
-		return result;
-	}
+	// private static boolean compareWithSuiteProperty(String classNameWithDots)
+	// {
+	// boolean result = false;
+	// String testSuiteName = MutationProperties.TEST_SUITE;
+	// if (testSuiteName != null && classNameWithDots.contains(testSuiteName)) {
+	// result = true;
+	// }
+	// return result;
+	// }
 }

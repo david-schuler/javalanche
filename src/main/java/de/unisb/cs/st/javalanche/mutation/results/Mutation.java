@@ -272,8 +272,6 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 		this.mutationForLine = mutationForLine;
 	}
 
-
-
 	/**
 	 * Same behavior as equals without checking for equal ids, or equal mutation
 	 * results.
@@ -344,6 +342,10 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 		sb.append(mutationForLine);
 		sb.append(',');
 		sb.append(mutationType.toString());
+		sb.append(',');
+		sb.append(operatorAddInfo);
+		sb.append(',');
+		sb.append(addInfo);
 		return sb.toString();
 	}
 
@@ -369,8 +371,15 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 		if (getLineNumber() != o.getLineNumber()) {
 			return (getLineNumber() < o.getLineNumber() ? -1 : 1);
 		}
+		if (getMutationType() != o.getMutationType()) {
+			return getMutationType().compareTo(o.getMutationType());
+		}
 		if (getMutationForLine() != o.getMutationForLine()) {
 			return (getMutationForLine() < o.getMutationForLine() ? -1 : 1);
+		}
+		if (getOperatorAddInfo() != null
+				&& getOperatorAddInfo().compareTo(o.getOperatorAddInfo()) != 0) {
+			return getOperatorAddInfo().compareTo(o.getOperatorAddInfo());
 		}
 		return 0;
 	}

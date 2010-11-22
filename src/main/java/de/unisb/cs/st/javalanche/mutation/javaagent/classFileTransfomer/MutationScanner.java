@@ -167,10 +167,10 @@ public class MutationScanner implements ClassFileTransformer {
 					logger.debug("Skipping class " + className);
 				}
 
-				if (BytecodeTasks.shouldIntegrate(classNameWithDots)) {
-					classfileBuffer = BytecodeTasks.integrateTestSuite(
-							classfileBuffer, classNameWithDots);
-				}
+				// if (BytecodeTasks.shouldIntegrate(classNameWithDots)) {
+				// classfileBuffer = BytecodeTasks.integrateTestSuite(
+				// classfileBuffer, classNameWithDots);
+				// }
 
 			} catch (Throwable t) {
 				t.printStackTrace();

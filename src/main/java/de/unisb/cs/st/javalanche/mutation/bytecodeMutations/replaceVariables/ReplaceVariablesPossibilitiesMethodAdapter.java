@@ -22,9 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.AnalyzerAdapter;
 
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
@@ -57,9 +55,11 @@ public final class ReplaceVariablesPossibilitiesMethodAdapter extends
 					mutation.getMethodName(), mutation.getLineNumber(),
 					mforLine, mutation.getMutationType());
 			m2.setAddInfo("Replace: " + name + " with " + replaceName);
+			m2.setOperatorAddInfo(replaceName);
 			mpc.addPossibility(m2);
 			CoverageDataUtil.insertCoverageCalls(mv, m2);
-			mforLine++;
+
+			// mforLine++;
 		}
 		return true;
 	}
@@ -73,9 +73,10 @@ public final class ReplaceVariablesPossibilitiesMethodAdapter extends
 					mutation.getMethodName(), mutation.getLineNumber(),
 					mforLine, mutation.getMutationType());
 			m2.setAddInfo("Replace: " + var + " with " + replaceVar);
+			m2.setOperatorAddInfo(replaceVar + "");
 			mpc.addPossibility(m2);
 			CoverageDataUtil.insertCoverageCalls(mv, m2);
-			mforLine++;
+			// mforLine++;
 		}
 		return true;
 	}

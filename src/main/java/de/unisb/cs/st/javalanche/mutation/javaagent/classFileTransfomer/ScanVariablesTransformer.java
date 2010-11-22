@@ -70,7 +70,7 @@ public class ScanVariablesTransformer implements ClassFileTransformer {
 	public void scanClass(String className, ClassReader cr) {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		VariableScannerAdapter vsa = new VariableScannerAdapter(cw);
-		cr.accept(vsa, ClassReader.SKIP_FRAMES);
+		cr.accept(vsa, ClassReader.EXPAND_FRAMES);
 		p.addClassVariables(className, vsa.getClassVariables());
 		p.addStaticVariables(className, vsa.getStaticVariables());
 	}

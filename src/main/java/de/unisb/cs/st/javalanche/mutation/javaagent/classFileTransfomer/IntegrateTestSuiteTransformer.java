@@ -37,10 +37,10 @@ public class IntegrateTestSuiteTransformer implements
 			byte[] classfileBuffer) throws IllegalClassFormatException {
 		String classNameWithDots = className.replace('/', '.');
 		try {
-			if (BytecodeTasks.shouldIntegrate(classNameWithDots)) {
-				classfileBuffer = BytecodeTasks.integrateTestSuite(
-						classfileBuffer, classNameWithDots);
-			}
+			// if (BytecodeTasks.shouldIntegrate(classNameWithDots)) {
+			// classfileBuffer = BytecodeTasks.integrateTestSuite(
+			// classfileBuffer, classNameWithDots);
+			// }
 		} catch (Throwable t) {
 			logger.warn(t.getMessage());
 			t.printStackTrace();

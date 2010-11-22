@@ -117,10 +117,10 @@ public class EclipseScanner implements ClassFileTransformer {
 		if (className != null) {
 			try {
 				String classNameWithDots = className.replace('/', '.');
-				if (BytecodeTasks.shouldIntegrate(classNameWithDots)) {
-					classfileBuffer = BytecodeTasks.integrateTestSuite(
-							classfileBuffer, classNameWithDots);
-				}
+				// if (BytecodeTasks.shouldIntegrate(classNameWithDots)) {
+				// classfileBuffer = BytecodeTasks.integrateTestSuite(
+				// classfileBuffer, classNameWithDots);
+				// }
 				logger.debug("Handling class " + classNameWithDots);
 				if (md.shouldBeHandled(classNameWithDots)) {
 					if (!isTest(classfileBuffer)) {

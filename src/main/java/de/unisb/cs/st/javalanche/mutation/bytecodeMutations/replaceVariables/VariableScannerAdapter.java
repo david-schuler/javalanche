@@ -24,7 +24,7 @@ import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
-import org.softevo.util.collections.ArrayList;
+import java.util.ArrayList;
 
 public class VariableScannerAdapter extends ClassAdapter {
 

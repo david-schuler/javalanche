@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.MethodVisitor;
-import org.softevo.util.collections.ArrayList;
+import java.util.ArrayList;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationCode;

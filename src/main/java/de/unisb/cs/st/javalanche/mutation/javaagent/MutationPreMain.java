@@ -94,8 +94,8 @@ public class MutationPreMain {
 				sysout.println("Integrating RandomPermutationTestSuite");
 				addClassFileTransformer(instrumentation,
 						new SysExitTransformer());
-				addClassFileTransformer(instrumentation,
-						new IntegrateTestSuiteTransformer());
+				// addClassFileTransformer(instrumentation,
+				// new IntegrateTestSuiteTransformer());
 				return;
 			} else if (RUN_MODE == CREATE_COVERAGE) {
 				sysout.println("Getting line coverage data for unmutated run.");

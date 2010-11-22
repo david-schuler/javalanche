@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.tools.JavaCompiler;
@@ -23,15 +24,9 @@ import org.junit.Before;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
-import org.softevo.util.collections.ArrayList;
 
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.BytecodeInfo;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsClassAdapter;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorClassAdapter;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer.RemoveSystemExitClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanVariablesTransformer;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
@@ -101,8 +96,9 @@ public class BaseBytecodeTest {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		ClassVisitor cv = new MutationsClassAdapter(cw, new BytecodeInfo(),
 				new MutationManager());
-		cv = new RemoveSystemExitTransformer.RemoveSystemExitClassAdapter(cv);
-		cr.accept(cv, ClassReader.SKIP_FRAMES);
+		// cv = new
+		// RemoveSystemExitTransformer.RemoveSystemExitClassAdapter(cv);
+		cr.accept(cv, ClassReader.EXPAND_FRAMES);
 		byte[] result = cw.toByteArray();
 		if (verbose) {
 			System.out.println("---------------------------------------");
@@ -129,7 +125,7 @@ public class BaseBytecodeTest {
 		}
 		ClassVisitor cv = new MutationsCollectorClassAdapter(cc, mpc);
 		ClassReader cr = new ClassReader(b);
-		cr.accept(cv, ClassReader.SKIP_FRAMES);
+		cr.accept(cv, ClassReader.EXPAND_FRAMES);
 		mpc.toDB();
 		return mpc.getPossibilities();
 	}
@@ -240,6 +236,11 @@ public class BaseBytecodeTest {
 	}
 
 	protected void checkUnmutated(Object input, Object expectedOutput,
+			Method method, Class<?> clazz) throws Exception {
+		checkUnmutated(new Object[] { input }, expectedOutput, method, clazz);
+	}
+
+	protected void checkUnmutated(Object[] input, Object expectedOutput,
 			Method method, Class<?> clazz) throws Exception {
 		Object instance = clazz.newInstance();
 		Object invoke = method.invoke(instance, input);

@@ -147,10 +147,10 @@ public class MutationFileTransformer implements ClassFileTransformer {
 					classfileBuffer = systemExitTransformer
 							.transformBytecode(classfileBuffer);
 				}
-				if (BytecodeTasks.shouldIntegrate(classNameWithDots)) {
-					classfileBuffer = BytecodeTasks.integrateTestSuite(
-							classfileBuffer, classNameWithDots);
-				}
+				// if (BytecodeTasks.shouldIntegrate(classNameWithDots)) {
+				// classfileBuffer = BytecodeTasks.integrateTestSuite(
+				// classfileBuffer, classNameWithDots);
+				// }
 				if (mutationDecision.shouldBeHandled(classNameWithDots)) {
 					logger.info("Transforming: " + classNameWithDots);
 					byte[] transformedBytecode = null;

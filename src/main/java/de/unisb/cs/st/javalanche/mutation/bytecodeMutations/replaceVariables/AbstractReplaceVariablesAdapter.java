@@ -21,6 +21,7 @@ package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables;
 import static de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -92,6 +93,9 @@ public abstract class AbstractReplaceVariablesAdapter extends
 		List<Integer> replaceLocals = null;
 		if (opcode == ILOAD) {
 			replaceLocals = getLocals(INTEGER, var);
+			// if (getLineNumber() == 20)
+			System.out.println("YYY " + getLineNumber() + " " + replaceLocals);
+
 		} else if (opcode == LLOAD) {
 			replaceLocals = getLocals(LONG, var);
 		} else if (opcode == FLOAD) {

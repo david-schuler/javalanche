@@ -39,9 +39,7 @@ public class CsvWriter {
 		StopWatch stp = new StopWatch();
 		for (Mutation mutation : mutations) {
 			// Mutation mutation = QueryManager.getMutationByID(id, session);
-			if (mutation.isKilled()) {
-				lines.add(mutation.getCsvString());
-			}
+			lines.add(mutation.getCsvString() + "," + mutation.isKilled());
 			counter++;
 			if (counter > 20) {
 				counter = 0;

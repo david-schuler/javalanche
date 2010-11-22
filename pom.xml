@@ -49,8 +49,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -313,9 +313,9 @@
 			<version>beta-20060220</version>
 		</dependency>
 		<dependency>
-			<groupId>de.unisb</groupId>
+			<groupId>de.unisb.cs.st</groupId>
 			<artifactId>bytecodeTransformer</artifactId>
-			<version>0.1</version>
+			<version>0.2</version>
 			<exclusions>
 				<exclusion>
 					<groupId>asm</groupId>

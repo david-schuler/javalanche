@@ -54,8 +54,10 @@ public class JavalancheWrapperTestSuiteTest {
 		RunNotifier notifier = new RunNotifier();
 		TestCounter tc = new TestCounter();
 		notifier.addListener(tc);
-		javalancheWrapperTestSuite.run(notifier);
-		assertEquals(expecedTests, tc.getNumberOfTests());
+		int testCount = javalancheWrapperTestSuite.testCount();
+		// javalancheWrapperTestSuite.run(notifier);
+		// assertEquals(expecedTests, tc.getNumberOfTests());
+		assertEquals(expecedTests, testCount);
 		MutationProperties.TEST_SUITE = back;
 	}
 

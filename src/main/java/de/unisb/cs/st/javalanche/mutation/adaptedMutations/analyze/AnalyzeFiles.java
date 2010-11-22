@@ -3,13 +3,13 @@ package de.unisb.cs.st.javalanche.mutation.adaptedMutations.analyze;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.softevo.util.collections.ArrayList;
 
 import au.com.bytecode.opencsv.CSVReader;
 import de.unisb.cs.st.ds.util.Util;

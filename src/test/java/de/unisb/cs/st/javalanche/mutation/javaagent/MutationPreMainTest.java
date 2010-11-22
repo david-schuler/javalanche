@@ -30,7 +30,7 @@ public class MutationPreMainTest {
 		Instrumentation mock = createMock(Instrumentation.class);
 		MutationProperties.RUN_MODE = CHECK_TESTS;
 		mock.addTransformer((ClassFileTransformer) anyObject());
-		mock.addTransformer((ClassFileTransformer) anyObject());
+		// mock.addTransformer((ClassFileTransformer) anyObject());
 		replay(mock);
 		MutationPreMain.premain("", mock);
 		verify(mock);
@@ -88,7 +88,7 @@ public class MutationPreMainTest {
 	}
 
 	@Test
-	public void testTestSuiteTransformerIsAdded() {
+	public void testSysExitTransformerAdded() {
 		MutationProperties.RUN_MODE = CHECK_TESTS;
 		checkIntegrateTestSuite();
 		MutationProperties.RUN_MODE = TEST_PERMUTED;
@@ -99,7 +99,7 @@ public class MutationPreMainTest {
 	private void checkIntegrateTestSuite() {
 		Instrumentation mock = createMock(Instrumentation.class);
 		mock.addTransformer(isA(SysExitTransformer.class));
-		mock.addTransformer(isA(IntegrateTestSuiteTransformer.class));
+		// mock.addTransformer(isA(IntegrateTestSuiteTransformer.class));
 		replay(mock);
 		MutationPreMain.premain("", mock);
 		verify(mock);

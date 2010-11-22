@@ -96,12 +96,11 @@ public class MutationsClassAdapter extends ClassAdapter {
 		mv = new RemoveMethodCallsMethodAdapter(mv, className, name,
 				removeCallsPossibilities, mutationManager, desc);
 		if (MutationProperties.ENABLE_ADAPTED_MUTATIONS) {
-		mv = new JumpsMethodAdapter(mv, className, name, jumpsPossibilities,
-				mutationManager, desc, bytecodeInfo);
-		mv = new ReplaceMethodAdapter(mv, className, name,
-				replacePossibilities, mutationManager, desc);
+			mv = new JumpsMethodAdapter(mv, className, name,
+					jumpsPossibilities, mutationManager, desc, bytecodeInfo);
+			mv = new ReplaceMethodAdapter(mv, className, name,
+					replacePossibilities, mutationManager, desc);
 		}
-
 		ReplaceVariablesMethodAdapter rvAdapter = new ReplaceVariablesMethodAdapter(
 				mv, className, name, replaceVariablePossibilities, desc,
 				mutationManager,

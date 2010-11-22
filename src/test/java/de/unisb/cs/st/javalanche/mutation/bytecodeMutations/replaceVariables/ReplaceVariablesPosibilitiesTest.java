@@ -17,7 +17,7 @@ import java.util.List;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.softevo.util.collections.ArrayList;
+import java.util.ArrayList;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.classes.RemoveCallsTEMPLATE;
@@ -28,12 +28,13 @@ import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanVari
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
-public class ReplaceVariablesPosibilitiesTest {
 
+public class ReplaceVariablesPosibilitiesTest {
 
 	@Test
 	public void testStaticIntsClass() throws Exception {
 		List<Mutation> rvMutations = scanForReplaceVariableMutations(ReplaceVariableClass1.class);
+		Collections.sort(rvMutations);
 
 		int possibilityCount = rvMutations.size();
 		int expectedMutations = 2;
@@ -48,6 +49,8 @@ public class ReplaceVariablesPosibilitiesTest {
 		assertEquals(MutationType.REPLACE_VARIABLE, m1.getMutationType());
 		assertEquals(MutationType.REPLACE_VARIABLE, m2.getMutationType());
 
+		System.out.println(m1);
+		System.out.println(m2);
 		assertThat(m1.getAddInfo(), containsString("a with b"));
 		assertThat(m2.getAddInfo(), containsString("a with c"));
 
@@ -84,15 +87,13 @@ public class ReplaceVariablesPosibilitiesTest {
 				possibilityCount);
 	}
 
-
 	private List<Mutation> scanForReplaceVariableMutations(Class clazz)
 			throws URISyntaxException, IOException, FileNotFoundException {
 		File file = getFileForClass(clazz);
 
 		ScanVariablesTransformer sTransformer = new ScanVariablesTransformer();
 		sTransformer.scanClass(clazz.getCanonicalName().replace('.', '/'),
-				new ClassReader(
-				new FileInputStream(file)));
+				new ClassReader(new FileInputStream(file)));
 		sTransformer.write();
 
 		ClassReader cr = new ClassReader(new FileInputStream(file));
@@ -106,7 +107,6 @@ public class ReplaceVariablesPosibilitiesTest {
 		List<Mutation> rvMutations = getReplaceVariableMutations(possibilies);
 		return rvMutations;
 	}
-
 
 	private List<Mutation> getReplaceVariableMutations(List<Mutation> mutations) {
 		List<Mutation> rvMutations = new ArrayList<Mutation>();

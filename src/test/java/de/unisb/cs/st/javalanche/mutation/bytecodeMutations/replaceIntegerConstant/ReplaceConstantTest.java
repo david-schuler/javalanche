@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-import org.softevo.util.collections.ArrayList;
+import java.util.ArrayList;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BaseBytecodeTest;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.classes.ReplaceConstantTEMPLATE;

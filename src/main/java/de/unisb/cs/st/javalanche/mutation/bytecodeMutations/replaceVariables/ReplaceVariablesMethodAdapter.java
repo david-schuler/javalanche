@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.AnalyzerAdapter;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationCode;
@@ -36,7 +35,7 @@ public final class ReplaceVariablesMethodAdapter extends
 			final String owner, final String name, final String desc,
 			final String[] replaceNames) {
 
-		int mforLine = m.getMutationForLine();
+		final int mforLine = m.getMutationForLine();
 		MutationCode unMutated = new MutationCode(null) {
 			@Override
 			public void insertCodeBlock(MethodVisitor mv) {
@@ -48,7 +47,8 @@ public final class ReplaceVariablesMethodAdapter extends
 		for (final String replaceName : replaceNames) {
 			Mutation m2 = new Mutation(m.getClassName(), m.getMethodName(),
 					m.getLineNumber(), mforLine, m.getMutationType());
-			mforLine++;
+			m2.setOperatorAddInfo(replaceName + "");
+			// mforLine++;
 			if (mutationManager.shouldApplyMutation(m2)) {
 				logger.warn("Mutation applied");
 				Mutation dbMutation = QueryManager.getMutation(m2);
@@ -74,22 +74,20 @@ public final class ReplaceVariablesMethodAdapter extends
 	@Override
 	protected boolean handleLocalMutation(Mutation m, final int opcode,
 			final int var, List<Integer> replaceLocals) {
-		int mforLine = m.getMutationForLine();
+		final int mforLine = m.getMutationForLine();
 		MutationCode unMutated = new MutationCode(null) {
 			@Override
 			public void insertCodeBlock(MethodVisitor mv) {
 				mv.visitVarInsn(opcode, var);
 			}
 		};
-
 		List<MutationCode> mutated = new ArrayList<MutationCode>();
 		for (final Integer replaceLocal : replaceLocals) {
-
 			Mutation m2 = new Mutation(m.getClassName(), m.getMethodName(),
 					m.getLineNumber(), mforLine, m.getMutationType());
-			mforLine++;
+			m2.setOperatorAddInfo(replaceLocal + "");
+			// mforLine++;
 			if (mutationManager.shouldApplyMutation(m2)) {
-				logger.warn("Mutation applied");
 				Mutation dbMutation = QueryManager.getMutation(m2);
 				MutationCode mutatedC = new MutationCode(dbMutation) {
 					@Override
@@ -97,6 +95,7 @@ public final class ReplaceVariablesMethodAdapter extends
 						mv.visitVarInsn(opcode, replaceLocal);
 					}
 				};
+				logger.info("Applying mutation: " + dbMutation);
 				mutated.add(mutatedC);
 			}
 		}

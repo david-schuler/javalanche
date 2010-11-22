@@ -17,7 +17,7 @@ import javax.tools.ToolProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.softevo.util.collections.ArrayList;
+import java.util.ArrayList;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;

@@ -1,29 +1,15 @@
 package de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode;
 
 import static de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils.*;
-import static org.junit.Assert.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Map;
 
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
-
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.softevo.util.collections.ArrayList;
 
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.ASTParseResult;
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.AdaptedMutationDescription;
@@ -31,12 +17,8 @@ import de.unisb.cs.st.javalanche.mutation.adaptedMutations.ParseResultAnalyzer;
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.SourceScanner;
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.replace.ReplaceClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.replace.ReplaceCollectorTransformer;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
-import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.cs.st.javalanche.mutation.runtime.MutationObserver;
 import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
 
 public class BaseTestReplace extends BaseTestAdapted {

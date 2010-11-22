@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BaseBytecodeTest;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.ReplaceVariables5TEMPLATE;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 
 public class ReplaceLocalVariablesTypesBytecodeTest extends BaseBytecodeTest {
@@ -40,10 +41,12 @@ public class ReplaceLocalVariablesTypesBytecodeTest extends BaseBytecodeTest {
 	public void testDoubles() throws Exception {
 		Method m1 = clazz.getMethod("m1");
 		checkUnmutated(1., m1, clazz);
-		checkMutation(9, MutationType.REPLACE_VARIABLE, 0, new Object[0], 2.2,
-				m1, clazz);
-		checkMutation(9, MutationType.REPLACE_VARIABLE, 1, new Object[0], 3.2,
-				m1, clazz);
+		Mutation m = new Mutation(clazz.getCanonicalName(), m1.getName(), 9, 0,
+				MutationType.REPLACE_VARIABLE);
+		m.setOperatorAddInfo("3");
+		checkMutation(m, new Object[0], 2.2, m1, clazz);
+		m.setOperatorAddInfo("5");
+		checkMutation(m, new Object[0], 3.2, m1, clazz);
 	}
 
 	@Test
@@ -69,6 +72,5 @@ public class ReplaceLocalVariablesTypesBytecodeTest extends BaseBytecodeTest {
 		checkMutation(27, MutationType.REPLACE_VARIABLE, 0, new Object[0], "B",
 				m, clazz);
 	}
-
 
 }
