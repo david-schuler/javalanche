@@ -136,6 +136,8 @@ public abstract class MutationTestDriver {
 
 	private FileWriter controlFileWriter;
 
+	private File controlFile;
+
 	public static void main(String[] args) throws ClassNotFoundException,
 			InstantiationException, IllegalAccessException {
 		runFromProperty();
@@ -146,7 +148,7 @@ public abstract class MutationTestDriver {
 		lastId = 0l;
 		try {
 			String s = MutationProperties.MUTATION_FILE_NAME;
-			File controlFile = new File(s + "-control");
+			controlFile = new File(s + "-control");
 			if (controlFile.exists()) {
 				List readLines;
 				readLines = FileUtils.readLines(controlFile);
@@ -479,6 +481,12 @@ public abstract class MutationTestDriver {
 		System.out.println(MutationObserver.summary(true));
 		MutationObserver.reportAppliedMutations();
 
+		try {
+			controlFileWriter.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		controlFile.delete();
 		Runtime.getRuntime().removeShutdownHook(shutDownThread);
 	}
 

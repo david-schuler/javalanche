@@ -93,9 +93,6 @@ public abstract class AbstractReplaceVariablesAdapter extends
 		List<Integer> replaceLocals = null;
 		if (opcode == ILOAD) {
 			replaceLocals = getLocals(INTEGER, var);
-			// if (getLineNumber() == 20)
-			System.out.println("YYY " + getLineNumber() + " " + replaceLocals);
-
 		} else if (opcode == LLOAD) {
 			replaceLocals = getLocals(LONG, var);
 		} else if (opcode == FLOAD) {
