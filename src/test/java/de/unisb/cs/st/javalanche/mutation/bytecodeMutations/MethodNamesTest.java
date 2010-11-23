@@ -6,14 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class MethodNamesTest {
 
@@ -30,7 +27,7 @@ public class MethodNamesTest {
 			bt.transformBytecode(new ClassReader(is));
 		} catch (IOException e) {
 			e.printStackTrace();
-			Assert.fail(e.getMessage());
+			fail(e.getMessage());
 		}
 		List<Mutation> mutations = mpc.getPossibilities();
 		boolean found[] = new boolean[4];

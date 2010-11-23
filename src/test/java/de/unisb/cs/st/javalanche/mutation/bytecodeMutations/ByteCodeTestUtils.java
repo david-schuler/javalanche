@@ -1,24 +1,25 @@
 /*
-* Copyright (C) 2010 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2010 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -37,12 +39,11 @@ import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
-import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
 
 /**
  * 
@@ -52,7 +53,6 @@ import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
  * @author David Schuler
  * 
  */
-// Because of hibernate
 @SuppressWarnings("unchecked")
 public class ByteCodeTestUtils {
 
@@ -78,10 +78,18 @@ public class ByteCodeTestUtils {
 			String classFileName,
 			CollectorByteCodeTransformer collectorTransformer) {
 		File classFile = new File(classFileName);
-		FileTransformer ft = new FileTransformer(classFile);
+		byte[] classBytes = null;
+		try {
+			classBytes = FileUtils.readFileToByteArray(classFile);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		// ClassReader cr = new ClassReader(classBytes);
+		// FileTransformer ft = new FileTransformer(classFile);
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 		collectorTransformer.setMpc(mpc);
-		ft.process(collectorTransformer);
+		// ft.process(collectorTransformer);
+		collectorTransformer.transformBytecode(classBytes);
 		mpc.toDB();
 		return mpc;
 	}
@@ -105,20 +113,6 @@ public class ByteCodeTestUtils {
 		session.close();
 	}
 
-	public static void deleteTestMutationResultOLD(String className) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		String queryString = String
-				.format("from Mutation where classname=:clname");
-		Query q = session.createQuery(queryString);
-		q.setString("clname", className);
-		List mutations = q.list();
-		for (Object m : mutations) {
-			((Mutation) m).setMutationResult(null);
-		}
-		tx.commit();
-		session.close();
-	}
 
 	public static void deleteMutations(String className) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -155,16 +149,6 @@ public class ByteCodeTestUtils {
 		return testCaseNames;
 	}
 
-	public static String getFileNameForClass(Class clazz) {
-		String result = null;
-		try {
-			String className = clazz.getSimpleName() + ".class";
-			result = clazz.getResource(className).getFile();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
 
 	/**
 	 * Tests if exactly one testMethod failed because of the mutation.
@@ -186,9 +170,9 @@ public class ByteCodeTestUtils {
 				MutationTestResult singleTestResult = m.getMutationResult();
 				if (singleTestResult != null) {
 					nonNulls++;
-					Assert.assertEquals("Mutation: " + m, 1, singleTestResult
-							.getNumberOfErrors()
-							+ singleTestResult.getNumberOfFailures());
+					Assert.assertEquals("Mutation: " + m, 1,
+							singleTestResult.getNumberOfErrors()
+									+ singleTestResult.getNumberOfFailures());
 				}
 			}
 		}
@@ -219,13 +203,6 @@ public class ByteCodeTestUtils {
 		File file = new File(DEFAULT_OUTPUT_FILE);
 		Io.writeFile(sb.toString(), file);
 		MutationProperties.MUTATION_FILE_NAME = file.getAbsolutePath();
-	}
-
-	public static void addMutations(String filename) {
-		FileTransformer ft = new FileTransformer(new File(filename));
-		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
-		ft.process(new MutationScannerTransformer(mpc));
-		mpc.toDB();
 	}
 
 	public static void doSetup(String classname,

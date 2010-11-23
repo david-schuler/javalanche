@@ -32,6 +32,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
@@ -46,7 +47,6 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
-import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 /**
  * MutationTransformer is used to apply mutations during runtime via a java
@@ -164,12 +164,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 					}
 					AsmUtil.checkClass2(transformedBytecode);
 					logger.debug("Class transformed: " + classNameWithDots);
-					String checkClass = AsmUtil.checkClass(transformedBytecode);
-					if (checkClass != null && checkClass.length() > 0) {
-						logger.warn("Check of class failed: "
-								+ classNameWithDots);
-						logger.warn("Message: " + checkClass);
-					}
+					AsmUtil.checkClass2(transformedBytecode);
 					return transformedBytecode;
 				}
 			} catch (Throwable t) {

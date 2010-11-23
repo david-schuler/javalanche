@@ -161,11 +161,10 @@ public class BaseTestReplace extends BaseTestAdapted {
 		ReplaceClassAdapter cv = new ReplaceClassAdapter(cw);
 		cr.accept(cv, ClassReader.SKIP_FRAMES);
 		byte[] result = cw.toByteArray();
-		String transformed = AsmUtil.checkClass(result);
+		AsmUtil.checkClass2(result);
 		// String transformed = AsmUtil.classToString(result);
 		FileUtils.writeByteArrayToFile(classFile, result);
 		System.out.println("---------------------------------------");
-		System.out.println(transformed);
 	}
 
 	private List<Mutation> scan(File classFile) {

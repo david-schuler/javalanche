@@ -43,9 +43,9 @@ public class ReplaceMethodAdapter extends AbstractReplaceAdapter {
 
 	private final MutationManager mutationManager;
 
-	private Multimap<Integer, Label> labelMap = HashMultimap.create();
-
-	private int lastLine;
+	// private Multimap<Integer, Label> labelMap = HashMultimap.create();
+	//
+	// private int lastLine;
 
 	public ReplaceMethodAdapter(MethodVisitor mv, String className,
 			String methodName, Map<Integer, Integer> possibilities,
@@ -156,9 +156,6 @@ public class ReplaceMethodAdapter extends AbstractReplaceAdapter {
 
 				}
 			};
-		}
-		if (mc == null) {
-			throw new RuntimeException("Null for type " + type);
 		}
 		return mc;
 	}

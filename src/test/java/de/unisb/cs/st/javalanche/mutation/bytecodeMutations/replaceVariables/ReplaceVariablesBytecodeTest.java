@@ -47,7 +47,7 @@ public class ReplaceVariablesBytecodeTest extends BaseBytecodeTest {
 		m.setOperatorAddInfo("b");
 		checkMutation(m, new Object[0], 2,
 				m1, clazz);
-		m.setOperatorAddInfo("c*");
+		m.setOperatorAddInfo("c");
 		checkMutation(m, new Object[0], 3,
 				m1, clazz);
 	}

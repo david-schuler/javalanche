@@ -29,11 +29,9 @@ import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.Byteco
 import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.LastLineClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationScannerTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationTransformer;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
@@ -108,8 +106,7 @@ public class TestDebug2 {
 		List<Mutation> mList = query.list();
 		for (Mutation m : mList) {
 
-
-// if ((m.getLineNumber() == 458 && m.getMutationForLine() == 1 && m
+			// if ((m.getLineNumber() == 458 && m.getMutationForLine() == 1 && m
 			// .getMutationType() == MutationType.ADAPTED_ALWAYS_ELSE)
 			// || (m.getLineNumber() == 9462
 			// && m.getMutationForLine() == 0 && m
@@ -118,7 +115,7 @@ public class TestDebug2 {
 			// && m.getMutationForLine() == 0 && m
 			// .getMutationType() == MutationType.REMOVE_CALL)) {
 
-				ids.add(m.getId());
+			ids.add(m.getId());
 			// }
 		}
 		tx.commit();
@@ -184,9 +181,7 @@ public class TestDebug2 {
 			e.printStackTrace();
 		}
 		System.out.println(result.length + "  " + bytes.length);
-		String errors = AsmUtil.checkClass(bytes);
-		System.out.println("---------------------------------------");
-		System.out.println(errors);
+		AsmUtil.checkClass2(bytes);
 		System.out.println("---------------------------------------");
 
 		String resultString = AsmUtil.classToString(result);

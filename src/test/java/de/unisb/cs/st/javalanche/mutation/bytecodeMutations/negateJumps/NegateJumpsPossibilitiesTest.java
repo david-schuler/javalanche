@@ -19,7 +19,7 @@
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps;
 
 import static de.unisb.cs.st.javalanche.mutation.properties.TestProperties.*;
-import junit.framework.Assert;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
@@ -38,7 +38,7 @@ public class NegateJumpsPossibilitiesTest {
 		NegateJumpsPossibilitiesClassAdapter njpcv = new NegateJumpsPossibilitiesClassAdapter(
 				cw, mpc);
 		cr.accept(njpcv, 0);
-		Assert.assertTrue(mpc.size() > 40);
+		assertTrue(mpc.size() > 40);
 	}
 
 

@@ -19,7 +19,6 @@
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations;
 
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
-import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public abstract class CollectorByteCodeTransformer extends BytecodeTransformer {
 

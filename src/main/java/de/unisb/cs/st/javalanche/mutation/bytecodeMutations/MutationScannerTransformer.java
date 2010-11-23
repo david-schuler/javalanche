@@ -26,7 +26,6 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
-import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;

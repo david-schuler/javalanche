@@ -1,24 +1,23 @@
 /*
-* Copyright (C) 2010 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2010 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.mutationPossibilities;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,10 +26,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.RicCollectorTransformer;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.st.bytecodetransformer.processFiles.FileTransformer;
 
 public class MutationPossibilityCollector {
 
@@ -39,8 +36,8 @@ public class MutationPossibilityCollector {
 	private Set<Mutation> possibilities = new HashSet<Mutation>();
 
 	public void addPossibility(Mutation mutationPossibility) {
-		if(possibilities.contains(mutationPossibility)){
-//			throw new RuntimeException("Possibility already contained");
+		if (possibilities.contains(mutationPossibility)) {
+			// throw new RuntimeException("Possibility already contained");
 			logger.warn("Possibility already contained" + mutationPossibility);
 		}
 		possibilities.add(mutationPossibility);
@@ -59,10 +56,10 @@ public class MutationPossibilityCollector {
 	public void toDB() {
 		QueryManager.saveMutations(possibilities);
 	}
-	
+
 	/**
 	 * Returns the number of collected mutation possibilities.
-	 *
+	 * 
 	 * @return The number of mutation possibilities that were collected.
 	 */
 	public int size() {

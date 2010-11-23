@@ -1,10 +1,27 @@
-package de.unisb.cs.st.javalanche.mutation.adaptedMutations;
+/*
+ * Copyright (C) 2010 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package de.unisb.cs.st.javalanche.mutation.util;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.DurationFormatUtils;
@@ -14,10 +31,15 @@ import org.hibernate.classic.Session;
 
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
+/**
+ * Class that writes all mutations for a project to a csv file.
+ * 
+ * @author David Schuler
+ * 
+ */
 public class CsvWriter {
 
 	private static Logger logger = Logger.getLogger(CsvWriter.class);
@@ -57,9 +79,7 @@ public class CsvWriter {
 			}
 		}
 		session.close();
-		logger
-				.info("Starting to write file with " + lines.size()
-						+ " entries.");
+		logger.info("Starting to write file with " + lines.size() + " entries.");
 		FileUtils.writeLines(new File("mutations.csv"), lines);
 	}
 }

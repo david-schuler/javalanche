@@ -31,8 +31,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTransformer;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
-import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class IntegrateSuiteTransformer extends BytecodeTransformer {
 

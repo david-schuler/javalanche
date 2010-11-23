@@ -26,7 +26,6 @@ import org.objectweb.asm.Opcodes;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 /**
  * Class that provides static methods for common bytecode modifications.

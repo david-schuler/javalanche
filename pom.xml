@@ -308,22 +308,6 @@
 			<version>5.1.13</version>
 		</dependency>
 		<dependency>
-			<groupId>org.prefuse</groupId>
-			<artifactId>prefuse</artifactId>
-			<version>beta-20060220</version>
-		</dependency>
-		<dependency>
-			<groupId>de.unisb.cs.st</groupId>
-			<artifactId>bytecodeTransformer</artifactId>
-			<version>0.2</version>
-			<exclusions>
-				<exclusion>
-					<groupId>asm</groupId>
-					<artifactId>asm</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>de.unisb.cs.st.javalanche.invariants</groupId>
 			<artifactId>invariants</artifactId>
 			<version>0.1</version>

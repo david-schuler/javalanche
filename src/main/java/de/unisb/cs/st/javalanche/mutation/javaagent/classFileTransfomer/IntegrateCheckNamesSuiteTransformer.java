@@ -23,11 +23,12 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
 import org.apache.log4j.Logger;
+
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 
 import static de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ClassFileTransformerUtil.*;
 
-import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class IntegrateCheckNamesSuiteTransformer implements ClassFileTransformer {
 

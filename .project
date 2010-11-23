@@ -6,7 +6,6 @@
 	mutations to effectively weed out equivalent mutants. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
     <project>adabu2-tracer</project>
-    <project>staticTransformer</project>
     <project>ds-util</project>
     <project>invariants</project>
     <project>util</project>

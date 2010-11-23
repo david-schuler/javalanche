@@ -29,7 +29,6 @@ import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.Byteco
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
-import de.unisb.st.bytecodetransformer.processFiles.BytecodeTransformer;
 
 public class MutationTransformer extends BytecodeTransformer {
 

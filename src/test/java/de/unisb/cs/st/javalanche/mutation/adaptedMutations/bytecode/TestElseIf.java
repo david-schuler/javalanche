@@ -63,10 +63,9 @@ public class TestElseIf extends BaseTestJump {
 				.read(), new MutationManager());
 		cr.accept(cv, ClassReader.SKIP_FRAMES);
 		byte[] result = cw.toByteArray();
-		String transformed = AsmUtil.checkClass(result);
+		AsmUtil.checkClass2(result);
 		// String transformed = AsmUtil.classToString(result);
 		FileUtils.writeByteArrayToFile(classFile, result);
 		System.out.println("---------------------------------------");
-		System.out.println(transformed);
 	}
 }

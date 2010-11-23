@@ -60,10 +60,6 @@ public class MutationProperties {
 						+ PROPERTIES_FILE + " Properties: "
 						+ properties.keySet());
 			}
-			if (properties == null) {
-				logger.warn("Could not read properties file:  "
-						+ PROPERTIES_FILE);
-			}
 		}
 		return properties;
 	}
@@ -176,8 +172,6 @@ public class MutationProperties {
 			"testname-map.xml");
 
 	public static final File EXCLUDE_FILE = new File(OUTPUT_DIR, "exclude.txt");
-
-	public static final int BATCH_SIZE = 1; // TODO
 
 	public static final String CLASSES_TO_MUTATE_KEY = "javalanche.classes.to.mutate";
 

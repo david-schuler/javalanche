@@ -86,6 +86,10 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 			String signature, final String[] exceptions) {
 		MethodVisitor mv = super.visitMethod(access, name, desc, signature,
 				exceptions);
+		if ((access & Opcodes.ACC_SYNTHETIC) > 0
+				|| (access & Opcodes.ACC_BRIDGE) > 0 || name.equals("<clinit>")) {
+			return mv;
+		}
 		if (debug) {
 			mv = new CheckMethodAdapter(mv);
 		}
@@ -108,9 +112,8 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 		}
 		if (!MutationProperties.IGNORE_REPLACE_VARIABLES) {
 			ReplaceVariablesPossibilitiesMethodAdapter rvAdapter = new ReplaceVariablesPossibilitiesMethodAdapter(
-					mv, className,
-					name, mpc, replaceVariablesPossibilities, desc,
-					projectVariables.getStaticVariables(className),
+					mv, className, name, mpc, replaceVariablesPossibilities,
+					desc, projectVariables.getStaticVariables(className),
 					projectVariables.getClassVariables(className));
 			mv = rvAdapter;
 			AnalyzerAdapter analyzerAdapter = new AnalyzerAdapter(className,

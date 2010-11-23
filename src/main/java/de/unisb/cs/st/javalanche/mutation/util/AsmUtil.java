@@ -22,11 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassReader;
@@ -90,22 +86,22 @@ public class AsmUtil {
 		return null;
 	}
 
-	private static ClassLoader getClassLoaderFromClasspath() {
-		ClassLoader classLoader;
-		String classPath = System.getProperty("java.class.path");
-		String[] split = classPath.split(":");
-		List<URL> urls = new ArrayList<URL>();
-		for (String string : split) {
-			try {
-				URL url = new File(string).toURI().toURL();
-				urls.add(url);
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-		}
-		classLoader = new URLClassLoader(urls.toArray(new URL[0]));
-		return classLoader;
-	}
+	// private static ClassLoader getClassLoaderFromClasspath() {
+	// ClassLoader classLoader;
+	// String classPath = System.getProperty("java.class.path");
+	// String[] split = classPath.split(":");
+	// List<URL> urls = new ArrayList<URL>();
+	// for (String string : split) {
+	// try {
+	// URL url = new File(string).toURI().toURL();
+	// urls.add(url);
+	// } catch (MalformedURLException e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// classLoader = new URLClassLoader(urls.toArray(new URL[0]));
+	// return classLoader;
+	// }
 
 	public static String classToString(String className) {
 		if (!className.endsWith("class")) {
@@ -120,18 +116,6 @@ public class AsmUtil {
 		System.out.println(classToString(className));
 	}
 
-	public static String checkClass(byte[] transformedBytecode) {
-		ClassReader cr = new ClassReader(transformedBytecode);
-		StringWriter sw = new StringWriter();
-		CheckClassAdapter check = new CheckClassAdapter(new ClassWriter(
-				ClassWriter.COMPUTE_MAXS));
-		// cr.accept(check, ClassReader.EXPAND_FRAMES);
-		// original classes
-		// cr.accept(check,0);
-		// CheckClassAdapter.verify(cr, false, new PrintWriter(sw)); TODO
-		// reports failure on
-		return sw.toString();
-	}
 
 	public static void checkClass2(byte[] classfileBuffer) {
 		ClassReader cr2 = new ClassReader(classfileBuffer);
