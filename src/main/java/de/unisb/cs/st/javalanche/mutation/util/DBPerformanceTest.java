@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2010 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2010 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.util;
 
 import java.io.BufferedWriter;
@@ -33,6 +33,12 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
+/**
+ * Tests the performance of the system.
+ * 
+ * @author David Schuler
+ * 
+ */
 public class DBPerformanceTest {
 
 	private static final String PREFIX = "PerformanceTestMutation";
@@ -66,8 +72,8 @@ public class DBPerformanceTest {
 			e.printStackTrace();
 		}
 		stopWatch.stop();
-		System.out.printf("Writing file took %s\n", DurationFormatUtils
-				.formatDurationHMS(stopWatch.getTime()));
+		System.out.printf("Writing file took %s\n",
+				DurationFormatUtils.formatDurationHMS(stopWatch.getTime()));
 
 	}
 
@@ -86,8 +92,9 @@ public class DBPerformanceTest {
 		}
 		stopWatch.stop();
 		System.out.printf("Querying %d mutations took %s -- checkvalue: %d\n",
-				LIMIT, DurationFormatUtils.formatDurationHMS(stopWatch
-						.getTime()), sb.length());
+				LIMIT,
+				DurationFormatUtils.formatDurationHMS(stopWatch.getTime()),
+				sb.length());
 	}
 
 	private void testDelete() {

@@ -120,7 +120,7 @@ public class MutationProperties {
 	public static final String TRACE_BYTECODE_KEY = "javalanche.trace.bytecode";
 
 	public static boolean TRACE_BYTECODE = getPropertyOrDefault(
-			TRACE_BYTECODE_KEY, true);
+			TRACE_BYTECODE_KEY, false);
 
 	public static final String STOP_AFTER_FIRST_FAIL_KEY = "javalanche.stop.after.first.fail";
 
