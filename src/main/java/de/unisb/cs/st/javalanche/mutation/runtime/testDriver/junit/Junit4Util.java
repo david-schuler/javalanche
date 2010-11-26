@@ -32,7 +32,7 @@ public class Junit4Util {
 		String testSuite = MutationProperties.TEST_SUITE;
 		Runner r = null;
 		if (MutationProperties.TEST_METHODS != null) {
-			r = getMethodsRunner(MutationProperties.TEST_METHODS);
+			r = getMethodsRunner(testSuite);
 		} else if (MutationProperties.TEST_CLASSES != null) {
 			r = getClassesRunner(MutationProperties.TEST_CLASSES);
 		} else if (testSuite.contains(":")) {
@@ -45,12 +45,12 @@ public class Junit4Util {
 				if (suite != null) {
 					r = new SuiteMethod(forName);
 				} else {
-					r = new AllDefaultPossibilitiesBuilder(false)
+					r = new AllDefaultPossibilitiesBuilder(true)
 							.runnerForClass(forName);
 				}
 				if (r == null) {
 					r = new Suite(forName, new AllDefaultPossibilitiesBuilder(
-							false));
+							true));
 				}
 			} catch (Throwable e) {
 				// e.printStackTrace();
@@ -80,7 +80,7 @@ public class Junit4Util {
 			Class<?> clazz = Class.forName(className);
 			classes.add(clazz);
 		}
-		r = new Suite(new AllDefaultPossibilitiesBuilder(false),
+		r = new Suite(new AllDefaultPossibilitiesBuilder(true),
 				classes.toArray(new Class[0]));
 		return r;
 	}
@@ -88,6 +88,7 @@ public class Junit4Util {
 	private static Runner getMethodsRunner(String testMethods)
 			throws ClassNotFoundException, InitializationError {
 		String[] testMethodsSplit = testMethods.split(":");
+		System.out.println("Junit4Util.getMethodsRunner() " + testMethods);
 		final Multimap<String, String> methods = getMethodMap(testMethodsSplit);
 		RunnerBuilder runnerBuilder = new RunnerBuilder() {
 			@Override
@@ -139,6 +140,7 @@ public class Junit4Util {
 	}
 
 	static String getTestClass(String testMethod) {
+		System.out.println("Junit4Util.getTestClass() " + testMethod);
 		int lastIndexOf = testMethod.lastIndexOf('.');
 		return testMethod.substring(0, lastIndexOf);
 	}

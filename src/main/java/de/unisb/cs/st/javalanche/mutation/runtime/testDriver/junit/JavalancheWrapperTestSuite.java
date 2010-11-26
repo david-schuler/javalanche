@@ -11,6 +11,9 @@ import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
+
 @RunWith(JavalancheWrapperTestSuite.class)
 public class JavalancheWrapperTestSuite extends Runner {
 
@@ -52,11 +55,18 @@ public class JavalancheWrapperTestSuite extends Runner {
 
 	@Override
 	public void run(RunNotifier notifier) {
-		Junit4MutationTestDriver driver = new Junit4MutationTestDriver();
-		// addTraceListener(notifier);
-		driver.run();
-		// Runner runner = getRunner();
-		// runner.run(notifier);
+		if (MutationProperties.RUN_MODE == RunMode.OFF) {
+			Runner runner = getRunner();
+			runner.run(notifier);
+		} else {
+			Junit4MutationTestDriver driver = new Junit4MutationTestDriver();
+			// addTraceListener(notifier);
+			driver.run();
+			// Runner runner = getRunner();
+			// runner.run(notifier);
+			System.out.println("JavalancheWrapperTestSuite.run() "
+					+ MutationProperties.RUN_MODE);
+		}
 	}
 
 	private void addTraceListener(RunNotifier notifier) {

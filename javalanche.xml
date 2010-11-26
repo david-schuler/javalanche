@@ -16,8 +16,6 @@
 	<property name="javalanche.location" value="${javalanche}" />
 	<property name="javalanche.dist.dir" value="${javalanche}" />
 	
-	<!-- value="${javalanche}/target/javalanche-mutation-0.1-dist.dir/lib/" /-->
-	
 		
 	<import file="${javalanche.location}/import.xml"/>
 	<import file="${javalanche.location}/src/main/resources/invariant-build.xml" />

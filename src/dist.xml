@@ -18,7 +18,6 @@
 	  </sources>
     </moduleSet>
   </moduleSets>
-		
   <fileSets>
     <fileSet>
       <directory>target</directory>
@@ -36,4 +35,3 @@
     </dependencySet>
   </dependencySets>
 </assembly>
-
