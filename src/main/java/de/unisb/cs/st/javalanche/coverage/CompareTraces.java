@@ -22,7 +22,6 @@ import static de.unisb.cs.st.javalanche.coverage.CoverageAnalyzer.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
@@ -46,7 +45,7 @@ public class CompareTraces {
 		}
 	}
 
-	private static Logger logger = Logger.getLogger(CompareTraces.class);
+	static Logger logger = Logger.getLogger(CompareTraces.class);
 
 	private enum Mode {
 		LINE, DATA
@@ -137,32 +136,11 @@ public class CompareTraces {
 		return allDifferences;
 	}
 
-	private static Set<String> compareTraces(
-			Map<String, Map<String, Map<Integer, Integer>>> map1,
-			Map<String, Map<String, Map<Integer, Integer>>> map2) {
-		if (map1 == null || map2 == null) {
-			throw new IllegalArgumentException("Got null as argument");
-		}
-		Set<String> differences = new HashSet<String>();
-		for (String testName : map1.keySet()) {
-			Map<String, Map<Integer, Integer>> testMap1 = map1.get(testName);
-			Map<String, Map<Integer, Integer>> testMap2 = map2.get(testName);
-			Collection<String> diff = CoverageTraceUtil.getDifferentMethods(
-					testMap1, testMap2);
-			if (diff.size() > 0) {
-				logger.info(diff.size() + " difference for test " + testName);
-			}
-			differences.addAll(diff);
-
-		}
-		return differences;
-	}
-
 	private static Set<String> compare(
 			Map<String, Map<String, Map<Integer, Integer>>> trace1,
 			Map<String, Map<String, Map<Integer, Integer>>> trace2) {
-		Set<String> diff1 = compareTraces(trace1, trace2);
-		Set<String> diff2 = compareTraces(trace2, trace1);
+		Set<String> diff1 = CoverageTraceUtil.getDifferentMethodsForTests2(trace1, trace2);
+		Set<String> diff2 = CoverageTraceUtil.getDifferentMethodsForTests2(trace2, trace1);
 		Set<String> result = new HashSet<String>(diff1);
 		result.addAll(diff2);
 		return result;

@@ -18,13 +18,17 @@
  */
 package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
@@ -78,7 +82,33 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 			}
 		}
 		allTests = getTests(r);
+		removeExludedTests();
 		logger.info("All tests" + allTests);
+	}
+
+	private void removeExludedTests() {
+		String excludes = MutationProperties.EXCLUDED_TESTS;
+		if (excludes != null) {
+			List<String> excludeList = new ArrayList<String>();
+			if (excludes.startsWith("file://")) {
+				String fileName = excludes.substring(7);
+				try {
+					excludeList = FileUtils.readLines(new File(fileName));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			} else {
+				String[] split = excludes.split(":");
+				excludeList = Arrays.asList(split);
+			}
+			for (String string : excludeList) {
+				if (allTests.containsKey(string)) {
+					allTests.remove(string);
+				}
+			}
+		}
+
 	}
 
 	private static Map<String, Description> getTests(Runner r) {
@@ -94,8 +124,14 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 				descs.addAll(children);
 			} else {
 				String testName = getTestName(d);
-				logger.debug("Got test case: " + testName);
-				testMap.put(testName, d);
+				String insertTestName = testName;
+				int count = 0;
+				while (testMap.containsKey(insertTestName)) {
+					count++;
+					insertTestName = testName + "-instance-" + count;
+				}
+				logger.debug("Got test case: " + insertTestName + "Desc: " + d);
+				testMap.put(insertTestName, d);
 			}
 
 		}

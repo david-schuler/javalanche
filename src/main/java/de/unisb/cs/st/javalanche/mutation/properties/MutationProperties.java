@@ -362,5 +362,9 @@ public class MutationProperties {
 	public static final String ENABLE_ADAPTED_MUTATIONS_KEY = "javalanche.enable.adapted.mutations";
 
 	public static final boolean ENABLE_ADAPTED_MUTATIONS = getPropertyOrDefault(
-			ENABLE_ADAPTED_MUTATIONS_KEY, false);;
+			ENABLE_ADAPTED_MUTATIONS_KEY, false);
+
+	public static final String EXCLUDED_TESTS_KEY = "javalanche.excluded.tests";
+	public static final String EXCLUDED_TESTS = getPropertyOrDefault(
+			EXCLUDED_TESTS_KEY, null);
 }

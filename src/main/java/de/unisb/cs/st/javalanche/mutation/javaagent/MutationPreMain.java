@@ -56,10 +56,10 @@ public class MutationPreMain {
 	 */
 	public static void premain(String agentArguments,
 			Instrumentation instrumentation) {
+
 		try {
 			if (RUN_MODE == MUTATION_TEST) {
-				sysout
-						.println("Run mutation testing (without impact detection)");
+				sysout.println("Run mutation testing (without impact detection)");
 				addClassFileTransformer(instrumentation,
 						new MutationFileTransformer());
 				return;
@@ -79,8 +79,7 @@ public class MutationPreMain {
 				return;
 
 			} else if (RUN_MODE == MUTATION_TEST_COVERAGE) {
-				sysout
-						.println("Run mutation tests with tracing of coverage data per test");
+				sysout.println("Run mutation tests with tracing of coverage data per test");
 				addClassFileTransformer(instrumentation,
 						new MutationFileTransformer());
 				addClassFileTransformer(instrumentation,
@@ -99,15 +98,22 @@ public class MutationPreMain {
 				return;
 			} else if (RUN_MODE == CREATE_COVERAGE) {
 				sysout.println("Getting line coverage data for unmutated run.");
+				// addClassFileTransformer(instrumentation,
+				// new IntegrateTestSuiteTransformer());
 				addClassFileTransformer(instrumentation,
-						new IntegrateTestSuiteTransformer());
+						new CoverageTransformer());
+				return;
+			} else if (RUN_MODE == CREATE_COVERAGE_MULT) {
+				sysout.println("Getting line coverage data for multiple unmutated runs.");
+				addClassFileTransformer(instrumentation,
+						new SysExitTransformer());
 				addClassFileTransformer(instrumentation,
 						new CoverageTransformer());
 				return;
 			} else if (RUN_MODE == SCAN_PROJECT) {
 				sysout.println("Scanning project for classes");
 				addClassFileTransformer(instrumentation,
-						new DistanceTransformer());	
+						new DistanceTransformer());
 				addClassFileTransformer(instrumentation,
 						new ScanVariablesTransformer());
 				addClassFileTransformer(instrumentation,
@@ -118,8 +124,7 @@ public class MutationPreMain {
 				addClassFileTransformer(instrumentation, new EclipseScanner());
 				return;
 			} else if (RUN_MODE == EVOLUTION) {
-				sysout
-						.println("Run mutation testing with evolutionary algorithm");
+				sysout.println("Run mutation testing with evolutionary algorithm");
 				addClassFileTransformer(instrumentation,
 						new MutationFileTransformer(
 								new EvolutionMutationTransformer()));

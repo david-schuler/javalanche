@@ -410,4 +410,24 @@ public class CoverageTraceUtil {
 		}
 		return result;
 	}
+
+	public static Set<String> getDifferentMethodsForTests2(
+			Map<String, Map<String, Map<Integer, Integer>>> map1,
+			Map<String, Map<String, Map<Integer, Integer>>> map2) {
+		if (map1 == null || map2 == null) {
+			throw new IllegalArgumentException("Got null as argument");
+		}
+		Set<String> differences = new HashSet<String>();
+		for (String testName : map1.keySet()) {
+			Map<String, Map<Integer, Integer>> testMap1 = map1.get(testName);
+			Map<String, Map<Integer, Integer>> testMap2 = map2.get(testName);
+			Collection<String> diff = getDifferentMethods(
+					testMap1, testMap2);
+			if (diff.size() > 0) {
+				logger.info(diff.size() + " difference for test " + testName);
+			}
+			differences.addAll(diff);
+		}
+		return differences;
+	}
 }

@@ -206,8 +206,9 @@ public abstract class MutationTestDriver {
 			addMutationTestListener(new InvariantPerTestCheckListener());
 			runNormalTests();
 		} else if (RUN_MODE == CREATE_COVERAGE) {
-			// runNormalTests();
-			// coldRun();
+			addMutationTestListener(new CoverageMutationListener());
+			runNormalTests();
+		} else if (RUN_MODE == CREATE_COVERAGE_MULT) {
 			addMutationTestListener(new CoverageMutationListener());
 			runPermutedTests();
 		} else if (RUN_MODE == TEST_PERMUTED) {
@@ -306,9 +307,18 @@ public abstract class MutationTestDriver {
 			logger.info(message);
 		} else {
 			logger.warn("Not all tests passed");
+			Set<String> failingTests = new HashSet<String>();
 			for (SingleTestResult str : allFailingTests) {
-				logger.warn(str.getTestMessage().getTestCaseName() + ": "
+				String testCaseName = str.getTestMessage().getTestCaseName();
+				logger.warn("Test Failed: " + testCaseName + ": "
 						+ str.getTestMessage());
+				failingTests.add(testCaseName);
+			}
+			try {
+				FileUtils.writeLines(new File(MutationProperties.OUTPUT_DIR
+						+ "/failing-tests-permuted.txt"), failingTests);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
 			}
 		}
 	}
@@ -609,7 +619,7 @@ public abstract class MutationTestDriver {
 	protected abstract MutationTestRunnable getTestRunnable(String testName);
 
 	/**
-	 * Return all tests that are availble to this test suite
+	 * Return all tests that are available to this test suite
 	 * 
 	 * @return a list of all tests
 	 */

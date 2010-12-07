@@ -17,7 +17,7 @@
 	  
 	<path id="mutation.classpath">
 		<pathelement path="${javalanche.dist.dir}/target/classes"/>
-		
+		<pathelement path="${javalanche.dist.dir}/src/main/resources"/>
 		<fileset dir="${mutation.jars.dir}" includes="*.jar">
 		  <include name="**/*.jar"/>
 		  <exclude name="**/*daikon*"/>
@@ -55,7 +55,7 @@
 	<target name="testTask2" description="* Test the Javalanche test runner without any bytecode modifications. All tests should pass in the Javalanche test runner.">
 		<property name="test.task.2.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="test.task.2.memory" value="-Xmx${javalanche.maxmemory}"/>
-		<property name="test.task.2.mutation.run.mode" value="-Dmutation.run.mode=test1"/>
+		<property name="test.task.2.mutation.run.mode" value="-Dmutation.run.mode=check-tests"/>
 		<property name="test.task.2.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="test.task.2.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
 		
@@ -73,7 +73,7 @@
 	<target name="testTask3" description="* Run the tests multiple times in different order. The outcome of the tests should not depend on the execution order.">
 		<property name="test.task.3.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="test.task.3.memory" value="-Xmx${javalanche.maxmemory}"/>
-		<property name="test.task.3.mutation.run.mode" value="-Dmutation.run.mode=test3"/>
+		<property name="test.task.3.mutation.run.mode" value="-Dmutation.run.mode=check-tests-permuted"/>
 		<property name="test.task.3.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="test.task.3.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
 		

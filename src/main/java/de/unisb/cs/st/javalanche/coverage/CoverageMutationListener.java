@@ -117,8 +117,7 @@ public class CoverageMutationListener implements MutationTestListener {
 			dir.mkdir();
 		}
 
-		if (MutationProperties.RUN_MODE == RunMode.TEST_PERMUTED
-				|| MutationProperties.RUN_MODE == RunMode.CREATE_COVERAGE) {
+		if (MutationProperties.RUN_MODE == RunMode.CREATE_COVERAGE_MULT) {
 			isPermuted = true;
 		}
 	}
@@ -156,6 +155,7 @@ public class CoverageMutationListener implements MutationTestListener {
 		this.testName = testName;
 		if (isPermuted) {
 			if (seenTests.contains(testName)) {
+				logger.info("New Permutation Detected for Test: " + testName);
 				seenTests.clear();
 				long i = 1;
 				File dir = new File(CoverageProperties.TRACE_RESULT_DATA_DIR

@@ -20,6 +20,7 @@ public class JavalancheWrapperTestSuite extends Runner {
 	private Runner r;
 
 	public JavalancheWrapperTestSuite(Class<?> c) {
+
 		// if (MutationProperties.TEST_CLASSES == null
 		// && MutationProperties.TEST_METHODS == null) {
 		// throw new IllegalStateException(

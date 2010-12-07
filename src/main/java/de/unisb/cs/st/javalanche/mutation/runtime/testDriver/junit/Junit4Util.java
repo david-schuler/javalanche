@@ -1,11 +1,14 @@
 package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.internal.runners.SuiteMethod;
@@ -32,7 +35,19 @@ public class Junit4Util {
 		String testSuite = MutationProperties.TEST_SUITE;
 		Runner r = null;
 		if (MutationProperties.TEST_METHODS != null) {
-			r = getMethodsRunner(testSuite);
+			if (MutationProperties.TEST_METHODS.startsWith("file:")) {
+				String fileName = MutationProperties.TEST_METHODS.substring(5);
+				try {
+					String testsFromFile = FileUtils.readFileToString(new File(
+							fileName));
+					r = getMethodsRunner(testsFromFile);
+				} catch (IOException e) {
+					throw new RuntimeException("Could not read file: "
+							+ fileName, e);
+				}
+			} else {
+				r = getMethodsRunner(testSuite);
+			}
 		} else if (MutationProperties.TEST_CLASSES != null) {
 			r = getClassesRunner(MutationProperties.TEST_CLASSES);
 		} else if (testSuite.contains(":")) {
@@ -88,12 +103,10 @@ public class Junit4Util {
 	private static Runner getMethodsRunner(String testMethods)
 			throws ClassNotFoundException, InitializationError {
 		String[] testMethodsSplit = testMethods.split(":");
-		System.out.println("Junit4Util.getMethodsRunner() " + testMethods);
 		final Multimap<String, String> methods = getMethodMap(testMethodsSplit);
 		RunnerBuilder runnerBuilder = new RunnerBuilder() {
 			@Override
 			public Runner runnerForClass(Class<?> testClass) throws Throwable {
-
 				Request aClass = Request.aClass(testClass);
 				final Collection<String> methodNames = methods.get(testClass
 						.getName());
@@ -108,6 +121,7 @@ public class Junit4Util {
 					public boolean shouldRun(Description description) {
 						String name = description.getClassName() + "."
 								+ description.getMethodName();
+						logger.debug("Testname: " + name);
 						boolean var = methodNames.contains(name);
 						return var;
 					}
@@ -133,15 +147,20 @@ public class Junit4Util {
 	private static Multimap<String, String> getMethodMap(String[] testMethods) {
 		final Multimap<String, String> methods = HashMultimap.create();
 		for (String testMethod : testMethods) {
-			String testClass = getTestClass(testMethod);
-			methods.put(testClass, testMethod);
+			if (!testMethod.trim().isEmpty()) {
+				String testClass = getTestClass(testMethod);
+				methods.put(testClass, testMethod);
+			}
 		}
 		return methods;
 	}
 
 	static String getTestClass(String testMethod) {
-		System.out.println("Junit4Util.getTestClass() " + testMethod);
 		int lastIndexOf = testMethod.lastIndexOf('.');
+		if (lastIndexOf < 0) {
+			throw new RuntimeException("Did not find class name for test: "
+					+ testMethod);
+		}
 		return testMethod.substring(0, lastIndexOf);
 	}
 

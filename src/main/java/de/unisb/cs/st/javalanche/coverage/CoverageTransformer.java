@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2010 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2010 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.coverage;
 
 import java.io.PrintWriter;
@@ -41,58 +41,63 @@ public class CoverageTransformer implements ClassFileTransformer {
 
 	private static Logger logger = Logger.getLogger(CoverageTransformer.class);
 
-	private static final Excludes e = Excludes.getTestExcludesInstance(); 
-	
+	private static final Excludes e = Excludes.getTestExcludesInstance();
+
 	public CoverageTransformer() {
 		super();
-		Runtime.getRuntime().addShutdownHook(new Thread(){
-			public void run(){
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
 				shutdown();
 			}
 		});
 	}
 
-	public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-	try{
-		if (className == null) {
+	public byte[] transform(ClassLoader loader, String className,
+			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
+			byte[] classfileBuffer) throws IllegalClassFormatException {
+		logger.info("Checking file: " + className);
+		try {
+			if (className == null) {
 				return classfileBuffer;
 			}
-		if (loader != ClassLoader.getSystemClassLoader()) {
-			return classfileBuffer;
-		}
+			if (loader != ClassLoader.getSystemClassLoader()) {
+				return classfileBuffer;
+			}
 
-		// whitelist - only trace packages of that domain
+			// whitelist - only trace packages of that domain
 
-		if (!className.startsWith(MutationProperties.PROJECT_PREFIX.replace('.', '/'))) {
-			//System.err.println("Not on whitelist: " + className);
-			return classfileBuffer;
-		}
+			if (!className.startsWith(MutationProperties.PROJECT_PREFIX
+					.replace('.', '/'))) {
+				// System.err.println("Not on whitelist: " + className);
+				return classfileBuffer;
+			}
 
-		// blacklist: can't trace yourself and don't instrument tests (better performance)
+			// blacklist: can't trace yourself and don't instrument tests
+			// (better performance)
 
-		if (e.shouldExclude(className.replace('/', '.'))) {
-			//System.err.println("Blacklisted: " + className);
-			return classfileBuffer;
-		}
-		//System.out.println("Changed: " + className);
+			if (e.shouldExclude(className.replace('/', '.'))) {
+				// System.err.println("Blacklisted: " + className);
+				return classfileBuffer;
+			}
+			// System.out.println("Changed: " + className);
+			logger.debug("Adding coverage calls for " + className);
+			byte[] result = classfileBuffer;
+			ClassReader reader = new ClassReader(classfileBuffer);
+			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+			ClassVisitor cv = writer;
+			if (MutationProperties.TRACE_BYTECODE) {
+				cv = new TraceClassVisitor(cv, new PrintWriter(
+						MutationPreMain.sysout));
+			}
+			cv = new CoverageClassAdapter(cv, className);
+			reader.accept(cv, ClassReader.SKIP_FRAMES);
+			result = writer.toByteArray();
 
-		byte[] result = classfileBuffer;
-		ClassReader reader = new ClassReader(classfileBuffer);
-		ClassWriter writer = new ClassWriter(org.objectweb.asm.ClassWriter.COMPUTE_MAXS);
-		ClassVisitor cv = writer;
-		if (MutationProperties.TRACE_BYTECODE) {
-			cv = new TraceClassVisitor(cv, new PrintWriter(
-					MutationPreMain.sysout));
-		}
-		cv = new CoverageClassAdapter(cv, className);
-		reader.accept(cv, ClassReader.SKIP_FRAMES);
-		result = writer.toByteArray();
-
-		return result;
-		}catch(Throwable t){
+			return result;
+		} catch (Throwable t) {
 			t.printStackTrace();
-			String message="Exception thrown during instrumentation";
-			logger.error(message , t);
+			String message = "Exception thrown during instrumentation";
+			logger.error(message, t);
 			System.err.println(message);
 			System.exit(1);
 		}

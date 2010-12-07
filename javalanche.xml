@@ -12,7 +12,6 @@
 
 	<property name="project.prefix" value="${prefix}"/>
 	<property name="project.test.suite" value="${testsuite}"/>
-<!--<property name="javalanche.location" value="/Users/schuler/workspace/javalanche/" /> -->
 	<property name="javalanche.location" value="${javalanche}" />
 	<property name="javalanche.dist.dir" value="${javalanche}" />
 	
@@ -38,7 +37,7 @@
 			
 			<formatter type="xml"/>
 			<formatter usefile="true" type="plain"/>
-			<test todir="mutation-files/junit-reports" name="${testsuite}" />
+			<test todir="mutation-files/junit-reports" name="${javalanche.wrapper.testsuite}" />
 		</junit>
 	</target>	
 

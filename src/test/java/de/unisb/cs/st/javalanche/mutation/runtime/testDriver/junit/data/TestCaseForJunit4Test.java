@@ -16,6 +16,7 @@ public class TestCaseForJunit4Test extends TestCase {
 
 	}
 
+
 	@Test
 	public void test3() {
 

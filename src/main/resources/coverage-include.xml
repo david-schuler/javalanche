@@ -70,7 +70,7 @@
 	<target name="createCoverageDataMult" description="* Create line and return coverage data for multiple permuted runs.">
 		<property name="coverage.mult.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="coverage.mult.memory" value="-Xmx${javalanche.maxmemory}"/>
-		<property name="coverage.mult.mutation.run.mode" value="-Dmutation.run.mode=test3"/>
+		<property name="coverage.mult.mutation.run.mode" value="-Dmutation.run.mode=create-coverage-mult"/>
 		<property name="coverage.mult.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="coverage.mult.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
 		<property name="coverage.mult.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.coverage.CoverageMutationListener"/>

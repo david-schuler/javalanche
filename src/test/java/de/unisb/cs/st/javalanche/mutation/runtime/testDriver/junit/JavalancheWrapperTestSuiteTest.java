@@ -23,6 +23,8 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.TestCase
 
 public class JavalancheWrapperTestSuiteTest {
 
+	private static final String TEST_CLASS_NAME_JUNIT3 = "de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.AllTestsJunit3";
+
 	private class TestCounter extends RunListener {
 		private int tests = 0;
 
@@ -100,5 +102,25 @@ public class JavalancheWrapperTestSuiteTest {
 	public void testJunit4Suite() {
 		testHelper(Junit4Suite.class, 7);
 	}
+
+	@Test
+	public void testMethodPropertyJunit3() {
+		MutationProperties.TEST_METHODS = "true";
+		String p = "de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.";
+		MutationProperties.TEST_SUITE = p + "DebugTestClass" + ".testObject";
+		// ":" +p+"AllTestsJunit3";
+		// JavalancheWrapperTestSuite javalancheWrapperTestSuite = new
+		// JavalancheWrapperTestSuite(
+		// null);
+		// int testCaseCount = javalancheWrapperTestSuite.testCount();
+		// assertEquals("Expected different number of testcases", 2,
+		// testCaseCount);
+		Junit4MutationTestDriver driver = new Junit4MutationTestDriver();
+
+		MutationProperties.TEST_METHODS = null;
+		MutationProperties.TEST_SUITE = null;
+
+	}
+
 }
 

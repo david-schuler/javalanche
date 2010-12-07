@@ -19,11 +19,13 @@
 package de.unisb.cs.st.javalanche.mutation.properties;
 
 public enum RunMode {
-	SCAN("scan"), MUTATION_TEST("mutation"), CHECK_TESTS("test1"), MUTATION_TEST_INVARIANT(
+	SCAN("scan"), MUTATION_TEST("mutation"), CHECK_TESTS("check-tests"), TEST_PERMUTED(
+			"check-tests-permuted"), MUTATION_TEST_INVARIANT(
 			"mutation-invariant"), MUTATION_TEST_INVARIANT_PER_TEST(
 			"mutation-invariant-per-test"), MUTATION_TEST_COVERAGE(
-			"mutation-coverage"), CREATE_COVERAGE("create-coverage"), OFF("off"), CHECK_INVARIANTS_PER_TEST(
-			"check-per-test"), TEST_PERMUTED("test3"), SCAN_PROJECT(
+			"mutation-coverage"), CREATE_COVERAGE("create-coverage"), CREATE_COVERAGE_MULT(
+			"create-coverage-mult"), OFF("off"), CHECK_INVARIANTS_PER_TEST(
+			"check-per-test"), SCAN_PROJECT(
 			"scan-project"), SCAN_ECLIPSE("scan-eclipse"), EVOLUTION(
 			"evolution");
 
