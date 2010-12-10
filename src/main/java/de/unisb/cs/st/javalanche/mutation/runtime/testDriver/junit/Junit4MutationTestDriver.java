@@ -83,7 +83,6 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 		}
 		allTests = getTests(r);
 		removeExludedTests();
-		logger.info("All tests" + allTests);
 	}
 
 	private void removeExludedTests() {

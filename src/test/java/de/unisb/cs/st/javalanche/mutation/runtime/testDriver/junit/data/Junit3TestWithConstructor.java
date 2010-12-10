@@ -1,7 +1,10 @@
 package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data;
 
+import org.junit.Ignore;
+
 import junit.framework.TestCase;
 
+@Ignore
 public class Junit3TestWithConstructor extends TestCase{
 
 	private final int value;

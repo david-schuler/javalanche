@@ -42,8 +42,7 @@ public class CoverageMethodAdapter extends MethodAdapter {
 
 	private String methodName, className;
 
-	private boolean instrumentReturns = false;// TODO
-												// CoverageProperties.TRACE_RETURNS;
+	private boolean instrumentReturns = CoverageProperties.TRACE_RETURNS;
 	private boolean instrumentLine = CoverageProperties.TRACE_LINES;
 
 	// primitive data types

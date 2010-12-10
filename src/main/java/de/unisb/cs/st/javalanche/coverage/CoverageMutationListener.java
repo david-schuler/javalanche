@@ -35,6 +35,7 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.log4j.Logger;
 
+import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.ds.util.io.XmlIo;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
@@ -48,21 +49,22 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListene
  */
 public class CoverageMutationListener implements MutationTestListener {
 
-	static Logger logger = Logger
-			.getLogger(CoverageMutationListener.class);
+	static Logger logger = Logger.getLogger(CoverageMutationListener.class);
 
 	private static boolean isPermuted = false;
-	private static HashSet<String> seenTests = new HashSet<String>();
+	private Set<String> seenTests = new HashSet<String>();
 
 	private static Long mutation_id = new Long(-1);
 	private String testName = null;
 
 	private boolean saveFiles = false;
 
+	private static int instanceCount = 0;
+
 	// private static Map<String, Map<Integer, Integer>> classMap = new
 	// ConcurrentHashMap<String, Map<Integer, Integer>>();
 
-	public static AtomicReference<ConcurrentMap<String, ConcurrentMap<Integer, Integer>>> classMapRef = new AtomicReference<ConcurrentMap<String, ConcurrentMap<Integer, Integer>>>(
+	public static AtomicReference<ConcurrentMap<String, ConcurrentMap<Integer, Integer>>> lineMapRef = new AtomicReference<ConcurrentMap<String, ConcurrentMap<Integer, Integer>>>(
 			new ConcurrentHashMap<String, ConcurrentMap<Integer, Integer>>());
 
 	// private static Map<String, Map<Integer, Integer>> valueMap = new
@@ -78,7 +80,7 @@ public class CoverageMutationListener implements MutationTestListener {
 	// private static int idMapMasterSize = 0;
 
 	public static ConcurrentMap<String, ConcurrentMap<Integer, Integer>> getLineCoverageMap() {
-		return classMapRef.get();
+		return lineMapRef.get();
 	}
 
 	public static ConcurrentMap<String, ConcurrentMap<Integer, Integer>> getValueMap() {
@@ -102,6 +104,8 @@ public class CoverageMutationListener implements MutationTestListener {
 	 */
 
 	public CoverageMutationListener() {
+		logger.info("Tracing lines: " + CoverageProperties.TRACE_LINES);
+		logger.info("Tracing data: " + CoverageProperties.TRACE_RETURNS);
 		File dir = new File(CoverageProperties.TRACE_RESULT_DIR);
 		if (!dir.exists()) {
 			dir.mkdir();
@@ -138,7 +142,7 @@ public class CoverageMutationListener implements MutationTestListener {
 
 	public void start() {
 		mutation_id = new Long(0);
-		classMapRef.get().clear();
+		lineMapRef.get().clear();
 		valueMapRef.get().clear();
 		saveFiles = true;
 	}
@@ -146,7 +150,7 @@ public class CoverageMutationListener implements MutationTestListener {
 	public void end() {
 		writeProfilingData();
 		InstrumentExclude.save();
-		classMapRef.get().clear();
+		lineMapRef.get().clear();
 		valueMapRef.get().clear();
 		saveFiles = false;
 	}
@@ -158,40 +162,52 @@ public class CoverageMutationListener implements MutationTestListener {
 				logger.info("New Permutation Detected for Test: " + testName);
 				seenTests.clear();
 				long i = 1;
-				File dir = new File(CoverageProperties.TRACE_RESULT_DATA_DIR
-						+ CoverageProperties.PERMUTED_PREFIX + i);
-				while (dir.exists()) {
+				File lineDir = new File(
+						CoverageProperties.TRACE_RESULT_LINE_DIR
+								+ CoverageProperties.PERMUTED_PREFIX + i);
+				File dataDir = new File(
+						CoverageProperties.TRACE_RESULT_DATA_DIR
+								+ CoverageProperties.PERMUTED_PREFIX + i);
+				while (dataDir.exists() || lineDir.exists()) {
 					i++;
-					dir = new File(CoverageProperties.TRACE_RESULT_DATA_DIR
+					dataDir = new File(CoverageProperties.TRACE_RESULT_DATA_DIR
+							+ CoverageProperties.PERMUTED_PREFIX + i);
+					lineDir = new File(CoverageProperties.TRACE_RESULT_LINE_DIR
 							+ CoverageProperties.PERMUTED_PREFIX + i);
 				}
 				mutation_id = -i;
 			}
 			seenTests.add(testName);
 		}
-		classMapRef.get().clear();
+		lineMapRef.get().clear();
 		valueMapRef.get().clear();
 		saveFiles = true;
 	}
 
 	public void testEnd(String testName) {
 		createMutationDir();
-
 		Tracer.getInstance().deactivateTrace();
-		ConcurrentMap<String, ConcurrentMap<Integer, Integer>> classMap = classMapRef
-				.get();
-		classMapRef
-				.set(new ConcurrentHashMap<String, ConcurrentMap<Integer, Integer>>());
-		CoverageTraceUtil.writeTrace(classMap, testName,
-				getLineCoverageFileName(testName));
-		classMapRef.get().clear();
-		ConcurrentMap<String, ConcurrentMap<Integer, Integer>> valueMap = valueMapRef
-				.get();
-		valueMapRef
-				.set(new ConcurrentHashMap<String, ConcurrentMap<Integer, Integer>>());
-		CoverageTraceUtil.writeTrace(valueMap, testName,
-				getDataCoverageFileName(testName));
-		valueMapRef.get().clear();
+		if (CoverageProperties.TRACE_LINES) {
+			logger.info("Writing line traces");
+			ConcurrentMap<String, ConcurrentMap<Integer, Integer>> classMap = lineMapRef
+					.get();
+			lineMapRef
+					.set(new ConcurrentHashMap<String, ConcurrentMap<Integer, Integer>>());
+			CoverageTraceUtil.writeTrace(classMap, testName,
+					getLineCoverageFileName(testName));
+			lineMapRef.get().clear();
+		}
+		if (CoverageProperties.TRACE_RETURNS) {
+			logger.info("Writing data traces");
+			ConcurrentMap<String, ConcurrentMap<Integer, Integer>> valueMap = valueMapRef
+					.get();
+			valueMapRef
+					.set(new ConcurrentHashMap<String, ConcurrentMap<Integer, Integer>>());
+			CoverageTraceUtil.writeTrace(valueMap, testName,
+					getDataCoverageFileName(testName));
+			valueMapRef.get().clear();
+		}
+
 		Tracer.getInstance().activateTrace();
 
 		saveFiles = false;
@@ -199,7 +215,7 @@ public class CoverageMutationListener implements MutationTestListener {
 
 	public void mutationStart(Mutation mutation) {
 		mutation_id = mutation.getId();
-		classMapRef.get().clear();
+		lineMapRef.get().clear();
 		valueMapRef.get().clear();
 		createMutationDir();
 		saveFiles = true;
@@ -207,7 +223,7 @@ public class CoverageMutationListener implements MutationTestListener {
 
 	public void mutationEnd(Mutation mutation) {
 		// serializeIdMap(mutation_id);
-		classMapRef.get().clear();
+		lineMapRef.get().clear();
 		valueMapRef.get().clear();
 		saveFiles = false;
 	}
@@ -225,7 +241,6 @@ public class CoverageMutationListener implements MutationTestListener {
 		return result;
 	}
 
-
 	private static String getDataCoverageFileName(String testName) {
 		String sanitizedName = sanitize(testName);
 		String fileName = CoverageProperties.TRACE_RESULT_DATA_DIR
@@ -236,8 +251,7 @@ public class CoverageMutationListener implements MutationTestListener {
 	static String getLineCoverageFileName(String testName) {
 		String sanitizedName = sanitize(testName);
 		String fileName = CoverageProperties.TRACE_RESULT_LINE_DIR
-				+ getMutationIdFileName() + "/"
-				+ sanitizedName + ".gz";
+				+ getMutationIdFileName() + "/" + sanitizedName + ".gz";
 		return fileName;
 	}
 }

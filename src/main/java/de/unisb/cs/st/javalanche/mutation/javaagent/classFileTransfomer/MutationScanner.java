@@ -107,15 +107,13 @@ public class MutationScanner implements ClassFileTransformer {
 				long addedTests = QueryManager.getNumberOfTests()
 						- numberOfTestsPre;
 				String testMessage = String
-						.format(
-								"Added %d tests. Total number of tests for project %s : %d",
+						.format("Added %d tests. Total number of tests for project %s : %d",
 								addedTests, MutationProperties.PROJECT_PREFIX,
 								numberOfTests);
 				long coveredMutations = MutationCoverageFile
 						.getNumberOfCoveredMutations();
 				String coveredMessage = String
-						.format(
-								"%d (%.2f %%) mutations are covered by tests.",
+						.format("%d (%.2f %%) mutations are covered by tests.",
 								coveredMutations,
 								(((double) coveredMutations) / mutationPossibilitiesPost) * 100.);
 				System.out.println(message1);
@@ -137,8 +135,9 @@ public class MutationScanner implements ClassFileTransformer {
 				String classNameWithDots = className.replace('/', '.');
 				logger.debug(classNameWithDots);
 				if (md.shouldBeHandled(classNameWithDots)) {
-
-					computeBytecodeInfo(classfileBuffer);
+					if (!MutationProperties.ENABLE_ADAPTED_MUTATIONS) {
+						computeBytecodeInfo(classfileBuffer);
+					}
 
 					ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 

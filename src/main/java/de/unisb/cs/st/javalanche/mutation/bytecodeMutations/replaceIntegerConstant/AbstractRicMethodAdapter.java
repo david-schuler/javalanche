@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2010 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2010 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant;
 
 import java.util.Map;
@@ -102,9 +102,20 @@ public abstract class AbstractRicMethodAdapter extends AbstractMutationAdapter {
 	protected abstract void intConstant(int i);
 
 	protected abstract void biOrSiPush(int operand);
-
 	protected abstract void ldc(Number constant);
 
+/*	protected abstract void ldc(Integer constant);
+
+	protected abstract void ldc(Long constant);
+
+	protected abstract void ldc(Double constant);
+
+	protected abstract void ldc(Float constant);
+
+	protected abstract void ldc(Byte constant);
+
+	protected abstract void ldc(Short constant);
+*/
 	@Override
 	public void visitLdcInsn(Object constant) {
 		if (mutationCode) {
@@ -112,6 +123,22 @@ public abstract class AbstractRicMethodAdapter extends AbstractMutationAdapter {
 			return;
 		}
 		if (constant instanceof Number) {
+			/*if (constant instanceof Integer) {
+				ldc((Integer) constant);
+			} else if (constant instanceof Long) {
+				ldc((Long) constant);
+			} else if (constant instanceof Short) {
+				ldc((Short) constant);
+			} else if (constant instanceof Byte) {
+				ldc((Byte) constant);
+			} else if (constant instanceof Float) {
+				ldc((Float) constant);
+			} else if (constant instanceof Double) {
+				ldc((Double) constant);
+			} else {
+				throw new RuntimeException("Number of unknown type: "
+						+ constant.getClass());
+			}*/
 			ldc((Number) constant);
 			if (forwardCalls) {
 				super.visitLdcInsn(constant);

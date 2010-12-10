@@ -27,6 +27,7 @@
 	-->
 	<target name="test-javalanche">
 		<mkdir dir="mutation-files/junit-reports"></mkdir>
+		<!--<java classname="${javalanche.wrapper.testsuite}" fork="true">-->
 		<junit dir="." printSummary="yes" fork="true" forkmode="once" showoutput="true">
 			<classpath>
 				<path refid="javalanche.classpath.add" />

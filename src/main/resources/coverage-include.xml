@@ -56,12 +56,12 @@
 	</target>
 	
 	
-	<target name="cleanCoverage" description="* Delete all data produced by the coverage tasks" depends="mutationDir">
+	<target name="cleanCoverage" description="* Delete all data produced by the coverage tasks" >
 		<delete dir="mutation-files/tracer/"/>
 	</target>
 	
 	
-	<target name="cleanTrace" description="* Delete the trace line coverage and return value data" depends="mutationDir">
+	<target name="cleanTrace" description="* Delete the trace line coverage and return value data" >
 		<delete dir="mutation-files/tracer/line/"/>
 		<delete dir="mutation-files/tracer/data/"/>
 	</target>
@@ -73,16 +73,13 @@
 		<property name="coverage.mult.mutation.run.mode" value="-Dmutation.run.mode=create-coverage-mult"/>
 		<property name="coverage.mult.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
 		<property name="coverage.mult.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
-		<property name="coverage.mult.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.coverage.CoverageMutationListener"/>
-		<property name="coverage.mult.trace" value="-Djavalanche.trace.returns=true"/>
-		
-		
+
 		<path id="coverage.mult.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
 		
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value=" ${coverage.mult.mutation.javaagent} ${coverage.mult.memory} ${coverage.mult.mutation.run.mode} ${coverage.mult.javalanche.package.prefix} ${coverage.mult.javalanche.project.test.suite} ${coverage.mult.listener} ${coverage.mult.trace}" />
+			<param name="javalanche.arg.line" value=" ${coverage.mult.mutation.javaagent} ${coverage.mult.memory} ${coverage.mult.mutation.run.mode} ${coverage.mult.javalanche.package.prefix} ${coverage.mult.javalanche.project.test.suite}" />
 			<reference refid="coverage.mult.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>

@@ -61,7 +61,7 @@ public class Tracer {
 			boolean instrumentLine, boolean instrumentData) {
 		// Integer key = getId(className + "@" + methodName);
 		String key = className + "@" + methodName;
-		ConcurrentMap<String, ConcurrentMap<Integer, Integer>> classMap = CoverageMutationListener.classMapRef
+		ConcurrentMap<String, ConcurrentMap<Integer, Integer>> classMap = CoverageMutationListener.lineMapRef
 				.get();
 		if (instrumentLine && !classMap.containsKey(key)) {
 			ConcurrentMap<Integer, Integer> lineMap = new ConcurrentHashMap<Integer, Integer>();
@@ -102,7 +102,7 @@ public class Tracer {
 		// Integer key = getId(className + "@" + methodName);
 		// logger.info("Line " + line + "  " + className + "." + methodName);
 		String key = className + "@" + methodName;
-		ConcurrentMap<String, ConcurrentMap<Integer, Integer>> classMap = CoverageMutationListener.classMapRef
+		ConcurrentMap<String, ConcurrentMap<Integer, Integer>> classMap = CoverageMutationListener.lineMapRef
 				.get();
 		if (!classMap.containsKey(key)) {
 			ConcurrentMap<Integer, Integer> lineMap = new ConcurrentHashMap<Integer, Integer>();

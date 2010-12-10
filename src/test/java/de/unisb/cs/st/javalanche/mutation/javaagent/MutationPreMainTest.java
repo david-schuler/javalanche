@@ -109,7 +109,6 @@ public class MutationPreMainTest {
 	public void testCoverageTransformerAdded() {
 		Instrumentation mock = createMock(Instrumentation.class);
 		MutationProperties.RUN_MODE = CREATE_COVERAGE;
-		mock.addTransformer(isA(IntegrateTestSuiteTransformer.class));
 		mock.addTransformer(isA(CoverageTransformer.class));
 		replay(mock);
 		MutationPreMain.premain("", mock);

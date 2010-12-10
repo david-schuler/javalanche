@@ -18,9 +18,12 @@
  */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -40,6 +43,9 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 
 public class MutationsClassAdapter extends ClassAdapter {
+
+	private static final Logger logger = Logger
+			.getLogger(MutationsClassAdapter.class);
 
 	private String className;
 
@@ -79,6 +85,9 @@ public class MutationsClassAdapter extends ClassAdapter {
 	public void visit(int version, int access, String name, String signature,
 			String superName, String[] interfaces) {
 		super.visit(version, access, name, signature, superName, interfaces);
+		if (version != 50) {
+			logger.warn("Got no Java 6 Class. Version: " + version);
+		}
 		className = name;
 	}
 
@@ -86,6 +95,7 @@ public class MutationsClassAdapter extends ClassAdapter {
 			String signature, final String[] exceptions) {
 		MethodVisitor mv = super.visitMethod(access, name, desc, signature,
 				exceptions);
+
 		mv = new CheckMethodAdapter(mv);
 		mv = new RicMethodAdapter(mv, className, name, ricPossibilities,
 				mutationManager, desc);
@@ -112,6 +122,7 @@ public class MutationsClassAdapter extends ClassAdapter {
 		rvAdapter.setAnlyzeAdapter(analyzerAdapter);
 		mv = analyzerAdapter;
 		return mv;
+
 	}
 
 }

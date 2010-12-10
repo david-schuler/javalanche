@@ -201,7 +201,6 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		} else if (cst instanceof Float) {
 			Float floatConstant = (Float) cst;
 			floatConstant(floatConstant);
-
 		} else if (cst instanceof Long) {
 			Long longConstant = (Long) cst;
 			longConstant(longConstant);
@@ -284,7 +283,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 					mutationCode.toArray(new MutationCode[0]));
 		} else {
 			logger.debug("Applying no mutation for line: " + getLineNumber());
-			super.visitLdcInsn(new Double(floatConstant));
+			super.visitLdcInsn(new Float(floatConstant));
 		}
 	}
 

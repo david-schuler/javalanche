@@ -64,7 +64,7 @@ public class MutationTaskCreator {
 	/**
 	 * Default number of mutations per task.
 	 */
-	private static final int DEFAULT_MUTATIONS_PER_TASK = 40;
+	private static final int DEFAULT_MUTATIONS_PER_TASK = 40; // TODO
 
 	private static final String MUTATION_PER_TASK_KEY = "mutation.mutations.per.task";
 

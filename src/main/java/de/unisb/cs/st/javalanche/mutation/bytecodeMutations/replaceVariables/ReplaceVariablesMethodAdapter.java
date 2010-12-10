@@ -87,6 +87,7 @@ public final class ReplaceVariablesMethodAdapter extends
 					m.getLineNumber(), mforLine, m.getMutationType());
 			m2.setOperatorAddInfo(replaceLocal + "");
 			// mforLine++;
+			// logger.info("M2: " + m2);
 			if (mutationManager.shouldApplyMutation(m2)) {
 				Mutation dbMutation = QueryManager.getMutation(m2);
 				MutationCode mutatedC = new MutationCode(dbMutation) {

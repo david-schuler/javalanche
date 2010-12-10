@@ -66,7 +66,9 @@ public class MutationManager {
 				logger.warn("Mutation not in db: " + mutation);
 				return false;
 			}
-			result = true;
+			if (mutationFromDb.getMutationResult() == null) {
+				result = true;
+			}
 		}
 		if (result) {
 			logger.debug("Applying mutation: " + mutationFromDb);

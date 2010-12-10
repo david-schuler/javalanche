@@ -100,7 +100,6 @@ public abstract class AbstractReplaceVariablesAdapter extends
 		} else if (opcode == DLOAD) {
 			replaceLocals = getLocals(DOUBLE, var);
 		} else if (opcode == ALOAD) {
-			logger.info(var);
 			List locals = anlyzeAdapter.locals;
 			if (locals != null) {
 				Object type = locals.get(var);
