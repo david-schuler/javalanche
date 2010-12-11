@@ -18,6 +18,8 @@ public class ProjectVariables {
 	private static final File DEFAULT_LOCATION = new File(
 			MutationProperties.OUTPUT_DIR + "/variable-info.xml");
 
+	private static ProjectVariables fromDefault;
+
 	private Map<String, List<VariableInfo>> classVariables = new HashMap<String, List<VariableInfo>>();
 
 	private Map<String, List<VariableInfo>> staticVariables = new HashMap<String, List<VariableInfo>>();
@@ -45,7 +47,10 @@ public class ProjectVariables {
 	}
 
 	public static ProjectVariables read() {
-		return (ProjectVariables) XmlIo.fromXml(DEFAULT_LOCATION);
+		if (fromDefault == null) {
+			fromDefault = (ProjectVariables) XmlIo.fromXml(DEFAULT_LOCATION);
+		}
+		return fromDefault;
 	}
 
 }
