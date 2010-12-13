@@ -22,6 +22,7 @@ import static de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType.*
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +41,8 @@ public abstract class AbstractReplaceVariablesAdapter extends
 	private static Logger logger = Logger
 			.getLogger(AbstractReplaceVariablesAdapter.class);
 
-	private List<VariableInfo> staticVariables;
-	private List<VariableInfo> classVariables;
+	private List<VariableInfo> staticVariables = Collections.EMPTY_LIST;
+	private List<VariableInfo> classVariables = Collections.EMPTY_LIST;
 
 	private AnalyzerAdapter anlyzeAdapter;
 
@@ -50,8 +51,12 @@ public abstract class AbstractReplaceVariablesAdapter extends
 			String desc, List<VariableInfo> staticVariables,
 			List<VariableInfo> classVariables) {
 		super(mv, className, methodName, possibilities, desc);
-		this.staticVariables = staticVariables;
-		this.classVariables = classVariables;
+		if (staticVariables != null) {
+			this.staticVariables = staticVariables;
+		}
+		if (classVariables != null) {
+			this.classVariables = classVariables;
+		}
 	}
 
 	@Override
@@ -155,6 +160,7 @@ public abstract class AbstractReplaceVariablesAdapter extends
 
 	private String[] getStaticReplacePosibilities(String name, String desc) {
 		List<String> vars = new ArrayList<String>();
+
 		for (VariableInfo vInfo : staticVariables) {
 			if (vInfo.getDesc().equals(desc) && !vInfo.getName().equals(name)) {
 				vars.add(vInfo.getName());
