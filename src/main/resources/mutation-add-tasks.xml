@@ -50,7 +50,7 @@
 	<target name="analyzeAdaptedMutations" description="* parse the source code to apply adapted mutations.">
 		<java classname="de.unisb.cs.st.javalanche.mutation.adaptedMutations.ParseResultAnalyzer" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
-			<sysproperty key="javalanche.project.source.dir" value="src/java" /> <!--TODO-->
+			<sysproperty key="javalanche.project.source.dir" value="${javalanche.project.source.dir}" /> <!--TODO-->
 			<classpath>
 				<path refid="mutation.classpath" />
 			</classpath>
@@ -58,9 +58,9 @@
 	</target>
 	
 	<target name="writeCsv" description="* write a csv file of all mutations.">
-		<java classname="de.unisb.cs.st.javalanche.mutation.adaptedMutations.CsvWriter" maxmemory="${javalanche.maxmemory}" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.CsvWriter" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
-			<sysproperty key="javalanche.project.source.dir" value="src/java" /> <!--TODO-->
+			<sysproperty key="javalanche.project.source.dir" value="${javalanche.project.source.dir}" />
 			<classpath>
 				<path refid="mutation.classpath" />
 			</classpath>
@@ -71,7 +71,7 @@
 	<target name="evaluate" description="* evaluate different schemes files, as specified in property -Did.file. The revision is specified with the property -Drevision">
 		<java classname="de.unisb.cs.st.javalanche.mutation.adaptedMutations.analyze.TestPrioritizer" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
-			<sysproperty key="javalanche.project.source.dir" value="src/java" /> <!--TODO-->
+			<sysproperty key="javalanche.project.source.dir" value="${javalanche.project.source.dir}" /> <!--TODO-->
 						
 			<sysproperty key="evalutation.file" value="/scratch/schuler/projects/project-extractor/report/evaluation-data.csv" /> <!--TODO-->
 			<sysproperty key="revision" value="${revision}" /> <!--TODO-->
@@ -87,7 +87,7 @@
 	<target name="addMutations" description="* Create additional mutations of type 'Replace Constant' and 'Replace Arithmetic Operator'.">
 		<java classname="de.unisb.cs.st.javalanche.mutation.util.AddMutations" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
-			<sysproperty key="javalanche.project.source.dir" value="src/java" /> <!--TODO-->
+			<sysproperty key="javalanche.project.source.dir" value="${javalanche.project.source.dir}" /> <!--TODO-->
 			<sysproperty key="evalutation.file" value="/scratch/schuler/projects/project-extractor/report/evaluation-data.csv" /> <!--TODO-->
 			<sysproperty key="revision" value="${revision}" /> <!--TODO-->
 			<sysproperty key="mutation.file.list" value="${id.file}" /> <!--TODO-->

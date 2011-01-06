@@ -33,6 +33,7 @@ import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.EclipseS
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.IntegrateTestSuiteTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationScanner;
+import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.PrintTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanProjectTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanVariablesTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.SysExitTransformer;
@@ -91,6 +92,8 @@ public class MutationPreMain {
 				return;
 			} else if (RUN_MODE == CHECK_TESTS || RUN_MODE == TEST_PERMUTED) {
 				sysout.println("Integrating RandomPermutationTestSuite");
+				// addClassFileTransformer(instrumentation, new
+				// PrintTransformer());
 				addClassFileTransformer(instrumentation,
 						new SysExitTransformer());
 				// addClassFileTransformer(instrumentation,

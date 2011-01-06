@@ -46,6 +46,7 @@ public class CompareTraces {
 	}
 
 	static Logger logger = Logger.getLogger(CompareTraces.class);
+	private static boolean zeroAsBase = true;
 
 	private enum Mode {
 		LINE, DATA
@@ -55,7 +56,11 @@ public class CompareTraces {
 		File dir = new File(CoverageProperties.TRACE_RESULT_LINE_DIR);
 		logger.info("Total methods: " + getAllMethods());
 		String[] files = dir.list(new PermutatedFilter());
+
 		String base = files[new Random().nextInt(files.length)];
+		if (zeroAsBase) {
+			base = "0";
+		}
 		HashSet<String> diffComplete = new HashSet<String>();
 		int count = 0;
 		int excludePre = InstrumentExclude.numberOfExlusions();

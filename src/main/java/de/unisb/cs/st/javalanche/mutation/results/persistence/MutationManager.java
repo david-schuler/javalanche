@@ -77,4 +77,13 @@ public class MutationManager {
 		return result;
 	}
 
+	public void reportAppliedMutations(Mutation... mutations) {
+		for (Mutation mutation : mutations) {
+			Mutation mutationFromDb = QueryManager.getMutationOrNull(mutation);
+			if (mutationFromDb != null) {
+				MutationObserver.mutationApplied(mutationFromDb);
+			}
+		}
+	}
+
 }

@@ -326,7 +326,7 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 	}
 
 	public static String getCsvHead() {
-		return "ID,CLASS_NAME,METHOD_NAME,LINE_NUMBER,MUTATION_FOR_LINE,MUTATION_TYPE";
+		return "ID,CLASS_NAME,METHOD_NAME,LINE_NUMBER,MUTATION_FOR_LINE,MUTATION_TYPE,OPERATOR_ADD_INFO,ADD_INFO";
 	}
 
 	public String getCsvString() {

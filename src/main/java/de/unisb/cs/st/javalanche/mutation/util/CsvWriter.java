@@ -55,7 +55,7 @@ public class CsvWriter {
 
 		logger.info("Got " + mutations.size() + " mutation ids.");
 		List<String> lines = new ArrayList<String>();
-		lines.add(Mutation.getCsvHead());
+		lines.add(Mutation.getCsvHead() + ",DETECTED");
 		int counter = 0;
 		int flushs = 0;
 		StopWatch stp = new StopWatch();

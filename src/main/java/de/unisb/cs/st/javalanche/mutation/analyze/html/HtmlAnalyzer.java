@@ -63,15 +63,15 @@ public class HtmlAnalyzer {
 		if (files == null) {
 			initFiles();
 		}
-		String className = fullClassName.substring(fullClassName
-				.lastIndexOf('.') + 1);
-		className = getClassName(className);
+		// String className = fullClassName.substring(fullClassName
+		// .lastIndexOf('.') + 1);
+		String className = getClassName(fullClassName);
 		logger.debug("Looking for content of class " + fullClassName + " in "
 				+ files.size() + " files.");
 		logger.debug("Files: " + files);
 		for (File f : files) {
 			String name = getContaingClassName(f);
-			if (name.endsWith(className)) {
+			if (name.equals(className)) {
 				List<String> linesFromFile = Io.getLinesFromFile(f);
 				logger.debug("Got file " + f + "for class " + fullClassName);
 				return linesFromFile;
@@ -82,16 +82,18 @@ public class HtmlAnalyzer {
 		return Arrays.asList(msg);
 	}
 
-	private String getContaingClassName(File f) {
+	public static String getContaingClassName(File f) {
 		String name = f.getAbsolutePath();
 		String sep = System.getProperty("file.separator");
 		name = name.replace(sep, ".");
 		if (name.endsWith(".java")) {
 			name = name.substring(0, name.length() - 5);
 		}
-		if (name.contains("$")) {
-			int index = name.indexOf('$');
-			name = name.substring(0, index);
+		int i = name.indexOf(MutationProperties.PROJECT_PREFIX);
+		if (i < 0) {
+			name = "";
+		} else {
+			name = name.substring(i);
 		}
 		return name;
 	}

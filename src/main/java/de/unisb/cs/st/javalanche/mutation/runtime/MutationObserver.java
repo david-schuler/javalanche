@@ -235,10 +235,10 @@ public class MutationObserver implements MutationTestListener {
 				+ " where applied to bytecode");
 		if (applied < mutations.size() || notApplied.size() > 0) {
 			logger.error("Not all mutations where applied to bytecode");
-			logger.error(appliedMutations);
-			logger.error(mutations);
+			logger.error("Applied Mutations: \n " + appliedMutations);
+			logger.error("All Mutations: \n " + mutations);
 			for (Mutation mutation : notApplied) {
-				logger.warn("Mutation not applied " + mutation.getId());
+				logger.warn("Mutation not applied: " + mutation.getId());
 			}
 		}
 	}

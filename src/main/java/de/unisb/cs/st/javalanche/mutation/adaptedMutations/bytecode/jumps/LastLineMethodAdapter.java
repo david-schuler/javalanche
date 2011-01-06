@@ -39,6 +39,9 @@ public class LastLineMethodAdapter extends MethodAdapter {
 
 	@Override
 	public void visitEnd() {
+		// System.out.printf(
+		// "LastLineMethodAdapter.visitEnd() LastLine: %s %s %s %d \n",
+		// className, name, desc, lastLine);
 		bytecodeInfo.addLastLine(className, name, desc, lastLine);
 		super.visitEnd();
 	}

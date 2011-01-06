@@ -42,11 +42,11 @@ public interface MutationTestRunnable extends Runnable {
 	public SingleTestResult getResult();
 
 	/**
-	 * Signalize this runnable that it failed.
-	 *
+	 * Method is called by {@link MutationTestDriver} when the test failed.
+	 * 
 	 * @param message
 	 *            a message that describes why the test failed
 	 */
-	public void setFailed(String message);
+	public void setFailed(String message, Throwable e);
 
 }

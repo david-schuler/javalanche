@@ -19,7 +19,6 @@
 package de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer;
 
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
@@ -31,11 +30,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import de.unisb.cs.st.ds.util.Util;
-import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.BytecodeInfo;
-import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.LastLineClassAdapter;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationScannerTransformer;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
@@ -43,9 +38,8 @@ import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutation
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
-import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
+import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
 
@@ -55,14 +49,15 @@ public class MutationScanner implements ClassFileTransformer {
 
 	private MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 
-	private MutationScannerTransformer mutationScannerTransformer = new MutationScannerTransformer(
-			mpc);
+	// private MutationScannerTransformer mutationScannerTransformer = new
+	// MutationScannerTransformer(
+	// mpc);
 
 	private MutationDecision md = MutationDecisionFactory.SCAN_DECISION;
 
-	private static BytecodeInfo lastLineInfo = new BytecodeInfo();
+	// private static BytecodeInfo lastLineInfo = new BytecodeInfo();
 
-	private MutationManager mm = new MutationManager();
+	// private MutationManager mm = new MutationManager();
 
 	static {
 		// DB must be loaded before transform method is entered. Otherwise
@@ -91,7 +86,7 @@ public class MutationScanner implements ClassFileTransformer {
 		runtime.addShutdownHook(new Thread() {
 			@Override
 			public void run() {
-				lastLineInfo.write();
+				// lastLineInfo.write();
 				String message1 = String.format(
 						"Got %d mutation possibilities before run.",
 						mutationPossibilitiesPre);
@@ -135,9 +130,9 @@ public class MutationScanner implements ClassFileTransformer {
 				String classNameWithDots = className.replace('/', '.');
 				logger.debug(classNameWithDots);
 				if (md.shouldBeHandled(classNameWithDots)) {
-					if (!MutationProperties.ENABLE_ADAPTED_MUTATIONS) {
-						computeBytecodeInfo(classfileBuffer);
-					}
+					// if (!MutationProperties.ENABLE_ADAPTED_MUTATIONS) {
+					// computeBytecodeInfo(classfileBuffer);
+					// }
 
 					ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
@@ -183,11 +178,11 @@ public class MutationScanner implements ClassFileTransformer {
 		return classfileBuffer;
 	}
 
-	private void computeBytecodeInfo(byte[] classfileBuffer) {
-		ClassReader cr = new ClassReader(classfileBuffer);
-		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-		LastLineClassAdapter cv = new LastLineClassAdapter(cw, lastLineInfo);
-		cr.accept(cv, ClassReader.EXPAND_FRAMES);
-	}
+	// private void computeBytecodeInfo(byte[] classfileBuffer) {
+	// ClassReader cr = new ClassReader(classfileBuffer);
+	// ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+	// LastLineClassAdapter cv = new LastLineClassAdapter(cw, lastLineInfo);
+	// cr.accept(cv, ClassReader.EXPAND_FRAMES);
+	// }
 
 }

@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
@@ -144,7 +145,8 @@ public class MutationsForRun {
 				logger.warn("Mutation file does not exist: " + file);
 			}
 		} else {
-			logger.warn("Passed null as a filename");
+			logger.warn("Passed null as a filename "
+					+ Util.getStackTraceString());
 		}
 		if (filter) {
 			filterMutationsWithResult(mutationsToReturn);

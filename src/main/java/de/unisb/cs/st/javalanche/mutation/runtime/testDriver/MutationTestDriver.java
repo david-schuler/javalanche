@@ -21,9 +21,12 @@ package de.unisb.cs.st.javalanche.mutation.runtime.testDriver;
 import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
 import static de.unisb.cs.st.javalanche.mutation.properties.RunMode.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
@@ -674,11 +677,11 @@ public abstract class MutationTestDriver {
 				if (exceptionMessage == null) {
 					exceptionMessage = "Exception caught during test execution.";
 				}
-				r.setFailed(exceptionMessage + " - " + capturedThrowable);
+				r.setFailed(exceptionMessage, capturedThrowable);
 			}
 		}
 		if (!future.isDone()) {
-			r.setFailed("Mutated Thread is still running after timeout.");
+			r.setFailed("Mutated Thread is still running after timeout.", null);
 			switchOfMutation(future);
 		}
 		stopWatch.stop();
@@ -744,12 +747,15 @@ public abstract class MutationTestDriver {
 				if (exceptionMessage == null) {
 					exceptionMessage = "Exception caught during test execution.";
 				}
-				r.setFailed(exceptionMessage + " - " + capturedThrowable);
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				capturedThrowable.printStackTrace(new PrintStream(out));
+				
+				r.setFailed(exceptionMessage, capturedThrowable);
 			}
 		}
 		if (!future.isDone()) {
 			r.setFailed(MutationProperties.MUTATION_TIME_LIMIT_MESSAGE
-					+ "Mutated Thread is still running after timeout.");
+					+ "Mutated Thread is still running after timeout.", null);
 			switchOfMutation(future);
 		}
 		stopWatch.stop();
@@ -766,7 +772,7 @@ public abstract class MutationTestDriver {
 
 	private void handleMutationRunnable(MutationTestRunnable r,
 			StopWatch stopWatch, String message) {
-		r.setFailed(message);
+		r.setFailed(message, null);
 		TestMessage tm = new TestMessage(currentTestName, message,
 				stopWatch.getTime());
 		boolean touched = MutationObserver.getTouchingTestCases().contains(

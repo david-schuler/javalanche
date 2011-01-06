@@ -274,8 +274,14 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 			return failures;
 		}
 
-		public void addFailure(Description desc, Exception e) throws Exception {
-			testFailure(new Failure(desc, e));
+		public void addFailure(Description desc, Throwable t) {
+			try {
+				testFailure(new Failure(desc, t));
+
+			} catch (Exception e) {
+				throw new RuntimeException("Could not add test failure: " + e,
+						e);
+			}
 		}
 
 		public List<Failure> getErrors() {
@@ -330,14 +336,14 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 				return res;
 			}
 
-			public void setFailed(String message) {
-				Exception e = new Exception(message);
-				try {
-					runListener.addFailure(allTests.get(testName), e);
-				} catch (Exception e2) {
-					logger.warn(e);
-					e2.printStackTrace();
+			public void setFailed(String message, Throwable t) {
+				Exception e;
+				if (t != null) {
+					e = new Exception(message, t);
+				} else {
+					e = new Exception(message);
 				}
+				runListener.addFailure(allTests.get(testName), e);
 			}
 
 		};

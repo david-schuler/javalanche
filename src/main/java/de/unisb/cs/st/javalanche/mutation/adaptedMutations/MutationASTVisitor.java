@@ -198,10 +198,6 @@ public class MutationASTVisitor extends ASTVisitor {
 
 	@Override
 	public boolean visit(TryStatement node) {
-		System.out.println("MutationASTVisitor.visit() TRY "
-				+ getStartLineNumber(node));
-		System.out.println("MutationASTVisitor.visit() TRY "
-				+ getEndLineNumber(node));
 		tryBlocks.push(node);
 		return super.visit(node);
 	}

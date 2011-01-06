@@ -25,7 +25,7 @@ public class BytecodeInfo {
 			Integer res = data.get(key);
 			return res;
 		} else {
-			throw new RuntimeException("Got no data for methods " + key);
+			throw new RuntimeException("Got no data for method: " + key);
 		}
 
 	}
@@ -34,7 +34,7 @@ public class BytecodeInfo {
 			int line) {
 		String key = getKey(className, methodName, desc);
 		if (data.containsKey(key)) {
-			//TODO throw new RuntimeException("Key already contained " + key);
+			throw new RuntimeException("Key already contained " + key);
 			/*junit]  Running de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.JavalancheWrapperTestSuite
     [junit] java.lang.RuntimeException: Key already contained org2/apache2/commons2/logging2/Log.isDebugEnabled()Z
     [junit]     at de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.BytecodeInfo.addLastLine(BytecodeInfo.java:37)

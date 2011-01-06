@@ -28,17 +28,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.util.TraceClassVisitor;
 
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationTransformer;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsClassAdapter;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationsForRun;
-import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecisionFactory;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
@@ -55,7 +49,6 @@ import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
  * @author David Schuler
  * 
  */
-@SuppressWarnings("unchecked")
 public class MutationFileTransformer implements ClassFileTransformer {
 
 	private static Logger logger = Logger
@@ -87,33 +80,6 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	private static RemoveSystemExitTransformer systemExitTransformer = new RemoveSystemExitTransformer();
 
-	private static final String[] systemExitClasses = new String[] {
-			"org.aspectj.tools.ajbrowser.ui.swing.TopFrame",
-			"org.aspectj.tools.ajdoc.JavadocRunner$1",
-			"org.aspectj.tools.ajdoc.Main",
-			"org.aspectj.apache.bcel.classfile.Utility",
-			"org.aspectj.apache.bcel.util.CodeHTML",
-			"org.aspectj.apache.bcel.verifier.NativeVerifier",
-			"org.aspectj.apache.bcel.verifier.TransitiveHull",
-			"org.aspectj.apache.bcel.verifier.VerifierAppFrame",
-			"org.aspectj.apache.bcel.verifier.VerifyDialog$1",
-			"$installer$.org.aspectj.Main",
-			"org.aspectj.tools.ajc.Main",
-			"RunWeaveTests",
-			"WeaveTests",
-			"org.aspectj.internal.tools.ant.taskdefs.MainWrapper$1",
-			"org.aspectj.internal.tools.ant.taskdefs.MainWrapper",
-			"org.aspectj.testing.util.LinkCheck",
-			"org.aspectj.testing.server.TestServer",
-			"org.aspectj.testing.drivers.Harness",
-			"de.unisb.cs.st.javalanche.mutation.bytecodeMutations.sysexit.testclasses.SysExit", };
-
-	private static List<String> systemExitClassList = Arrays
-			.asList(systemExitClasses);
-
-	static {
-		logger.info("Loading MutationFileTransformer");
-	}
 
 	private static MutationDecision mutationDecision = MutationDecisionFactory
 			.getStandardMutationDecision(classesToMutate);
@@ -142,15 +108,13 @@ public class MutationFileTransformer implements ClassFileTransformer {
 				String classNameWithDots = className.replace('/', '.');
 				// logger.info(className + " is passed to transformer");
 				if (mutationDecision.shouldBeHandled(classNameWithDots)) {
+					// TODO Remove System exit calls also from additional
+					// classes (e.g.libraries)
 					logger.debug("Removing calls to System.exit() from class: "
 							+ classNameWithDots);
 					classfileBuffer = systemExitTransformer
 							.transformBytecode(classfileBuffer);
 				}
-				// if (BytecodeTasks.shouldIntegrate(classNameWithDots)) {
-				// classfileBuffer = BytecodeTasks.integrateTestSuite(
-				// classfileBuffer, classNameWithDots);
-				// }
 				if (mutationDecision.shouldBeHandled(classNameWithDots)) {
 					logger.info("Transforming: " + classNameWithDots);
 					byte[] transformedBytecode = null;
@@ -196,15 +160,6 @@ public class MutationFileTransformer implements ClassFileTransformer {
 
 	}
 
-	/**
-	 * Checks if the given class contains a System.exit() call.
-	 * 
-	 * @param classNameWithDots
-	 *            the class to check
-	 * @return true, if the class contains a call to System.exit()
-	 */
-	private boolean isSystemExitClass(String classNameWithDots) {
-		return systemExitClassList.contains(classNameWithDots);
-	}
+
 
 }

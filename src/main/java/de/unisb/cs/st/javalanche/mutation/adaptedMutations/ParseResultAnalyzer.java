@@ -234,7 +234,7 @@ public class ParseResultAnalyzer {
 		String sourceDir = MutationProperties.PROJECT_SOURCE_DIR;
 		File dir = new File(sourceDir);
 		if (!dir.exists()) {
-			throw new RuntimeException("Directory does not exist");
+			throw new RuntimeException("Directory does not exist: " + dir);
 		}
 		Map<String, ASTParseResult> results = SourceScanner.parseDirectory(dir);
 		List<AdaptedMutationDescription> analyzeJump = analyzeJump(results);

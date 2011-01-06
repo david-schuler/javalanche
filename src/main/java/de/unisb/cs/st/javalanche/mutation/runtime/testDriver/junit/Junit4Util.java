@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import javax.management.RuntimeErrorException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
@@ -92,8 +94,12 @@ public class Junit4Util {
 		String[] split = testClasses.split(":");
 		List<Class<?>> classes = new ArrayList<Class<?>>();
 		for (String className : split) {
-			Class<?> clazz = Class.forName(className);
-			classes.add(clazz);
+			try {
+				Class<?> clazz = Class.forName(className);
+				classes.add(clazz);
+			} catch (ClassNotFoundException e) {
+				throw new RuntimeException("Class not found " + className, e);
+			}
 		}
 		r = new Suite(new AllDefaultPossibilitiesBuilder(true),
 				classes.toArray(new Class[0]));

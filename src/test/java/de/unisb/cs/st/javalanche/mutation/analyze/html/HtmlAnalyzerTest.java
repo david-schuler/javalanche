@@ -2,23 +2,38 @@ package de.unisb.cs.st.javalanche.mutation.analyze.html;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlAnalyzer;
+import de.unisb.cs.st.javalanche.mutation.analyze.html.testcontent.ABCTestContent;
 import de.unisb.cs.st.javalanche.mutation.analyze.html.testcontent.TestContent;
 import de.unisb.cs.st.javalanche.mutation.analyze.html.testcontent.TestContent1;
+import de.unisb.cs.st.javalanche.mutation.analyze.html.testcontent.TestContentABC;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import static org.hamcrest.Matchers.*;
 
 public class HtmlAnalyzerTest {
 
+	private static final String SEPERATOR = System
+			.getProperty("file.separator");
+	private String prefixBack;
 	@Before
 	public void setUp() throws Exception {
+		prefixBack = MutationProperties.PROJECT_PREFIX;
+		MutationProperties.PROJECT_PREFIX = "de.unisb";
+	}
+
+	@After
+	public void tearDown() {
+		MutationProperties.PROJECT_PREFIX = prefixBack;
 	}
 
 	@Test
@@ -40,6 +55,18 @@ public class HtmlAnalyzerTest {
 		checkClass(className, TestContent1.value);
 	}
 
+	@Test
+	public void testClassContentABCpre() {
+		String className = ABCTestContent.class.getCanonicalName();
+		checkClass(className, ABCTestContent.value);
+	}
+
+	@Test
+	public void testClassContentABCpost() {
+		String className = TestContentABC.class.getCanonicalName();
+		checkClass(className, TestContentABC.value);
+	}
+
 	private void checkClass(String className, String checkValue) {
 		HtmlAnalyzer a = new HtmlAnalyzer();
 		Mutation m = new Mutation(className, "testM", 4, 1,
@@ -50,5 +77,16 @@ public class HtmlAnalyzerTest {
 		String html = classReport.getHtml();
 		assertThat(html, containsString(checkValue));
 	}
+
+	@Test
+	public void testGetClassName(){
+		String canonicalName = TestContent.class.getCanonicalName();
+		File f = new File("src/test/java/"
+				+ canonicalName.replace(".", SEPERATOR));
+		String className = HtmlAnalyzer.getContaingClassName(f);
+		assertEquals(TestContent.class.getName(), className);
+	}
+
+
 
 }

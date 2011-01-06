@@ -24,6 +24,11 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+
+import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.BytecodeInfo;
+import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.LastLineClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.Excludes;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 
@@ -37,10 +42,13 @@ public class ScanProjectTransformer implements ClassFileTransformer {
 
 	private List<String> classes = new ArrayList<String>();
 
+	private static BytecodeInfo lastLineInfo = new BytecodeInfo();
+
 	public ScanProjectTransformer() {
 		Runtime r = Runtime.getRuntime();
 		r.addShutdownHook(new Thread() {
 			public void run() {
+				lastLineInfo.write();
 				Excludes.getInstance().addClasses(classes);
 				Excludes.getInstance().writeFile();
 				System.out.println("Got " + classes.size()
@@ -50,7 +58,7 @@ public class ScanProjectTransformer implements ClassFileTransformer {
 		});
 	}
 
-	private static int count = 0; 
+	// private static int count = 0;
 	
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
@@ -58,8 +66,18 @@ public class ScanProjectTransformer implements ClassFileTransformer {
 		String classNameWithDots = className.replace('/', '.');
 		if (classNameWithDots.startsWith(MutationProperties.PROJECT_PREFIX)) {
 			classes.add(classNameWithDots);
+			if (MutationProperties.ENABLE_ADAPTED_MUTATIONS) {
+				computeBytecodeInfo(classfileBuffer);
+			}
+
 		}
 		return classfileBuffer;
 	}
 
+	private void computeBytecodeInfo(byte[] classfileBuffer) {
+		ClassReader cr = new ClassReader(classfileBuffer);
+		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+		LastLineClassAdapter cv = new LastLineClassAdapter(cw, lastLineInfo);
+		cr.accept(cv, ClassReader.EXPAND_FRAMES);
+	}
 }
