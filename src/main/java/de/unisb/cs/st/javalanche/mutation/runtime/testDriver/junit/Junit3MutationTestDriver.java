@@ -168,8 +168,8 @@ public class Junit3MutationTestDriver extends MutationTestDriver {
 				return res;
 			}
 
-			public void setFailed(String message) {
-				Exception e = new Exception(message);
+			@Override
+			public void setFailed(String message, Throwable e) {
 				result.addError(allTests.get(testName), e);
 			}
 

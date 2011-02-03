@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BaseBytecodeTest;
@@ -14,6 +16,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.classes.RemoveCallsTEMPLATE;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.ReplaceVariableClass1;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.Triangle2TEMPLATE;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.properties.TestProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
@@ -27,6 +30,16 @@ public class Triangle2Test extends BaseBytecodeTest {
 		super(Triangle2TEMPLATE.class);
 		verbose = true;
 		clazz = prepareTest();
+	}
+
+	@Before
+	public void setUp() {
+		MutationProperties.IGNORE_REPLACE_VARIABLES = false;
+	}
+
+	@After
+	public void tearDown() {
+		MutationProperties.IGNORE_REPLACE_VARIABLES = true;
 	}
 
 	@Test

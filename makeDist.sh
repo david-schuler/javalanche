@@ -43,6 +43,14 @@ cp ../InvariantExample/build.xml ${DIST}/examples/invariantExample/
 cp -r ../InvariantExample/src ${DIST}/examples/invariantExample/
 
 rm ${DIST}/javalanche-${VERSION}.jar
+
+
+JARJAR=/scratch/schuler/java/jarjar-1.0.jar
+java -jar ${JARJAR} process jarjar-rules.txt ${DIST}/lib/ds-util-0.3.2.jar ${DIST}/lib/ds-util-trans.jar
+rm ${DIST}/lib/ds-util-0.3.2.jar
+java -jar ${JARJAR} process jarjar-rules.txt ${DIST}/lib/xstream-1.3.1.jar ${DIST}/lib/xstream-trans.jar
+rm ${DIST}/lib/xstream-1.3.1.jar
+
 #rm ${DIST}/lib/daikon-local.jar
 if [  $1 ]; then
  if [ $1 == "tgz"  ]

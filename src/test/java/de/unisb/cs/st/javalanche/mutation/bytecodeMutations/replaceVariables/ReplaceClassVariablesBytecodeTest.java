@@ -20,16 +20,29 @@ package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables;
 
 import java.lang.reflect.Method;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BaseBytecodeTest;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.ReplaceVariables3TEMPLATE;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 
 public class ReplaceClassVariablesBytecodeTest extends BaseBytecodeTest {
 
 	private Class<?> clazz;
+
+	@BeforeClass
+	public static void setUpClass() {
+		MutationProperties.IGNORE_REPLACE_VARIABLES = false;
+	}
+
+	@AfterClass
+	public static void tearDownClass() {
+		MutationProperties.IGNORE_REPLACE_VARIABLES = true;
+	}
 
 	public ReplaceClassVariablesBytecodeTest() throws Exception {
 		super(ReplaceVariables3TEMPLATE.class);
@@ -42,8 +55,7 @@ public class ReplaceClassVariablesBytecodeTest extends BaseBytecodeTest {
 		Method m1 = clazz.getMethod("m1");
 		checkUnmutated(1, m1, clazz);
 		Mutation m = new Mutation(clazz.getCanonicalName(), m1.getName(), 12,
-				0,
-				MutationType.REPLACE_VARIABLE);
+				0, MutationType.REPLACE_VARIABLE);
 		m.setOperatorAddInfo("b");
 		checkMutation(m, new Object[0], 2, m1, clazz);
 		m.setOperatorAddInfo("c");

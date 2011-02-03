@@ -158,7 +158,7 @@ public class MutationProperties {
 
 	public static final String IGNORE_REPLACE_VARIABLES_KEY = "javalanche.ignore.replace.variables";
 	public static boolean IGNORE_REPLACE_VARIABLES = getPropertyOrDefault(
-			IGNORE_REPLACE_VARIABLES_KEY, false);
+			IGNORE_REPLACE_VARIABLES_KEY, true);
 
 	public static final String IGNORE_ADAPTED_JUMPS_KEY = "javalanche.ignore.adapted.jumps";
 	public static boolean IGNORE_ADAPTED_JUMPS = getPropertyOrDefault(

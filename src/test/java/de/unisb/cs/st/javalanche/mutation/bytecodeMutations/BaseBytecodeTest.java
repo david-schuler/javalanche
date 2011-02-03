@@ -79,6 +79,7 @@ public class BaseBytecodeTest {
 		compileTest(outFile);
 		deleteMutations(className);
 		List<Mutation> pos = scan(classFile);
+		System.out.println("SCAN: " + pos.size());
 		// analyze(outFile);
 		redefineMutations(className);
 		transform(classFile);

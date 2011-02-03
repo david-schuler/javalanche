@@ -14,6 +14,8 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -26,11 +28,21 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.cla
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.ReplaceVariables6TEMPLATE;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanVariablesTransformer;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 
 public class ReplaceVariablesPosibilitiesTest {
 
+	@BeforeClass
+	public static void setUpClass() {
+		MutationProperties.IGNORE_REPLACE_VARIABLES = false;
+	}
+
+	@AfterClass
+	public static void tearDownClass() {
+		MutationProperties.IGNORE_REPLACE_VARIABLES = true;
+	}
 	@Test
 	public void testStaticIntsClass() throws Exception {
 		List<Mutation> rvMutations = scanForReplaceVariableMutations(ReplaceVariableClass1.class);

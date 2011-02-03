@@ -118,7 +118,7 @@ public class CoverageTraceUtilTest {
 
 	@Test
 	public void testReadDirectory() {
-		File dir = new File("/rw-test-dir");
+		File dir = new File("./rw-test-dir");
 		dir.mkdir();
 		dir.deleteOnExit();
 		String fileName1 = new File(dir, "test1.gz").getAbsolutePath();

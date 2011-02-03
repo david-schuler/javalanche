@@ -41,8 +41,8 @@ public abstract class AbstractReplaceVariablesAdapter extends
 	private static Logger logger = Logger
 			.getLogger(AbstractReplaceVariablesAdapter.class);
 
-	private List<VariableInfo> staticVariables = Collections.EMPTY_LIST;
-	private List<VariableInfo> classVariables = Collections.EMPTY_LIST;
+	private List<VariableInfo> staticVariables = Collections.emptyList();
+	private List<VariableInfo> classVariables = Collections.emptyList();
 
 	private AnalyzerAdapter anlyzeAdapter;
 

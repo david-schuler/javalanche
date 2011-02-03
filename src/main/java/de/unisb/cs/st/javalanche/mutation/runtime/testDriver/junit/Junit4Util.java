@@ -98,7 +98,12 @@ public class Junit4Util {
 				Class<?> clazz = Class.forName(className);
 				classes.add(clazz);
 			} catch (ClassNotFoundException e) {
-				throw new RuntimeException("Class not found " + className, e);
+				if (className.trim().length() == 0) {
+					throw new RuntimeException("Classname with length 0.", e);
+				}
+				throw new RuntimeException("Class not found: " + className, e);
+			} catch (VerifyError e) {
+				throw new RuntimeException("Verrify error for " + className, e);
 			}
 		}
 		r = new Suite(new AllDefaultPossibilitiesBuilder(true),

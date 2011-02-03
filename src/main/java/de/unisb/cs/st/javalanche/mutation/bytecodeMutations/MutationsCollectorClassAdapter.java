@@ -110,6 +110,8 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 					removeCallsPossibilities, desc);
 		}
 		if (!MutationProperties.IGNORE_REPLACE_VARIABLES) {
+			System.out
+					.println("MutationsCollectorClassAdapter.visitMethod() IGNORE_REPLACE_VARIABLES");
 			ReplaceVariablesPossibilitiesMethodAdapter rvAdapter = new ReplaceVariablesPossibilitiesMethodAdapter(
 					mv, className, name, mpc, replaceVariablesPossibilities,
 					desc, projectVariables.getStaticVariables(className),

@@ -18,6 +18,7 @@
  */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +50,9 @@ public final class ReplaceVariablesPossibilitiesMethodAdapter extends
 	protected boolean handleMutation(Mutation mutation, int opcode,
 			String owner, String name, String desc, String[] replaceNames) {
 		// mpc.addPossibility(m);
+		System.out
+				.println("ReplaceVariablesPossibilitiesMethodAdapter.handleMutation()"
+						+ Arrays.toString(replaceNames));
 		int mforLine = mutation.getMutationForLine();
 		for (String replaceName : replaceNames) {
 			Mutation m2 = new Mutation(mutation.getClassName(),
@@ -67,6 +71,8 @@ public final class ReplaceVariablesPossibilitiesMethodAdapter extends
 	@Override
 	protected boolean handleLocalMutation(Mutation mutation, int opcode,
 			int var, List<Integer> replaceLocals) {
+		System.out
+				.println("ReplaceVariablesPossibilitiesMethodAdapter.handleLocalMutation()");
 		int mforLine = mutation.getMutationForLine();
 		for (Integer replaceVar : replaceLocals) {
 			Mutation m2 = new Mutation(mutation.getClassName(),

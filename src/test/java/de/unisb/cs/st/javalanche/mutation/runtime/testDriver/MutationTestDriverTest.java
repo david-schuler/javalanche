@@ -101,12 +101,14 @@ public class MutationTestDriverTest {
 			return finished.get();
 		}
 
-		public void setFailed(String message) {
-			this.message = message;
-		}
 
 		public synchronized boolean hasFailed() {
 			return message != null;
+		}
+
+		@Override
+		public void setFailed(String message, Throwable e) {
+			this.message = message;
 		}
 
 	}

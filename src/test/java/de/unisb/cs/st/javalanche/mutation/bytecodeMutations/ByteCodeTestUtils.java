@@ -192,6 +192,7 @@ public class ByteCodeTestUtils {
 		query.setString("clname", testClassName);
 		List<Mutation> mList = query.list();
 		for (Mutation m : mList) {
+			System.out.println("REDEFINE: " + m);
 			ids.add(m.getId());
 		}
 		tx.commit();

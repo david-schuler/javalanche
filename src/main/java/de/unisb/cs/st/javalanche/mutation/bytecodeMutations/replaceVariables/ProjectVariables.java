@@ -47,9 +47,9 @@ public class ProjectVariables {
 	}
 
 	public static ProjectVariables read() {
-		if (fromDefault == null) {
+		// if (fromDefault == null) {
 			fromDefault = (ProjectVariables) XmlIo.fromXml(DEFAULT_LOCATION);
-		}
+		// }
 		return fromDefault;
 	}
 

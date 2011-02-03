@@ -204,6 +204,7 @@ public class MutationPropertiesTest {
 		assertThat(TEST_PERMUTATIONS, is(10));
 		assertTrue(IGNORE_ADAPTED_JUMPS);
 		assertTrue(IGNORE_ADAPTED_REPLACE);
+		assertTrue(IGNORE_REPLACE_VARIABLES);
 	}
 
 }

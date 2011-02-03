@@ -20,10 +20,15 @@ package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables;
 
 import java.lang.reflect.Method;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BaseBytecodeTest;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.ReplaceVariables1TEMPLATE;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 
@@ -35,6 +40,16 @@ public class ReplaceVariablesBytecodeTest extends BaseBytecodeTest {
 		super(ReplaceVariables1TEMPLATE.class);
 		verbose = true;
 		clazz = prepareTest();
+	}
+
+	@BeforeClass
+	public static void setUpClass() {
+		MutationProperties.IGNORE_REPLACE_VARIABLES = false;
+	}
+
+	@AfterClass
+	public static void tearDownClass() {
+		MutationProperties.IGNORE_REPLACE_VARIABLES = true;
 	}
 
 	@Test
