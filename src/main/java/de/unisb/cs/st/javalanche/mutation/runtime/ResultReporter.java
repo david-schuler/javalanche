@@ -32,13 +32,13 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
 /**
- *
- * Class that manages the results of the mutation testing and persits them to
+ * 
+ * Class that manages the results of the mutation testing and persists them to
  * the database.
- *
- *
+ * 
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class ResultReporter implements MutationTestListener {
 
@@ -106,7 +106,7 @@ public class ResultReporter implements MutationTestListener {
 	}
 
 	/**
-	 * Persits the reported mutations to the database.
+	 * Persists the reported mutations to the database.
 	 */
 	public synchronized void persist() {
 		logger.debug("Start storing " + reportedMutations.size()

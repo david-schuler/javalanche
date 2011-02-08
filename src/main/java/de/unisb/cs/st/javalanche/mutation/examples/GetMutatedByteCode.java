@@ -71,7 +71,7 @@ public class GetMutatedByteCode {
 		List<Mutation> possibilities = posibilities.getPossibilities();
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 		for (Mutation mutation : possibilities) {
-			// if(mutation matche criterion)
+			// if(mutation match criterion)
 			mpc.addPossibility(mutation);
 		}
 		return mpc;
