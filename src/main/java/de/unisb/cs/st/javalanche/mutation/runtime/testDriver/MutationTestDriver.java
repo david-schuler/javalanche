@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
@@ -65,16 +64,13 @@ import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationObserver;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationSwitcher;
 import de.unisb.cs.st.javalanche.mutation.runtime.ResultReporter;
-import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit3MutationTestDriver;
-import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestCheckListener;
-import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.listeners.InvariantPerTestListener;
 import de.unisb.cs.st.javalanche.mutation.util.ThreadUtilities;
 
 /**
  * Abstract class that drives the mutation test process. Driver for specific
  * test architectures must subclass this class.
  * 
- * @see Junit3MutationTestDriver
+ * @see Junit4MutationTestDriver
  * 
  * @author David Schuler
  * 
@@ -146,6 +142,7 @@ public abstract class MutationTestDriver {
 		runFromProperty();
 	}
 
+	@SuppressWarnings("unchecked")
 	public MutationTestDriver() {
 		// File dir = new File(MutationProperties.OUTPUT_DIR);
 		lastId = 0l;
@@ -153,7 +150,7 @@ public abstract class MutationTestDriver {
 			String s = MutationProperties.MUTATION_FILE_NAME;
 			controlFile = new File(s + "-control");
 			if (controlFile.exists()) {
-				List readLines;
+				List<String> readLines;
 				readLines = FileUtils.readLines(controlFile);
 				if (readLines.size() > 0) {
 					String lastLine = (String) readLines
@@ -192,25 +189,15 @@ public abstract class MutationTestDriver {
 	public final void run() {
 		logger.debug("Run Mode" + RUN_MODE);
 		if (RUN_MODE == MUTATION_TEST || RUN_MODE == MUTATION_TEST_INVARIANT
-				|| RUN_MODE == MUTATION_TEST_INVARIANT_PER_TEST
-				|| RUN_MODE == MUTATION_TEST_COVERAGE || RUN_MODE == EVOLUTION) {
-			if (RUN_MODE == MUTATION_TEST_INVARIANT_PER_TEST) {
-				addMutationTestListener(new InvariantPerTestListener());
-			}
-			if (RUN_MODE == MUTATION_TEST_COVERAGE || RUN_MODE == EVOLUTION) {
+				|| RUN_MODE == MUTATION_TEST_COVERAGE) {
+			if (RUN_MODE == MUTATION_TEST_COVERAGE) {
 				addMutationTestListener(new CoverageMutationListener());
 				// runNormalTests();
 			}
 			listeners.addLast(new ResultReporter());
 			runMutations();
-		} else if (RUN_MODE == SCAN || RUN_MODE == SCAN_ECLIPSE) {
+		} else if (RUN_MODE == SCAN) {
 			scanTests();
-		} else if (RUN_MODE == CHECK_INVARIANTS_PER_TEST) {
-			addMutationTestListener(new InvariantPerTestCheckListener());
-			runNormalTests();
-		} else if (RUN_MODE == CREATE_COVERAGE) {
-			addMutationTestListener(new CoverageMutationListener());
-			runNormalTests();
 		} else if (RUN_MODE == CREATE_COVERAGE_MULT) {
 			addMutationTestListener(new CoverageMutationListener());
 			runPermutedTests();

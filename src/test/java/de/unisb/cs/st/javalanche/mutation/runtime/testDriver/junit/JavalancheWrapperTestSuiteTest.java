@@ -43,7 +43,6 @@ public class JavalancheWrapperTestSuiteTest {
 	public void setUp() throws Exception {
 	}
 
-
 	private void testHelper(Class<?> testClass, int expecedTests) {
 		testHelper(new Class<?>[] { testClass }, expecedTests);
 	}
@@ -77,16 +76,24 @@ public class JavalancheWrapperTestSuiteTest {
 	}
 
 	@Test
-	public void testMultipleJunit3Test() {
-		testHelper(new Class<?>[] { Junit3TestCase2.class,
-				TestCaseForJunitTest.class }, 6);
+	public void testMultipleJunit3Test() throws Exception {
+		try {
+			testHelper(new Class<?>[] { Junit3TestCase2.class,
+					TestCaseForJunitTest.class }, 6);
+		} catch (Throwable t) {
+			System.out
+					.println("This test fails when junit < 4.8.2 is on the classpath.");
+			System.out.println(t.getMessage());
+			t.printStackTrace();
+			throw new RuntimeException(t);
+		}
 	}
 
 	@Test
 	public void testJunit3Suite() {
 		testHelper(Junit3Suite.class, 6);
 	}
-	
+
 	@Test
 	public void testJunit4Test() {
 		testHelper(Junit4TestCase2.class, 4);
@@ -123,4 +130,3 @@ public class JavalancheWrapperTestSuiteTest {
 	}
 
 }
-

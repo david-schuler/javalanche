@@ -26,7 +26,6 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
-import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.BytecodeInfo;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanVariablesTransformer;
@@ -96,8 +95,7 @@ public class BaseBytecodeTest {
 		}
 		ClassReader cr = new ClassReader(bytes);
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-		ClassVisitor cv = new MutationsClassAdapter(cw, new BytecodeInfo(),
-				new MutationManager());
+		ClassVisitor cv = new MutationsClassAdapter(cw, new MutationManager());
 		cv = new RemoveSystemExitTransformer.RemoveSystemExitClassAdapter(cv);
 		cr.accept(cv, ClassReader.EXPAND_FRAMES);
 		byte[] result = cw.toByteArray();
@@ -198,6 +196,7 @@ public class BaseBytecodeTest {
 	protected File createTmpJavaFile(String fileToCopy, File outDir)
 			throws IOException {
 		File file = new File(fileToCopy);
+		@SuppressWarnings("unchecked")
 		List<String> lines = FileUtils.readLines(file);
 		List<String> writeLines = new ArrayList<String>();
 		for (String l : lines) {

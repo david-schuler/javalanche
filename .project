@@ -4,12 +4,7 @@
 	Java programs with a special focus on automation, efficiency, and 
 	effectiveness. In particular, Javalanche assesses the impact of individual 
 	mutations to effectively weed out equivalent mutants. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
-  <projects>
-    <project>adabu2-tracer</project>
-    <project>ds-util</project>
-    <project>invariants</project>
-    <project>util</project>
-  </projects>
+  <projects/>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>

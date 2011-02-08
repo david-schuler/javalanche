@@ -22,17 +22,14 @@ import java.io.PrintWriter;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
-import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.BytecodeInfo;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 
 public class MutationTransformer extends BytecodeTransformer {
 
-	private BytecodeInfo lastLineInfo = BytecodeInfo.read();
 
 	private MutationManager mm = new MutationManager();
 
@@ -43,7 +40,7 @@ public class MutationTransformer extends BytecodeTransformer {
 			cv = new TraceClassVisitor(cv, new PrintWriter(
 					MutationPreMain.sysout));
 		}
-		return new MutationsClassAdapter(cv, lastLineInfo, mm);
+		return new MutationsClassAdapter(cv, mm);
 
 	}
 

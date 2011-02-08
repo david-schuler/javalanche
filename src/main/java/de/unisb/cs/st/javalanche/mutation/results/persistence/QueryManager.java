@@ -47,10 +47,6 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
  * @author David Schuler
  *
  */
-/**
- * @author David Schuler
- * 
- */
 @SuppressWarnings("unchecked")
 public class QueryManager {
 

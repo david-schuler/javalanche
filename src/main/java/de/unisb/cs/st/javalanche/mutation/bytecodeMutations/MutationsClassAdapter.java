@@ -18,9 +18,7 @@
  */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -30,16 +28,12 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.util.CheckMethodAdapter;
 
-import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.BytecodeInfo;
-import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.JumpsMethodAdapter;
-import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.replace.ReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.ArithmeticReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.RemoveMethodCallsMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.RicMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ProjectVariables;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ReplaceVariablesMethodAdapter;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 
 public class MutationsClassAdapter extends ClassAdapter {
@@ -65,20 +59,11 @@ public class MutationsClassAdapter extends ClassAdapter {
 
 	private final MutationManager mutationManager;
 
-	private BytecodeInfo bytecodeInfo;
-
 	private ProjectVariables projectVariables = ProjectVariables.read();
 
-	public MutationsClassAdapter(ClassVisitor cv, BytecodeInfo lastLineInfo,
-			MutationManager mm) {
-		this(cv, mm, lastLineInfo);
-	}
-
-	public MutationsClassAdapter(ClassVisitor cv, MutationManager mm,
-			BytecodeInfo bytecodeInfo) {
+	public MutationsClassAdapter(ClassVisitor cv, MutationManager mm) {
 		super(cv);
 		this.mutationManager = mm;
-		this.bytecodeInfo = bytecodeInfo;
 	}
 
 	@Override
@@ -105,12 +90,6 @@ public class MutationsClassAdapter extends ClassAdapter {
 				arithmeticPossibilities, mutationManager, desc);
 		mv = new RemoveMethodCallsMethodAdapter(mv, className, name,
 				removeCallsPossibilities, mutationManager, desc);
-		if (MutationProperties.ENABLE_ADAPTED_MUTATIONS) {
-			mv = new JumpsMethodAdapter(mv, className, name,
-					jumpsPossibilities, mutationManager, desc, bytecodeInfo);
-			mv = new ReplaceMethodAdapter(mv, className, name,
-					replacePossibilities, mutationManager, desc);
-		}
 		ReplaceVariablesMethodAdapter rvAdapter = new ReplaceVariablesMethodAdapter(
 				mv, className, name, replaceVariablePossibilities, desc,
 				mutationManager,

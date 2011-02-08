@@ -16,7 +16,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
-import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.BytecodeInfo;
+
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
@@ -56,8 +56,7 @@ public class GetMutatedByteCode {
 			cv = new TraceClassVisitor(cv, new PrintWriter(
 					MutationPreMain.sysout));
 		}
-		cv = new MutationsClassAdapter(cv, new MutationManager(true),
-				BytecodeInfo.read());
+		cv = new MutationsClassAdapter(cv, new MutationManager(true));
 		cr.accept(cv, ClassReader.SKIP_FRAMES);
 		byte[] byteArray = cw.toByteArray();
 		OutputStream out = new BufferedOutputStream(new FileOutputStream(dest));

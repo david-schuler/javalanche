@@ -33,6 +33,8 @@ import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
 import de.unisb.cs.st.javalanche.mutation.results.TestName;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.util.MutationDeleter;
+import de.unisb.cs.st.javalanche.mutation.util.ResultDeleter;
 
 public class DeleteTest<T> {
 

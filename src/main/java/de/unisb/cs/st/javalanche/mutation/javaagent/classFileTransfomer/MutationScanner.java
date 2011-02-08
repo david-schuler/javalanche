@@ -30,7 +30,6 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import de.unisb.cs.st.ds.util.Util;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationScannerTransformer;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
@@ -49,15 +48,7 @@ public class MutationScanner implements ClassFileTransformer {
 
 	private MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 
-	// private MutationScannerTransformer mutationScannerTransformer = new
-	// MutationScannerTransformer(
-	// mpc);
-
 	private MutationDecision md = MutationDecisionFactory.SCAN_DECISION;
-
-	// private static BytecodeInfo lastLineInfo = new BytecodeInfo();
-
-	// private MutationManager mm = new MutationManager();
 
 	static {
 		// DB must be loaded before transform method is entered. Otherwise

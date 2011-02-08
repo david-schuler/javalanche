@@ -250,8 +250,6 @@
 
 	<target name="analyzeResults" description="* Analyze the mutation test results. Own analyzers can be specified with -Djavalanche.mutation.analyzers=">
 	<echo> Using ${javalanche.maxmemory} memory </echo>
-	<!--jvmarg value="-Djavalanche.mutation.analyzers=de.unisb.cs.st.javalanche.mutation.analyze.MutationPrioritizationAnalyzer" />-->
-	<!--echo> Test: ${javalanche.mutation.analyzers} </echo-->
 	<condition property="analyze.add" value="-Djavalanche.mutation.analyzers=${javalanche.mutation.analyzers}" else="">
 		<isset property="javalanche.mutation.analyzers"/>
 	</condition>
@@ -276,7 +274,7 @@
 
 	<target name="deleteResults" description="* Delete mutation results for this project.">
 		<echo> Deleting mutation result with prefix: ${project.prefix} </echo>
-		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.tools.ResultDeleter" maxmemory="${javalanche.maxmemory}" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.ResultDeleter" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
 			<classpath>
 				<path refid="mutation.classpath" />
@@ -287,7 +285,7 @@
 	
 	<target name="deleteSingleResult" description="* Delete result for single specified mutation (property -Dmutation.id=).">
 		<echo> Deleting result for mutation with id: ${mutation.id} </echo>
-		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.tools.ResultDeleter" maxmemory="${javalanche.maxmemory}" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.ResultDeleter" maxmemory="${javalanche.maxmemory}" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
 			</classpath>
@@ -298,7 +296,7 @@
 		
 	<target name="showMutation" description="* Show the mutation with given id (-Dmutation.id= ) and its results. ">
 		<echo> Display mutation with id: ${mutation.id} </echo>
-		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.tools.ShowMutation" maxmemory="${javalanche.maxmemory}" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.ShowMutation" maxmemory="${javalanche.maxmemory}" fork="true">
 			<classpath>
 				<path refid="mutation.classpath" />
 			</classpath>
@@ -311,7 +309,7 @@
 	<target name="deleteMutations" description="* Delete mutations for this project.">
 		<echo> Deleting mutations with prefix: ${project.prefix} </echo>
 		<delete dir="mutation-files/coverage-data" />
-		<java classname="de.unisb.cs.st.javalanche.mutation.analyze.tools.MutationDeleter" maxmemory="${javalanche.maxmemory}" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.MutationDeleter" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="mutation.package.prefix" value="${project.prefix}" />
 			<classpath>
 				<path refid="mutation.classpath" />

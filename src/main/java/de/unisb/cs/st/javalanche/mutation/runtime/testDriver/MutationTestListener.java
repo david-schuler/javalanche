@@ -39,16 +39,16 @@ public interface MutationTestListener {
 	void end();
 
 	/**
-	 * This method is called everytime a new mutation is tested.
-	 *
+	 * This method is called every time a new mutation is tested.
+	 * 
 	 * @param mutation
 	 *            the mutation that is currently tested
 	 */
 	void mutationStart(Mutation mutation);
 
 	/**
-	 * This method is called everytime the tests for a mutation end.
-	 *
+	 * This method is called every time the tests for a mutation end.
+	 * 
 	 * @param mutation
 	 *            the mutation that was tested
 	 */

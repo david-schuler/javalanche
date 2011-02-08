@@ -160,13 +160,6 @@ public class MutationProperties {
 	public static boolean IGNORE_REPLACE_VARIABLES = getPropertyOrDefault(
 			IGNORE_REPLACE_VARIABLES_KEY, true);
 
-	public static final String IGNORE_ADAPTED_JUMPS_KEY = "javalanche.ignore.adapted.jumps";
-	public static boolean IGNORE_ADAPTED_JUMPS = getPropertyOrDefault(
-			IGNORE_ADAPTED_JUMPS_KEY, true);
-
-	public static final String IGNORE_ADAPTED_REPLACE_KEY = "javalanche.ignore.adapted.replace";
-	public static boolean IGNORE_ADAPTED_REPLACE = getPropertyOrDefault(
-			IGNORE_ADAPTED_REPLACE_KEY, true);
 
 	public static final File TEST_MAP_FILE = new File(OUTPUT_DIR,
 			"testname-map.xml");

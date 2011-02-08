@@ -31,8 +31,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.util.CheckMethodAdapter;
 
-import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.jumps.JumpsPossibilitiesMethodAdapter;
-import de.unisb.cs.st.javalanche.mutation.adaptedMutations.bytecode.replace.ReplacePossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.PossibilitiesArithmeticReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsPossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.MyAdviceAdapter;
@@ -121,15 +119,6 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 					access, name, desc, mv);
 			rvAdapter.setAnlyzeAdapter(analyzerAdapter);
 			mv = analyzerAdapter;
-		}
-		if (!MutationProperties.IGNORE_ADAPTED_JUMPS) {
-			mv = new JumpsPossibilitiesMethodAdapter(mv, className, name, mpc,
-					jumpsCallsPossibilities, desc);
-		}
-
-		if (!MutationProperties.IGNORE_ADAPTED_REPLACE) {
-			mv = new ReplacePossibilitiesMethodAdapter(mv, className, name,
-					mpc, replaceCallsPossibilities, desc);
 		}
 		return mv;
 	}

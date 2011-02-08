@@ -65,9 +65,8 @@ public class BytecodeTasks {
 		for (MutationCode mutationCode : mutations) {
 			Mutation mutation = mutationCode.getMutation();
 			mv.visitLdcInsn(mutation.getMutationVariable());
-			mv.visitLdcInsn(mutation.getMutationType() + "");
-
-			mv.visitInsn(Opcodes.POP);
+			// mv.visitLdcInsn(mutation.getMutationType() + "");
+			// mv.visitInsn(Opcodes.POP);
 			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/System",
 					"getProperty", "(Ljava/lang/String;)Ljava/lang/String;");
 			Label l1 = new Label();
