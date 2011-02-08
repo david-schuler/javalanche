@@ -38,16 +38,16 @@
 	
 		<target name="testTask1" description="* Test the Javalanche task. The task should behave in the same way as a regular test task.">
 		<property name="test.task.1.memory" value="-Xmx${javalanche.maxmemory}"/> 
-		<property name="test.task.1.mutation.run.mode" value="-Dmutation.run.mode=off"/> 
+		<property name="test.task.1.javalanche.run.mode" value="-Djavalanche.run.mode=off"/> 
 		<property name="test.task.1.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
-		<property name="test.task.1.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="test.task.1.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
 	
 		<path id="testTask.javalanche.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
 
 		<antcall target="test-javalanche">                                
-			<param name="javalanche.arg.line" value="${test.task.1.memory} ${test.task.1.mutation.run.mode} ${test.task.1.javalanche.package.prefix} ${test.task.1.javalanche.project.test.suite}" />
+			<param name="javalanche.arg.line" value="${test.task.1.memory} ${test.task.1.javalanche.run.mode} ${test.task.1.javalanche.package.prefix} ${test.task.1.javalanche.project.tests}" />
 			<reference refid="testTask.javalanche.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>  
@@ -55,16 +55,16 @@
 	<target name="testTask2" description="* Test the Javalanche test runner without any bytecode modifications. All tests should pass in the Javalanche test runner.">
 		<property name="test.task.2.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="test.task.2.memory" value="-Xmx${javalanche.maxmemory}"/>
-		<property name="test.task.2.mutation.run.mode" value="-Dmutation.run.mode=check-tests"/>
+		<property name="test.task.2.javalanche.run.mode" value="-Djavalanche.run.mode=check-tests"/>
 		<property name="test.task.2.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
-		<property name="test.task.2.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="test.task.2.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
 		
 		<path id="test.task.2.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
 		
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value="  ${test.task.2.mutation.javaagent} ${test.task.2.memory} ${test.task.2.mutation.run.mode} ${test.task.2.javalanche.package.prefix} ${test.task.2.javalanche.project.test.suite} " />
+			<param name="javalanche.arg.line" value="  ${test.task.2.mutation.javaagent} ${test.task.2.memory} ${test.task.2.javalanche.run.mode} ${test.task.2.javalanche.package.prefix} ${test.task.2.javalanche.project.tests} " />
 			<reference refid="test.task.2.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>                              
@@ -73,16 +73,16 @@
 	<target name="testTask3" description="* Run the tests multiple times in different order. The outcome of the tests should not depend on the execution order.">
 		<property name="test.task.3.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="test.task.3.memory" value="-Xmx${javalanche.maxmemory}"/>
-		<property name="test.task.3.mutation.run.mode" value="-Dmutation.run.mode=check-tests-permuted"/>
+		<property name="test.task.3.javalanche.run.mode" value="-Djavalanche.run.mode=check-tests-permuted"/>
 		<property name="test.task.3.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
-		<property name="test.task.3.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="test.task.3.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
 		
 		<path id="test.task.3.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
 		
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value="  ${test.task.3.mutation.javaagent} ${test.task.3.memory} ${test.task.3.mutation.run.mode} ${test.task.3.javalanche.package.prefix} ${test.task.3.javalanche.project.test.suite} " />
+			<param name="javalanche.arg.line" value="  ${test.task.3.mutation.javaagent} ${test.task.3.memory} ${test.task.3.javalanche.run.mode} ${test.task.3.javalanche.package.prefix} ${test.task.3.javalanche.project.tests} " />
 			<reference refid="test.task.3.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>
@@ -93,9 +93,9 @@
 	<target name="_scanProject">
 		<property name="scan.project.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="scan.project.memory" value="-Xmx${javalanche.maxmemory}"/>
-		<property name="scan.project.mutation.run.mode" value="-Dmutation.run.mode=scan-project"/>
+		<property name="scan.project.javalanche.run.mode" value="-Djavalanche.run.mode=scan-project"/>
 		<property name="scan.project.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
-		<property name="scan.project.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="scan.project.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
 		<property name="scan.project.verbose" value="-verbose"/>
 
 		
@@ -105,7 +105,7 @@
 		
 		<antcall target="test-javalanche">
 			<!--${scan.project.verbose}-->
-			<param name="javalanche.arg.line" value="  ${scan.project.mutation.javaagent} ${scan.project.memory} ${scan.project.mutation.run.mode} ${scan.project.javalanche.package.prefix} ${scan.project.javalanche.project.test.suite} " />
+			<param name="javalanche.arg.line" value="  ${scan.project.mutation.javaagent} ${scan.project.memory} ${scan.project.javalanche.run.mode} ${scan.project.javalanche.package.prefix} ${scan.project.javalanche.project.tests} " />
 			<reference refid="scan.project.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>
@@ -135,9 +135,9 @@
 		
 		<property name="scan.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="scan.memory" value="-Xmx${javalanche.maxmemory}"/>
-		<property name="scan.mutation.run.mode" value="-Dmutation.run.mode=scan"/>
+		<property name="scan.javalanche.run.mode" value="-Djavalanche.run.mode=scan"/>
 		<property name="scan.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
-		<property name="scan.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="scan.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
 		<!--property name="scan.junit4" value="-Djavalanche.junit4=true"/-->
 		
 		<property name="scan.bootclasspath" value="-Xbootclasspath/a:${javalanche.dist.dir}/javalanche-mutation-bootclasspath.jar"/>
@@ -146,7 +146,7 @@
 		</path>
 		
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value=" ${scan.memory} ${scan.bootclasspath} ${scan.mutation.javaagent}  ${scan.mutation.run.mode} ${scan.javalanche.package.prefix} ${scan.javalanche.project.test.suite} " />
+			<param name="javalanche.arg.line" value=" ${scan.memory} ${scan.bootclasspath} ${scan.mutation.javaagent}  ${scan.javalanche.run.mode} ${scan.javalanche.package.prefix} ${scan.javalanche.project.tests} " />
 			<reference refid="scan.javalanche.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>
@@ -212,10 +212,10 @@
 	
 		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="run.mutations.memory" value="-Xmx${javalanche.maxmemory}"/>
-		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=mutation"/>
+		<property name="run.mutations.javalanche.run.mode" value="-Djavalanche.run.mode=mutation"/>
 		<property name="run.mutations.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
-		<property name="run.mutations.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
-		<property name="run.mutations.mutation.file" value="-Dmutation.file=${mutation.file}"/>
+		<property name="run.mutations.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
+		<property name="run.mutations.mutation.file" value="-Djavalanche.mutation.file=${mutation.file}"/>
 		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=result-${mutation.file}"/>
 		<property name="run.mutations.verbose" value="-verbose"/>
 		<property name="run.mutations.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.mutation.runtime.jmx.JmxMutationTestListener"/>
@@ -224,7 +224,7 @@
 		</path>
 			<!--${run.mutations.verbose}-->
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value="  ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.listener} ${run.mutations.single.task.mode}" />
+			<param name="javalanche.arg.line" value="  ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.javalanche.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.tests} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.listener} ${run.mutations.single.task.mode}" />
 			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 

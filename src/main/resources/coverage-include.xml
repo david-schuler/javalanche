@@ -3,9 +3,9 @@
 	<target name="createCoverageData" description="* Create coverage data for an original unmutated run" depends="mutationDir">
 		<property name="create.coverage.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="create.coverage.memory" value="-Xmx${javalanche.maxmemory}" />
-		<property name="create.coverage.mutation.run.mode" value="-Dmutation.run.mode=create-coverage"/>
+		<property name="create.coverage.javalanche.run.mode" value="-Djavalanche.run.mode=create-coverage"/>
 		<property name="create.coverage.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
-		<property name="create.coverage.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="create.coverage.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
 		<property name="create.coverage.verbose" value="-verbose"/>
 		
 		<property name="create.coverage.trace" value="-Djavalanche.trace.returns=true"/>
@@ -16,7 +16,7 @@
 		
 		<antcall target="test-javalanche">
 			<!--${create.coverage.verbose}-->
-			<param name="javalanche.arg.line" value=" ${create.coverage.mutation.javaagent} ${create.coverage.memory} ${create.coverage.mutation.run.mode} ${create.coverage.javalanche.package.prefix} ${create.coverage.javalanche.project.test.suite} ${create.coverage.trace}" />
+			<param name="javalanche.arg.line" value=" ${create.coverage.mutation.javaagent} ${create.coverage.memory} ${create.coverage.javalanche.run.mode} ${create.coverage.javalanche.package.prefix} ${create.coverage.javalanche.project.tests} ${create.coverage.trace}" />
 			<reference refid="create.coverage.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>
@@ -32,10 +32,10 @@
 		
 		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="run.mutations.memory" value="-Xmx${javalanche.maxmemory}"/>
-		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=mutation-coverage"/>
+		<property name="run.mutations.javalanche.run.mode" value="-Djavalanche.run.mode=mutation-coverage"/>
 		<property name="run.mutations.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
-		<property name="run.mutations.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
-		<property name="run.mutations.mutation.file" value="-Dmutation.file=${mutation.file}"/>
+		<property name="run.mutations.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
+		<property name="run.mutations.mutation.file" value="-Djavalanche.mutation.file=${mutation.file}"/>
 		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
 		<property name="run.mutations.verbose" value="-verbose"/>
 		<property name="run.mutations.field.file.arg" value="-Djavalanche.invariant.field.file=${field.file}"/>
@@ -50,7 +50,7 @@
 
 		<!--${run.mutations.verbose}-->
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value=" -verify ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.test.suite} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode} ${run.mutations.trace.returns} ${run.mutations.single.task.mode}" />
+			<param name="javalanche.arg.line" value=" -verify ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.javalanche.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.tests} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode} ${run.mutations.trace.returns} ${run.mutations.single.task.mode}" />
 			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>
@@ -70,16 +70,16 @@
 	<target name="createCoverageDataMult" description="* Create line and return coverage data for multiple permuted runs.">
 		<property name="coverage.mult.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="coverage.mult.memory" value="-Xmx${javalanche.maxmemory}"/>
-		<property name="coverage.mult.mutation.run.mode" value="-Dmutation.run.mode=create-coverage-mult"/>
+		<property name="coverage.mult.javalanche.run.mode" value="-Djavalanche.run.mode=create-coverage-mult"/>
 		<property name="coverage.mult.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
-		<property name="coverage.mult.javalanche.project.test.suite" value="-Dmutation.test.suite=${project.test.suite}"/>
+		<property name="coverage.mult.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
 
 		<path id="coverage.mult.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
 		
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value=" ${coverage.mult.mutation.javaagent} ${coverage.mult.memory} ${coverage.mult.mutation.run.mode} ${coverage.mult.javalanche.package.prefix} ${coverage.mult.javalanche.project.test.suite}" />
+			<param name="javalanche.arg.line" value=" ${coverage.mult.mutation.javaagent} ${coverage.mult.memory} ${coverage.mult.javalanche.run.mode} ${coverage.mult.javalanche.package.prefix} ${coverage.mult.javalanche.project.tests}" />
 			<reference refid="coverage.mult.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 	</target>

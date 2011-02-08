@@ -67,8 +67,6 @@ public class Junit4Util {
 			} else {
 				r = getMethodsRunner(testSuite);
 			}
-		} else if (MutationProperties.TEST_CLASSES != null) {
-			r = getClassesRunner(MutationProperties.TEST_CLASSES);
 		} else if (testSuite.contains(":")) {
 			r = getClassesRunner(testSuite);
 		} else {

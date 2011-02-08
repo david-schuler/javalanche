@@ -21,15 +21,12 @@ package de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ProjectVariables;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.VariableScannerAdapter;
-import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.Excludes;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 
 /**

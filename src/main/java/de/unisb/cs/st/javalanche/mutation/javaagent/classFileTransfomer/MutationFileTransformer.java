@@ -23,9 +23,7 @@ import java.io.StringWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -35,11 +33,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.Rem
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationsForRun;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecisionFactory;
-import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
-import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
-import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
 
 /**
@@ -54,22 +48,6 @@ public class MutationFileTransformer implements ClassFileTransformer {
 	private static Logger logger = Logger
 			.getLogger(MutationFileTransformer.class);
 
-	static {
-		// DB must be loaded before transform method is entered. Otherwise
-		// program crashes.
-		if (MutationProperties.QUERY_DB_BEFORE_START) {
-			Mutation someMutation = new Mutation("SomeMutationToAddToTheDb",
-					"tm", 23, 23, MutationType.ARITHMETIC_REPLACE);
-			Mutation mutationFromDb = QueryManager
-					.getMutationOrNull(someMutation);
-			if (mutationFromDb == null) {
-				MutationPossibilityCollector mpc1 = new MutationPossibilityCollector();
-				mpc1.addPossibility(someMutation);
-				mpc1.toDB();
-			}
-		}
-
-	}
 
 	private final BytecodeTransformer mutationTransformer;
 

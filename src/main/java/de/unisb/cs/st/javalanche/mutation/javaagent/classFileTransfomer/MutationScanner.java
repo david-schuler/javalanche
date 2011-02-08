@@ -53,16 +53,19 @@ public class MutationScanner implements ClassFileTransformer {
 	static {
 		// DB must be loaded before transform method is entered. Otherwise
 		// program crashes.
-		Mutation someMutation = new Mutation("SomeMutationToAddToTheDb", "tm",
-				23, 23, MutationType.ARITHMETIC_REPLACE);
-		Mutation mutationFromDb = QueryManager.getMutationOrNull(someMutation);
-		if (mutationFromDb == null) {
-			MutationPossibilityCollector mpc1 = new MutationPossibilityCollector();
-			mpc1.addPossibility(someMutation);
-			mpc1.toDB();
+		if (MutationProperties.QUERY_DB_BEFORE_START) {
+			Mutation someMutation = new Mutation("SomeMutationToAddToTheDb",
+					"tm", 23, 23, MutationType.ARITHMETIC_REPLACE);
+			Mutation mutationFromDb = QueryManager
+					.getMutationOrNull(someMutation);
+			if (mutationFromDb == null) {
+				MutationPossibilityCollector mpc1 = new MutationPossibilityCollector();
+				mpc1.addPossibility(someMutation);
+				mpc1.toDB();
+			}
+			MutationProperties.checkProperty(MutationProperties.TEST_SUITE_KEY);
+			logger.info("Name of test suite: " + MutationProperties.TEST_SUITE);
 		}
-		MutationProperties.checkProperty(MutationProperties.TEST_SUITE_KEY);
-		logger.info("Name of test suite: " + MutationProperties.TEST_SUITE);
 	}
 
 	public MutationScanner() {

@@ -69,11 +69,11 @@ public class MutationProperties {
 	public static final String OUTPUT_DIR = getPropertyOrDefault(
 			OUTPUT_DIR_KEY, "mutation-files");
 
-	private static final String RUN_MODE_KEY = "mutation.run.mode";
+	private static final String RUN_MODE_KEY = "javalanche.run.mode";
 
 	public static RunMode RUN_MODE = getRunMode();
 
-	public static final String MUTATION_FILE_KEY = "mutation.file";
+	public static final String MUTATION_FILE_KEY = "javalanche.mutation.file";
 
 	public static String MUTATION_FILE_NAME = getProperty(MUTATION_FILE_KEY);
 
@@ -103,17 +103,14 @@ public class MutationProperties {
 	 * The key for the system property that specifies the the test suite which
 	 * should be modified
 	 * 
-	 * -dmutation.test.suite=AllTests
 	 */
-	public static final String TEST_SUITE_KEY = "mutation.test.suite";
+
+	public static final String TEST_SUITE_KEY = "javalanche.test.classes";
 
 	public static String TEST_SUITE = getProperty(TEST_SUITE_KEY);
 
 	public static final String TEST_METHODS_KEY = "javalanche.test.methods";
 	public static String TEST_METHODS = getProperty(TEST_METHODS_KEY);
-
-	public static final String TEST_CLASSES_KEY = "javalanche.test.classes";
-	public static String TEST_CLASSES = getProperty(TEST_CLASSES_KEY);
 
 	public static final String CURRENT_MUTATION_KEY = "javalanche.current.mutation";
 
@@ -136,7 +133,7 @@ public class MutationProperties {
 	 * The save interval in which the mutation results are written to the
 	 * database.
 	 */
-	private static final String SAVE_INTERVAL_KEY = "mutation.save.interval";
+	private static final String SAVE_INTERVAL_KEY = "javalanche.save.interval";
 	public static final int SAVE_INTERVAL = getPropertyOrDefault(
 			SAVE_INTERVAL_KEY, 50);
 
@@ -288,13 +285,37 @@ public class MutationProperties {
 	public static final boolean QUERY_DB_BEFORE_START = false;
 
 	/**
+	 * When set true, System.println statements will be inserted that signal
+	 * whether a mutation is covered.
+	 */
+	public static final String MUTATION_PRINT_STATEMENTS_ENABLED_KEY = "javalanche.mutation.print.statements";
+
+	public static final boolean MUTATION_PRINT_STATEMENTS_ENABLED = getPropertyOrDefault(
+			MUTATION_PRINT_STATEMENTS_ENABLED_KEY, false);
+
+	public static final String PROJECT_SOURCE_DIR_KEY = "javalanche.project.source.dir";
+
+	public static final String PROJECT_SOURCE_DIR = getProperty(PROJECT_SOURCE_DIR_KEY);
+
+	public static final String IGNORE_PREFIX_KEY = "javalanche.ignore.prefix";
+
+	public static String IGNORE_PREFIX = getPropertyOrDefault(
+			IGNORE_PREFIX_KEY, "");
+
+	public static final String MUTATION_TIME_LIMIT_MESSAGE = "Mutation exceeded time limit";
+
+	public static final String EXCLUDED_TESTS_KEY = "javalanche.excluded.tests";
+	public static final String EXCLUDED_TESTS = getPropertyOrDefault(
+			EXCLUDED_TESTS_KEY, null);
+
+	/**
 	 * 
 	 * Properties needed for experiments
 	 * 
 	 * 
 	 * */
 
-	public static final String MULTIPLE_MAKEFILES_KEY = "mutation.multiple.makefile";
+	public static final String MULTIPLE_MAKEFILES_KEY = "javalanche.multiple.makefile";
 
 	public static final boolean MULTIPLE_MAKEFILES = getPropertyOrDefault(
 			MULTIPLE_MAKEFILES_KEY, false);
@@ -320,44 +341,5 @@ public class MutationProperties {
 		return false;
 	}
 
-	public static final String MUTATION_PRINT_STATEMENTS_ENABLED_KEY = "javalanche.mutation.print.statements";
 
-	/**
-	 * When set true, System.println statements will be inserted that signal
-	 * whether a mutation is covered.
-	 */
-	public static final boolean MUTATION_PRINT_STATEMENTS_ENABLED = getPropertyOrDefault(
-			MUTATION_PRINT_STATEMENTS_ENABLED_KEY, false);
-
-	public static final String PROJECT_SOURCE_DIR_KEY = "javalanche.project.source.dir";
-
-	public static final String PROJECT_SOURCE_DIR = getProperty(PROJECT_SOURCE_DIR_KEY);
-
-	public static final String ADAPTED_TARGET_FILE_NAME_KEY = "javalanche.adapted.target.file";
-	public static final String ADAPTED_TARGET_FILE_NAME = getPropertyOrDefault(
-			ADAPTED_TARGET_FILE_NAME_KEY, "target.xml");
-
-	public static final String ADAPTED_END_FILE_NAME_KEY = "javalanche.adapted.end.file";
-	public static final String ADAPTED_END_FILE_NAME = getPropertyOrDefault(
-			ADAPTED_TARGET_FILE_NAME_KEY, "end.xml");
-
-	public static final String LAST_LINE_INFO_FILE_KEY = "javalanche.last.line.file";
-	public static final String LAST_LINE_INFO_FILE = getPropertyOrDefault(
-			LAST_LINE_INFO_FILE_KEY, OUTPUT_DIR + "/lastLine.xml");
-
-	public static final String IGNORE_PREFIX_KEY = "javalanche.ignore.prefix";
-
-	public static String IGNORE_PREFIX = getPropertyOrDefault(
-			IGNORE_PREFIX_KEY, "");
-
-	public static final String MUTATION_TIME_LIMIT_MESSAGE = "Mutation exceeded time limit";
-
-	public static final String ENABLE_ADAPTED_MUTATIONS_KEY = "javalanche.enable.adapted.mutations";
-
-	public static final boolean ENABLE_ADAPTED_MUTATIONS = getPropertyOrDefault(
-			ENABLE_ADAPTED_MUTATIONS_KEY, false);
-
-	public static final String EXCLUDED_TESTS_KEY = "javalanche.excluded.tests";
-	public static final String EXCLUDED_TESTS = getPropertyOrDefault(
-			EXCLUDED_TESTS_KEY, null);
 }
