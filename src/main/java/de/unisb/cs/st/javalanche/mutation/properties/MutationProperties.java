@@ -90,21 +90,19 @@ public class MutationProperties {
 	/**
 	 * 
 	 * The key for the system property that specifies the package prefix of the
-	 * project to mutate.
+	 * project to mutate
 	 * 
-	 * -dmutation.package.prefix=org.aspectj
+	 * For example: -Dmutation.package.prefix=org.aspectj
 	 */
-	public static final String PROJECT_PREFIX_KEY = "mutation.package.prefix";
+	public static final String PROJECT_PREFIX_KEY = "javalanche.project.prefix";
 
 	public static String PROJECT_PREFIX = getPrefix();
 
 	/**
-	 * 
-	 * The key for the system property that specifies the the test suite which
-	 * should be modified
+	 * The key for the system property that specifies the tests that are used
+	 * for mutation testing.
 	 * 
 	 */
-
 	public static final String TEST_SUITE_KEY = "javalanche.test.classes";
 
 	public static String TEST_SUITE = getProperty(TEST_SUITE_KEY);
@@ -156,7 +154,6 @@ public class MutationProperties {
 	public static final String IGNORE_REPLACE_VARIABLES_KEY = "javalanche.ignore.replace.variables";
 	public static boolean IGNORE_REPLACE_VARIABLES = getPropertyOrDefault(
 			IGNORE_REPLACE_VARIABLES_KEY, true);
-
 
 	public static final File TEST_MAP_FILE = new File(OUTPUT_DIR,
 			"testname-map.xml");
@@ -340,6 +337,5 @@ public class MutationProperties {
 		}
 		return false;
 	}
-
 
 }

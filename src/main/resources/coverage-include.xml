@@ -4,7 +4,7 @@
 		<property name="create.coverage.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="create.coverage.memory" value="-Xmx${javalanche.maxmemory}" />
 		<property name="create.coverage.javalanche.run.mode" value="-Djavalanche.run.mode=create-coverage"/>
-		<property name="create.coverage.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="create.coverage.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
 		<property name="create.coverage.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
 		<property name="create.coverage.verbose" value="-verbose"/>
 		
@@ -33,7 +33,7 @@
 		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="run.mutations.memory" value="-Xmx${javalanche.maxmemory}"/>
 		<property name="run.mutations.javalanche.run.mode" value="-Djavalanche.run.mode=mutation-coverage"/>
-		<property name="run.mutations.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="run.mutations.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
 		<property name="run.mutations.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
 		<property name="run.mutations.mutation.file" value="-Djavalanche.mutation.file=${mutation.file}"/>
 		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
@@ -71,7 +71,7 @@
 		<property name="coverage.mult.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="coverage.mult.memory" value="-Xmx${javalanche.maxmemory}"/>
 		<property name="coverage.mult.javalanche.run.mode" value="-Djavalanche.run.mode=create-coverage-mult"/>
-		<property name="coverage.mult.javalanche.package.prefix" value="-Dmutation.package.prefix=${project.prefix}"/>
+		<property name="coverage.mult.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
 		<property name="coverage.mult.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
 
 		<path id="coverage.mult.classpath.add">
@@ -98,7 +98,7 @@
 	
 	<target name="analyzeManual" description="">
 		<java classname="de.unisb.cs.st.javalanche.coverage.experiment.ManualResultsAnalyzer" maxmemory="${javalanche.maxmemory}" fork="true">
-		<jvmarg line="-Dmutation.package.prefix=${project.prefix}"/>	
+		<jvmarg line="-Djavalanche.project.prefix=${project.prefix}"/>	
 		<classpath>
 				<path refid="mutation.classpath" />
 		</classpath>
@@ -109,7 +109,7 @@
 		
 	<target name="analyzeManualInv" description="">
 		<java classname="de.unisb.cs.st.javalanche.coverage.experiment.ManualnvariantAnalyzer" maxmemory="${javalanche.maxmemory}" fork="true">
-		<jvmarg line="-Dmutation.package.prefix=${project.prefix}"/>	
+		<jvmarg line="-Djavalanche.project.prefix=${project.prefix}"/>	
 		<classpath>
 				<path refid="mutation.classpath" />
 		</classpath>
@@ -120,7 +120,7 @@
 
 	<target name="makeDistances" description="">
 		<java classname="de.unisb.cs.st.javalanche.coverage.distance.MethodDistances" maxmemory="${javalanche.maxmemory}" fork="true">
-		<jvmarg line="-Dmutation.package.prefix=${project.prefix}"/>	
+		<jvmarg line="-Djavalanche.project.prefix=${project.prefix}"/>	
 		<classpath>
 				<path refid="mutation.classpath" />
 		</classpath>
