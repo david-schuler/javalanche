@@ -34,27 +34,27 @@ ant -f javalanche.xml -Djavalanche=../../  schemaexport
 +-------------------------------+
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask1
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask1
 +-------------------------------+
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask2
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask2
 +-------------------------------+
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask3
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask3
 +-------------------------------+
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  scanProject
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  scanProject
 +-------------------------------+
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  scan
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  scan
 +-------------------------------+
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  createTasks
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  createTasks
 +-------------------------------+
 
  
@@ -63,7 +63,7 @@ ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dt
  The coverage data for an the unmutated program is generated with the <<<createCoverageData>>> task.
  
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  createCoverageData
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  createCoverageData
 +-------------------------------+
 
 
@@ -73,7 +73,7 @@ ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dt
  task for mutation testing.
  
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtestsuite=triangle.tests.TriangleTestSuite -Djavalanche=../../  runMutationsCoverage \
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  runMutationsCoverage \
 -Dmutation.file=./mutation-files/mutation-task-triangle-01.txt
 +-------------------------------+
 

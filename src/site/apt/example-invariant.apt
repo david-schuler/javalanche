@@ -30,7 +30,7 @@ ant test
 
 +-------------------------------+
 <property name="prefix" value="invariant.example"/>
-<property name="testsuite" value="invariant.example.InvariantExampleTestSuite"/>
+<property name="tests" value="invariant.example.InvariantExampleTestSuite"/>
 <property name="javalanche" value="../../"/>
 <property name="cp" value="./target/classes:../triangle/lib/junit.jar"/>
 +-------------------------------+

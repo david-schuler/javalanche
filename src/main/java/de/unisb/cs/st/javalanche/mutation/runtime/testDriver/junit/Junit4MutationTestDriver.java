@@ -250,11 +250,16 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 		List<Failure> failures = new ArrayList<Failure>();
 		List<Failure> errors = new ArrayList<Failure>();
 
-		String message;
+		String message = null;
 
 		@Override
 		public void testFailure(Failure failure) throws Exception {
+			// if(message != null){
+			// logger.warn("Message exists " + message);
+			// }
 			Throwable e = failure.getException();
+			logger.debug("Adding failure: " + failure
+					+ "Exception of failure: " + failure.getException());
 			// Junit4 does distinguish between failures and errors. Thus, the
 			// type of the exception is checked.
 			if (e instanceof AssertionError) {
@@ -264,6 +269,7 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 			}
 			if (failure != null) {
 				message = failure.getMessage();
+				logger.debug("Setting failure message: " + message);
 				if (!MutationProperties.IGNORE_EXCEPTION_TRACES) {
 					message += "\n" + failure.getTrace();
 				}
@@ -277,7 +283,6 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 		public void addFailure(Description desc, Throwable t) {
 			try {
 				testFailure(new Failure(desc, t));
-
 			} catch (Exception e) {
 				throw new RuntimeException("Could not add test failure: " + e,
 						e);

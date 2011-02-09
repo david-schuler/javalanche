@@ -80,7 +80,7 @@ if [  $1 ]; then
 		cp ${TAR_SRC} ../src/site/builds/
 		cp ${TAR_SRC} site/builds/
 		cd ..
-		rsync  --verbose  --progress --stats --compress --recursive --times --perms --links    target/site/ kubrick:Sites/st_chair/javalanche/ 
+	#	rsync  --verbose  --progress --stats --compress --recursive --times --perms --links    target/site/ kubrick:Sites/st_chair/javalanche/ 
 	fi
 fi
 

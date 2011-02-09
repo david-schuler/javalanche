@@ -1,7 +1,7 @@
 <project name="Mutation Tester">
 	
 
-<!-- Properties can either be supplied on the comand line or specified here -->
+<!-- Properties can either be supplied on the command line or specified here -->
 <!--
 	<property name="prefix" value=""/>
 	<property name="tests" value=""/>

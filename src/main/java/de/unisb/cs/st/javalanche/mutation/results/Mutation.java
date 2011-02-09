@@ -61,18 +61,7 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 				"Negate jump condition"), ARITHMETIC_REPLACE(
 				"Replace arithmetic operator"), REMOVE_CALL(
 				"Remove method call"), REPLACE_VARIABLE(
-				"Replace variable reference"),
-
-		ADAPTED_JUMP("adapted jump"), ADAPTED_SKIP_ELSE("Skip else block"), ADAPTED_REMOVE_CHECK(
-				"Always executed if block"), ADAPTED_SKIP_IF("Skip if block"), ADAPTED_NEGATE_JUMP_IN_IF(
-				"Negate Jump in if statement only"), ADAPTED_ALWAYS_ELSE(
-				"Always execute else block"), ADAPTED_REPLACE(
-				"Replace variable with default value"), ADAPTED_REPLACE_STORE(
-				"Replace store to variable with default value"), ADAPTED_REPLACE_METHOD_ARG(
-				"Replace argument of a method call"), ADAPTED_REPLACE_ASSIGNMENT(
-				"Replace variable assignment"), ADAPTED_REPLACE_FIELD(
-				"Replace field assignemt"), ADAPTED_REPLACE_RETURN(
-				"Replace variable in return");
+				"Replace variable reference");
 
 		private String desc;
 

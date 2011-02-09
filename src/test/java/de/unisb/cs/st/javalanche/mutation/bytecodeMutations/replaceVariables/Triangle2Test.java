@@ -1,6 +1,5 @@
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables;
 
-import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.lang.reflect.Method;
@@ -13,11 +12,8 @@ import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BaseBytecodeTest;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.classes.RemoveCallsTEMPLATE;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.ReplaceVariableClass1;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.Triangle2TEMPLATE;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
-import de.unisb.cs.st.javalanche.mutation.properties.TestProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.testutil.TestUtil;

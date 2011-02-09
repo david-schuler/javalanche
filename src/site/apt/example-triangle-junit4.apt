@@ -57,7 +57,7 @@ public class TriangleTestSuite {
 
 +-------------------------------+
 <property name="prefix" value="triangle"/>
-<property name="testsuite" value="triangle.tests.TriangleTestSuite"/>
+<property name="tests" value="triangle.tests.TriangleTestSuite"/>
 <property name="javalanche" value="../../"/>
 <property name="cp" value="target/classes"/>
 +-------------------------------+

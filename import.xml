@@ -46,7 +46,8 @@
 		<hibernatetool destdir="${basedir}">
 			<classpath refid="mutation.classpath"/>
 			<annotationconfiguration configurationfile="${javalanche.dir}/src/main/resources/hibernate.cfg.xml" />
-			<hbm2ddl drop="true" create="true" export="true" outputfilename="${proj.shortname}-ddl.sql" delimiter=";" format="true" />
+			<!--hbm2ddl drop="true" create="true" export="true" outputfilename="mutation-files/${proj.shortname}-ddl.sql" delimiter=";" format="true" /-->
+			<hbm2ddl drop="true" create="true" export="true" delimiter=";" format="true" />
 		</hibernatetool>
 	</target>
 	

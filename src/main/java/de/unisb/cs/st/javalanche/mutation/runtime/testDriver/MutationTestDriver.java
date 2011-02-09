@@ -85,6 +85,8 @@ public abstract class MutationTestDriver {
 
 	private static final String MUTATION_TEST_LISTENER_KEY = "javalanche.mutation.test.listener";
 
+	public static final String RESTART_MESSAGE = "Shutting down JVM.";
+
 	private static Logger logger = Logger.getLogger(MutationTestDriver.class);
 
 	final ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
@@ -114,8 +116,6 @@ public abstract class MutationTestDriver {
 	 */
 	private boolean shutdownMethodCalled;
 
-	public static final String RESTART_MESSAGE = "Shutting down JVM.";
-
 	/**
 	 * The listeners that are informed about mutation events. The order in which
 	 * the listeners are called is not specified. However, the
@@ -142,13 +142,17 @@ public abstract class MutationTestDriver {
 		runFromProperty();
 	}
 
-	@SuppressWarnings("unchecked")
 	public MutationTestDriver() {
-		// File dir = new File(MutationProperties.OUTPUT_DIR);
+		File dir = new File(MutationProperties.OUTPUT_DIR);
 		lastId = 0l;
 		try {
-			String s = MutationProperties.MUTATION_FILE_NAME;
-			controlFile = new File(s + "-control");
+			String s;
+			if (MutationProperties.MUTATION_FILE_NAME != null) {
+				s = new File(MutationProperties.MUTATION_FILE_NAME).getName();
+			} else {
+				s = "default";
+			}
+			controlFile = new File(dir, s + "-mutation-id-control-file");
 			if (controlFile.exists()) {
 				List<String> readLines;
 				readLines = FileUtils.readLines(controlFile);
@@ -736,7 +740,8 @@ public abstract class MutationTestDriver {
 				}
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				capturedThrowable.printStackTrace(new PrintStream(out));
-				
+				logger.debug("Setting test failed. Message: "
+						+ exceptionMessage + " Exception " + capturedThrowable);
 				r.setFailed(exceptionMessage, capturedThrowable);
 			}
 		}

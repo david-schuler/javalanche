@@ -29,7 +29,7 @@ Mutation Testing with Invariant Checking
 * Detect Dynamic Invariants
 	
   {{{http://groups.csail.mit.edu/pag/daikon/} Daikon}} is used to detect dynamic invariants
-  for the run of the test suite. Therfore, a script  is generated that calls Daikon
+  for the run of the test suite. Therefore, a script  is generated that calls Daikon
   with the appropriate arguments (task: <<<createDaikonScript>>>).
   
   In order to generate dynamic invariants for all traces a Makefile is generated 
@@ -48,7 +48,7 @@ Mutation Testing with Invariant Checking
  the fields have to be known. This information can be obtained with the 
  <<<scanFields>>> task.
  
- Since the invariants are derived per test, it need to be checked wich invariants
+ Since the invariants are derived per test, it need to be checked which invariants
  hold for the complete test suite. Therefore the invariant checkers are tested
  on the unmodified test suite with the <<<checkInvariants>>> task.
  If an invariant is violated it gets disabled.

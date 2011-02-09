@@ -8,32 +8,35 @@
 
 Documentation
 
- Javalanche allows mutation testing of Java projects that come with a JUnit 3 or
- {{{JUnit}JUnit 4}} test suite. Below you will find a description of the several task of
+ Javalanche allows mutation testing of Java projects that come with JUnit 3 or
+ JUnit 4 tests. Below you will find a description of the several task of
  Javalanche. 
 
 
 * Installing Javalanche
  
- You need to download an unpack the latest release (see
+ Download an unpack the latest release (see
  {{{download.html}Downloads}}). The Release contains Javalanche and all its 
  dependencies.
- In order to run Javalanche, you need Java 6 and you will also need {{{http://ant.apache.org/}
- ant}}, which is not included in the release.
+ In order to run Javalanche, Java 6 is and ant will be needed {{{http://ant.apache.org/}
+ ant}}, which are not included in the release.
  
 * Running Javalanche
 
  In order to run Javalanche, you first need to copy the file
  <<<javalanche.xml>>> from the Javalanche distribution to the root directory of
- project that you want to test. This file makes the different tasks of Javalanche
- available.When running Javalanche, these four properties have to be defined:
+ project that you want to test. This file makes the different tasks of
+ Javalanche available.When running Javalanche, these four properties have to be
+ defined:
  
- [[1]] Test Suite (<<<-Dtestsuite>>>) The name of a JUnit test suite that should
-       be used for mutation testing.
+ [[1]] Tests (<<<-Dtests>>>) The name of a JUnit test suite, or JUnit test classes that should
+       be used for mutation testing. Multiple classes can be separated with a colon ":". The tests
+	   can either be JUnit 3 or JUnit 4 tests. Javalanche uses Junit 4 classes
+	   that can handle both types of tests.
  
  [[1]] Classpath (<<<-Dcp>>>) The classpath needed to execute the test suite. 
- Note: If there is already an ant task defined that executes the test suite, the
- <<<-v>>> switch also prints out the classpath.
+ Note: If there is already an ant task for the project that executes the test suite, the
+ <<<-v>>> switch prints out the classpath. Similar for for maven projects the <<<-X>>> switch can be used.
  
  [[1]] Prefix (<<<-Dprefix>>>) The package prefix of the project. This prefix is
  used to distinguish classes from the project from library classes. Only classes
@@ -46,7 +49,7 @@ Documentation
  
  These properties have to specified for all following steps.
  They can either be set on the command
- line or in <<<javalanche.xml>>>.
+ line or in the <<<javalanche.xml>>> file.
  
  The following sections describe the steps during mutation testing. Examples for
  these steps can be found {{{example-triangle.html}here}} and
@@ -88,7 +91,7 @@ Documentation
 ** Scanning Project
 
  When all tests pass for a project, it is ready for mutation testing. 
- In a first step all classes that can be mutated are determined.
+ In a first step Javalanche determines all classes that can be mutated.
  This includes all classes of the project that are executed by the test suite
  and excludes all test cases. The task <<<scanProject>>> scans for classes 
  in the project and produces an exclude file (<<<./mutation-files/exclude.txt>>>).
@@ -101,8 +104,8 @@ Documentation
  In a next step all classes are scanned for possible mutations with the 
  <<<scan>>> task. In this task all mutation possibilities for classes, which
  match the given prefix and are not excluded, are written to the database. 
- Furthermore, this tasks collects coverage data (which mutations are executed by
- which test)
+ Furthermore, this tasks collects coverage data for each mutation, i.e. which mutations are executed by
+ which test.
  
 ** Executing Mutations
  
@@ -111,16 +114,16 @@ Documentation
  The ant task <<<createTasks>>> creates different mutation tasks for all 
  mutations that are covered by tests and do not have results yet.
 	
- The task <<<runMutations>>> executes the mutations. The task file has to be
- specified in an additional parameter (<<<-Dmutation.file>>>). 
+ The task <<<runMutations>>> executes the mutations for one task. The task
+ file has to be specified in an additional parameter (<<<-Dmutation.file>>>).
  
 ** Analyzing Results
 
- The results of the mutations can be analyzed with <<<analyzeResults>>>. This
+ The results of the mutation testing process can be analyzed with the <<<analyzeResults>>> task. This
  shows the mutation score and the number of mutations that are detected by the
  test suite as well as the mutation score for the executed mutations. 
  Furthermore, an html report is generated that shows the mutations for each 
- class.
+ class. The html report is located in the directory <<<mutation-files/report/>>>.
  
  With the parameter (<<<-Djavalanche.mutation.analyzers>>>) own mutation 
  analyzers can be supplied. These analyzers have to implement the Interface 
@@ -130,7 +133,7 @@ Documentation
  
 ** Cleaning Up
 
- There are two tasks that clean up the database and one that cleans up all 
+ There are several tasks that clean up the database and one that cleans up all 
  produced files.
   
  [[1]] <<<deleteResults>>> Deletes all mutation test results from the database.
@@ -192,19 +195,5 @@ make -j4
 	
  This task, for example, runs four tasks in parallel. 
 
-** Running {JUnit} 4 Tests
-
- Javalanche also supports JUnit 4 tests. To this end, Javalanche also needs
- a test suite that is defined via the <<<@RunWith>>> and <<<@Suite.SuiteClasses>>>
- annotations. Furthermore,  we have to tell Javalanche that we are running 
- JUnit 4 tests with the <<javalanche.junit4>> property.
- Thus, the <<<jvmarg>>> property for the <<<test-javalanche>>> task has to be modified.
-
-+-------------------------------+
-<jvmarg line="-Djavalanche.junit4=true ${javalanche.arg.line}" />
-+-------------------------------+
-
- See the {{{example-triangle-junit4.html} Triangle JUnit 4 project}} for a full
- example on running Javalanche on a JUnit 4 project. 
 
  

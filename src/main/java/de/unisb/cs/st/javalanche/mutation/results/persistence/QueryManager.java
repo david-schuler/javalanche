@@ -886,46 +886,6 @@ public class QueryManager {
 		return result;
 	}
 
-	public static List<Mutation> getAdaptedJumpMutations(Mutation mutation) {
-		Session session = openSession();
-		Transaction tx = session.beginTransaction();
-		Query query = session
-				.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number  and m.mutationForLine=:mforl and  m.mutationType in (:types)");
-		String className = mutation.getClassName();
-		int lineNumber = mutation.getLineNumber();
-		int forLine = mutation.getMutationForLine();
-		query.setParameter("name", className);
-		query.setParameter("number", lineNumber);
-		query.setParameter("mforl", forLine);
-		query.setParameterList("types", new MutationType[] {
-				ADAPTED_ALWAYS_ELSE, ADAPTED_NEGATE_JUMP_IN_IF,
-				ADAPTED_REMOVE_CHECK, ADAPTED_SKIP_ELSE, ADAPTED_SKIP_IF });
-		List result = query.list();
-		tx.commit();
-		session.close();
-		return result;
-	}
-
-	public static Mutation getReplaceMutation(Mutation mutation) {
-		Session session = openSession();
-		Transaction tx = session.beginTransaction();
-		Query query = session
-				.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and m.mutationForLine=:mforl and m.mutationType in (:types)");
-		String className = mutation.getClassName();
-		int lineNumber = mutation.getLineNumber();
-		int forLine = mutation.getMutationForLine();
-		query.setParameter("name", className);
-		query.setParameter("number", lineNumber);
-		query.setParameter("mforl", forLine);
-		query.setParameterList("types", new MutationType[] {
-				ADAPTED_REPLACE_ASSIGNMENT, ADAPTED_REPLACE_FIELD,
-				ADAPTED_REPLACE_METHOD_ARG, ADAPTED_REPLACE_RETURN });
-		Mutation result = (Mutation) query.uniqueResult();
-		tx.commit();
-		session.close();
-		return result;
-	}
-
 	public static void deleteMutations(MutationType mutationType) {
 		Session session = openSession();
 		Transaction tx = session.beginTransaction();

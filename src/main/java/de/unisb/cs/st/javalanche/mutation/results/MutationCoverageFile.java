@@ -88,13 +88,13 @@ public class MutationCoverageFile {
 
 	public static Set<String> getCoverageData(Mutation m) {
 		if (m.getBaseMutationId() != null) {
-			return getCoverageDataId(m.getBaseMutationId());
+			return _getCoverageDataId(m.getBaseMutationId());
 		}
-		return getCoverageDataId(m.getId());
-
+		return _getCoverageDataId(m.getId());
 	}
 
-	public static Set<String> getCoverageDataId(long id) {
+
+	public static Set<String> _getCoverageDataId(long id) {
 		if (idMap == null) {
 			idMap = SerializeIo.get(FILE_MAP);
 		}
