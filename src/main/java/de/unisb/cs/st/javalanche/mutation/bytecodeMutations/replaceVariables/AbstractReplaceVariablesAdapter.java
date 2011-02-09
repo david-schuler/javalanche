@@ -19,9 +19,9 @@
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables;
 
 import static de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType.*;
+import static org.objectweb.asm.Opcodes.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +32,6 @@ import org.objectweb.asm.commons.AnalyzerAdapter;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.AbstractMutationAdapter;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-
-import static org.objectweb.asm.Opcodes.*;
 
 public abstract class AbstractReplaceVariablesAdapter extends
 		AbstractMutationAdapter {

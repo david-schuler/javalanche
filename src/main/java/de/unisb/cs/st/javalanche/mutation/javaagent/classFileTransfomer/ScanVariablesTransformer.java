@@ -29,9 +29,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.Pro
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.VariableScannerAdapter;
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 
-/**
- * 
- */
+
 public class ScanVariablesTransformer implements ClassFileTransformer {
 
 	ProjectVariables p = new ProjectVariables();
@@ -47,7 +45,6 @@ public class ScanVariablesTransformer implements ClassFileTransformer {
 		});
 	}
 
-	private static int count = 0;
 
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,

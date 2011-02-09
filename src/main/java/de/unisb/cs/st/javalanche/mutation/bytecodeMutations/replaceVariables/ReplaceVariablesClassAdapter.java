@@ -18,9 +18,7 @@
  */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.objectweb.asm.ClassAdapter;
@@ -28,27 +26,22 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 
-import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 
 public class ReplaceVariablesClassAdapter extends ClassAdapter {
 
 	private String className;
 
-	private MutationPossibilityCollector mutationPossibilityCollector;
 
 	private Map<Integer, Integer> possibilities = new HashMap<Integer, Integer>();
 
-	private List<VariableInfo> staticVariables = new ArrayList<VariableInfo>();
 
 	private MutationManager mm = new MutationManager();
 
 	private ProjectVariables projectVariables = ProjectVariables.read();
 
-	public ReplaceVariablesClassAdapter(ClassVisitor cv,
-			MutationPossibilityCollector collector) {
+	public ReplaceVariablesClassAdapter(ClassVisitor cv) {
 		super(cv);
-		this.mutationPossibilityCollector = collector;
 	}
 
 	@Override
