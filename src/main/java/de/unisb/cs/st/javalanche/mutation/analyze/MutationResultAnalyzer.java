@@ -79,13 +79,16 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 			XmlIo.toXML(survivedIds, "survived-ids.xml");
 		}
 		sb.append(formatLine("Total mutations:  ", total));
-		sb.append(formatLine("Touched mutations: ", touched, AnalyzeUtil
+		sb.append(formatLine("Covered mutations: ", touched,
+				AnalyzeUtil
 				.formatPercent(touched, total)));
-		sb.append(formatLine("Not touched mutations: ", notTouched, AnalyzeUtil
+		sb.append(formatLine("Not covered mutations: ", notTouched,
+				AnalyzeUtil
 				.formatPercent(notTouched, total)));
 		sb.append(formatLine("Killed mutations: ", killed, AnalyzeUtil
 				.formatPercent(killed, total)));
-		sb.append(formatLine("Survived mutations: ", survived, AnalyzeUtil
+		sb.append(formatLine("Surviving mutations: ", survived,
+				AnalyzeUtil
 				.formatPercent(survived, total)));
 		// sb.append("IDs:\n");
 		// for (Long survivedId : survivedIds) {
