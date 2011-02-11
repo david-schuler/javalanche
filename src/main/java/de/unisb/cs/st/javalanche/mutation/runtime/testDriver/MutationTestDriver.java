@@ -268,7 +268,9 @@ public abstract class MutationTestDriver {
 				logger.warn(str.getTestMessage().getTestCaseName() + ": "
 						+ str.getTestMessage());
 			}
-			XmlIo.toXML(failing, "failed-tests.xml");
+			File outFile = new File(MutationProperties.OUTPUT_DIR
+					+ "/failed-tests.xml");
+			XmlIo.toXML(failing, outFile);
 		}
 	}
 
@@ -613,7 +615,7 @@ public abstract class MutationTestDriver {
 	protected abstract MutationTestRunnable getTestRunnable(String testName);
 
 	/**
-	 * Return all tests that are available to this test suite
+	 * Return all tests that are available to this test suite.
 	 * 
 	 * @return a list of all tests
 	 */

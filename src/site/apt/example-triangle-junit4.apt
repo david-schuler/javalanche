@@ -24,6 +24,22 @@ ant test
  
  Which produces the following output:
 
++-------------------------------+
+Buildfile: build.xml
+
+compile:
+    [mkdir] Created dir: /javalanche/examples/triangleJunit4/target/classes
+    [javac] Compiling 6 source files to /javalanche/examples/triangleJunit4/target/classes
+
+test:
+    [mkdir] Created dir: /javalanche/examples/triangleJunit4/target/test-reports
+    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] Tests run: 18, Failures: 0, Errors: 0, Time elapsed: 0.117 sec
+
+BUILD SUCCESSFUL
+Total time: 1 second
++-------------------------------+
+
 * Setting Up
 
  After we compiled the project, we copy <<<javalanche.xml>>> to this directory.
@@ -34,7 +50,7 @@ cp ../../javalanche.xml .
 
 ** Editing javalanche.xml
 
- In order to apply mutation testing Javalanche needs a test suite.
+ In order to apply mutation testing, Javalanche needs either needs the names of the test classed or a test suite.
  The JUnit 4 Test Suite for the project looks as follows:
 
 +-------------------------------+
@@ -62,12 +78,10 @@ public class TriangleTestSuite {
 <property name="cp" value="target/classes"/>
 +-------------------------------+
  
- Furthermore, we have to modify the <<<jvmarg>>> property for the <<<test-javalanche>>>
- task. We have to tell Javalanche that we are running JUnit 4 tests with the 
- <<javalanche.junit4>> property.
- 
+ Alternatively, the <<<tests>>> property can also be set to a list of test classes.
+  
 +-------------------------------+
-<jvmarg line="-Djavalanche.junit4=true ${javalanche.arg.line}" />
+<property name="tests" value="triangle.tests.Triangle1Test:triangle.tests.Triangle2Test:triangle.tests.Triangle3Test" />
 +-------------------------------+
 
 ** Database setup
@@ -255,7 +269,7 @@ ant -f javalanche.xml createTasks
 Buildfile: javalanche.xml
 
 createTasks:
-     [java] Task created: /Users/schuler/workspace/mutationTest/javalanche-0.3.2/examples/triangleJunit4/mutation-files/mutation-task-triangle-01.txt
+     [java] Task created: /javalanche/examples/triangleJunit4/mutation-files/mutation-task-triangle-01.txt
      [java] Created 1 mutation tasks
 
 BUILD SUCCESSFUL

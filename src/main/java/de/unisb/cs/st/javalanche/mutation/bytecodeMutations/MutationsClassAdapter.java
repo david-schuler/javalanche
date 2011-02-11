@@ -34,6 +34,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.RemoveMe
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.RicMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ProjectVariables;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ReplaceVariablesMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 
 public class MutationsClassAdapter extends ClassAdapter {
@@ -90,16 +91,18 @@ public class MutationsClassAdapter extends ClassAdapter {
 				arithmeticPossibilities, mutationManager, desc);
 		mv = new RemoveMethodCallsMethodAdapter(mv, className, name,
 				removeCallsPossibilities, mutationManager, desc);
-		ReplaceVariablesMethodAdapter rvAdapter = new ReplaceVariablesMethodAdapter(
-				mv, className, name, replaceVariablePossibilities, desc,
-				mutationManager,
-				projectVariables.getStaticVariables(className),
-				projectVariables.getClassVariables(className));
-		mv = rvAdapter;
-		AnalyzerAdapter analyzerAdapter = new AnalyzerAdapter(className,
-				access, name, desc, mv);
-		rvAdapter.setAnlyzeAdapter(analyzerAdapter);
-		mv = analyzerAdapter;
+		if (!MutationProperties.IGNORE_REPLACE_VARIABLES) {
+			ReplaceVariablesMethodAdapter rvAdapter = new ReplaceVariablesMethodAdapter(
+					mv, className, name, replaceVariablePossibilities, desc,
+					mutationManager,
+					projectVariables.getStaticVariables(className),
+					projectVariables.getClassVariables(className));
+			mv = rvAdapter;
+			AnalyzerAdapter analyzerAdapter = new AnalyzerAdapter(className,
+					access, name, desc, mv);
+			rvAdapter.setAnlyzeAdapter(analyzerAdapter);
+			mv = analyzerAdapter;
+		}
 		return mv;
 
 	}

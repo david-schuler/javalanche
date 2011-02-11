@@ -121,6 +121,6 @@ public class AsmUtil {
 		ClassReader cr2 = new ClassReader(classfileBuffer);
 		CheckClassAdapter check = new CheckClassAdapter(new ClassWriter(
 				ClassWriter.COMPUTE_MAXS));
-		cr2.accept(check, ClassReader.EXPAND_FRAMES);
+		cr2.accept(check, ClassReader.SKIP_FRAMES);
 	}
 }

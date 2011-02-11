@@ -8,20 +8,21 @@ OUT2=out-analyzeResults.txt
 cp ../../javalanche.xml .
 ant -f javalanche.xml -Djavalanche=../../  startHsql
 ant -f javalanche.xml -Djavalanche=../../  schemaexport
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  mutationTest | tee ${OUT1}
+JAVALANCHE_PROPERTIES_1="-Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar  -Djavalanche=../../    -Dtests=triangle.tests.TriangleTestSuite "
+#ant -f javalanche.xml ${JAVALANCHE_PROPERTIES_1} mutationTest | tee ${OUT1}
 ant -f javalanche.xml -Djavalanche=../../  startHsql
 ant -f javalanche.xml -Djavalanche=../../  schemaexport
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask1
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask2
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  testTask3
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  scanProject
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  scan
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  createTasks
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  runMutations -Dmutation.file=./mutation-files/mutation-task-triangle-01.txt
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  analyzeResults   | tee ${OUT2}
-#TODO test for same output in mutationTest task and single tasks
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dtests=triangle.tests.TriangleTestSuite -Djavalanche=../../  cleanJavalanche
-ant -f javalanche.xml -Djavalanche=../../  schemaexport
+JAVALANCHE_PROPERTIES_2="-Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar  -Djavalanche=../../   -Dtests=triangle.tests.Triangle1Test" #:triangle.tests.Triangle2Test:triangle.tests.Triangle3Test
+ant -f javalanche.xml $JAVALANCHE_PROPERTIES_2 testTask1
+ant -f javalanche.xml $JAVALANCHE_PROPERTIES_2 testTask2
+ant -f javalanche.xml $JAVALANCHE_PROPERTIES_2 testTask3
+ant -f javalanche.xml $JAVALANCHE_PROPERTIES_2 scanProject
+ant -f javalanche.xml $JAVALANCHE_PROPERTIES_2 scan
+ant -f javalanche.xml $JAVALANCHE_PROPERTIES_2 createTasks
+ant -f javalanche.xml $JAVALANCHE_PROPERTIES_2 runMutations -Dmutation.file=./mutation-files/mutation-task-triangle-01.txt
+ant -f javalanche.xml $JAVALANCHE_PROPERTIES_2 analyzeResults   | tee ${OUT2}
+ant -f javalanche.xml $JAVALANCHE_PROPERTIES_2 cleanJavalanche
+ant -f javalanche.xml $JAVALANCHE_PROPERTIES_2 schemaexport
 ant clean
 rm javalanche.xml
 
