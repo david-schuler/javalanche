@@ -146,17 +146,19 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 		return new ArrayList<String>(allTests.keySet());
 	}
 
-	private static Runner getRunner(Description desc) {
+	private static Runner getRunner(Description desc, boolean useSuite) {
 		String className = getClassName(desc);
 		Runner tcr = null;
 		try {
 			Class<?> clazz;
 			clazz = Class.forName(className);
 			logger.info("Creating Runner for " + className);
-			Class<? extends Runner> runWithRunner = getRunWithRunner(clazz);
+			Class<? extends Runner> runWithRunner = getRunWithRunner(clazz,
+					useSuite);
 			Constructor<? extends Runner> constructor = runWithRunner
 					.getConstructor(Class.class);
 			tcr = constructor.newInstance(clazz);
+			logger.info("Runner Type " + tcr.getClass());
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 			// e.printStackTrace();
@@ -183,11 +185,12 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 		return tcr;
 	}
 
-	private static Class<? extends Runner> getRunWithRunner(Class<?> clazz) {
+	private static Class<? extends Runner> getRunWithRunner(Class<?> clazz,
+			boolean useSuite) {
 		RunWith runWithAnnotation = clazz.getAnnotation(RunWith.class);
 		if (runWithAnnotation == null) {
 			AllDefaultPossibilitiesBuilder builder = new AllDefaultPossibilitiesBuilder(
-					true);
+					useSuite);
 			try {
 				return builder.runnerForClass(clazz).getClass();
 			} catch (Throwable e) {
@@ -219,7 +222,7 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 
 	private static void runTest(final Description desc, RunListener runListener) {
 		try {
-			Runner r = getRunner(desc);
+			Runner r = getRunner(desc, false);
 			((Filterable) r).filter(new Filter() {
 
 				@Override

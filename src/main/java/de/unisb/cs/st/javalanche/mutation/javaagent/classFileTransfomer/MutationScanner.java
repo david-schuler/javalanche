@@ -117,22 +117,12 @@ public class MutationScanner implements ClassFileTransformer {
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
-		System.out.println("XXX " + className);
 		if (className != null) {
-			if (className.equals("triangle/Triangle")) {
-				System.out.println("FOUND " + className);
-				System.exit(0);
-			} else {
-				return classfileBuffer;
-			}
 			try {
 
 				String classNameWithDots = className.replace('/', '.');
 				logger.debug(classNameWithDots);
 				if (md.shouldBeHandled(classNameWithDots)) {
-					// if (!MutationProperties.ENABLE_ADAPTED_MUTATIONS) {
-					// computeBytecodeInfo(classfileBuffer);
-					// }
 
 					ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
@@ -143,12 +133,12 @@ public class MutationScanner implements ClassFileTransformer {
 								MutationPreMain.sysout));
 					}
 					cv = new MutationsCollectorClassAdapter(cv, mpc);
-					// ClassReader cr = new ClassReader(classfileBuffer);
+					ClassReader cr = new ClassReader(classfileBuffer);
 					// cr.accept(cv, ClassReader.EXPAND_FRAMES);
-					// cr.accept(cv, ClassReader.SKIP_FRAMES);
-					// classfileBuffer = cw.toByteArray();
+					cr.accept(cv, ClassReader.SKIP_FRAMES);
+					classfileBuffer = cw.toByteArray();
 
-					// AsmUtil.checkClass2(classfileBuffer);
+					 AsmUtil.checkClass2(classfileBuffer);
 
 					// classfileBuffer = mutationScannerTransformer
 					// .transformBytecode(classfileBuffer);
