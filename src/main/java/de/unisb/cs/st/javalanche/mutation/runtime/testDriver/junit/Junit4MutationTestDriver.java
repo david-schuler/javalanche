@@ -158,29 +158,22 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 			Constructor<? extends Runner> constructor = runWithRunner
 					.getConstructor(Class.class);
 			tcr = constructor.newInstance(clazz);
-			logger.info("Runner Type " + tcr.getClass());
+			// logger.debug("Runner Type " + tcr.getClass());
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
-			// e.printStackTrace();
 		} catch (SecurityException e) {
 			throw new RuntimeException(e);
-			// e.printStackTrace();
 		} catch (NoSuchMethodException e) {
 			throw new RuntimeException(e);
-			// e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			throw new RuntimeException(e);
-			// e.printStackTrace();
 		} catch (InstantiationException e) {
 			throw new RuntimeException(e);
-			// e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
-			// e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			logger.warn("Invocation Exception ", e);
 			throw new RuntimeException(e);
-			// e.printStackTrace();
 		}
 		return tcr;
 	}
