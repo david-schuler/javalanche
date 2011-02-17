@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2011 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2011 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision;
 
 import java.io.File;
@@ -25,7 +25,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.unisb.cs.st.ds.util.io.Io;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 
 /**
  * This class is used to determine the classes that are excluded from mutation
@@ -37,15 +38,16 @@ import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
  */
 public class Excludes {
 
-
 	private static class SingletonHolder {
 		private static final Excludes INSTANCE = new Excludes(
-				MutationProperties.EXCLUDE_FILE);
+				ConfigurationLocator.getJavalancheConfiguration()
+						.getExcludeFile());
 	}
-	
+
 	private static class TestSingletonHolder {
 		private static final Excludes INSTANCE = new Excludes(
-				MutationProperties.TEST_EXCLUDE_FILE);
+				ConfigurationLocator.getJavalancheConfiguration()
+						.getTestExcludeFile());
 	}
 
 	public static Excludes getInstance() {
@@ -68,8 +70,7 @@ public class Excludes {
 		excludes = new HashSet<String>();
 		allClasses = new TreeSet<String>();
 		if (f.exists()) {
-			List<String> lines = Io
-					.getLinesFromFile(f);
+			List<String> lines = Io.getLinesFromFile(f);
 			for (String line : lines) {
 				String trim = line.trim();
 				if (!trim.startsWith("#")) {
@@ -98,8 +99,10 @@ public class Excludes {
 				sb.append('\n');
 			}
 		}
-		Io.writeFile(sb.toString(), MutationProperties.EXCLUDE_FILE);
-		Io.writeFile(sb.toString(), MutationProperties.TEST_EXCLUDE_FILE);
+		JavalancheConfiguration configuration = ConfigurationLocator
+				.getJavalancheConfiguration();
+		Io.writeFile(sb.toString(), configuration.getExcludeFile());
+		Io.writeFile(sb.toString(), configuration.getTestExcludeFile());
 	}
 
 	public void exclude(String testClass) {

@@ -2,18 +2,27 @@ package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
+//import static org.junit.matchers.JUnitMatchers.*;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.internal.runners.SuiteMethod;
+import org.junit.runner.Description;
+import org.junit.runner.Runner;
 
 import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestRunnable;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult.TestOutcome;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.AllTestsJunit3;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.DebugTestClass;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.Junit3SuiteMultipleTestsSameName;
 
 public class Junit4MutationTestDriverTest {
 
@@ -39,7 +48,7 @@ public class Junit4MutationTestDriverTest {
 
 	@Test
 	public void testFailingTest() {
-		runTestHelper("testFailure", TestOutcome.FAIL);
+		runTestHelper("testFail", TestOutcome.FAIL);
 	}
 
 	@Test
@@ -48,12 +57,20 @@ public class Junit4MutationTestDriverTest {
 	}
 
 	@Test
+	public void testFailureMessage() {
+		MutationProperties.IGNORE_MESSAGES = false;
+		SingleTestResult result2 = runTestHelper("testFail", TestOutcome.FAIL);
+		String message = result2.getTestMessage().getMessage();
+		assertThat(message, containsString(DebugTestClass.FAILURE_MESSAGE));
+	}
+
+	@Test
 	public void testErrorMessage() {
+		MutationProperties.IGNORE_MESSAGES = false;
 		SingleTestResult result2 = runTestHelper("testError", TestOutcome.ERROR);
 		String message = result2.getTestMessage().getMessage();
-		assertThat(message, containsString(SimpleTest.ERROR_MESSAGE));
-		String trace1 = "testclasses.SimpleTest.testError";
-		assertThat(message, not(containsString(trace1)));
+		System.out.println("MESSAGE " + message);
+		assertThat(message, containsString(DebugTestClass.ERROR_MESSAGE));
 	}
 
 	@Test
@@ -61,9 +78,8 @@ public class Junit4MutationTestDriverTest {
 		MutationProperties.IGNORE_EXCEPTION_TRACES = false;
 		SingleTestResult result2 = runTestHelper("testError", TestOutcome.ERROR);
 		String message = result2.getTestMessage().getMessage();
-		assertThat(message, containsString(SimpleTest.ERROR_MESSAGE));
-		String trace1 = "testclasses.SimpleTest.testError";
-		String trace2 = "de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit4MutationTestDriverTest.testErrorMessageWithTrace";
+		String trace1 = DebugTestClass.class.getCanonicalName();
+		String trace2 = Junit4MutationTestDriverTest.class.getCanonicalName();
 		assertThat(message, containsString(trace1));
 		assertThat(message, containsString(trace2));
 	}

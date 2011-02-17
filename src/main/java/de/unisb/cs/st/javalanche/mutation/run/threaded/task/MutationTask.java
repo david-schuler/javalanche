@@ -23,7 +23,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 
 public class MutationTask {
 
@@ -52,7 +52,8 @@ public class MutationTask {
 
 	public static List<MutationTask> getTasks() {
 		List<MutationTask> result = new ArrayList<MutationTask>();
-		File dir = new File(MutationProperties.OUTPUT_DIR);
+		File dir = ConfigurationLocator.getJavalancheConfiguration()
+				.getOutputDir();
 		File[] taskFiles = dir.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				if (name

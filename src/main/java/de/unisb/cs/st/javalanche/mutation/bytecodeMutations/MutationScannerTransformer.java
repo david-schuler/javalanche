@@ -25,10 +25,9 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
-
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.DebugProperties;
 
 public class MutationScannerTransformer extends BytecodeTransformer {
 
@@ -46,7 +45,7 @@ public class MutationScannerTransformer extends BytecodeTransformer {
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
 		// ClassVisitor cc = new CheckClassAdapter(cw);
 		ClassVisitor cc = cw;
-		if (MutationProperties.TRACE_BYTECODE) {
+		if (DebugProperties.TRACE_BYTECODE) {
 			cc = new TraceClassVisitor(cc, new PrintWriter(MutationPreMain.sysout));
 		}
 		return new MutationsCollectorClassAdapter(cc, mpc);

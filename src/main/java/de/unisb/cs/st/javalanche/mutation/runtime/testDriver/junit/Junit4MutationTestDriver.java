@@ -44,7 +44,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestDriver;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestRunnable;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult;
@@ -63,30 +63,33 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 
 	private Map<String, Description> allTests = new HashMap<String, Description>();
 
-	public Junit4MutationTestDriver() {
+	private Runner masterRunner;
 
-		Runner r = null;
+	public Junit4MutationTestDriver() {
+		masterRunner = null;
 		Throwable t = null;
 		try {
-			r = Junit4Util.getRunner();
+			masterRunner = Junit4Util.getRunner();
 		} catch (ClassNotFoundException e) {
 			t = e;
 		} catch (InitializationError e) {
 			t = e;
 		} finally {
 			if (t != null) {
-				String message = "Could not initialize junit 4 test suite "
-						+ MutationProperties.TEST_SUITE;
+				String message = "Could not initialize tests suite for:"
+						+ ConfigurationLocator.getJavalancheConfiguration()
+								.getTestNames();
 				logger.warn(message, t);
 				throw new RuntimeException(message, t);
 			}
 		}
-		allTests = getTests(r);
+		allTests = getTests(masterRunner);
 		removeExludedTests();
 	}
 
 	private void removeExludedTests() {
-		String excludes = MutationProperties.EXCLUDED_TESTS;
+		String excludes = ConfigurationLocator.getJavalancheConfiguration()
+				.getExcludedTests();
 		if (excludes != null) {
 			List<String> excludeList = new ArrayList<String>();
 			if (excludes.startsWith("file://")) {
@@ -213,9 +216,12 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 		return s.substring(start + 1, end);
 	}
 
-	private static void runTest(final Description desc, RunListener runListener) {
+	private static void runTest(final Description desc,
+			RunListener runListener, Runner masterRunner) {
 		try {
-			Runner r = getRunner(desc, false);
+			// Runner r = getRunner(desc, false);
+			Runner r = Junit4Util.getRunner();
+
 			((Filterable) r).filter(new Filter() {
 
 				@Override
@@ -232,14 +238,20 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 				}
 
 			});
+
 			RunNotifier notifier = new RunNotifier();
 			notifier.addListener(runListener);
 			r.run(notifier);
 		} catch (NoTestsRemainException e) {
 			e.printStackTrace();
 			logger.warn(e);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (InitializationError e) {
+			throw new RuntimeException(e);
 		}
 	}
+
 
 	private static class TestRunListener extends RunListener {
 
@@ -266,7 +278,8 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 			if (failure != null) {
 				message = failure.getMessage();
 				logger.debug("Setting failure message: " + message);
-				if (!MutationProperties.IGNORE_EXCEPTION_TRACES) {
+				if (ConfigurationLocator.getJavalancheConfiguration()
+						.storeTestMessages()) {
 					message += "\n" + failure.getTrace();
 				}
 			}
@@ -311,7 +324,7 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 				// stopWatch.start();
 				final Description desc = allTests.get(testName);
 				logger.debug("Start running " + desc);
-				runTest(desc, runListener);
+				runTest(desc, runListener, masterRunner);
 				logger.debug("Run finished " + desc);
 				setFinished();
 			}

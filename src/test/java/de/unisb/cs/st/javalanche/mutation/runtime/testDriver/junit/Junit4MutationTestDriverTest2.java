@@ -26,7 +26,8 @@ public class Junit4MutationTestDriverTest2 {
 		List<String> allTests = j.getAllTests();
 		assertEquals(2, allTests.size());
 		System.out.println(allTests);
-		testRunnable = j.getTestRunnable(testname + ".test1");
+		String test1 = testname + ".test1";
+		testRunnable = j.getTestRunnable(test1);
 		Junit3RegularPlusSuite.check = 0;
 		assertEquals(0, Junit3RegularPlusSuite.check);
 		testRunnable.run();

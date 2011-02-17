@@ -34,7 +34,8 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.RemoveMe
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.RicMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ProjectVariables;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ReplaceVariablesMethodAdapter;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 
 public class MutationsClassAdapter extends ClassAdapter {
@@ -91,7 +92,8 @@ public class MutationsClassAdapter extends ClassAdapter {
 				arithmeticPossibilities, mutationManager, desc);
 		mv = new RemoveMethodCallsMethodAdapter(mv, className, name,
 				removeCallsPossibilities, mutationManager, desc);
-		if (!MutationProperties.IGNORE_REPLACE_VARIABLES) {
+		if (ConfigurationLocator.getJavalancheConfiguration()
+				.enableMutationType(MutationType.REPLACE_VARIABLE)) {
 			ReplaceVariablesMethodAdapter rvAdapter = new ReplaceVariablesMethodAdapter(
 					mv, className, name, replaceVariablePossibilities, desc,
 					mutationManager,

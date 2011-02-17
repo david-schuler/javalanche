@@ -20,36 +20,36 @@ package de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutatio
 
 import java.util.Collection;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 public class MutationDecisionFactory {
 
-	// Hack for unit testing
-	private static String TEST_PACKAGE = ".testclasses";
 
 	public static final MutationDecision SCAN_DECISION = new MutationDecision() {
+
+		JavalancheConfiguration configuration = ConfigurationLocator
+				.getJavalancheConfiguration();
 
 		public boolean shouldBeHandled(String classNameWithDots) {
 			if (classNameWithDots == null) {
 				return false;
 			}
+			String ignorePattern = configuration.getIgnorePattern();
 			if (classNameWithDots.startsWith("java")
 					|| classNameWithDots.startsWith("sun")
 					|| classNameWithDots.startsWith("org.aspectj.org.eclipse")
 					|| classNameWithDots
 							.startsWith("org.mozilla.javascript.gen.c")
-					|| (MutationProperties.IGNORE_PREFIX.length() > 0 && classNameWithDots
-							.matches(MutationProperties.IGNORE_PREFIX))) {
-				return false;
-			}
-			if (classNameWithDots.contains(TEST_PACKAGE)) {
+					|| (ignorePattern.length() > 0 && classNameWithDots
+							.matches(ignorePattern))) {
 				return false;
 			}
 			if (Excludes.getInstance().shouldExclude(classNameWithDots)) {
 				return false;
 			}
-			if (classNameWithDots.startsWith(MutationProperties.PROJECT_PREFIX)) {
+			if (classNameWithDots.startsWith(configuration.getProjectPrefix())) {
 				if (QueryManager.hasMutationsforClass(classNameWithDots)) {
 					return false;
 				}
@@ -65,11 +65,6 @@ public class MutationDecisionFactory {
 
 			public boolean shouldBeHandled(String classNameWithDots) {
 				if (classesToMutate.contains(classNameWithDots)) {
-					return true;
-				}
-				if (classNameWithDots.contains(TEST_PACKAGE)
-						&& !classNameWithDots.endsWith("Test")) {
-					// Hack for unittesting
 					return true;
 				}
 				return false;

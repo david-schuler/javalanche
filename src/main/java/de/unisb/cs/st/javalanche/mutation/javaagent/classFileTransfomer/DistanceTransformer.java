@@ -31,9 +31,11 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
+import de.unisb.cs.st.javalanche.coverage.CoverageProperties;
 import de.unisb.cs.st.javalanche.coverage.distance.ConnectionData;
 import de.unisb.cs.st.javalanche.coverage.distance.DistanceClassAdapter;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 
 public class DistanceTransformer implements ClassFileTransformer {
 
@@ -102,9 +104,7 @@ public class DistanceTransformer implements ClassFileTransformer {
 			for (String i : interfaces) {
 				supers.add(i);
 			}
-			super
-					.visit(version, access, name, signature, superName,
-							interfaces);
+			super.visit(version, access, name, signature, superName, interfaces);
 		}
 
 		public Set<String> getSupers() {
@@ -118,16 +118,20 @@ public class DistanceTransformer implements ClassFileTransformer {
 
 	public DistanceTransformer() {
 		Runtime r = Runtime.getRuntime();
+
 		r.addShutdownHook(new Thread() {
 			public void run() {
 				traceLock.set(false);
 				data.save();
-				XmlIo.toXML(classes, MutationProperties.INHERITANCE_DATA_FILE);
+				XmlIo.toXML(classes, CoverageProperties.INHERITANCE_DATA_FILE);
 			}
 		});
 	}
 
 	Set<ClassEntry> classes = new HashSet<ClassEntry>();
+
+	JavalancheConfiguration javalancheConfiguration = ConfigurationLocator
+			.getJavalancheConfiguration();
 
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
@@ -136,7 +140,8 @@ public class DistanceTransformer implements ClassFileTransformer {
 		Set<String> supers = getSuper(classfileBuffer);
 		if (traceLock.get()) {
 			classes.add(new ClassEntry(className, supers));
-			if (classNameWithDots.startsWith(MutationProperties.PROJECT_PREFIX)) {
+			if (classNameWithDots.startsWith(javalancheConfiguration
+					.getProjectPrefix())) {
 				ClassReader cr = new ClassReader(classfileBuffer);
 				ClassWriter cw = new ClassWriter(0);
 				ClassVisitor cv = new DistanceClassAdapter(cw, data);

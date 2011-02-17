@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2011 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2011 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.runtime;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.javalanche.invariants.runtime.InvariantObserver;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
@@ -54,9 +54,12 @@ public class ResultReporter implements MutationTestListener {
 	 */
 	private int reportCount;
 
+	private int saveInterval = ConfigurationLocator
+			.getJavalancheConfiguration().getSaveInterval();
+
 	/**
 	 * Reports the results of the given mutation.
-	 *
+	 * 
 	 * @param mutation
 	 *            The mutation the result is reported for.
 	 */
@@ -79,14 +82,14 @@ public class ResultReporter implements MutationTestListener {
 			logger.info(message);
 			throw new RuntimeException(message);
 		}
-		if (MutationProperties.RUN_MODE == RunMode.MUTATION_TEST_INVARIANT) {
+		if (ConfigurationLocator.getJavalancheConfiguration().getRunMode() == RunMode.MUTATION_TEST_INVARIANT) {
 			reportInvariantResults(mutation.getMutationResult());
 		}
 	}
 
 	/**
 	 * Add invariant results tie the given {@link MutationTestResult}.
-	 *
+	 * 
 	 * @param mutationTestResult
 	 *            the result to add the invariant results
 	 */
@@ -129,9 +132,8 @@ public class ResultReporter implements MutationTestListener {
 		if (!reportedMutations.contains(mutation)) {
 			report(mutation);
 			reportCount++;
-			if (reportCount % MutationProperties.SAVE_INTERVAL == 0) {
-				logger.info("Reached save intervall. Saving "
-						+ MutationProperties.SAVE_INTERVAL
+			if (reportCount % saveInterval == 0) {
+				logger.info("Reached save intervall. Saving " + saveInterval
 						+ " mutations. Total mutations tested until now: "
 						+ reportCount);
 				persist();

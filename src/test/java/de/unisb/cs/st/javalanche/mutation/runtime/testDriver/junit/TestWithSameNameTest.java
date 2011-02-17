@@ -23,11 +23,12 @@ public class TestWithSameNameTest {
 				.getCanonicalName();
 		Runner runner = Junit4Util.getRunner();
 		int testCount = runner.getDescription().testCount();
-		Description description = runner.getDescription();
+		assertEquals(5, testCount);
 		List<String> testNames = getTestNames(runner.getDescription());
 		assertEquals(5, testNames.size());
 		Set<String> testNameSet = new HashSet<String>(testNames);
 		assertEquals(1, testNameSet.size());
+		MutationProperties.TEST_SUITE = back;
 	}
 
 	@Test
@@ -40,6 +41,7 @@ public class TestWithSameNameTest {
 		assertEquals(5, testNames.size());
 		Set<String> testNameSet = new HashSet<String>(testNames);
 		assertEquals(5, testNameSet.size());
+		MutationProperties.TEST_SUITE = back;
 	}
 
 	private List<String> getTestNames(Description d) {

@@ -18,12 +18,8 @@
 */
 package de.unisb.cs.st.javalanche.mutation.analyze;
 
-import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import net.sf.cglib.transform.impl.AddStaticInitTransformer;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -31,6 +27,8 @@ import org.hibernate.Transaction;
 
 import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlAnalyzer;
 import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlReport;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
@@ -92,7 +90,9 @@ public class AnalyzeMain {
 	 */
 	public static void analyzeMutations(
 			List<MutationAnalyzer> analyzers) {
-		String prefix = PROJECT_PREFIX;
+		JavalancheConfiguration javalancheConfiguration = ConfigurationLocator
+				.getJavalancheConfiguration();
+		String prefix = javalancheConfiguration.getProjectPrefix();
 		if (prefix == null) {
 			throw new RuntimeException("no prefix set");
 		}
@@ -140,8 +140,10 @@ public class AnalyzeMain {
 					.append("\n--------------------------------------------------------------------------------\n");
 		}
 		long l = getNumberOfMutationsWithoutResult(session, prefix);
+		JavalancheConfiguration javalancheConfiguration = ConfigurationLocator
+				.getJavalancheConfiguration();
 		System.out.println("Analyzed Results for mutations with prefix: "
-				+ PROJECT_PREFIX);
+				+ javalancheConfiguration.getProjectPrefix());
 		System.out.println("No results for " + l + " mutations");
 		System.out.println(sb.toString());
 		report.report();

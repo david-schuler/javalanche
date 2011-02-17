@@ -30,7 +30,7 @@ import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 
 @RunWith(JavalancheWrapperTestSuite.class)
@@ -75,7 +75,9 @@ public class JavalancheWrapperTestSuite extends Runner {
 
 	@Override
 	public void run(RunNotifier notifier) {
-		if (MutationProperties.RUN_MODE == RunMode.OFF) {
+		RunMode runMode = ConfigurationLocator.getJavalancheConfiguration()
+				.getRunMode();
+		if (runMode == RunMode.OFF) {
 			Runner runner = getRunner();
 			runner.run(notifier);
 		} else {
@@ -84,8 +86,7 @@ public class JavalancheWrapperTestSuite extends Runner {
 			driver.run();
 			// Runner runner = getRunner();
 			// runner.run(notifier);
-			System.out.println("JavalancheWrapperTestSuite.run() "
-					+ MutationProperties.RUN_MODE);
+			System.out.println("JavalancheWrapperTestSuite.run() " + runMode);
 		}
 	}
 

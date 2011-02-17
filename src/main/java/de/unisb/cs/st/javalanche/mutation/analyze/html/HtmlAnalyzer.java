@@ -34,7 +34,8 @@ import com.google.common.collect.Multimap;
 
 import de.unisb.cs.st.ds.util.io.DirectoryFileSource;
 import de.unisb.cs.st.ds.util.io.Io;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
 public class HtmlAnalyzer {
@@ -89,7 +90,9 @@ public class HtmlAnalyzer {
 		if (name.endsWith(".java")) {
 			name = name.substring(0, name.length() - 5);
 		}
-		int i = name.indexOf(MutationProperties.PROJECT_PREFIX);
+		JavalancheConfiguration javalancheConfiguration = ConfigurationLocator
+				.getJavalancheConfiguration();
+		int i = name.indexOf(javalancheConfiguration.getProjectPrefix());
 		if (i < 0) {
 			name = "";
 		} else {
@@ -101,7 +104,9 @@ public class HtmlAnalyzer {
 	private void initFiles() {
 		System.out.println("HtmlAnalyzer.initFiles()");
 		File startDirectory = new File(".");
-		String property = MutationProperties.PROJECT_SOURCE_DIR;
+		JavalancheConfiguration javalancheConfiguration = ConfigurationLocator
+				.getJavalancheConfiguration();
+		String property = javalancheConfiguration.getProjectSourceDir();
 		if (property != null) {
 			startDirectory = new File(property);
 			logger.info("Using different start dir" + startDirectory);

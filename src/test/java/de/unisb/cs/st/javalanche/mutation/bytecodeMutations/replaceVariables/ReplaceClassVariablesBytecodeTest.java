@@ -36,14 +36,13 @@ public class ReplaceClassVariablesBytecodeTest extends BaseBytecodeTest {
 
 	@BeforeClass
 	public static void setUpClass() {
-		MutationProperties.IGNORE_REPLACE_VARIABLES = false;
+		MutationProperties.ENABLE_REPLACE_VARIABLES = true;
 	}
 
 	@AfterClass
 	public static void tearDownClass() {
-		MutationProperties.IGNORE_REPLACE_VARIABLES = true;
+		MutationProperties.ENABLE_REPLACE_VARIABLES = false;
 	}
-
 	public ReplaceClassVariablesBytecodeTest() throws Exception {
 		super(ReplaceVariables3TEMPLATE.class);
 		verbose = true;

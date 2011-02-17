@@ -23,7 +23,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 
 @Entity
 public class TestName {
@@ -43,7 +43,8 @@ public class TestName {
 	}
 
 	public TestName(String name) {
-		this(name, MutationProperties.PROJECT_PREFIX, 0);
+		this(name, ConfigurationLocator.getJavalancheConfiguration()
+				.getProjectPrefix(), 0);
 	}
 
 	public  TestName(String name, String project, long duration) {

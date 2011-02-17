@@ -7,6 +7,7 @@ import junit.framework.TestSuite;
 public class Junit3RegularPlusSuite extends TestCase {
 
 	public static int check = 0;
+	public static int suite = 0;
 
 	public void test1() {
 		check += 1;
@@ -21,7 +22,7 @@ public class Junit3RegularPlusSuite extends TestCase {
 	}
 
 	public static Test suite() {
-		check += 3;
+		suite += 1;
 		TestSuite suite = new TestSuite();
 		suite.addTestSuite(Junit3RegularPlusSuite.class);
 		return suite;

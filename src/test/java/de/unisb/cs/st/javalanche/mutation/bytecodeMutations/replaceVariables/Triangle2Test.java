@@ -7,7 +7,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BaseBytecodeTest;
@@ -28,14 +30,14 @@ public class Triangle2Test extends BaseBytecodeTest {
 		clazz = prepareTest();
 	}
 
-	@Before
-	public void setUp() {
-		MutationProperties.IGNORE_REPLACE_VARIABLES = false;
+	@BeforeClass
+	public static void setUpClass() {
+		MutationProperties.ENABLE_REPLACE_VARIABLES = true;
 	}
 
-	@After
-	public void tearDown() {
-		MutationProperties.IGNORE_REPLACE_VARIABLES = true;
+	@AfterClass
+	public static void tearDownClass() {
+		MutationProperties.ENABLE_REPLACE_VARIABLES = false;
 	}
 
 	@Test

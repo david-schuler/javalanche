@@ -29,11 +29,9 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.io.Io;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
-import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-//import de.unisb.cs.st.javalanche.mutation.util.HandleUnsafeMutations;
 
 /**
  * Creates Mutation tasks that can later be executed on multiple JVMs
@@ -49,7 +47,8 @@ public class MutationTaskCreator {
 	public static final String MUTATION_TASK_FILE_PREFIX = "mutation-task-";
 
 	public static final String MUTATION_TASK_PROJECT_FILE_PREFIX = MUTATION_TASK_FILE_PREFIX
-			+ MutationProperties.PROJECT_PREFIX.replace('.', '_');
+			+ ConfigurationLocator.getJavalancheConfiguration()
+					.getProjectPrefix().replace('.', '_');
 
 	private static final String MUTATION_TASK_FILE_FORMAT = MUTATION_TASK_PROJECT_FILE_PREFIX
 			+ "-%02d.txt";
@@ -72,7 +71,8 @@ public class MutationTaskCreator {
 
 	private static final String MUTATION_FIXED_NUMBER_OF_TASKS_KEY = "javalanche.fixed.number.of.tasks";
 
-	private static final String TASK_DIR = getTaskDir();
+	private static final File TASK_DIR = ConfigurationLocator
+			.getJavalancheConfiguration().getOutputDir();
 
 	public static void createMutationTasks() {
 		deleteTasks();
@@ -104,16 +104,9 @@ public class MutationTaskCreator {
 		createMutationTasks(numberOfTasks, mutationsPerTask);
 	}
 
-	private static String getTaskDir() {
-		String property = System.getProperty("javalanche.mutation.output.dir");
-		if (property == null) {
-			property = MutationProperties.OUTPUT_DIR;
-		}
-		return property;
-	}
 
 	private static void deleteTasks() {
-		File dir = new File(TASK_DIR);
+		File dir = TASK_DIR;
 
 		File[] toDelete = dir.listFiles(new FilenameFilter() {
 
@@ -151,7 +144,8 @@ public class MutationTaskCreator {
 	 */
 	public static void createMutationTasks(int numberOfTasks,
 			int mutationsPerTask) {
-		String prefix = MutationProperties.PROJECT_PREFIX;
+		String prefix = ConfigurationLocator.getJavalancheConfiguration()
+				.getProjectPrefix();
 		int numberOfIds = numberOfTasks * mutationsPerTask;
 		List<Long> mutationIds = getMutations(prefix, numberOfIds);
 		Collections.shuffle(mutationIds);
@@ -191,7 +185,8 @@ public class MutationTaskCreator {
 
 	private static File writeListToFile(List<Long> list, int id) {
 		String filename = String.format(MUTATION_TASK_FILE_FORMAT, id);
-		File resultFile = new File(MutationProperties.OUTPUT_DIR, filename);
+		File resultFile = new File(ConfigurationLocator
+				.getJavalancheConfiguration().getOutputDir(), filename);
 		StringBuilder sb = new StringBuilder();
 		for (Long l : list) {
 			sb.append(l);
@@ -208,9 +203,11 @@ public class MutationTaskCreator {
 	}
 
 	public static void main(String[] args) {
-		MutationProperties.checkProperty(MutationProperties.PROJECT_PREFIX_KEY);
-//		HandleUnsafeMutations.handleUnsafeMutations(HibernateUtil
-//				.getSessionFactory());
+		String projectPrefix = ConfigurationLocator
+				.getJavalancheConfiguration().getProjectPrefix();
+		if (projectPrefix == null) {
+			throw new RuntimeException("Project prefix not specified");
+		}
 		createMutationTasks();
 	}
 

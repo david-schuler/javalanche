@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2011 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2011 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.util;
 
 import java.io.BufferedWriter;
@@ -27,7 +27,8 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.io.Io;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.PropertyUtil;
 import de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator;
 
 /**
@@ -63,7 +64,12 @@ public class MutationMakeFileGenerator {
 	private static Logger logger = Logger
 			.getLogger(MutationMakeFileGenerator.class);
 
-	private static boolean multiFileMode = MutationProperties.MULTIPLE_MAKEFILES;
+	public static final String MULTIPLE_MAKEFILES_KEY = "javalanche.multiple.makefile";
+
+	public static final boolean MULTIPLE_MAKEFILES = PropertyUtil
+			.getPropertyOrDefault(MULTIPLE_MAKEFILES_KEY, false);
+
+	private static boolean multiFileMode = MULTIPLE_MAKEFILES;
 
 	private static String generateMakeFile(String scriptCommand, String add) {
 		File[] files = getTaskFiles();
@@ -125,14 +131,14 @@ public class MutationMakeFileGenerator {
 	}
 
 	public static File[] getTaskFiles() {
-		File dir = new File(MutationProperties.OUTPUT_DIR);
+		File dir = ConfigurationLocator.getJavalancheConfiguration()
+				.getOutputDir();
 		logger.info("Searching for files in directory" + dir);
 		logger.info("Seraching for files starting with: "
 				+ (MutationTaskCreator.MUTATION_TASK_PROJECT_FILE_PREFIX));
 		File[] listFiles = dir.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
-				if (name
-						.startsWith(MutationTaskCreator.MUTATION_TASK_PROJECT_FILE_PREFIX)) {
+				if (name.startsWith(MutationTaskCreator.MUTATION_TASK_PROJECT_FILE_PREFIX)) {
 					return true;
 				}
 				return false;

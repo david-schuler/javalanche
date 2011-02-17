@@ -44,7 +44,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
@@ -192,21 +192,24 @@ public class MutationMxClient {
 
 	@SuppressWarnings("unchecked")
 	private static void analyzeDB() {
+		String projectPrefix = ConfigurationLocator
+				.getJavalancheConfiguration().getProjectPrefix();
 		Session session = HibernateUtil.openSession();
 		Transaction transaction = session.beginTransaction();
 		Query query = session
 				.createQuery("from Mutation WHERE mutationResult != null AND className LIKE '"
-						+ MutationProperties.PROJECT_PREFIX + "%' ");
+						+ projectPrefix + "%' ");
 		List<Mutation> list = query.list();
 		System.out.printf("Already executed mutations for project %s:  %d. \n",
-				MutationProperties.PROJECT_PREFIX, list.size());
+				projectPrefix, list.size());
 		RunInfo r = getRunInfo(list);
 		transaction.commit();
 		session.close();
 		long averageRuntimeMutation = r.totalDuration / r.mutations;
 		long averageRuntimeTest = r.totalDuration / r.tests;
 		System.out.printf("Already executed mutations for project %s:  %d. Number of tests: %d  Total Runtime: %s\n",
-				MutationProperties.PROJECT_PREFIX, r.mutations, r.tests, DurationFormatUtils
+						projectPrefix, r.mutations, r.tests,
+						DurationFormatUtils
 						.formatDurationHMS(r.totalDuration));
 		System.out.printf("Average mutation runtime: %s\n", DurationFormatUtils
 				.formatDurationHMS(averageRuntimeMutation));
@@ -217,8 +220,13 @@ public class MutationMxClient {
 	}
 
 	private static RunInfo getFastRunInfo(List<Mutation> list) {
+		String projectPrefix = ConfigurationLocator
+				.getJavalancheConfiguration().getProjectPrefix();
+
 		long totalDuration = QueryManager.getResultFromSQLCountQuery("SELECT sum(duration) FROM TestMessage T");
-		long mutations = QueryManager.getResultFromSQLCountQuery("SELECT count(*) FROM Mutation M WHERE mutationResult_id AND className LIKE '" + MutationProperties.PROJECT_PREFIX + "%'");
+		long mutations = QueryManager
+				.getResultFromSQLCountQuery("SELECT count(*) FROM Mutation M WHERE mutationResult_id AND className LIKE '"
+						+ projectPrefix + "%'");
 		long restarts = QueryManager.getResultFromSQLCountQuery("SELECT count(*) FROM TestMessage T WHERE message LIKE '" + MutationTestDriver.RESTART_MESSAGE + "%'");
 		long tests = QueryManager.getResultFromSQLCountQuery("SELECT count(*) FROM TestMessage T");
 		return new RunInfo(totalDuration, (int) mutations, (int) restarts, tests);

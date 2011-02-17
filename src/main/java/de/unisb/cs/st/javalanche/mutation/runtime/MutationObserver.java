@@ -30,12 +30,13 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationsForRun;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheMessages;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
 /**
- * Class used by the mutation test driver at runtime to report the testcases
+ * Class used by the mutation test driver at runtime to report the test cases
  * that cover a mutation.
  * 
  * @author David Schuler
@@ -87,7 +88,8 @@ public class MutationObserver implements MutationTestListener {
 	 */
 	private final static Collection<Mutation> appliedMutations = new HashSet<Mutation>();
 
-	public static final int LIMIT = MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS * 1000;
+	public static final int LIMIT = ConfigurationLocator
+			.getJavalancheConfiguration().getDefaultTimeoutInSeconds() * 1000;
 
 	/**
 	 * This method is called by statements that are added to the mutated code.
@@ -118,7 +120,8 @@ public class MutationObserver implements MutationTestListener {
 				time = System.currentTimeMillis();
 			} else {
 				if (System.currentTimeMillis() - time > LIMIT) {
-					throw new RuntimeException(MutationProperties.MUTATION_TIME_LIMIT_MESSAGE);
+					throw new RuntimeException(
+							JavalancheMessages.MUTATION_TIME_LIMIT_MESSAGE);
 				}
 			}
 		}

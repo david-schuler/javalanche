@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2011 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2011 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.results;
 
 import java.io.Serializable;
@@ -27,17 +27,17 @@ import javax.persistence.Lob;
 
 import org.apache.log4j.Logger;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 
 /**
- *
+ * 
  * Class that holds the result of one single TestCase.
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 @Entity
-public class TestMessage  implements Serializable{
+public class TestMessage implements Serializable {
 
 	/**
 	 *
@@ -73,12 +73,12 @@ public class TestMessage  implements Serializable{
 	 */
 	private long duration;
 
-
 	public TestMessage(TestMessage testMessage) {
 		this.id = new Long(0);
 		this.testCaseName = testMessage.testCaseName;
 		this.hasTouched = testMessage.hasTouched;
-		if (MutationProperties.IGNORE_MESSAGES) {
+		if (ConfigurationLocator.getJavalancheConfiguration()
+				.storeTestMessages()) {
 			this.message = testMessage.message;
 		}
 		this.duration = 0;
@@ -88,11 +88,11 @@ public class TestMessage  implements Serializable{
 	public TestMessage(String testCaseName, String message, long duration) {
 		super();
 		this.testCaseName = testCaseName;
-		if (message!= null && message.length() > MAX_MESSAGE_LENGTH) {
+		if (message != null && message.length() > MAX_MESSAGE_LENGTH) {
 			logger.info("Got long error message from test:  ("
 					+ message.length() + ") " + testCaseName + "\n" + message);
-			this.message = message.substring(0, Math.min(message.length(),
-					MAX_MESSAGE_LENGTH));
+			this.message = message.substring(0,
+					Math.min(message.length(), MAX_MESSAGE_LENGTH));
 		} else {
 			this.message = message;
 		}
@@ -185,7 +185,7 @@ public class TestMessage  implements Serializable{
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -203,7 +203,7 @@ public class TestMessage  implements Serializable{
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

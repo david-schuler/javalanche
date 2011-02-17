@@ -27,12 +27,15 @@ import org.objectweb.asm.ClassWriter;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ProjectVariables;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.VariableScannerAdapter;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 
 
 public class ScanVariablesTransformer implements ClassFileTransformer {
 
 	ProjectVariables p = new ProjectVariables();
+
+	private static final String PROJECT_PREFIX = ConfigurationLocator
+			.getJavalancheConfiguration().getProjectPrefix();
 
 	public ScanVariablesTransformer() {
 		Runtime r = Runtime.getRuntime();
@@ -50,7 +53,7 @@ public class ScanVariablesTransformer implements ClassFileTransformer {
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
 		String classNameWithDots = className.replace('/', '.');
-		if (classNameWithDots.startsWith(MutationProperties.PROJECT_PREFIX)) {
+		if (classNameWithDots.startsWith(PROJECT_PREFIX)) {
 			scanClass(className, classfileBuffer);
 		}
 		return classfileBuffer;

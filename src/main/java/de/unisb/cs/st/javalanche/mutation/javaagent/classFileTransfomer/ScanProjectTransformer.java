@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.Excludes;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 
 /**
  * Transformer that collects all classes with the current mutation prefix, and
@@ -38,6 +39,9 @@ public class ScanProjectTransformer implements ClassFileTransformer {
 	private List<String> classes = new ArrayList<String>();
 
 
+	JavalancheConfiguration configuration = ConfigurationLocator
+			.getJavalancheConfiguration();
+
 	public ScanProjectTransformer() {
 		Runtime r = Runtime.getRuntime();
 		r.addShutdownHook(new Thread() {
@@ -46,7 +50,7 @@ public class ScanProjectTransformer implements ClassFileTransformer {
 				Excludes.getInstance().writeFile();
 				System.out.println("Got " + classes.size()
 						+ " classes with prefix: "
-						+ MutationProperties.PROJECT_PREFIX);
+						+ configuration.getProjectPrefix());
 			}
 		});
 	}
@@ -55,7 +59,7 @@ public class ScanProjectTransformer implements ClassFileTransformer {
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
 		String classNameWithDots = className.replace('/', '.');
-		if (classNameWithDots.startsWith(MutationProperties.PROJECT_PREFIX)) {
+		if (classNameWithDots.startsWith(configuration.getProjectPrefix())) {
 			classes.add(classNameWithDots);
 		}
 		return classfileBuffer;

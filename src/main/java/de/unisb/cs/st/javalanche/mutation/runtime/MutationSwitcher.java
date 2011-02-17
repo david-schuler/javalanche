@@ -26,7 +26,6 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationsForRun;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
 /**
@@ -37,6 +36,8 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
  * 
  */
 public class MutationSwitcher {
+
+	private static final String CURRENT_MUTATION_KEY = "javalanche.current.mutation";
 
 	private static Logger logger = Logger.getLogger(MutationSwitcher.class);
 
@@ -99,7 +100,7 @@ public class MutationSwitcher {
 			stopWatch.reset();
 			stopWatch.start();
 			System.setProperty(currentMutation.getMutationVariable(), "1");
-			System.setProperty(MutationProperties.CURRENT_MUTATION_KEY,
+			System.setProperty(CURRENT_MUTATION_KEY,
 					currentMutation.getId() + "");
 
 		}
@@ -111,7 +112,7 @@ public class MutationSwitcher {
 	public void switchOff() {
 		if (currentMutation != null) {
 			System.clearProperty(currentMutation.getMutationVariable());
-			System.clearProperty(MutationProperties.CURRENT_MUTATION_KEY);
+			System.clearProperty(CURRENT_MUTATION_KEY);
 			stopWatch.stop();
 			logger.info("Disabling mutation: "
 					+ currentMutation.getMutationVariable()

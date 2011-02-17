@@ -36,7 +36,7 @@ import com.google.common.base.Joiner;
 import de.unisb.cs.st.ds.util.io.DirectoryFileSource;
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.Excludes;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 
 /**
  * Class that scans all subdirectories for JUnit tests using several heuristics.
@@ -120,11 +120,12 @@ public class TestDetector {
 
 	private static Collection<File> getFiles(String baseDir) throws IOException {
 		File dir = new File(baseDir);
+		final String outDir = ConfigurationLocator.getJavalancheConfiguration()
+				.getOutputDir().getName();
 		File[] dirs = dir.listFiles(new FileFilter() {
 			public boolean accept(File pathname) {
 				return pathname.isDirectory()
-						&& !pathname.toString().endsWith(
-								MutationProperties.OUTPUT_DIR);
+						&& !pathname.toString().endsWith(outDir);
 			}
 		});
 		Set<File> result = new HashSet<File>();
@@ -155,7 +156,8 @@ public class TestDetector {
 		}
 		String sep = System.getProperty("file.separator");
 		String name = fileName.replace(sep, ".");
-		int index = name.lastIndexOf(MutationProperties.PROJECT_PREFIX);
+		int index = name.lastIndexOf(ConfigurationLocator
+				.getJavalancheConfiguration().getProjectPrefix());
 		if (index >= 0 && name.toLowerCase().endsWith("java")) {
 			name = name.substring(index, name.length() - 5);
 		} else if (name.lastIndexOf('.') >= 0

@@ -35,9 +35,8 @@ import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecisionFactory;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
-import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.DebugProperties;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
@@ -50,32 +49,18 @@ public class MutationScanner implements ClassFileTransformer {
 
 	private MutationDecision md = MutationDecisionFactory.SCAN_DECISION;
 
-	static {
-		// DB must be loaded before transform method is entered. Otherwise
-		// program crashes.
-		if (MutationProperties.QUERY_DB_BEFORE_START) {
-			Mutation someMutation = new Mutation("SomeMutationToAddToTheDb",
-					"tm", 23, 23, MutationType.ARITHMETIC_REPLACE);
-			Mutation mutationFromDb = QueryManager
-					.getMutationOrNull(someMutation);
-			if (mutationFromDb == null) {
-				MutationPossibilityCollector mpc1 = new MutationPossibilityCollector();
-				mpc1.addPossibility(someMutation);
-				mpc1.toDB();
-			}
-			MutationProperties.checkProperty(MutationProperties.TEST_SUITE_KEY);
-			logger.info("Name of test suite: " + MutationProperties.TEST_SUITE);
-		}
-	}
+
 
 	public MutationScanner() {
 		addShutDownHook();
 	}
 
 	public static void addShutDownHook() {
+		final String projectPrefix = ConfigurationLocator
+				.getJavalancheConfiguration().getProjectPrefix();
 		Runtime runtime = Runtime.getRuntime();
 		final long mutationPossibilitiesPre = QueryManager
-				.getNumberOfMutationsWithPrefix(MutationProperties.PROJECT_PREFIX);
+				.getNumberOfMutationsWithPrefix(projectPrefix);
 		final long numberOfTestsPre = QueryManager.getNumberOfTests();
 		runtime.addShutdownHook(new Thread() {
 			@Override
@@ -85,7 +70,7 @@ public class MutationScanner implements ClassFileTransformer {
 						"Got %d mutation possibilities before run.",
 						mutationPossibilitiesPre);
 				final long mutationPossibilitiesPost = QueryManager
-						.getNumberOfMutationsWithPrefix(MutationProperties.PROJECT_PREFIX);
+						.getNumberOfMutationsWithPrefix(projectPrefix);
 				String message2 = String.format(
 						"Got %d mutation possibilities after run.",
 						mutationPossibilitiesPost);
@@ -97,7 +82,7 @@ public class MutationScanner implements ClassFileTransformer {
 						- numberOfTestsPre;
 				String testMessage = String
 						.format("Added %d tests. Total number of tests for project %s : %d",
-								addedTests, MutationProperties.PROJECT_PREFIX,
+								addedTests, projectPrefix,
 								numberOfTests);
 				long coveredMutations = MutationCoverageFile
 						.getNumberOfCoveredMutations();
@@ -128,7 +113,7 @@ public class MutationScanner implements ClassFileTransformer {
 
 					ClassVisitor cv = cw;
 					// cv = new CheckClassAdapter(cw);
-					if (MutationProperties.TRACE_BYTECODE) {
+					if (DebugProperties.TRACE_BYTECODE) {
 						cv = new TraceClassVisitor(cv, new PrintWriter(
 								MutationPreMain.sysout));
 					}

@@ -24,7 +24,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 
 public class TestInfo {
 
@@ -47,7 +47,8 @@ public class TestInfo {
 	}
 
 	private static void initTestNames() {
-		File file = MutationProperties.TEST_MAP_FILE;
+		File file = ConfigurationLocator.getJavalancheConfiguration()
+				.getTestMap();
 		if (file.exists()) {
 			testNames = XmlIo.get(file);
 		} else {

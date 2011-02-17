@@ -26,7 +26,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.PropertyUtil;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
@@ -48,7 +49,8 @@ public class MutationDeleter {
 	 * MutationProperties.PROJECT_PREFIX.
 	 */
 	public static void deleteAllWithPrefix() {
-		String prefix = MutationProperties.PROJECT_PREFIX;
+		String prefix = ConfigurationLocator.getJavalancheConfiguration()
+				.getProjectPrefix();
 		String query = "FROM Mutation WHERE className LIKE '" + prefix + "%'";
 		List<Long> idList = getIdList(query);
 		logger.info("Deleting Coverage Data");
@@ -118,7 +120,10 @@ public class MutationDeleter {
 	 *            ignored
 	 */
 	public static void main(String[] args) {
-		MutationProperties.checkProperty(MutationProperties.PROJECT_PREFIX_KEY);
+		if (ConfigurationLocator.getJavalancheConfiguration()
+				.getProjectPrefix() == null) {
+			throw new RuntimeException("Prject prefix not specified");
+		}
 		deleteAllWithPrefix();
 	}
 }

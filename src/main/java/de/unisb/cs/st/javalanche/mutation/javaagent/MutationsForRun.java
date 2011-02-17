@@ -33,7 +33,8 @@ import org.hibernate.Transaction;
 
 import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.ds.util.io.Io;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
@@ -65,17 +66,22 @@ public class MutationsForRun {
 	}
 
 	public static MutationsForRun getFromDefaultLocation(boolean filter) {
-		if (MutationProperties.SINGLE_TASK_MODE) {
+		JavalancheConfiguration configuration = ConfigurationLocator
+				.getJavalancheConfiguration();
+		if (configuration.singleTaskMode()) {
 			String fileName = findFile();
 			return new MutationsForRun(fileName, filter);
 		} else {
-			return new MutationsForRun(MutationProperties.MUTATION_FILE_NAME,
+			return new MutationsForRun(configuration.getMutationIdFile(),
 					filter);
 		}
 	}
 
 	private static String findFile() {
-		File f = new File(MutationProperties.OUTPUT_DIR + '/'
+		File outputDir = ConfigurationLocator.getJavalancheConfiguration()
+				.getOutputDir();
+
+		File f = new File(outputDir, '/'
 				+ MutationTaskCreator.MUTATION_TASK_PROJECT_FILE_PREFIX
 				+ "-01.txt");
 		// System.out.println("MutationsForRun.findFile() " +

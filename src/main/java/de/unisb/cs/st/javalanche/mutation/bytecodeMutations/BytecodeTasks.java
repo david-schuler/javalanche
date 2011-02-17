@@ -23,8 +23,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.integrateSuite.IntegrateSuiteTransformer;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.DebugProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
 /**
@@ -77,7 +76,7 @@ public class BytecodeTasks {
 			// insertPrintStatements(mv, "Mutation touched: " +
 			// mutation.getId());
 			insertMutationTouchedCode(mv, mutation);
-			if (!MutationProperties.INSERT_ORIGINAL_INSTEAD_OF_MUTATION) {
+			if (!DebugProperties.INSERT_ORIGINAL_INSTEAD_OF_MUTATION) {
 				mutationCode.insertCodeBlock(mv);
 			} else {
 				logger.warn("Debug mode: not inserting mutated statement");
@@ -104,7 +103,7 @@ public class BytecodeTasks {
 	 */
 	private static void insertMutationTouchedCode(MethodVisitor mv,
 			Mutation mutation) {
-		if (MutationProperties.MUTATION_PRINT_STATEMENTS_ENABLED) {
+		if (DebugProperties.MUTATION_PRINT_STATEMENTS_ENABLED) {
 			BytecodeTasks.insertPrintStatements(mv, "Mutation "
 					+ mutation.getMutationVariable() + " - "
 					+ mutation.getMutationType() + " is enabled");

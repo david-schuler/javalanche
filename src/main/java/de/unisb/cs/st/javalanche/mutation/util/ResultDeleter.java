@@ -27,7 +27,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
@@ -45,9 +45,10 @@ public class ResultDeleter {
 	/**
 	 * Deletes all mutation test results for classes with the specified
 	 * MutationProperties.PROJECT_PREFIX.
+	 * 
+	 * @param projectPrefix
 	 */
-	public static void deleteAllWithPrefix() {
-		String prefix = MutationProperties.PROJECT_PREFIX;
+	public static void deleteAllWithPrefix(String prefix) {
 		String query = "FROM Mutation WHERE mutationResult IS NOT NULL AND className LIKE '"
 				+ prefix + "%'";
 		deleteMutationResultsFromQuery(query);
@@ -124,13 +125,15 @@ public class ResultDeleter {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		if (MutationProperties.PROJECT_PREFIX != null) {
-			deleteAllWithPrefix();
+		String projectPrefix = ConfigurationLocator
+				.getJavalancheConfiguration().getProjectPrefix();
+		if (projectPrefix != null) {
+			deleteAllWithPrefix(projectPrefix);
 		} else {
 			if (args.length >= 1) {
 				if (args[0].toLowerCase().equals("all")) {
-					if (MutationProperties.PROJECT_PREFIX != null) {
-						deleteAllWithPrefix();
+					if (projectPrefix != null) {
+						deleteAllWithPrefix(projectPrefix);
 					} else {
 						deleteAllMutationResult();
 					}

@@ -39,7 +39,8 @@ import org.apache.log4j.Logger;
 import com.google.common.base.Joiner;
 
 import de.unisb.cs.st.ds.util.io.Io;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 
 public class HtmlReport {
 
@@ -47,8 +48,8 @@ public class HtmlReport {
 
 	private static Logger logger = Logger.getLogger(HtmlReport.class);
 
-	private static final File REPORT_DIR = new File(
-			MutationProperties.OUTPUT_DIR + "/report");
+	private static final File REPORT_DIR = new File(ConfigurationLocator
+			.getJavalancheConfiguration().getOutputDir() + "/report");
 
 	private List<String> summary = new ArrayList<String>();
 
@@ -93,7 +94,7 @@ public class HtmlReport {
 	}
 
 	//
-	// 
+	//
 	// count++;
 
 	private void createFrameFile(File navigationFile, File summaryFile) {
@@ -123,10 +124,12 @@ public class HtmlReport {
 	}
 
 	private File createSummary(String mutationSummary) {
+		JavalancheConfiguration javalancheConfiguration = ConfigurationLocator
+				.getJavalancheConfiguration();
 		StringBuilder sb = new StringBuilder(
 				"<html><head><title>Javalanche Sumary</title></head><body>\n");
 		sb.append("<h2> Results for project:<br/>"
-				+ MutationProperties.PROJECT_PREFIX + "</h2>\n");
+				+ javalancheConfiguration.getProjectPrefix() + "</h2>\n");
 		sb.append(mutationSummary);
 		sb.append("\n</body></html>");
 		File file = new File(REPORT_DIR, SUMMARY_FILE_NAME);
@@ -143,8 +146,8 @@ public class HtmlReport {
 				SUMMARY_FILE_NAME));
 		for (String key : keySet) {
 			sb.append(String.format(
-					"<a href=\"%s\" target=\"main\" >%s</a><br/>", fileMap
-							.get(key), key));
+					"<a href=\"%s\" target=\"main\" >%s</a><br/>",
+					fileMap.get(key), key));
 
 		}
 		sb.append("</body></html>");

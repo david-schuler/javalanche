@@ -29,7 +29,7 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.hibernate.classic.Session;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
@@ -51,7 +51,8 @@ public class CsvWriter {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		List<Mutation> mutations = QueryManager.getMutationsForProject(
-				MutationProperties.PROJECT_PREFIX, session);
+				ConfigurationLocator.getJavalancheConfiguration()
+						.getProjectPrefix(), session);
 
 		logger.info("Got " + mutations.size() + " mutation ids.");
 		List<String> lines = new ArrayList<String>();

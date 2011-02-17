@@ -42,7 +42,8 @@ import org.junit.runners.model.RunnerBuilder;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 
 public class Junit4Util {
 
@@ -51,23 +52,26 @@ public class Junit4Util {
 	public static Runner getRunner() throws ClassNotFoundException,
 			InitializationError {
 		Class<?> forName = null;
-		String testSuite = MutationProperties.TEST_SUITE;
+		JavalancheConfiguration configuration = ConfigurationLocator
+				.getJavalancheConfiguration();
+		String testSuite = configuration.getTestNames();
 		Runner r = null;
-		if (MutationProperties.TEST_METHODS != null) {
-			if (MutationProperties.TEST_METHODS.startsWith("file:")) {
-				String fileName = MutationProperties.TEST_METHODS.substring(5);
-				try {
-					String testsFromFile = FileUtils.readFileToString(new File(
-							fileName));
-					r = getMethodsRunner(testsFromFile);
-				} catch (IOException e) {
-					throw new RuntimeException("Could not read file: "
-							+ fileName, e);
-				}
-			} else {
-				r = getMethodsRunner(testSuite);
-			}
-		} else if (testSuite.contains(":")) {
+		// if (MutationProperties.TEST_METHODS != null) {
+		// if (MutationProperties.TEST_METHODS.startsWith("file:")) {
+		// String fileName = MutationProperties.TEST_METHODS.substring(5);
+		// try {
+		// String testsFromFile = FileUtils.readFileToString(new File(
+		// fileName));
+		// r = getMethodsRunner(testsFromFile);
+		// } catch (IOException e) {
+		// throw new RuntimeException("Could not read file: "
+		// + fileName, e);
+		// }
+		// } else {
+		// r = getMethodsRunner(testSuite);
+		// }
+		// }
+		if (testSuite.contains(":")) {
 			r = getClassesRunner(testSuite);
 		} else {
 			logger.info("Getting test suite for name: " + testSuite);

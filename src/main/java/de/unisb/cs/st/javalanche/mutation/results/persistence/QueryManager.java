@@ -33,13 +33,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import de.unisb.cs.st.ds.util.Util;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import static de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType.*;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestName;
-import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 
 /**
  * Class that provides static method that execute queries.
@@ -562,7 +561,8 @@ public class QueryManager {
 	// }
 
 	public static List<Mutation> getMutationIdListFromDb(int numberOfMutations) {
-		String prefix = MutationProperties.PROJECT_PREFIX;
+		String prefix = ConfigurationLocator.getJavalancheConfiguration()
+				.getProjectPrefix();
 		Session session = openSession();
 		Transaction tx = session.beginTransaction();
 		String queryString = "SELECT m.* FROM Mutation m WHERE m.mutationType != 0 AND m.className LIKE '"
@@ -587,7 +587,9 @@ public class QueryManager {
 				+ " WHERE "
 				// +"NOT m.classInit AND"
 				+ " m.mutationResult_id IS NULL " + " AND m.mutationType != 0"
-				+ " AND m.className LIKE '" + MutationProperties.PROJECT_PREFIX
+				+ " AND m.className LIKE '"
+				+ ConfigurationLocator.getJavalancheConfiguration()
+						.getProjectPrefix()
 				+ "%'"; // ORDER BY m.id ";
 		logger.debug("Executing query: " + queryString);
 		Query query = session.createSQLQuery(queryString);
@@ -686,7 +688,8 @@ public class QueryManager {
 	}
 
 	public static long getNumberOfTestsForProject() {
-		String prefix = MutationProperties.PROJECT_PREFIX;
+		String prefix = ConfigurationLocator.getJavalancheConfiguration()
+				.getProjectPrefix();
 		Session session = openSession();
 		Transaction tx = session.beginTransaction();
 		String queryString = "SELECT count(DISTINCT name) FROM TestName WHERE project='"
@@ -716,7 +719,8 @@ public class QueryManager {
 		Transaction tx = session.beginTransaction();
 		String queryString = "FROM TestName WHERE project=:project";
 		Query query = session.createQuery(queryString);
-		query.setParameter("project", MutationProperties.PROJECT_PREFIX);
+		query.setParameter("project", ConfigurationLocator
+				.getJavalancheConfiguration().getProjectPrefix());
 		List<TestName> results = query.list();
 		tx.commit();
 		session.close();

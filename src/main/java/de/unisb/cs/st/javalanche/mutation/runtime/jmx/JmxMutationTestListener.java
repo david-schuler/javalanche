@@ -18,7 +18,7 @@
 */
 package de.unisb.cs.st.javalanche.mutation.runtime.jmx;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
@@ -54,7 +54,8 @@ public class JmxMutationTestListener implements MutationTestListener {
 
 	private static int getRunNumber() {
 		int result = -1;
-		String run = MutationProperties.MUTATION_FILE_NAME;
+		String run = ConfigurationLocator.getJavalancheConfiguration()
+				.getMutationIdFile();
 		int start = run.lastIndexOf('-') + 1;
 		int end = run.lastIndexOf(".txt");
 		if (start > -1 && end > 0) {

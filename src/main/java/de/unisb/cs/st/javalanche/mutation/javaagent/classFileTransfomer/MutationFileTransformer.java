@@ -33,7 +33,6 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.Rem
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationsForRun;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecision;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.MutationDecisionFactory;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
 
 /**
@@ -123,20 +122,21 @@ public class MutationFileTransformer implements ClassFileTransformer {
 		return classfileBuffer;
 	}
 
-	/**
-	 * Checks if the given class name equals to the test suite property.
-	 * 
-	 * @param classNameWithDots
-	 *            the class name to check
-	 * @return true, if
-	 */
-	public static boolean compareWithSuiteProperty(String classNameWithDots) {
-		String testSuiteName = System
-				.getProperty(MutationProperties.TEST_SUITE_KEY);
-		return testSuiteName != null
-				&& classNameWithDots.contains(testSuiteName);
-
-	}
+	// /**
+	// * Checks if the given class name equals to the test suite property.
+	// *
+	// * @param classNameWithDots
+	// * the class name to check
+	// * @return true, if
+	// */
+	// public static boolean compareWithSuiteProperty(String classNameWithDots)
+	// {
+	// String testSuiteName = System
+	// .getProperty(MutationProperties.TEST_SUITE_KEY);
+	// return testSuiteName != null
+	// && classNameWithDots.contains(testSuiteName);
+	//
+	// }
 
 
 

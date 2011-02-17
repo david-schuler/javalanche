@@ -27,7 +27,7 @@ import org.apache.commons.lang.time.StopWatch;
 import com.google.common.base.Joiner;
 
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationsForRun;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
@@ -87,8 +87,11 @@ public class MutationMX implements MutationMXMBean {
 		MutationsForRun instance = MutationsForRun.getFromDefaultLocation();
 		List<Mutation> mutationListInstance = instance.getMutations();
 		List<Mutation> mutationList = new ArrayList<Mutation>();
-		if (MutationProperties.MUTATION_FILE_NAME != null) {
-			File file = new File(MutationProperties.MUTATION_FILE_NAME);
+		String idFile = ConfigurationLocator.getJavalancheConfiguration()
+				.getMutationIdFile();
+
+		if (idFile != null) {
+			File file = new File(idFile);
 			if (file.exists()) {
 				// TODO mutationList = QueryManager.getMutationsByFile(file);
 			}

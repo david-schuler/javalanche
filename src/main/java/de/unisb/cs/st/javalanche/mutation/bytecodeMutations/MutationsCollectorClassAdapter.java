@@ -40,7 +40,10 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.Pro
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ReplaceVariablesPossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.VariableInfo;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import static de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType.*;
 
 public class MutationsCollectorClassAdapter extends ClassAdapter {
 
@@ -90,26 +93,26 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 		if (debug) {
 			mv = new CheckMethodAdapter(mv);
 		}
-		if (!MutationProperties.IGNORE_RIC) {
+		JavalancheConfiguration configuration = ConfigurationLocator
+				.getJavalancheConfiguration();
+		if (configuration.enableMutationType(REPLACE_CONSTANT)) {
 			mv = new PossibilitiesRicMethodAdapter(mv, className, name, mpc,
 					ricPossibilities, desc);
 		}
-		if (!MutationProperties.IGNORE_NEGATE_JUMPS) {
+		if (configuration.enableMutationType(NEGATE_JUMP)) {
 			mv = new NegateJumpsPossibilitiesMethodAdapter(mv, className, name,
 					mpc, negatePossibilities, desc);
 		}
-		if (!MutationProperties.IGNORE_ARITHMETIC_REPLACE) {
+		if (configuration.enableMutationType(ARITHMETIC_REPLACE)) {
 			mv = new PossibilitiesArithmeticReplaceMethodAdapter(mv, className,
 					name, mpc, arithmeticPossibilities, desc);
 		}
-		if (!MutationProperties.IGNORE_REMOVE_CALLS) {
+		if (configuration.enableMutationType(REMOVE_CALL)) {
 			mv = new RemoveCallsPossibilitiesMethodAdapter(new MyAdviceAdapter(
 					mv, access, name, desc), className, name, mpc,
 					removeCallsPossibilities, desc);
 		}
-		if (!MutationProperties.IGNORE_REPLACE_VARIABLES) {
-			System.out
-					.println("MutationsCollectorClassAdapter.visitMethod() IGNORE_REPLACE_VARIABLES");
+		if (configuration.enableMutationType(REPLACE_VARIABLE)) {
 			ReplaceVariablesPossibilitiesMethodAdapter rvAdapter = new ReplaceVariablesPossibilitiesMethodAdapter(
 					mv, className, name, mpc, replaceVariablesPossibilities,
 					desc, projectVariables.getStaticVariables(className),

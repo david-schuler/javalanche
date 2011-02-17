@@ -33,7 +33,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.ReplaceMap;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
@@ -76,7 +76,8 @@ public class AddMutations {
 	public static void addReplaceConstantMutations() {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-		String projectPrefix = MutationProperties.PROJECT_PREFIX;
+		String projectPrefix = ConfigurationLocator
+				.getJavalancheConfiguration().getProjectPrefix();
 		Query query = session
 				.createQuery("from Mutation as m where className LIKE '"
 						+ projectPrefix + "%' and m.mutationType=:type");
@@ -118,7 +119,8 @@ public class AddMutations {
 	public static void addArithmeticReplaceMutations() {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-		String projectPrefix = MutationProperties.PROJECT_PREFIX;
+		String projectPrefix = ConfigurationLocator
+				.getJavalancheConfiguration().getProjectPrefix();
 		Query query = session
 				.createQuery("from Mutation as m where className LIKE '"
 						+ projectPrefix + "%' and m.mutationType=:type");

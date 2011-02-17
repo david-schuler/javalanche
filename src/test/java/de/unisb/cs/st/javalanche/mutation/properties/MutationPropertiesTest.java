@@ -196,13 +196,13 @@ public class MutationPropertiesTest {
 		assertTrue(IGNORE_MESSAGES);
 		assertTrue(IGNORE_EXCEPTION_TRACES);
 		assertThat(SAVE_INTERVAL, is(50));
-		assertFalse(IGNORE_RIC);
-		assertFalse(IGNORE_NEGATE_JUMPS);
-		assertFalse(IGNORE_ARITHMETIC_REPLACE);
-		assertFalse(IGNORE_REMOVE_CALLS);
+		assertTrue(ENABLE_RIC);
+		assertTrue(ENABLE_NEGATE_JUMPS);
+		assertTrue(ENABLE_ARITHMETIC_REPLACE);
+		assertTrue(ENABLE_REMOVE_CALLS);
+		assertFalse(ENABLE_REPLACE_VARIABLES);
 		assertFalse(JUNIT4_MODE);
 		assertThat(TEST_PERMUTATIONS, is(10));
-		assertTrue(IGNORE_REPLACE_VARIABLES);
 	}
 
 }

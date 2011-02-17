@@ -35,14 +35,14 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import de.unisb.cs.st.ds.util.io.SerializeIo;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 
 public class MutationCoverageFile {
 
 	private static Logger logger = Logger.getLogger(MutationCoverageFile.class);
 
-	private static final File COVERAGE_DIR = new File(
-			MutationProperties.OUTPUT_DIR + "/coverage-data/");
+	private static final File COVERAGE_DIR = new File(ConfigurationLocator
+			.getJavalancheConfiguration().getOutputDir() + "/coverage-data/");
 
 	private static BiMap<String, Integer> idMap;
 
@@ -92,7 +92,6 @@ public class MutationCoverageFile {
 		}
 		return _getCoverageDataId(m.getId());
 	}
-
 
 	public static Set<String> _getCoverageDataId(long id) {
 		if (idMap == null) {

@@ -18,7 +18,6 @@
  */
 package de.unisb.cs.st.javalanche.mutation.runtime.testDriver;
 
-import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.*;
 import static de.unisb.cs.st.javalanche.mutation.properties.RunMode.*;
 
 import java.io.ByteArrayOutputStream;
@@ -53,7 +52,10 @@ import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.ds.util.io.XmlIo;
 import de.unisb.cs.st.javalanche.coverage.CoverageMutationListener;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationsForRun;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheMessages;
+import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
@@ -91,10 +93,14 @@ public abstract class MutationTestDriver {
 
 	final ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
 
+	JavalancheConfiguration configuration = ConfigurationLocator
+			.getJavalancheConfiguration();
+
 	/**
 	 * Timeout for the test. After this time a test is stopped.
 	 */
-	protected long timeout = MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS;
+	protected long timeout = ConfigurationLocator.getJavalancheConfiguration()
+			.getDefaultTimeoutInSeconds();
 
 	/**
 	 * The mutation that is currently active.
@@ -143,12 +149,13 @@ public abstract class MutationTestDriver {
 	}
 
 	public MutationTestDriver() {
-		File dir = new File(MutationProperties.OUTPUT_DIR);
+		File dir = configuration.getOutputDir();
 		lastId = 0l;
 		try {
 			String s;
-			if (MutationProperties.MUTATION_FILE_NAME != null) {
-				s = new File(MutationProperties.MUTATION_FILE_NAME).getName();
+			String mutationIdFile = configuration.getMutationIdFile();
+			if (mutationIdFile != null) {
+				s = new File(mutationIdFile).getName();
 			} else {
 				s = "default";
 			}
@@ -191,21 +198,22 @@ public abstract class MutationTestDriver {
 	 * corresponding method is called.
 	 */
 	public final void run() {
-		logger.debug("Run Mode" + RUN_MODE);
-		if (RUN_MODE == MUTATION_TEST || RUN_MODE == MUTATION_TEST_INVARIANT
-				|| RUN_MODE == MUTATION_TEST_COVERAGE) {
-			if (RUN_MODE == MUTATION_TEST_COVERAGE) {
+		RunMode runMode = configuration.getRunMode();
+		logger.debug("Run Mode" + runMode);
+		if (runMode == MUTATION_TEST || runMode == MUTATION_TEST_INVARIANT
+				|| runMode == MUTATION_TEST_COVERAGE) {
+			if (runMode == MUTATION_TEST_COVERAGE) {
 				addMutationTestListener(new CoverageMutationListener());
 				// runNormalTests();
 			}
 			listeners.addLast(new ResultReporter());
 			runMutations();
-		} else if (RUN_MODE == SCAN) {
+		} else if (runMode == SCAN) {
 			scanTests();
-		} else if (RUN_MODE == CREATE_COVERAGE_MULT) {
+		} else if (runMode == CREATE_COVERAGE_MULT) {
 			addMutationTestListener(new CoverageMutationListener());
 			runPermutedTests();
-		} else if (RUN_MODE == TEST_PERMUTED) {
+		} else if (runMode == TEST_PERMUTED) {
 			runPermutedTests();
 		} else {
 			runNormalTests();
@@ -219,7 +227,7 @@ public abstract class MutationTestDriver {
 	 */
 	private void runNormalTests() {
 		logger.info("Running tests of project "
-				+ MutationProperties.PROJECT_PREFIX);
+				+ configuration.getProjectPrefix());
 		// addMutationTestListener(new AdabuListener());
 		addListenersFromProperty();
 		List<String> allTests = getAllTests();
@@ -268,8 +276,8 @@ public abstract class MutationTestDriver {
 				logger.warn(str.getTestMessage().getTestCaseName() + ": "
 						+ str.getTestMessage());
 			}
-			File outFile = new File(MutationProperties.OUTPUT_DIR
-					+ "/failed-tests.xml");
+			File outFile = new File(configuration.getOutputDir(),
+					"/failed-tests.xml");
 			XmlIo.toXML(failing, outFile);
 		}
 	}
@@ -281,14 +289,14 @@ public abstract class MutationTestDriver {
 	 */
 	private void runPermutedTests() {
 		logger.info("Running permuted tests for project "
-				+ MutationProperties.PROJECT_PREFIX);
+				+ configuration.getProjectPrefix());
 		addListenersFromProperty();
 		List<String> allTests = new ArrayList<String>(getAllTests());
 		timeout = Integer.MAX_VALUE;
 		List<SingleTestResult> allFailingTests = new ArrayList<SingleTestResult>();
 		coldRun(allTests);
 		testsStart();
-		int permutations = MutationProperties.TEST_PERMUTATIONS;
+		int permutations = configuration.getTestPermutations();
 		for (int i = 0; i < permutations; i++) {
 			logger.info("Shuffling tests. Round " + (i + 1));
 			Collections.shuffle(allTests);
@@ -311,8 +319,8 @@ public abstract class MutationTestDriver {
 				failingTests.add(testCaseName);
 			}
 			try {
-				FileUtils.writeLines(new File(MutationProperties.OUTPUT_DIR
-						+ "/failing-tests-permuted.txt"), failingTests);
+				FileUtils.writeLines(new File(configuration.getOutputDir(),
+						"/failing-tests-permuted.txt"), failingTests);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -372,7 +380,7 @@ public abstract class MutationTestDriver {
 			SingleTestResult result = runnable.getResult();
 			long duration = result.getDuration();
 			TestName tm = new TestName(testName,
-					MutationProperties.PROJECT_PREFIX, duration);
+					configuration.getProjectPrefix(), duration);
 			QueryManager.save(tm);
 			CoverageDataRuntime.unsetTestName(testName);
 		}
@@ -591,7 +599,7 @@ public abstract class MutationTestDriver {
 					testName);
 			result.setTouched(touched);
 			resultsForMutation.add(result);
-			if (MutationProperties.STOP_AFTER_FIRST_FAIL && !result.hasPassed()) {
+			if (configuration.stopAfterFirstFail() && !result.hasPassed()) {
 				logger.info("Test failed for mutation not running more tests. Test: "
 						+ testName);
 				TestMessage testMessage = result.getTestMessage();
@@ -704,7 +712,7 @@ public abstract class MutationTestDriver {
 		future.cancel(true);
 		try {
 			logger.info("Sleeping   ");
-			Thread.sleep(MutationProperties.DEFAULT_TIMEOUT_IN_SECONDS);
+			Thread.sleep(configuration.getDefaultTimeoutInSeconds());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -730,7 +738,7 @@ public abstract class MutationTestDriver {
 		} catch (ExecutionException e) {
 			capturedThrowable = e;
 		} catch (TimeoutException e) {
-			exceptionMessage = MutationProperties.MUTATION_TIME_LIMIT_MESSAGE
+			exceptionMessage = JavalancheMessages.MUTATION_TIME_LIMIT_MESSAGE
 					+ "Mutation causes test timeout";
 			capturedThrowable = e;
 		} catch (Throwable t) {
@@ -748,13 +756,13 @@ public abstract class MutationTestDriver {
 			}
 		}
 		if (!future.isDone()) {
-			r.setFailed(MutationProperties.MUTATION_TIME_LIMIT_MESSAGE
+			r.setFailed(JavalancheMessages.MUTATION_TIME_LIMIT_MESSAGE
 					+ "Mutated Thread is still running after timeout.", null);
 			switchOfMutation(future);
 		}
 		stopWatch.stop();
 		if (!checkAllFinished(preIds)) {
-			if (MutationProperties.USE_THREAD_STOP) {
+			if (configuration.useThreadStop()) {
 				stopThreads(preIds);
 			} else {
 				shutDown(r, stopWatch);
