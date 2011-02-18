@@ -2,46 +2,43 @@ package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables;
 
 import static org.junit.Assert.*;
 
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BaseBytecodeTest;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.Triangle2TEMPLATE;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.testutil.TestUtil;
+import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
-public class Triangle2Test extends BaseBytecodeTest {
+public class Triangle2Test {
 
-	private Class<?> clazz;
-
-	public Triangle2Test() throws Exception {
-		super(Triangle2TEMPLATE.class);
-		verbose = true;
-		clazz = prepareTest();
-	}
+	private static JavalancheConfiguration configBack;
+	private static JavalancheTestConfiguration config;
 
 	@BeforeClass
-	public static void setUpClass() {
-		MutationProperties.ENABLE_REPLACE_VARIABLES = true;
+	public static void setUpClass() throws Exception {
+		configBack = ConfigurationLocator.getJavalancheConfiguration();
+		config = new JavalancheTestConfiguration();
+		ConfigurationLocator.setJavalancheConfiguration(config);
 	}
 
 	@AfterClass
 	public static void tearDownClass() {
-		MutationProperties.ENABLE_REPLACE_VARIABLES = false;
+		ConfigurationLocator.setJavalancheConfiguration(configBack);
 	}
 
 	@Test
 	public void testStaticIntsClass() throws Exception {
+		config.setMutationType(MutationType.REPLACE_VARIABLE, true);
+
 		ByteCodeTestUtils.deleteMutations(Triangle2TEMPLATE.class
 				.getCanonicalName());
 		List<Mutation> mutations = TestUtil
@@ -59,15 +56,5 @@ public class Triangle2Test extends BaseBytecodeTest {
 
 	}
 
-
-	@Test
-	public void test() throws Exception {
-		Method m1 = clazz.getMethod("exe", int.class, int.class, int.class);
-		checkUnmutated(new Object[] { 1, 2, 3 }, 1, m1, clazz);
-		// checkMutation(12, MutationType.REPLACE_VARIABLE, 0, new Object[0], 2,
-		// m1, clazz);
-		// Mutation m = new Mutation(className, "exe", 6, 0,
-		// MutationType.REPLACE_VARIABLE);
-	}
 
 }

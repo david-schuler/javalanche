@@ -26,7 +26,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
@@ -60,11 +59,10 @@ public class DeleteTest<T> {
 		assertTrue(passing.get(0).getId() != 0);
 		assertTrue(failing.get(0).getId() != 0);
 		assertTrue(errors.get(0).getId() != 0);
-		String backup = MutationProperties.PROJECT_PREFIX;
-		MutationProperties.PROJECT_PREFIX = TEST_PREFIX;
-		ResultDeleter.deleteAllWithPrefix();
-		MutationDeleter.deleteAllWithPrefix();
-		MutationProperties.PROJECT_PREFIX = backup;
+
+		ResultDeleter.deleteAllWithPrefix(TEST_PREFIX);
+		MutationDeleter.deleteAllWithPrefix(TEST_PREFIX);
+
 		expectDelete(mutationTestResult.getId(), MutationTestResult.class);
 		expectDelete(passing.get(0).getId(), TestMessage.class);
 		expectDelete(failing.get(0).getId(), TestMessage.class);
@@ -94,10 +92,7 @@ public class DeleteTest<T> {
 		QueryManager.saveMutation(m);
 		System.out.println(mutationTestResult.getId());
 		assertTrue(mutationTestResult.getId() != 0);
-		String backup = MutationProperties.PROJECT_PREFIX;
-		MutationProperties.PROJECT_PREFIX = TEST_PREFIX;
-		MutationDeleter.deleteAllWithPrefix();
-		MutationProperties.PROJECT_PREFIX = backup;
+		MutationDeleter.deleteAllWithPrefix(TEST_PREFIX);
 		MutationTestResult objectById = QueryManager.getObjectById(
 				mutationTestResult.getId(), MutationTestResult.class);
 		assertNull("Expected Object to be deleted ", objectById);
@@ -117,10 +112,7 @@ public class DeleteTest<T> {
 		assertTrue(mutationTestResult.getId() != 0);
 		assertTrue(testName.getId() != 0);
 
-		String backup = MutationProperties.PROJECT_PREFIX;
-		MutationProperties.PROJECT_PREFIX = TEST_PREFIX;
-		MutationDeleter.deleteAllWithPrefix();
-		MutationProperties.PROJECT_PREFIX = backup;
+		MutationDeleter.deleteAllWithPrefix(TEST_PREFIX);
 		expectDelete(mutationTestResult.getId(), MutationTestResult.class);
 		expectDelete(testName.getId(), TestName.class);
 

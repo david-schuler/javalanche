@@ -22,7 +22,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.coverage.CoverageProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 
 public class ConnectionData {
 
@@ -51,11 +52,11 @@ public class ConnectionData {
 	}
 
 	public void save() {
-		XmlIo.toXML(this, MutationProperties.CONNECTION_DATA_FILE);
+		XmlIo.toXML(this, CoverageProperties.CONNECTION_DATA_FILE);
 	}
 
 	public static ConnectionData read() {
-		return XmlIo.get(MutationProperties.CONNECTION_DATA_FILE);
+		return XmlIo.get(CoverageProperties.CONNECTION_DATA_FILE);
 	}
 
 	public Set<Tuple> getConnections() {

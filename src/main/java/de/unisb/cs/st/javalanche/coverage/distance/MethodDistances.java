@@ -30,7 +30,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.io.SerializeIo;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 
 public class MethodDistances implements Serializable {
 
@@ -39,8 +39,9 @@ public class MethodDistances implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final File DEFAULT_LOCATION = new File(
-			MutationProperties.OUTPUT_DIR + "/method_distances.ser");
+	private static final File DEFAULT_LOCATION = new File(ConfigurationLocator
+			.getJavalancheConfiguration().getOutputDir(),
+			"/method_distances.ser");
 	private static Logger logger = Logger.getLogger(MethodDistances.class);
 	Map<Tuple, Integer> distances = new HashMap<Tuple, Integer>();
 	private Set<MethodDescription> allMethods;
@@ -64,8 +65,8 @@ public class MethodDistances implements Serializable {
 			logger.info("Checking distance " + i);
 			Set<Tuple> next = new HashSet<Tuple>();
 			for (Tuple distanceTuple : copy.keySet()) {
-				Set<MethodDescription> startMds = getFrom(distanceTuple
-						.getEnd(), changedSet);
+				Set<MethodDescription> startMds = getFrom(
+						distanceTuple.getEnd(), changedSet);
 				for (MethodDescription methodDescription : startMds) {
 					Tuple t = new Tuple(distanceTuple.getStart(),
 							methodDescription);
@@ -238,8 +239,8 @@ public class MethodDistances implements Serializable {
 	}
 
 	public MethodDescription getMetodDesc(String fullMethodName) {
-		String className = fullMethodName.substring(0, fullMethodName
-				.indexOf('@'));
+		String className = fullMethodName.substring(0,
+				fullMethodName.indexOf('@'));
 		String methodName = fullMethodName.substring(fullMethodName
 				.indexOf('@') + 1);
 

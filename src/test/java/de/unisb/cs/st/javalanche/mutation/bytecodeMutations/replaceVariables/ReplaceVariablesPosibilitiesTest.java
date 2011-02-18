@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,7 +20,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import java.util.ArrayList;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorClassAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.classes.RemoveCallsTEMPLATE;
@@ -28,20 +28,27 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.cla
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.ReplaceVariables6TEMPLATE;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanVariablesTransformer;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
 public class ReplaceVariablesPosibilitiesTest {
 
+	private static JavalancheConfiguration configBack;
+
 	@BeforeClass
-	public static void setUpClass() {
-		MutationProperties.ENABLE_REPLACE_VARIABLES = true;
+	public static void setUpClass() throws Exception {
+		configBack = ConfigurationLocator.getJavalancheConfiguration();
+		JavalancheTestConfiguration config = new JavalancheTestConfiguration();
+		config.setMutationType(MutationType.REPLACE_VARIABLE, true);
+		ConfigurationLocator.setJavalancheConfiguration(config);
 	}
 
 	@AfterClass
 	public static void tearDownClass() {
-		MutationProperties.ENABLE_REPLACE_VARIABLES = false;
+		ConfigurationLocator.setJavalancheConfiguration(configBack);
 	}
 
 	@Test

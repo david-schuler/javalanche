@@ -14,22 +14,27 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
 public class MutationForRunTest {
 
-	private static Mutation m1 = new Mutation(MutationForRunTest.class
-			.getName(), "testMethod", 41, 0, MutationType.NEGATE_JUMP);
+	private static Mutation m1 = new Mutation(
+			MutationForRunTest.class.getName(), "testMethod", 41, 0,
+			MutationType.NEGATE_JUMP);
 
-	private static Mutation m2 = new Mutation(MutationForRunTest.class
-			.getName(), "testMethod", 42, 0, MutationType.NEGATE_JUMP);
+	private static Mutation m2 = new Mutation(
+			MutationForRunTest.class.getName(), "testMethod", 42, 0,
+			MutationType.NEGATE_JUMP);
 
-	private static Mutation m3 = new Mutation(MutationForRunTest.class
-			.getName(), "testMethod", 43, 0, MutationType.NEGATE_JUMP);
+	private static Mutation m3 = new Mutation(
+			MutationForRunTest.class.getName(), "testMethod", 43, 0,
+			MutationType.NEGATE_JUMP);
 
 	private static Mutation mutationWithResult = new Mutation(
 			MutationForRunTest.class.getName(), "testMethod", 55, 0,
@@ -85,10 +90,17 @@ public class MutationForRunTest {
 
 	@Test
 	public void testGetFromDefaultLocation() {
-		MutationProperties.MUTATION_FILE_NAME = f.getAbsolutePath();
+		JavalancheConfiguration back = ConfigurationLocator
+				.getJavalancheConfiguration();
+		JavalancheTestConfiguration cfg = new JavalancheTestConfiguration();
+		cfg.setMutationIdFile(f.getAbsolutePath());
+		ConfigurationLocator.setJavalancheConfiguration(cfg);
+
 		MutationsForRun fromDefaultLocation = MutationsForRun
 				.getFromDefaultLocation();
 		assertThat(fromDefaultLocation.getMutations(), is(mfr.getMutations()));
+
+		ConfigurationLocator.setJavalancheConfiguration(back);
 	}
 
 	@Test
@@ -124,8 +136,8 @@ public class MutationForRunTest {
 		File fEmpty = File.createTempFile("testEmpty", "testEmpty");
 		fEmpty.deleteOnExit();
 		assertTrue(fEmpty.exists());
-		MutationsForRun mutationsForRun = new MutationsForRun(fEmpty
-				.getAbsolutePath(), true);
+		MutationsForRun mutationsForRun = new MutationsForRun(
+				fEmpty.getAbsolutePath(), true);
 		List<Mutation> mutations = mutationsForRun.getMutations();
 		assertThat(mutations.size(), is(0));
 	}
@@ -147,8 +159,12 @@ public class MutationForRunTest {
 
 	@Test
 	public void testSingleTask() throws IOException {
-		MutationProperties.SINGLE_TASK_MODE = true;
-		MutationProperties.PROJECT_PREFIX = "org.test";
+		JavalancheConfiguration back = ConfigurationLocator
+				.getJavalancheConfiguration();
+		JavalancheTestConfiguration cfg = new JavalancheTestConfiguration();
+		cfg.setSingleTaskMode(true);
+		cfg.setProjectPrefix("org.test");
+		ConfigurationLocator.setJavalancheConfiguration(cfg);
 		File f = new File("mutation-files/mutation-task-org_test-01.txt");
 		BufferedWriter w = new BufferedWriter(new FileWriter(f));
 		w.write(m1.getId() + "\n");
@@ -156,8 +172,7 @@ public class MutationForRunTest {
 		w.flush();
 		w.close();
 		MutationsForRun mfr2 = MutationsForRun.getFromDefaultLocation();
-		MutationProperties.PROJECT_PREFIX = null;
-		MutationProperties.SINGLE_TASK_MODE = false;
+		ConfigurationLocator.setJavalancheConfiguration(back);
 		f.delete();
 		List<Mutation> mutations = mfr2.getMutations();
 		assertEquals("Expected mutation with result not to be filtered", 1,
@@ -166,8 +181,12 @@ public class MutationForRunTest {
 
 	@Test
 	public void testSingleTaskNonExistinFile() throws IOException {
-		MutationProperties.SINGLE_TASK_MODE = true;
-		MutationProperties.PROJECT_PREFIX = "org.test2";
+		JavalancheConfiguration back = ConfigurationLocator
+				.getJavalancheConfiguration();
+		JavalancheTestConfiguration cfg = new JavalancheTestConfiguration();
+		cfg.setSingleTaskMode(true);
+		cfg.setProjectPrefix("org.test");
+		ConfigurationLocator.setJavalancheConfiguration(cfg);
 		File f2 = new File("mutation-files/mutation-task-org_test2-01.txt");
 		try {
 			MutationsForRun mfr2 = MutationsForRun.getFromDefaultLocation();
@@ -175,7 +194,8 @@ public class MutationForRunTest {
 		} catch (RuntimeException e) {
 			// ok
 		}
-		MutationProperties.PROJECT_PREFIX = null;
-		MutationProperties.SINGLE_TASK_MODE = false;
+		ConfigurationLocator.setJavalancheConfiguration(back); // TODO when test
+																// fails config
+																// is not reset.
 	}
 }

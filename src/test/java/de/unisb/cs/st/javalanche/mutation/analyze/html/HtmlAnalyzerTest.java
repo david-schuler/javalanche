@@ -1,5 +1,6 @@
 package de.unisb.cs.st.javalanche.mutation.analyze.html;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
@@ -10,30 +11,33 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.unisb.cs.st.javalanche.mutation.analyze.html.HtmlAnalyzer;
 import de.unisb.cs.st.javalanche.mutation.analyze.html.testcontent.ABCTestContent;
 import de.unisb.cs.st.javalanche.mutation.analyze.html.testcontent.TestContent;
 import de.unisb.cs.st.javalanche.mutation.analyze.html.testcontent.TestContent1;
 import de.unisb.cs.st.javalanche.mutation.analyze.html.testcontent.TestContentABC;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
-import static org.hamcrest.Matchers.*;
+import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
 public class HtmlAnalyzerTest {
 
 	private static final String SEPERATOR = System
 			.getProperty("file.separator");
-	private String prefixBack;
+	private JavalancheConfiguration back;
+
 	@Before
 	public void setUp() throws Exception {
-		prefixBack = MutationProperties.PROJECT_PREFIX;
-		MutationProperties.PROJECT_PREFIX = "de.unisb";
+		back = ConfigurationLocator.getJavalancheConfiguration();
+		JavalancheTestConfiguration config = new JavalancheTestConfiguration();
+		ConfigurationLocator.setJavalancheConfiguration(config);
+		config.setProjectPrefix("de.unisb");
 	}
 
 	@After
 	public void tearDown() {
-		MutationProperties.PROJECT_PREFIX = prefixBack;
+		ConfigurationLocator.setJavalancheConfiguration(back);
 	}
 
 	@Test

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Saarland University
+ * Copyright (C) 2011 Saarland University
  * 
  * This file is part of Javalanche.
  * 
@@ -26,63 +26,67 @@ import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BaseBytecodeTest;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.ReplaceVariables5TEMPLATE;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
-public class ReplaceLocalVariablesTypesBytecodeTest extends BaseBytecodeTest {
+public class ReplaceLocalVariablesTypesBytecodeTest {
 
-	private Class<?> clazz;
-
-	public ReplaceLocalVariablesTypesBytecodeTest() throws Exception {
-		super(ReplaceVariables5TEMPLATE.class);
-		verbose = true;
-		clazz = prepareTest();
-	}
+	private static Class<?> clazz;
+	private static JavalancheConfiguration configBack;
+	private static BaseBytecodeTest b;
 
 	@BeforeClass
-	public static void setUpClass() {
-		MutationProperties.ENABLE_REPLACE_VARIABLES = true;
+	public static void setUpClass() throws Exception {
+		configBack = ConfigurationLocator.getJavalancheConfiguration();
+		b = new BaseBytecodeTest(ReplaceVariables5TEMPLATE.class);
+		JavalancheTestConfiguration config = b.getConfig();
+		config.setMutationType(MutationType.REPLACE_VARIABLE, true);
+		clazz = b.prepareTest();
 	}
 
 	@AfterClass
 	public static void tearDownClass() {
-		MutationProperties.ENABLE_REPLACE_VARIABLES = false;
+		ConfigurationLocator.setJavalancheConfiguration(configBack);
 	}
+
 
 	@Test
 	public void testDoubles() throws Exception {
 		Method m1 = clazz.getMethod("m1");
-		checkUnmutated(1., m1, clazz);
+		b.checkUnmutated(1., m1, clazz);
 		Mutation m = new Mutation(clazz.getCanonicalName(), m1.getName(), 9, 0,
 				MutationType.REPLACE_VARIABLE);
 		m.setOperatorAddInfo("3");
-		checkMutation(m, new Object[0], 2.2, m1, clazz);
+		b.checkMutation(m, new Object[0], 2.2, m1, clazz);
 		m.setOperatorAddInfo("5");
-		checkMutation(m, new Object[0], 3.2, m1, clazz);
+		b.checkMutation(m, new Object[0], 3.2, m1, clazz);
 	}
 
 	@Test
 	public void testFloats() throws Exception {
 		Method m = clazz.getMethod("m2");
-		checkUnmutated(1.f, m, clazz);
-		checkMutation(15, MutationType.REPLACE_VARIABLE, 0, new Object[0],
+		b.checkUnmutated(1.f, m, clazz);
+		b.checkMutation(15, MutationType.REPLACE_VARIABLE, 0, new Object[0],
 				1.2f, m, clazz);
 	}
 
 	@Test
 	public void testLongs() throws Exception {
 		Method m = clazz.getMethod("m3");
-		checkUnmutated(1l, m, clazz);
-		checkMutation(21, MutationType.REPLACE_VARIABLE, 0, new Object[0],
+		b.checkUnmutated(1l, m, clazz);
+		b.checkMutation(21, MutationType.REPLACE_VARIABLE, 0, new Object[0],
 				1234567890l, m, clazz);
 	}
 
 	@Test
 	public void testObject() throws Exception {
 		Method m = clazz.getMethod("m4");
-		checkUnmutated("A", m, clazz);
-		checkMutation(27, MutationType.REPLACE_VARIABLE, 0, new Object[0], "B",
+		b.checkUnmutated("A", m, clazz);
+		b.checkMutation(27, MutationType.REPLACE_VARIABLE, 0, new Object[0],
+				"B",
 				m, clazz);
 	}
 

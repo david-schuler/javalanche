@@ -18,8 +18,9 @@
  */
 package de.unisb.cs.st.javalanche.coverage;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
-import static de.unisb.cs.st.javalanche.mutation.properties.MutationProperties.OUTPUT_DIR;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.PropertyUtil;
+
 /**
  * @author Bernhard Gruen
  * 
@@ -43,17 +44,17 @@ public final class CoverageProperties {
 			+ "differences-set.xml";
 
 	private static final String TRACE_RETRURNS_KEY = "javalanche.trace.returns";
-	public static final boolean TRACE_RETURNS = MutationProperties
+	public static final boolean TRACE_RETURNS = PropertyUtil
 			.getPropertyOrDefault(TRACE_RETRURNS_KEY, false);
 
 	private static final String TRACE_LINES_KEY = "javalanche.trace.lines";
-	public static final boolean TRACE_LINES = MutationProperties
+	public static final boolean TRACE_LINES = PropertyUtil
 			.getPropertyOrDefault(TRACE_LINES_KEY, true);
 
 	public static final String EPSILON_KEY = "javalanche.coverage.epsilon";
 
-	public static final double EPSILON = MutationProperties
-			.getPropertyOrDefault(EPSILON_KEY, 0);
+	public static final double EPSILON = PropertyUtil.getPropertyOrDefault(
+			EPSILON_KEY, 0);
 
 	public static void updateBaseDir(String base) {
 		TRACE_RESULT_DIR = base + "/mutation-files/tracer/";
@@ -67,11 +68,12 @@ public final class CoverageProperties {
 
 	static final String PERMUTED_PREFIX = "PERMUTED_";
 
-	
-	public static final String CONNECTION_DATA_FILE = OUTPUT_DIR
+	public static final String CONNECTION_DATA_FILE = ConfigurationLocator
+			.getJavalancheConfiguration().getOutputDir()
 			+ "/connections.xml";
 
-	public static final String INHERITANCE_DATA_FILE = OUTPUT_DIR
+	public static final String INHERITANCE_DATA_FILE = ConfigurationLocator
+			.getJavalancheConfiguration().getOutputDir()
 			+ "/inheritance.xml";
 
 }

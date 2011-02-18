@@ -21,7 +21,7 @@ package de.unisb.cs.st.javalanche.coverage.distance;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 
 public class DistanceMethodAdapter extends MethodAdapter {
 
@@ -44,7 +44,8 @@ public class DistanceMethodAdapter extends MethodAdapter {
 	public void visitMethodInsn(int opcode, String owner, String name,
 			String desc) {
 		String ownerDots = owner.replace('/', '.');
-		if (ownerDots.startsWith(MutationProperties.PROJECT_PREFIX)) {
+		if (ownerDots.startsWith(ConfigurationLocator
+				.getJavalancheConfiguration().getProjectPrefix())) {
 			connectionData.addConnection(className, methodName, description,
 					owner, name, desc);
 		}

@@ -18,26 +18,18 @@
  */
 package de.unisb.cs.st.javalanche.coverage;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.zip.GZIPOutputStream;
 
 import org.apache.log4j.Logger;
 
-import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.ds.util.io.XmlIo;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
@@ -121,7 +113,7 @@ public class CoverageMutationListener implements MutationTestListener {
 			dir.mkdir();
 		}
 
-		if (MutationProperties.RUN_MODE == RunMode.CREATE_COVERAGE_MULT) {
+		if (ConfigurationLocator.getJavalancheConfiguration().getRunMode() == RunMode.CREATE_COVERAGE_MULT) {
 			isPermuted = true;
 		}
 	}

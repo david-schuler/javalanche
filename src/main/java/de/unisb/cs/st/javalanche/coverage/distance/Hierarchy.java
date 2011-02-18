@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,8 +30,8 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.io.XmlIo;
+import de.unisb.cs.st.javalanche.coverage.CoverageProperties;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.DistanceTransformer.ClassEntry;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 
 public class Hierarchy implements Serializable {
 
@@ -88,7 +87,7 @@ public class Hierarchy implements Serializable {
 
 	public static Hierarchy readFromDefaultLocation() {
 		Set<ClassEntry> entries = XmlIo
-				.get(MutationProperties.INHERITANCE_DATA_FILE);
+				.get(CoverageProperties.INHERITANCE_DATA_FILE);
 		return fromSet(entries);
 	}
 

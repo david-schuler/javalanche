@@ -47,10 +47,11 @@ public class MutationDeleter {
 	/**
 	 * Deletes all mutation test results for classes with the specified
 	 * MutationProperties.PROJECT_PREFIX.
+	 * 
+	 * @param prefix
 	 */
-	public static void deleteAllWithPrefix() {
-		String prefix = ConfigurationLocator.getJavalancheConfiguration()
-				.getProjectPrefix();
+	public static void deleteAllWithPrefix(String prefix) {
+		
 		String query = "FROM Mutation WHERE className LIKE '" + prefix + "%'";
 		List<Long> idList = getIdList(query);
 		logger.info("Deleting Coverage Data");
@@ -120,10 +121,11 @@ public class MutationDeleter {
 	 *            ignored
 	 */
 	public static void main(String[] args) {
-		if (ConfigurationLocator.getJavalancheConfiguration()
-				.getProjectPrefix() == null) {
+		String projectPrefix = ConfigurationLocator.getJavalancheConfiguration()
+				.getProjectPrefix();
+		if (projectPrefix == null) {
 			throw new RuntimeException("Prject prefix not specified");
 		}
-		deleteAllWithPrefix();
+		deleteAllWithPrefix(projectPrefix);
 	}
 }

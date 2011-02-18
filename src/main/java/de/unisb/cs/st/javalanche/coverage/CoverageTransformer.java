@@ -31,7 +31,8 @@ import org.objectweb.asm.util.TraceClassVisitor;
 
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.mutationDecision.Excludes;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.DebugProperties;
 
 /**
  * @author Bernhard Gruen
@@ -65,7 +66,8 @@ public class CoverageTransformer implements ClassFileTransformer {
 
 			// whitelist - only trace packages of that domain
 
-			if (!className.startsWith(MutationProperties.PROJECT_PREFIX
+			if (!className.startsWith(ConfigurationLocator
+					.getJavalancheConfiguration().getProjectPrefix()
 					.replace('.', '/'))) {
 				// System.err.println("Not on whitelist: " + className);
 				return classfileBuffer;
@@ -84,7 +86,7 @@ public class CoverageTransformer implements ClassFileTransformer {
 			ClassReader reader = new ClassReader(classfileBuffer);
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 			ClassVisitor cv = writer;
-			if (MutationProperties.TRACE_BYTECODE) {
+			if (DebugProperties.TRACE_BYTECODE) {
 				cv = new TraceClassVisitor(cv, new PrintWriter(
 						MutationPreMain.sysout));
 			}

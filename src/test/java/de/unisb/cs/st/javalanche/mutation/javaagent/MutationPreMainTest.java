@@ -6,6 +6,8 @@ import static org.easymock.EasyMock.*;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.coverage.CoverageTransformer;
@@ -16,14 +18,30 @@ import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.Mutation
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanProjectTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanVariablesTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.SysExitTransformer;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
+import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
 public class MutationPreMainTest {
 
+	private static JavalancheConfiguration configBack;
+	private static JavalancheTestConfiguration config;
+
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		configBack = ConfigurationLocator.getJavalancheConfiguration();
+		config = new JavalancheTestConfiguration();
+		ConfigurationLocator.setJavalancheConfiguration(config);
+	}
+
+	@AfterClass
+	public static void tearDownClass() {
+		ConfigurationLocator.setJavalancheConfiguration(configBack);
+	}
 	@Test
 	public void testTransformerIsAdded() {
 		Instrumentation mock = createMock(Instrumentation.class);
-		MutationProperties.RUN_MODE = CHECK_TESTS;
+		config.setRunMode(CHECK_TESTS);
 		mock.addTransformer((ClassFileTransformer) anyObject());
 		// mock.addTransformer((ClassFileTransformer) anyObject());
 		replay(mock);
@@ -34,7 +52,7 @@ public class MutationPreMainTest {
 	@Test
 	public void testMutaitonTestTransformerIsAdded() {
 		Instrumentation mock = createMock(Instrumentation.class);
-		MutationProperties.RUN_MODE = MUTATION_TEST;
+		config.setRunMode(MUTATION_TEST);
 		mock.addTransformer(isA(MutationFileTransformer.class));
 		replay(mock);
 		MutationPreMain.premain("", mock);
@@ -54,7 +72,7 @@ public class MutationPreMainTest {
 	@Test
 	public void testCoverageTransformerIsAdded() {
 		Instrumentation mock = createMock(Instrumentation.class);
-		MutationProperties.RUN_MODE = MUTATION_TEST_COVERAGE;
+		config.setRunMode(MUTATION_TEST_COVERAGE);
 		mock.addTransformer(isA(MutationFileTransformer.class));
 		mock.addTransformer(isA(CoverageTransformer.class));
 		replay(mock);
@@ -65,8 +83,7 @@ public class MutationPreMainTest {
 	@Test
 	public void testScanTransformerIsAdded() {
 		Instrumentation mock = createMock(Instrumentation.class);
-		MutationProperties.RUN_MODE = SCAN;
-		System.setProperty(MutationProperties.TEST_SUITE_KEY, "test");
+		config.setRunMode(SCAN);
 		mock.addTransformer(isA(MutationScanner.class));
 		replay(mock);
 		MutationPreMain.premain("", mock);
@@ -75,9 +92,9 @@ public class MutationPreMainTest {
 
 	@Test
 	public void testSysExitTransformerAdded() {
-		MutationProperties.RUN_MODE = CHECK_TESTS;
+		config.setRunMode(CHECK_TESTS);
 		checkIntegrateTestSuite();
-		MutationProperties.RUN_MODE = TEST_PERMUTED;
+		config.setRunMode(TEST_PERMUTED);
 		checkIntegrateTestSuite();
 
 	}
@@ -94,7 +111,7 @@ public class MutationPreMainTest {
 	@Test
 	public void testCoverageTransformerAdded() {
 		Instrumentation mock = createMock(Instrumentation.class);
-		MutationProperties.RUN_MODE = CREATE_COVERAGE_MULT;
+		config.setRunMode(CREATE_COVERAGE_MULT);
 		mock.addTransformer(isA(SysExitTransformer.class));
 		mock.addTransformer(isA(CoverageTransformer.class));
 		replay(mock);
@@ -105,7 +122,7 @@ public class MutationPreMainTest {
 	@Test
 	public void testScanProjectTransformerAdded() {
 		Instrumentation mock = createMock(Instrumentation.class);
-		MutationProperties.RUN_MODE = SCAN_PROJECT;
+		config.setRunMode(SCAN_PROJECT);
 		mock.addTransformer(isA(DistanceTransformer.class));
 		mock.addTransformer(isA(ScanVariablesTransformer.class));
 		mock.addTransformer(isA(ScanProjectTransformer.class));

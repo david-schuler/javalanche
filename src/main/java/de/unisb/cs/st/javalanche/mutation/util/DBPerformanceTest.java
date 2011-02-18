@@ -41,9 +41,7 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 public class DBPerformanceTest {
 
 	private static final String PREFIX = "PerformanceTestMutation";
-	static {
-		System.setProperty("mutation.package.prefix", PREFIX);
-	}
+
 	private static final int LIMIT = 1000;
 	private List<Mutation> mutations;
 
@@ -99,7 +97,7 @@ public class DBPerformanceTest {
 	private void testDelete() {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
-		MutationDeleter.deleteAllWithPrefix();
+		MutationDeleter.deleteAllWithPrefix(PREFIX);
 		stopWatch.stop();
 		System.out.printf("Deleting %d mutations took %s\n", LIMIT,
 				DurationFormatUtils.formatDurationHMS(stopWatch.getTime()));

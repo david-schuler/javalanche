@@ -2,35 +2,45 @@ package de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-//import static org.junit.matchers.JUnitMatchers.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestResult;
-import junit.framework.TestSuite;
-
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.internal.runners.SuiteMethod;
-import org.junit.runner.Description;
-import org.junit.runner.Runner;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestRunnable;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult.TestOutcome;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.AllTestsJunit3;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.DebugTestClass;
-import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.Junit3SuiteMultipleTestsSameName;
+import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
 public class Junit4MutationTestDriverTest {
 
 	private Junit4MutationTestDriver driver;
 
+	private static JavalancheConfiguration configBack;
+	private static JavalancheTestConfiguration config;
+
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		configBack = ConfigurationLocator.getJavalancheConfiguration();
+		config = new JavalancheTestConfiguration();
+		ConfigurationLocator.setJavalancheConfiguration(config);
+	}
+
+	@AfterClass
+	public static void tearDownClass() {
+		ConfigurationLocator.setJavalancheConfiguration(configBack);
+	}
+
 	@Before
 	public void setUp() {
-		MutationProperties.TEST_SUITE = AllTestsJunit3.class.getName();
+		config.setTestNames(AllTestsJunit3.class.getName());
 		driver = new Junit4MutationTestDriver();
 
 	}
@@ -58,7 +68,7 @@ public class Junit4MutationTestDriverTest {
 
 	@Test
 	public void testFailureMessage() {
-		MutationProperties.IGNORE_MESSAGES = false;
+		config.setStoreTestMessages(true); // TODO test false
 		SingleTestResult result2 = runTestHelper("testFail", TestOutcome.FAIL);
 		String message = result2.getTestMessage().getMessage();
 		assertThat(message, containsString(DebugTestClass.FAILURE_MESSAGE));
@@ -66,7 +76,7 @@ public class Junit4MutationTestDriverTest {
 
 	@Test
 	public void testErrorMessage() {
-		MutationProperties.IGNORE_MESSAGES = false;
+		config.setStoreTestMessages(true); // TODO test false
 		SingleTestResult result2 = runTestHelper("testError", TestOutcome.ERROR);
 		String message = result2.getTestMessage().getMessage();
 		System.out.println("MESSAGE " + message);
@@ -75,7 +85,7 @@ public class Junit4MutationTestDriverTest {
 
 	@Test
 	public void testErrorMessageWithTrace() {
-		MutationProperties.IGNORE_EXCEPTION_TRACES = false;
+		config.setStoreTraces(true); // TODO test false
 		SingleTestResult result2 = runTestHelper("testError", TestOutcome.ERROR);
 		String message = result2.getTestMessage().getMessage();
 		String trace1 = DebugTestClass.class.getCanonicalName();

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.IllegalClassFormatException;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,10 +19,12 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationsCollectorCl
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationScanner;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanVariablesTransformer;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.properties.TestProperties;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
+import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
 public class MutationScannerTest {
 
@@ -69,14 +72,20 @@ public class MutationScannerTest {
 		ScanVariablesTransformer sTransformer = new ScanVariablesTransformer();
 		sTransformer.scanClass(className.replace('.', '/'), byteArray);
 		sTransformer.write();
+		configBack = ConfigurationLocator.getJavalancheConfiguration();
+		config = new JavalancheTestConfiguration();
+		ConfigurationLocator.setJavalancheConfiguration(config);
+		config.setTestNames("noTest");
+		config.setProjectPrefix("org.jaxen");
 	}
 
-	@Before
-	public void setUp() throws Exception {
-		System.setProperty(MutationProperties.TEST_SUITE_KEY, "noTest");
-		MutationProperties.TEST_SUITE = "noTest";
-		MutationProperties.PROJECT_PREFIX = "org.jaxen";
-		// MutationProperties.IGNORE_REPLACE_VARIABLES = false;
+	private static JavalancheConfiguration configBack;
+	private static JavalancheTestConfiguration config;
+
+	@AfterClass
+	public static void tearDownClass() {
+		ConfigurationLocator.setJavalancheConfiguration(configBack);
+
 	}
 
 

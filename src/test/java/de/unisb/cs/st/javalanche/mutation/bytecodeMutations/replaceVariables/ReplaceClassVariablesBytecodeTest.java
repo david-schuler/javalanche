@@ -26,38 +26,41 @@ import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BaseBytecodeTest;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.ReplaceVariables3TEMPLATE;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
-public class ReplaceClassVariablesBytecodeTest extends BaseBytecodeTest {
+public class ReplaceClassVariablesBytecodeTest {
 
-	private Class<?> clazz;
+	private static JavalancheConfiguration configBack;
 
 	@BeforeClass
-	public static void setUpClass() {
-		MutationProperties.ENABLE_REPLACE_VARIABLES = true;
+	public static void setUpClass() throws Exception {
+		configBack = ConfigurationLocator.getJavalancheConfiguration();
 	}
 
 	@AfterClass
 	public static void tearDownClass() {
-		MutationProperties.ENABLE_REPLACE_VARIABLES = false;
+		ConfigurationLocator.setJavalancheConfiguration(configBack);
 	}
-	public ReplaceClassVariablesBytecodeTest() throws Exception {
-		super(ReplaceVariables3TEMPLATE.class);
-		verbose = true;
-		clazz = prepareTest();
-	}
+
 
 	@Test
 	public void testM1() throws Exception {
+		BaseBytecodeTest b = new BaseBytecodeTest(
+				ReplaceVariables3TEMPLATE.class);
+		JavalancheTestConfiguration config = b.getConfig();
+		config.setMutationType(MutationType.REPLACE_VARIABLE, true);
+		Class<?> clazz = b.prepareTest();
 		Method m1 = clazz.getMethod("m1");
-		checkUnmutated(1, m1, clazz);
+		b.checkUnmutated(1, m1, clazz);
 		Mutation m = new Mutation(clazz.getCanonicalName(), m1.getName(), 12,
 				0, MutationType.REPLACE_VARIABLE);
 		m.setOperatorAddInfo("b");
-		checkMutation(m, new Object[0], 2, m1, clazz);
+		b.checkMutation(m, new Object[0], 2, m1, clazz);
 		m.setOperatorAddInfo("c");
-		checkMutation(m, new Object[0], 3, m1, clazz);
+		b.checkMutation(m, new Object[0], 3, m1, clazz);
 	}
 }

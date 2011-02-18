@@ -9,7 +9,9 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.coverage.distance.classes.A;
@@ -17,13 +19,26 @@ import de.unisb.cs.st.javalanche.coverage.distance.classes.B;
 import de.unisb.cs.st.javalanche.coverage.distance.classes.B2;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.DistanceTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.DistanceTransformer.ClassEntry;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
+import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
 public class DistanceTest {
+	private static JavalancheConfiguration configBack;
+	private static JavalancheTestConfiguration config;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		configBack = ConfigurationLocator.getJavalancheConfiguration();
+		config = new JavalancheTestConfiguration();
+		ConfigurationLocator.setJavalancheConfiguration(config);
 	}
+
+	@AfterClass
+	public static void tearDownClass() {
+		ConfigurationLocator.setJavalancheConfiguration(configBack);
+	}
+
 
 	@Test
 	public void testDistance() throws IOException, IllegalClassFormatException {
@@ -85,7 +100,7 @@ public class DistanceTest {
 					+ ".class";
 			InputStream is = class1.getClassLoader().getResourceAsStream(path);
 			byte[] byteArray = IOUtils.toByteArray(is);
-			MutationProperties.PROJECT_PREFIX = "de.unisb.cs.st.javalanche.coverage.distance.classes";
+			config.setProjectPrefix("de.unisb.cs.st.javalanche.coverage.distance.classes");
 			dt.transform(null, class1.getCanonicalName(), null, null, byteArray);
 		}
 	}

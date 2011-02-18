@@ -21,21 +21,29 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.cla
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanVariablesTransformer;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.DebugProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.testutil.TestUtil;
+import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
 public class TempTest {
 
+	private static JavalancheConfiguration configBack;
+
 	@BeforeClass
-	public static void setUpClass() {
-		MutationProperties.ENABLE_REPLACE_VARIABLES = true;
+	public static void setUpClass() throws Exception {
+		configBack = ConfigurationLocator.getJavalancheConfiguration();
+		JavalancheTestConfiguration config = new JavalancheTestConfiguration();
+		config.setMutationType(MutationType.REPLACE_VARIABLE, true);
+		ConfigurationLocator.setJavalancheConfiguration(config);
 	}
 
 	@AfterClass
 	public static void tearDownClass() {
-		MutationProperties.ENABLE_REPLACE_VARIABLES = false;
+		ConfigurationLocator.setJavalancheConfiguration(configBack);
 	}
 
 	@Test
@@ -66,7 +74,7 @@ public class TempTest {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		ClassVisitor cc = cw;
 		// ClassVisitor cc = new CheckClassAdapter(cw);
-		if (MutationProperties.TRACE_BYTECODE) {
+		if (DebugProperties.TRACE_BYTECODE) {
 			cc = new TraceClassVisitor(cc, new PrintWriter(
 					MutationPreMain.sysout));
 		}

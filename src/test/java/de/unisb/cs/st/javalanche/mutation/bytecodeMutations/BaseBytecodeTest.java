@@ -20,34 +20,40 @@ import javax.tools.ToolProvider;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.classes.Triangle2TEMPLATE;
 import de.unisb.cs.st.javalanche.mutation.javaagent.MutationPreMain;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.ScanVariablesTransformer;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.DebugProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.runtime.MutationObserver;
 import de.unisb.cs.st.javalanche.mutation.util.AsmUtil;
+import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
 public class BaseBytecodeTest {
 
 	protected MutationObserver mutationObserver;
 
 	protected static final String TEMPLATE_STRING = "TEMPLATE";
-	protected final String simpleClassName;
-	protected final String packageName;
-	protected final String className;
-	protected final String templateFileName;
-	protected final String testClassName;
+	protected String simpleClassName;
+	protected String packageName;
+	protected String className;
+	protected String templateFileName;
+	protected String testClassName;
 
 	protected boolean verbose;
 
@@ -58,7 +64,17 @@ public class BaseBytecodeTest {
 	private static final int[] linenumbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
 			11, 12 };
 
+	protected JavalancheTestConfiguration config = new JavalancheTestConfiguration();
+
 	public BaseBytecodeTest(Class<?> c) {
+		initVariables(c);
+		mutationObserver = new MutationObserver();
+		ByteCodeTestUtils.generateCoverageData(className, testCaseNames,
+				linenumbers);
+		ByteCodeTestUtils.deleteTestMutationResult(className);
+	}
+
+	public void initVariables(Class<?> c) {
 		String name = c.getName();
 		className = name.replace(TEMPLATE_STRING, "");
 		simpleClassName = className.substring(className.lastIndexOf('.') + 1);
@@ -71,6 +87,10 @@ public class BaseBytecodeTest {
 	}
 
 	public Class<?> prepareTest() throws Exception {
+		JavalancheConfiguration configBack = ConfigurationLocator
+				.getJavalancheConfiguration();
+
+		ConfigurationLocator.setJavalancheConfiguration(config);
 		String filename = templateFileName;
 		File outDir = new File(OUT_DIR, packageName.replace('.', '/'));
 		File classFile = new File(outDir, simpleClassName + ".class");
@@ -80,9 +100,10 @@ public class BaseBytecodeTest {
 		List<Mutation> pos = scan(classFile);
 		System.out.println("SCAN: " + pos.size());
 		// analyze(outFile);
-		redefineMutations(className);
+		redefineMutations(className, config);
 		transform(classFile);
 		Class<?> clazz = loadClass(outDir);
+		ConfigurationLocator.setJavalancheConfiguration(configBack);
 		return clazz;
 	}
 
@@ -118,7 +139,7 @@ public class BaseBytecodeTest {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		ClassVisitor cc = cw;
 		// ClassVisitor cc = new CheckClassAdapter(cw);
-		if (MutationProperties.TRACE_BYTECODE) {
+		if (DebugProperties.TRACE_BYTECODE) {
 			cc = new TraceClassVisitor(cc, new PrintWriter(
 					MutationPreMain.sysout));
 		}
@@ -129,13 +150,7 @@ public class BaseBytecodeTest {
 		return mpc.getPossibilities();
 	}
 
-	@Before
-	public void setup() {
-		mutationObserver = new MutationObserver();
-		ByteCodeTestUtils.generateCoverageData(className, testCaseNames,
-				linenumbers);
-		ByteCodeTestUtils.deleteTestMutationResult(className);
-	}
+
 
 	@After
 	public void tearDown() {
@@ -226,7 +241,7 @@ public class BaseBytecodeTest {
 
 	}
 
-	protected void checkUnmutated(Object expectedOutput, Method method,
+	public void checkUnmutated(Object expectedOutput, Method method,
 			Class<?> clazz) throws Exception {
 		Object instance = clazz.newInstance();
 		Object invoke = method.invoke(instance);
@@ -235,12 +250,12 @@ public class BaseBytecodeTest {
 
 	}
 
-	protected void checkUnmutated(Object input, Object expectedOutput,
+	public void checkUnmutated(Object input, Object expectedOutput,
 			Method method, Class<?> clazz) throws Exception {
 		checkUnmutated(new Object[] { input }, expectedOutput, method, clazz);
 	}
 
-	protected void checkUnmutated(Object[] input, Object expectedOutput,
+	public void checkUnmutated(Object[] input, Object expectedOutput,
 			Method method, Class<?> clazz) throws Exception {
 		Object instance = clazz.newInstance();
 		Object invoke = method.invoke(instance, input);
@@ -256,7 +271,7 @@ public class BaseBytecodeTest {
 	// + method + " with input " + input + ".", expectedOutput, invoke);
 	// }
 
-	protected void checkMutation(int lineNumber, MutationType type,
+	public void checkMutation(int lineNumber, MutationType type,
 			int mutationForLine, Object expectedResult, Method method,
 			Class<?> clazz) throws Exception {
 		checkMutation(lineNumber, type, mutationForLine, new Object[0],
@@ -264,7 +279,7 @@ public class BaseBytecodeTest {
 
 	}
 
-	protected void checkMutation(int lineNumber, MutationType type,
+	public void checkMutation(int lineNumber, MutationType type,
 			int mutationForLine, int input, Object expectedResult,
 			Method method, Class<?> clazz) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException,
@@ -273,7 +288,7 @@ public class BaseBytecodeTest {
 				new Object[] { input }, expectedResult, method, clazz);
 	}
 
-	protected void checkMutation(int lineNumber, MutationType type,
+	public void checkMutation(int lineNumber, MutationType type,
 			int mutationForLine, Object[] input, Object expectedResult,
 			Method method, Class<?> clazz) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException,
@@ -283,7 +298,7 @@ public class BaseBytecodeTest {
 		checkMutation(queryMutation, input, expectedResult, method, clazz);
 	}
 
-	protected void checkMutation(Mutation mutation, Object input,
+	public void checkMutation(Mutation mutation, Object input,
 			Object expectedResult, Method method, Class<?> clazz)
 			throws IllegalArgumentException, IllegalAccessException,
 			InvocationTargetException, InstantiationException {
@@ -291,14 +306,14 @@ public class BaseBytecodeTest {
 				clazz);
 	}
 
-	protected void checkMutation(Mutation mutation, Object expectedResult,
+	public void checkMutation(Mutation mutation, Object expectedResult,
 			Method method, Class<?> clazz) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException,
 			InstantiationException {
 		checkMutation(mutation, new Object[0], expectedResult, method, clazz);
 	}
 
-	protected void checkMutation(Mutation mutation, Object[] input,
+	public void checkMutation(Mutation mutation, Object[] input,
 			Object expectedResult, Method method, Class<?> clazz)
 			throws IllegalArgumentException, IllegalAccessException,
 			InvocationTargetException, InstantiationException {
@@ -312,6 +327,14 @@ public class BaseBytecodeTest {
 		assertEquals(
 				"Expected different result when mutation is enabled. Mutation"
 						+ m, expectedResult, result);
+	}
+
+	public JavalancheTestConfiguration getConfig() {
+		return config;
+	}
+
+	public void setConfig(JavalancheTestConfiguration config) {
+		this.config = config;
 	}
 
 }

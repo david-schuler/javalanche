@@ -21,7 +21,7 @@ package de.unisb.cs.st.javalanche.coverage.experiment;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import static de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType.*;
 
@@ -490,7 +490,8 @@ public class ManualClassifications {
 	}
 
 	public static Map<Mutation, Boolean> getManualClassification() {
-		String prefix = MutationProperties.PROJECT_PREFIX;
+		String prefix = ConfigurationLocator.getJavalancheConfiguration()
+				.getProjectPrefix();
 		Project[] values = Project.values();
 		for (Project project : values) {
 			if (prefix.equals(project.getPrefix())

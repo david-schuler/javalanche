@@ -5,7 +5,9 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunListener;
@@ -13,13 +15,15 @@ import org.junit.runner.notification.RunNotifier;
 
 import com.google.common.base.Joiner;
 
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
+import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.Junit3Suite;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.Junit3TestCase2;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.Junit4Suite;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.Junit4TestCase2;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.TestCaseForJunit4Test;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.TestCaseForJunitTest;
+import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
 public class JavalancheWrapperTestSuiteTest {
 
@@ -43,13 +47,27 @@ public class JavalancheWrapperTestSuiteTest {
 	public void setUp() throws Exception {
 	}
 
+	private static JavalancheConfiguration configBack;
+	private static JavalancheTestConfiguration config;
+
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		configBack = ConfigurationLocator.getJavalancheConfiguration();
+		config = new JavalancheTestConfiguration();
+		ConfigurationLocator.setJavalancheConfiguration(config);
+	}
+
+	@AfterClass
+	public static void tearDownClass() {
+		ConfigurationLocator.setJavalancheConfiguration(configBack);
+	}
+
 	private void testHelper(Class<?> testClass, int expecedTests) {
 		testHelper(new Class<?>[] { testClass }, expecedTests);
 	}
 
 	private void testHelper(Class<?>[] testClasses, int expecedTests) {
-		String back = MutationProperties.TEST_SUITE;
-		MutationProperties.TEST_SUITE = getTestNames(testClasses);
+		config.setTestNames(getTestNames(testClasses));
 		JavalancheWrapperTestSuite javalancheWrapperTestSuite = new JavalancheWrapperTestSuite(
 				null);
 		RunNotifier notifier = new RunNotifier();
@@ -59,7 +77,6 @@ public class JavalancheWrapperTestSuiteTest {
 		// javalancheWrapperTestSuite.run(notifier);
 		// assertEquals(expecedTests, tc.getNumberOfTests());
 		assertEquals(expecedTests, testCount);
-		MutationProperties.TEST_SUITE = back;
 	}
 
 	private String getTestNames(Class<?>[] testClasses) {
@@ -112,21 +129,22 @@ public class JavalancheWrapperTestSuiteTest {
 
 	@Test
 	public void testMethodPropertyJunit3() {
-		MutationProperties.TEST_METHODS = "true";
-		String p = "de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.";
-		MutationProperties.TEST_SUITE = p + "DebugTestClass" + ".testObject";
-		// ":" +p+"AllTestsJunit3";
-		// JavalancheWrapperTestSuite javalancheWrapperTestSuite = new
-		// JavalancheWrapperTestSuite(
-		// null);
-		// int testCaseCount = javalancheWrapperTestSuite.testCount();
-		// assertEquals("Expected different number of testcases", 2,
-		// testCaseCount);
-		Junit4MutationTestDriver driver = new Junit4MutationTestDriver();
-
-		MutationProperties.TEST_METHODS = null;
-		MutationProperties.TEST_SUITE = null;
-
+		// MutationProperties.TEST_METHODS = "true";
+		// String p =
+		// "de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.";
+		// MutationProperties.TEST_SUITE = p + "DebugTestClass" + ".testObject";
+		// // ":" +p+"AllTestsJunit3";
+		// // JavalancheWrapperTestSuite javalancheWrapperTestSuite = new
+		// // JavalancheWrapperTestSuite(
+		// // null);
+		// // int testCaseCount = javalancheWrapperTestSuite.testCount();
+		// // assertEquals("Expected different number of testcases", 2,
+		// // testCaseCount);
+		// Junit4MutationTestDriver driver = new Junit4MutationTestDriver();
+		//
+		// MutationProperties.TEST_METHODS = null;
+		// MutationProperties.TEST_SUITE = null;
+		// TODO Reintroduce Test methods or delete
 	}
 
 }

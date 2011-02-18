@@ -37,13 +37,13 @@ import org.junit.Assert;
 
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
-import de.unisb.cs.st.javalanche.mutation.properties.MutationProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
+import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
 /**
  * 
@@ -113,7 +113,6 @@ public class ByteCodeTestUtils {
 		session.close();
 	}
 
-
 	public static void deleteMutations(String className) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -149,7 +148,6 @@ public class ByteCodeTestUtils {
 		return testCaseNames;
 	}
 
-
 	/**
 	 * Tests if exactly one testMethod failed because of the mutation.
 	 * 
@@ -183,7 +181,8 @@ public class ByteCodeTestUtils {
 				nonNulls >= mList.size() / 2);
 	}
 
-	public static void redefineMutations(String testClassName) {
+	public static void redefineMutations(String testClassName,
+			JavalancheTestConfiguration c) {
 		List<Long> ids = new ArrayList<Long>();
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -203,17 +202,7 @@ public class ByteCodeTestUtils {
 		}
 		File file = new File(DEFAULT_OUTPUT_FILE);
 		Io.writeFile(sb.toString(), file);
-		MutationProperties.MUTATION_FILE_NAME = file.getAbsolutePath();
+		c.setMutationIdFile(file.getAbsolutePath());
 	}
 
-	public static void doSetup(String classname,
-			CollectorByteCodeTransformer collector) {
-		deleteMutations(classname);
-		generateTestDataInDB(System.getProperty("user.dir")
-				+ "/target/classes/" + classname.replace('.', '/') + ".class",
-				collector);
-		System.setProperty("mutation.run.mode", "mutation");
-		System.setProperty("invariant.mode", "off");
-		redefineMutations(classname);
-	}
 }
