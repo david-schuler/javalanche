@@ -88,7 +88,7 @@ public class MutationMX implements MutationMXMBean {
 		List<Mutation> mutationListInstance = instance.getMutations();
 		List<Mutation> mutationList = new ArrayList<Mutation>();
 		String idFile = ConfigurationLocator.getJavalancheConfiguration()
-				.getMutationIdFile();
+				.getMutationIdFile().getName();
 
 		if (idFile != null) {
 			File file = new File(idFile);

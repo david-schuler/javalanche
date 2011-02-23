@@ -14,7 +14,7 @@ public class TestDefaultProperties {
 		PropertyConfiguration cfg = new PropertyConfiguration();
 		assertFalse(DebugProperties.TRACE_BYTECODE);
 		assertTrue(cfg.stopAfterFirstFail());
-		assertThat(cfg.getDefaultTimeoutInSeconds(), is(10));
+		assertThat(cfg.getTimeoutInSeconds(), is(10));
 		assertFalse(cfg.storeTestMessages());
 		assertFalse(cfg.storeTraces());
 		assertThat(cfg.getSaveInterval(), is(50));

@@ -3,6 +3,7 @@ package de.unisb.cs.st.javalanche.mutation.javaagent;
 import static de.unisb.cs.st.javalanche.mutation.properties.RunMode.*;
 import static org.easymock.EasyMock.*;
 
+import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 
@@ -26,18 +27,23 @@ public class MutationPreMainTest {
 
 	private static JavalancheConfiguration configBack;
 	private static JavalancheTestConfiguration config;
+	private static File idFile;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		configBack = ConfigurationLocator.getJavalancheConfiguration();
 		config = new JavalancheTestConfiguration();
 		ConfigurationLocator.setJavalancheConfiguration(config);
+		idFile = File.createTempFile("javalanche-temp-file", "txt", new File(
+				"."));
+		idFile.deleteOnExit();
 	}
 
 	@AfterClass
 	public static void tearDownClass() {
 		ConfigurationLocator.setJavalancheConfiguration(configBack);
 	}
+
 	@Test
 	public void testTransformerIsAdded() {
 		Instrumentation mock = createMock(Instrumentation.class);
@@ -53,6 +59,7 @@ public class MutationPreMainTest {
 	public void testMutaitonTestTransformerIsAdded() {
 		Instrumentation mock = createMock(Instrumentation.class);
 		config.setRunMode(MUTATION_TEST);
+		config.setMutationIdFile(idFile);
 		mock.addTransformer(isA(MutationFileTransformer.class));
 		replay(mock);
 		MutationPreMain.premain("", mock);
@@ -73,6 +80,7 @@ public class MutationPreMainTest {
 	public void testCoverageTransformerIsAdded() {
 		Instrumentation mock = createMock(Instrumentation.class);
 		config.setRunMode(MUTATION_TEST_COVERAGE);
+		config.setMutationIdFile(idFile);
 		mock.addTransformer(isA(MutationFileTransformer.class));
 		mock.addTransformer(isA(CoverageTransformer.class));
 		replay(mock);

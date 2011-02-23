@@ -202,7 +202,7 @@ public class ByteCodeTestUtils {
 		}
 		File file = new File(DEFAULT_OUTPUT_FILE);
 		Io.writeFile(sb.toString(), file);
-		c.setMutationIdFile(file.getAbsolutePath());
+		c.setMutationIdFile(file);
 	}
 
 }

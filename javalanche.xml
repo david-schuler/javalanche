@@ -1,6 +1,5 @@
 <project name="Javalanche">
 	
-
 <!-- Properties can either be supplied on the command line or specified here -->
 <!--
 	<property name="prefix" value=""/>
@@ -8,7 +7,7 @@
 	<property name="javalanche" value=""/>
 	<property name="cp" value=""/>
 -->
-<!-- Nothing need to be changed after this line -->
+
 
 	<property name="project.prefix" value="${prefix}"/>
 	<property name="project.tests" value="${tests}"/>
@@ -17,10 +16,14 @@
 	
 		
 	<import file="${javalanche.location}/import.xml"/>
-	<import file="${javalanche.location}/src/main/resources/invariant-build.xml" />
 	<import file="${javalanche.location}/src/main/resources/mutation-build.xml" />
+
+<!--	<import file="${javalanche.location}/src/main/resources/mutation-add-tasks.xml"/> -->
 	
-	
+<!-- To compute the coverage or invariant impact of the mutations, one of these files has to be included. -->
+<!--	<import file="${javalanche.location}/src/main/resources/invariant-build.xml" /> -->
+<!--	<import file="${javalanche.location}/src/main/resources/coverage-include.xml" /> -->
+
 	<!-- 
 	Task that is called by the different stages of Javalanche.
 	This task should not be called directly.
@@ -37,7 +40,7 @@
 			
 			<formatter type="xml"/>
 			<formatter usefile="true" type="plain"/>
-			<test todir="mutation-files/junit-reports" name="${javalanche.wrapper.testsuite}" />
+			<test todir="${javalanche.out.dir}/junit-reports" name="${javalanche.wrapper.testsuite}" />
 		</junit>
 	</target>	
 
@@ -58,6 +61,7 @@
 	<target name="createSingleTask" >
 		<antcall target="createTasksFixed">
 			<param name="javalanche.fixed.number.of.tasks" value="1" />
+			<param name="javalanche.task.file.name" value="${javalanche.out.dir}/${project.prefix}_single-task.txt" /> 
 		</antcall>
 	</target>
 	

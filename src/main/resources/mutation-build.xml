@@ -4,7 +4,8 @@
 	<property name="mutation.base.dir" value="${javalanche.location}" />
 	<property name="javalanche.mutation.javaagent" value="${javalanche.dist.dir}/javaagent.jar" />
 	<property name="mutation.jars.dir" value="${javalanche.dist.dir}/lib/" />
-	<property name="javalanche.mutation.output.dir" value="${basedir}/mutation-files" />
+	<property name="javalanche.out.dir" value="${basedir}/mutation-files" />
+	<property name="javalanche.mutation.output.dir" value="${javalanche.out.dir}" />
 		
 		
 	<condition property="javalanche.maxmemory" value="2048m">
@@ -24,10 +25,8 @@
 		 </fileset>
 	</path>
 	
-	<import file="./coverage-include.xml"/>
-	<import file="./mutation-add-tasks.xml"/>
 	
-	<target name="cleanJavalanche" description="* Delete all files produced by javalanche.">
+	<target name="cleanJavalanche" description="* Delete all files produced by Javalanche.">
 		<delete dir="${javalanche.mutation.output.dir}"/>
 	</target>
 	
@@ -87,8 +86,8 @@
 		</antcall>
 	</target>
 
-	<target name="scanProject" depends="_scanProject,_scanForTests" description="* Scan this project for classes to mutate and tests, that are not mutated. A different start directroy can be supplied with property -Djavalanche.test.base.dir=. ">
-	<!-- To this end the subdirectories of the current directory are searched for tests.  The format of the exclude file is described in the documentation. This task produces an exclude file : mutation-files/exclude.txt.-->
+	<target name="scanProject" depends="_scanProject,_scanForTests" description="* Scan this project for classes to mutate and tests, that are not mutated. A different start directory can be supplied with property -Djavalanche.test.base.dir=. ">
+	<!-- To this end the subdirectories of the current directory are searched for tests.  The format of the exclude file is described in the documentation. This task produces an exclude file : ${javalanche.out.dir}/exclude.txt.-->
 	</target>
 	<target name="_scanProject">
 		<property name="scan.project.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
@@ -156,8 +155,7 @@
 		
 		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="javalanche.project.prefix" value="${project.prefix}" />
-			<sysproperty key="mutation.number.of.tasks" value="100" />
-			<sysproperty key="mutation.mutations.per.task" value="400" />
+			<sysproperty key="javalanche.mutations.per.task" value="400" />
 			<sysproperty key="javalanche.mutation.output.dir" value="${javalanche.mutation.output.dir}" />
 			<classpath>
 				<path refid="mutation.classpath" />
@@ -173,24 +171,17 @@
 			<isset property="javalanche.fixed.number.of.tasks"/>
 	  	</not>
 	  </condition>
+	 <condition property="javalanche.task.file.name" value="">
+	  	<not>
+			<isset property="javalanche.task.file.name"/>
+	  	</not>
+	  </condition>
 		<mkdir dir="${javalanche.mutation.output.dir}"/>
 		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="javalanche.project.prefix" value="${project.prefix}" />
 			<sysproperty key="javalanche.fixed.number.of.tasks" value="${javalanche.fixed.number.of.tasks}" />
 			<sysproperty key="javalanche.mutation.output.dir" value="${javalanche.mutation.output.dir}" />
-			<classpath>
-				<path refid="mutation.classpath" />
-			</classpath>
-		</java>
-	</target>
-	
-	
-    <target name="createTasksFew" depends="mutationDir">
-		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="${javalanche.maxmemory}" fork="true">
-			<sysproperty key="javalanche.project.prefix" value="${project.prefix}" />
-			<sysproperty key="mutation.number.of.tasks" value="10" />
-			<sysproperty key="mutation.mutations.per.task" value="10" />
-			<sysproperty key="javalanche.mutation.output.dir" value="${javalanche.mutation.output.dir}" />
+			<sysproperty key="javalanche.task.file.name" value="${javalanche.task.file.name}" />
 			<classpath>
 				<path refid="mutation.classpath" />
 			</classpath>
@@ -308,7 +299,7 @@
 	
 	<target name="deleteMutations" description="* Delete mutations for this project.">
 		<echo> Deleting mutations with prefix: ${project.prefix} </echo>
-		<delete dir="mutation-files/coverage-data" />
+		<delete dir="${javalanche.out.dir}/coverage-data" />
 		<java classname="de.unisb.cs.st.javalanche.mutation.util.MutationDeleter" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="javalanche.project.prefix" value="${project.prefix}" />
 			<classpath>
@@ -316,6 +307,7 @@
 			</classpath>
 		</java>
 	</target>
+	
 	
 	<target name="runMake">
 		<exec executable="make" spawn="false">

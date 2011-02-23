@@ -24,10 +24,28 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 
 public interface JavalancheConfiguration {
 
+	/**
+	 * Returns true when whether mutations of given type should be enabled.
+	 * 
+	 * @param t
+	 *            the mutation type to check.
+	 * @return true, when whether mutations of given type should be enabled.
+	 */
 	boolean enableMutationType(MutationType t);
 
-	int getDefaultTimeoutInSeconds();
+	/**
+	 * Returns the timeout for one mutation in seconds.
+	 * 
+	 * @return the timeout for one mutation in seconds.
+	 */
+	int getTimeoutInSeconds();
 
+	/**
+	 * Returns a string of test names that should be excluded from mutation
+	 * testing. TODO
+	 * 
+	 * @return
+	 */
 	String getExcludedTests();
 
 	File getExcludeFile();
@@ -46,7 +64,7 @@ public interface JavalancheConfiguration {
 	 * @return
 	 */
 	// TODO make it complete file
-	String getMutationIdFile();
+	File getMutationIdFile();
 
 	File getOutputDir();
 
@@ -65,8 +83,6 @@ public interface JavalancheConfiguration {
 	String getTestNames();
 
 	int getTestPermutations();
-
-	boolean singleTaskMode();
 
 	boolean stopAfterFirstFail();
 

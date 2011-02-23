@@ -113,10 +113,10 @@
 	
 
 	<target name="createCoverageDataClean" description="* Create coverage data for an original unmutated run ,and deletes files" depends="mutationDir">
-		<delete file="mutation-files/tracer/profiler-map.xml"/>
-		<delete file="mutation-files/tracer/dont-instrument-set.xml"/>
-		<delete dir="mutation-files/tracer/line/0"/>
-		<delete dir="mutation-files/tracer/data/0"/>
+		<delete file="javalanche.out.dir/tracer/profiler-map.xml"/>
+		<delete file="${javalanche.out.dir}/tracer/dont-instrument-set.xml"/>
+		<delete dir="${javalanche.out.dir}/tracer/line/0"/>
+		<delete dir="${javalanche.out.dir}/tracer/data/0"/>
 		<antcall target="createCoverageData"/>
 	</target>
 

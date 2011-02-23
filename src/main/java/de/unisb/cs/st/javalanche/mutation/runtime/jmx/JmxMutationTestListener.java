@@ -55,7 +55,7 @@ public class JmxMutationTestListener implements MutationTestListener {
 	private static int getRunNumber() {
 		int result = -1;
 		String run = ConfigurationLocator.getJavalancheConfiguration()
-				.getMutationIdFile();
+				.getMutationIdFile().getName();
 		int start = run.lastIndexOf('-') + 1;
 		int end = run.lastIndexOf(".txt");
 		if (start > -1 && end > 0) {

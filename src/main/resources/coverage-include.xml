@@ -57,13 +57,13 @@
 	
 	
 	<target name="cleanCoverage" description="* Delete all data produced by the coverage tasks" >
-		<delete dir="mutation-files/tracer/"/>
+		<delete dir="${javalanche.out.dir}/tracer/"/>
 	</target>
 	
 	
 	<target name="cleanTrace" description="* Delete the trace line coverage and return value data" >
-		<delete dir="mutation-files/tracer/line/"/>
-		<delete dir="mutation-files/tracer/data/"/>
+		<delete dir="${javalanche.out.dir}/tracer/line/"/>
+		<delete dir="${javalanche.out.dir}/tracer/data/"/>
 	</target>
 	
 	

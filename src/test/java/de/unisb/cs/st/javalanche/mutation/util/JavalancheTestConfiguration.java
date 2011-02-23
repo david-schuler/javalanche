@@ -13,10 +13,10 @@ public class JavalancheTestConfiguration implements JavalancheConfiguration {
 
 	JavalancheDefaultConfiguration d = new JavalancheDefaultConfiguration();
 	private String excludedTests = d.getExcludedTests();
-	private int timeOut = d.getDefaultTimeoutInSeconds();
+	private int timeOut = d.getTimeoutInSeconds();
 	private File excludedFile = d.getExcludeFile();
 	private String ignorePattern = d.getIgnorePattern();
-	private String mutationIdFile = d.getMutationIdFile();
+	private File mutationIdFile = d.getMutationIdFile();
 	private File outputDir = d.getOutputDir();
 	private String projectPrefix = d.getProjectPrefix();
 	private int saveIntervall = d.getSaveInterval();
@@ -26,7 +26,6 @@ public class JavalancheTestConfiguration implements JavalancheConfiguration {
 	private File testMapFile = d.getTestMap();
 	private String testNames = d.getTestNames();
 	private int testPermutations = d.getTestPermutations();
-	private boolean singleTaskMode = d.singleTaskMode();
 	private boolean stopAfterFirstFail = d.stopAfterFirstFail();
 	private boolean storeTestMessages = d.storeTestMessages();
 	private boolean storeTraces = d.storeTraces();
@@ -54,7 +53,7 @@ public class JavalancheTestConfiguration implements JavalancheConfiguration {
 	}
 
 	@Override
-	public int getDefaultTimeoutInSeconds() {
+	public int getTimeoutInSeconds() {
 		return timeOut;
 	}
 
@@ -74,7 +73,7 @@ public class JavalancheTestConfiguration implements JavalancheConfiguration {
 	}
 
 	@Override
-	public String getMutationIdFile() {
+	public File getMutationIdFile() {
 		return mutationIdFile;
 	}
 
@@ -123,10 +122,6 @@ public class JavalancheTestConfiguration implements JavalancheConfiguration {
 		return testPermutations;
 	}
 
-	@Override
-	public boolean singleTaskMode() {
-		return singleTaskMode;
-	}
 
 	@Override
 	public boolean stopAfterFirstFail() {
@@ -164,7 +159,7 @@ public class JavalancheTestConfiguration implements JavalancheConfiguration {
 		this.ignorePattern = ignorePattern;
 	}
 
-	public void setMutationIdFile(String mutationIdFile) {
+	public void setMutationIdFile(File mutationIdFile) {
 		this.mutationIdFile = mutationIdFile;
 	}
 
@@ -202,10 +197,6 @@ public class JavalancheTestConfiguration implements JavalancheConfiguration {
 
 	public void setTestPermutations(int testPermutations) {
 		this.testPermutations = testPermutations;
-	}
-
-	public void setSingleTaskMode(boolean singleTaskMode) {
-		this.singleTaskMode = singleTaskMode;
 	}
 
 	public void setStopAfterFirstFail(boolean stopAfterFirstFail) {

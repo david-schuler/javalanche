@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -42,28 +44,48 @@ public class MutationForRunTest {
 
 	private static MutationsForRun mfr;
 
-	private static File f;
+	private static File tempFile;
+
+	private JavalancheConfiguration back;
+
+	private JavalancheTestConfiguration cfg;
+
+	private static File testDir;
 
 	@BeforeClass
 	public static void setupClass() throws IOException {
+		testDir = new File("target/tmp");
+		testDir.mkdirs();
 		QueryManager.save(m1);
 		QueryManager.save(m3);
 		QueryManager.save(m2);
 		MutationTestResult mutationTestResult = new MutationTestResult();
 		mutationWithResult.setMutationResult(mutationTestResult);
 		QueryManager.save(mutationWithResult);
-		f = File.createTempFile("test", "test");
-		BufferedWriter w = new BufferedWriter(new FileWriter(f));
+		tempFile = File.createTempFile("test", "test");
+		BufferedWriter w = new BufferedWriter(new FileWriter(tempFile));
 		w.write(m1.getId() + "\n");
 		w.write(m2.getId() + "\n");
 		w.flush();
 		w.close();
-		mfr = new MutationsForRun(f.getAbsolutePath(), true);
+		mfr = new MutationsForRun(tempFile, true);
 	}
 
 	@AfterClass
 	public static void tearDownClass() {
 		QueryManager.deleteMutations(MutationForRunTest.class.getName());
+	}
+
+	@Before
+	public void setup() {
+		back = ConfigurationLocator.getJavalancheConfiguration();
+		cfg = new JavalancheTestConfiguration();
+		ConfigurationLocator.setJavalancheConfiguration(cfg);
+	}
+
+	@After
+	public void tearDown() {
+		ConfigurationLocator.setJavalancheConfiguration(back);
 	}
 
 	@Test
@@ -93,7 +115,7 @@ public class MutationForRunTest {
 		JavalancheConfiguration back = ConfigurationLocator
 				.getJavalancheConfiguration();
 		JavalancheTestConfiguration cfg = new JavalancheTestConfiguration();
-		cfg.setMutationIdFile(f.getAbsolutePath());
+		cfg.setMutationIdFile(tempFile);
 		ConfigurationLocator.setJavalancheConfiguration(cfg);
 
 		MutationsForRun fromDefaultLocation = MutationsForRun
@@ -111,7 +133,7 @@ public class MutationForRunTest {
 		w.write(mutationWithResult.getId() + "\n");
 		w.flush();
 		w.close();
-		MutationsForRun mfr2 = new MutationsForRun(f2.getAbsolutePath(), true);
+		MutationsForRun mfr2 = new MutationsForRun(f2, true);
 		List<Mutation> mutations = mfr2.getMutations();
 		assertEquals("Expected mutation with result to be filtered", 1,
 				mutations.size());
@@ -125,7 +147,7 @@ public class MutationForRunTest {
 		w.write(mutationWithResult.getId() + "\n");
 		w.flush();
 		w.close();
-		MutationsForRun mfr2 = new MutationsForRun(f2.getAbsolutePath(), false);
+		MutationsForRun mfr2 = new MutationsForRun(f2, false);
 		List<Mutation> mutations = mfr2.getMutations();
 		assertEquals("Expected mutation with result not to be filtered", 2,
 				mutations.size());
@@ -136,43 +158,50 @@ public class MutationForRunTest {
 		File fEmpty = File.createTempFile("testEmpty", "testEmpty");
 		fEmpty.deleteOnExit();
 		assertTrue(fEmpty.exists());
-		MutationsForRun mutationsForRun = new MutationsForRun(
-				fEmpty.getAbsolutePath(), true);
+		MutationsForRun mutationsForRun = new MutationsForRun(fEmpty, true);
 		List<Mutation> mutations = mutationsForRun.getMutations();
 		assertThat(mutations.size(), is(0));
 	}
 
 	@Test
 	public void testFileDoesNotExist() throws IOException {
-		MutationsForRun mutationsForRun = new MutationsForRun(
-				"non_exisiting_file", true);
-		List<Mutation> mutations = mutationsForRun.getMutations();
-		assertThat(mutations.size(), is(0));
+		String name = "non_exisiting_file";
+		try {
+			new MutationsForRun(new File(name), true);
+			fail("Expected exception");
+		} catch (RuntimeException e) {
+			assertThat(
+					e.getMessage(),
+					containsString("Given id file does not exist:"));
+			assertThat(e.getMessage(), containsString(name));
+		}
 	}
 
 	@Test
 	public void testNull() throws IOException {
-		MutationsForRun mutationsForRun = new MutationsForRun(null, true);
-		List<Mutation> mutations = mutationsForRun.getMutations();
-		assertThat(mutations.size(), is(0));
+		try {
+			MutationsForRun mutationsForRun = new MutationsForRun(null, true);
+			fail("Expected exception");
+		} catch (RuntimeException e) {
+			assertThat(
+					e.getMessage(),
+					containsString("Given id file does not exist:"));
+			assertThat(e.getMessage(), containsString("null"));
+		}
+	
 	}
 
 	@Test
-	public void testSingleTask() throws IOException {
-		JavalancheConfiguration back = ConfigurationLocator
-				.getJavalancheConfiguration();
-		JavalancheTestConfiguration cfg = new JavalancheTestConfiguration();
-		cfg.setSingleTaskMode(true);
+	public void testConfigFileLocation() throws IOException {
+		File f = new File(testDir, "mutation-task-org_test-01.txt");
+		cfg.setMutationIdFile(f);
 		cfg.setProjectPrefix("org.test");
-		ConfigurationLocator.setJavalancheConfiguration(cfg);
-		File f = new File("mutation-files/mutation-task-org_test-01.txt");
 		BufferedWriter w = new BufferedWriter(new FileWriter(f));
 		w.write(m1.getId() + "\n");
 		w.write(mutationWithResult.getId() + "\n");
 		w.flush();
 		w.close();
 		MutationsForRun mfr2 = MutationsForRun.getFromDefaultLocation();
-		ConfigurationLocator.setJavalancheConfiguration(back);
 		f.delete();
 		List<Mutation> mutations = mfr2.getMutations();
 		assertEquals("Expected mutation with result not to be filtered", 1,
@@ -180,22 +209,18 @@ public class MutationForRunTest {
 	}
 
 	@Test
-	public void testSingleTaskNonExistinFile() throws IOException {
-		JavalancheConfiguration back = ConfigurationLocator
-				.getJavalancheConfiguration();
-		JavalancheTestConfiguration cfg = new JavalancheTestConfiguration();
-		cfg.setSingleTaskMode(true);
+	public void testSingleTaskNonExistingFile() throws IOException {
+		String fileName = "mutation-task-org_test2-01.txt";
+		File f2 = new File(testDir, fileName);
+		cfg.setMutationIdFile(f2);
 		cfg.setProjectPrefix("org.test");
-		ConfigurationLocator.setJavalancheConfiguration(cfg);
-		File f2 = new File("mutation-files/mutation-task-org_test2-01.txt");
 		try {
-			MutationsForRun mfr2 = MutationsForRun.getFromDefaultLocation();
+			MutationsForRun.getFromDefaultLocation();
 			fail("Expected exception");
 		} catch (RuntimeException e) {
-			// ok
+			assertThat(e.getMessage(),
+					containsString("Given id file does not exist:"));
+			assertThat(e.getMessage(), containsString(fileName));
 		}
-		ConfigurationLocator.setJavalancheConfiguration(back); // TODO when test
-																// fails config
-																// is not reset.
 	}
 }

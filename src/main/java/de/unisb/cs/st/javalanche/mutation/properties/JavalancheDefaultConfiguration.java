@@ -27,7 +27,7 @@ public class JavalancheDefaultConfiguration implements JavalancheConfiguration {
 	}
 
 	@Override
-	public int getDefaultTimeoutInSeconds() {
+	public int getTimeoutInSeconds() {
 		return 10;
 	}
 
@@ -47,7 +47,7 @@ public class JavalancheDefaultConfiguration implements JavalancheConfiguration {
 	}
 
 	@Override
-	public String getMutationIdFile() {
+	public File getMutationIdFile() {
 		return null;
 	}
 
@@ -94,11 +94,6 @@ public class JavalancheDefaultConfiguration implements JavalancheConfiguration {
 	@Override
 	public int getTestPermutations() {
 		return 10;
-	}
-
-	@Override
-	public boolean singleTaskMode() {
-		return false;
 	}
 
 	@Override

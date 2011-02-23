@@ -20,16 +20,19 @@
 package de.unisb.cs.st.javalanche.mutation.properties;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import static de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType.*;
 import de.unisb.cs.st.javalanche.mutation.util.MutationUtil;
 import static de.unisb.cs.st.javalanche.mutation.properties.PropertyUtil.*;
 
 public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 
-	// TODO store in variables.
+	// TODO store read properties in variables.
 
 	/**
 	 * The period each test is allowed to run in seconds.
@@ -95,11 +98,13 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 	 */
 	private static final String SAVE_INTERVAL_KEY = "javalanche.save.interval";
 
-	public static final String SINGLE_TASK_MODE_KEY = "javalanche.single.task.mode";
-
 	// public static final String TEST_METHODS_KEY = "javalanche.test.methods";
 	// public static String TEST_METHODS = getProperty(TEST_METHODS_KEY); TODO
 
+	/**
+	 * Controls whether further tests are executed for a mutation when a test
+	 * fails.
+	 */
 	public static final String STOP_AFTER_FIRST_FAIL_KEY = "javalanche.stop.after.first.fail";
 
 	public static String STORE_EXCEPTION_TRACES_KEY = "javalanche.store.exception.traces";
@@ -121,139 +126,263 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 				+ MutationUtil.getLog4jPropertiesLocation());
 	}
 
+	private boolean timeoutInSecondsCalled;
+
+	private int timeoutInSeconds;
+
+	private boolean excludedTestCalled;
+
+	private String excludedTests;
+
+	private String ignorePattern;
+
+	private boolean ignorePatternCalled;
+
+	private File mutationIdFile;
+
+	private boolean mutationIdFileCalled;
+
+	private boolean outputDirCalled;
+
+	private File outputDir;
+
+	private String projectPrefix;
+
+	private boolean projectPrefixCalled;
+
+	private String projectSourceDir;
+
+	private boolean projectSourceDirCalled;
+
+	private boolean runModeCalled;
+
+	private RunMode runMode;
+
+	private boolean saveIntervalCalled;
+
+	private int saveInterval;
+
+	private boolean testNamesCalled;
+
+	private String testNames;
+
+	private boolean testPermutationsCalled;
+
+	private int testPermutations;
+
+	private boolean stopAfterFirstFail;
+
+	private boolean stopAfterFirstFailCalled;
+
+	private boolean storeTestMessagesCalled;
+
+	private boolean storeTestMessages;
+
+	private boolean storeTracesCalled;
+
+	private boolean storeTraces;
+
+	private boolean useThreadStop;
+
+	private boolean useThreadStopCalled;
+
+	private boolean enableMutationCalled;
+
+	private Map<MutationType, Boolean> mutationTypeMap;
+
 	@Override
 	public boolean enableMutationType(MutationType t) {
-		String key = "";
-		switch (t) {
-		case ARITHMETIC_REPLACE:
-			key = ENABLE_ARITHMETIC_REPLACE_KEY;
-			break;
-		case NEGATE_JUMP:
-			key = ENABLE_NEGATE_JUMP_KEY;
-			break;
-		case REMOVE_CALL:
-			key = ENABLE_REMOVE_CALL_KEY;
-
-		case REPLACE_CONSTANT:
-			key = ENABLE_REPLACE_CONSTANT_KEY;
-			break;
-		case REPLACE_VARIABLE:
-			key = ENABLE_REPLACE_VARIABLE_KEY;
-			break;
-		default:
-			break;
+		if (!enableMutationCalled) {
+			enableMutationCalled = true;
+			intitMutationTypeMap();
 		}
-		return getPropertyOrDefault(key, super.enableMutationType(t));
+		return mutationTypeMap.get(t);
+	}
+
+	private void intitMutationTypeMap() {
+		mutationTypeMap = new HashMap<MutationType, Boolean>();
+		setValue(ENABLE_ARITHMETIC_REPLACE_KEY, ARITHMETIC_REPLACE);
+		setValue(ENABLE_NEGATE_JUMP_KEY, NEGATE_JUMP);
+		setValue(ENABLE_REMOVE_CALL_KEY, REMOVE_CALL);
+		setValue(ENABLE_REPLACE_CONSTANT_KEY, REPLACE_CONSTANT);
+		setValue(ENABLE_REPLACE_VARIABLE_KEY, REPLACE_VARIABLE);
+	}
+
+	public void setValue(String key, MutationType type) {
+		boolean value = getPropertyOrDefault(key,
+				super.enableMutationType(type));
+		mutationTypeMap.put(type, value);
 	}
 
 	@Override
-	public int getDefaultTimeoutInSeconds() {
-		return getPropertyOrDefault(TIMEOUT_IN_SECONDS_KEY,
-				super.getDefaultTimeoutInSeconds());
+	public int getTimeoutInSeconds() {
+		if (!timeoutInSecondsCalled) {
+			timeoutInSecondsCalled = true;
+			timeoutInSeconds = getPropertyOrDefault(TIMEOUT_IN_SECONDS_KEY,
+					super.getTimeoutInSeconds());
+		}
+		return timeoutInSeconds;
 	}
 
 	@Override
 	public String getExcludedTests() {
-		return getPropertyOrDefault(EXCLUDED_TESTS_KEY,
-				super.getExcludedTests());
+		if (!excludedTestCalled) {
+			excludedTestCalled = true;
+			excludedTests = getPropertyOrDefault(EXCLUDED_TESTS_KEY,
+					super.getExcludedTests());
+		}
+		return excludedTests;
 	}
 
 	@Override
 	public String getIgnorePattern() {
-		return getPropertyOrDefault(IGNORE_PREFIX_KEY, super.getIgnorePattern());
+		if (!ignorePatternCalled) {
+			ignorePatternCalled = true;
+			ignorePattern = getPropertyOrDefault(IGNORE_PREFIX_KEY,
+					super.getIgnorePattern());
+		}
+		return ignorePattern;
 	}
 
 	@Override
-	public String getMutationIdFile() {
-		return getPropertyOrDefault(MUTATION_FILE_KEY,
-				super.getMutationIdFile());
+	public File getMutationIdFile() {
+		if (!mutationIdFileCalled) {
+			mutationIdFileCalled = true;
+			String mutationIdFileName = getProperty(MUTATION_FILE_KEY);
+			if(mutationIdFileName  != null){
+				mutationIdFile = new File(mutationIdFileName);
+			}
+			mutationIdFile = super.getMutationIdFile();
+		}
+		return mutationIdFile;
 	}
 
 	@Override
 	public File getOutputDir() {
-		String property = getProperty(OUTPUT_DIR_KEY);
-		if (property != null) {
-			return new File(property);
-		} else {
-			return super.getOutputDir();
+		if (!outputDirCalled) {
+			outputDirCalled = true;
+			String property = getProperty(OUTPUT_DIR_KEY);
+			if (property != null) {
+				outputDir = new File(property);
+			} else {
+				outputDir = super.getOutputDir();
+			}
 		}
+		return outputDir;
 	}
 
 	@Override
 	public String getProjectPrefix() {
-		String projectPrefix = getProperty(PROJECT_PREFIX_KEY);
-		if (projectPrefix == null || projectPrefix.length() == 0) {
-			logger.warn("No project prefix found (Property: "
-					+ PROJECT_PREFIX_KEY + " not set)");
-			return super.getProjectPrefix();
+		if (!projectPrefixCalled) {
+			projectPrefixCalled = true;
+			projectPrefix = getProperty(PROJECT_PREFIX_KEY);
+			if (projectPrefix == null || projectPrefix.length() == 0) {
+				logger.warn("No project prefix found (Property: "
+						+ PROJECT_PREFIX_KEY + " not set)");
+				projectPrefix = super.getProjectPrefix();
+			}
 		}
 		return projectPrefix;
 	}
 
 	@Override
 	public String getProjectSourceDir() {
-		return getPropertyOrDefault(PROJECT_SOURCE_DIR_KEY,
-				super.getProjectSourceDir());
+		if (!projectSourceDirCalled) {
+			projectSourceDirCalled = true;
+			projectSourceDir = getPropertyOrDefault(PROJECT_SOURCE_DIR_KEY,
+					super.getProjectSourceDir());
+		}
+		return projectSourceDir;
 	}
 
 	@Override
 	public RunMode getRunMode() {
-		String runModeString = PropertyUtil.getProperty(RUN_MODE_KEY);
-		if (runModeString != null) {
-			runModeString = runModeString.toLowerCase();
-			for (RunMode runMode : RunMode.values()) {
-				if (runMode.getKey().equals(runModeString)) {
-					return runMode;
+		if (!runModeCalled) {
+			runModeCalled = true;
+			String runModeString = PropertyUtil.getProperty(RUN_MODE_KEY);
+			if (runModeString != null) {
+				runModeString = runModeString.toLowerCase();
+				for (RunMode rm : RunMode.values()) {
+					if (rm.getKey().equals(runModeString)) {
+						runMode = rm;
+						break;
+					}
 				}
 			}
+			if (runMode == null) {
+				runMode = super.getRunMode();
+			}
 		}
-		return super.getRunMode();
+		return runMode;
 	}
 
 	@Override
 	public int getSaveInterval() {
-		return getPropertyOrDefault(SAVE_INTERVAL_KEY, super.getSaveInterval());
+		if (!saveIntervalCalled) {
+			saveIntervalCalled = true;
+			saveInterval = getPropertyOrDefault(SAVE_INTERVAL_KEY,
+					super.getSaveInterval());
+		}
+		return saveInterval;
 	}
 
 	@Override
 	public String getTestNames() {
-		return getPropertyOrDefault(TEST_NAMES_KEY, super.getTestNames());
+		if (!testNamesCalled) {
+			testNamesCalled = true;
+			testNames = getPropertyOrDefault(TEST_NAMES_KEY,
+					super.getTestNames());
+		}
+		return testNames;
 	}
 
 	@Override
 	public int getTestPermutations() {
-		return getPropertyOrDefault(TEST_PERMUTATIONS_KEY,
-				super.getTestPermutations());
-	}
-
-	@Override
-	public boolean singleTaskMode() {
-		return getPropertyOrDefault(SINGLE_TASK_MODE_KEY,
-				super.singleTaskMode());
+		if (!testPermutationsCalled) {
+			testPermutationsCalled = true;
+			testPermutations = getPropertyOrDefault(TEST_PERMUTATIONS_KEY,
+					super.getTestPermutations());
+		}
+		return testPermutations;
 	}
 
 	@Override
 	public boolean stopAfterFirstFail() {
-		return getPropertyOrDefault(STOP_AFTER_FIRST_FAIL_KEY,
-				super.stopAfterFirstFail());
+		if (!stopAfterFirstFailCalled) {
+			stopAfterFirstFailCalled = true;
+			stopAfterFirstFail = getPropertyOrDefault(
+					STOP_AFTER_FIRST_FAIL_KEY, super.stopAfterFirstFail());
+		}
+		return stopAfterFirstFail;
 	}
 
 	@Override
 	public boolean storeTestMessages() {
-		return getPropertyOrDefault(STORE_MESSAGES_KEY,
-				super.storeTestMessages());
+		if (!storeTestMessagesCalled) {
+			storeTestMessagesCalled = true;
+			storeTestMessages = getPropertyOrDefault(STORE_MESSAGES_KEY,
+					super.storeTestMessages());
+		}
+		return storeTestMessages;
 	}
 
 	@Override
 	public boolean storeTraces() {
-		return getPropertyOrDefault(STORE_EXCEPTION_TRACES_KEY,
-				super.storeTraces());
+		if (!storeTracesCalled) {
+			storeTracesCalled = true;
+			storeTraces = getPropertyOrDefault(STORE_EXCEPTION_TRACES_KEY,
+					super.storeTraces());
+		}
+		return storeTraces;
 	}
 
 	@Override
 	public boolean useThreadStop() {
-
-		return getPropertyOrDefault(USE_THREAD_STOP_KEY, super.useThreadStop());
+		if (!useThreadStopCalled) {
+			useThreadStopCalled = true;
+			useThreadStop = getPropertyOrDefault(USE_THREAD_STOP_KEY,
+					super.useThreadStop());
+		}
+		return useThreadStop;
 	}
-
 }

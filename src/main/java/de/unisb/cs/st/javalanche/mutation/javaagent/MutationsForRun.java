@@ -58,8 +58,7 @@ public class MutationsForRun {
 
 	/**
 	 * @return an instance that contains all mutations for IDs from a file
-	 *         specified at the command line (see
-	 *         MutationProperties.MUTATION_FILE_NAME_KEY).
+	 *         specified at the command line.
 	 */
 	public static MutationsForRun getFromDefaultLocation() {
 		return getFromDefaultLocation(true);
@@ -68,35 +67,17 @@ public class MutationsForRun {
 	public static MutationsForRun getFromDefaultLocation(boolean filter) {
 		JavalancheConfiguration configuration = ConfigurationLocator
 				.getJavalancheConfiguration();
-		if (configuration.singleTaskMode()) {
-			String fileName = findFile();
-			return new MutationsForRun(fileName, filter);
-		} else {
-			return new MutationsForRun(configuration.getMutationIdFile(),
-					filter);
-		}
+		return new MutationsForRun(configuration.getMutationIdFile(), filter);
 	}
 
-	private static String findFile() {
-		File outputDir = ConfigurationLocator.getJavalancheConfiguration()
-				.getOutputDir();
-
-		File f = new File(outputDir, '/'
-				+ MutationTaskCreator.MUTATION_TASK_PROJECT_FILE_PREFIX
-				+ "-01.txt");
-		// System.out.println("MutationsForRun.findFile() " +
-		// f.getAbsolutePath());
-		if (!f.exists()) {
-			throw new RuntimeException("Did not find file " + f);
+	public MutationsForRun(File idFile, boolean filter) {
+		if (idFile == null || !idFile.exists()) {
+			throw new RuntimeException("Given id file does not exist: "
+					+ idFile);
 		}
-		logger.info("Found task file " + f);
-		return f.getAbsolutePath();
-	}
-
-	public MutationsForRun(String fileName, boolean filter) {
-		mutations = getMutationsForRun(fileName, filter);
+		mutations = getMutationsForRun(idFile, filter);
 		logger.info("Got " + mutations.size() + " mutations from file: "
-				+ fileName);// + " Trace " + Util.getStackTraceString()
+				+ idFile);// + " Trace " + Util.getStackTraceString()
 		List<Long> ids = new ArrayList<Long>();
 		for (Mutation m : mutations) {
 			logger.debug("Mutation ID: " + m.getId());
@@ -135,25 +116,19 @@ public class MutationsForRun {
 	 * filtered such that they get not applied again.
 	 * 
 	 * @param fileName
-	 * 
+	 *            TODO update javadoc
 	 * @return a list of mutations for this run.
 	 */
-	private static List<Mutation> getMutationsForRun(String fileName,
-			boolean filter) {
+	private static List<Mutation> getMutationsForRun(File idFile, boolean filter) {
 		List<Mutation> mutationsToReturn = new ArrayList<Mutation>();
-		if (fileName != null) {
-			File file = new File(fileName);
-			if (file.exists()) {
-				logger.info("Location of mutation file: "
-						+ file.getAbsolutePath());
-				mutationsToReturn = getMutationsByFile(file);
-			} else {
-				logger.warn("Mutation file does not exist: " + file);
-			}
+		if (idFile.exists()) {
+			logger.info("Location of mutation file: "
+					+ idFile.getAbsolutePath());
+			mutationsToReturn = getMutationsByFile(idFile);
 		} else {
-			logger.warn("Passed null as a filename "
-					+ Util.getStackTraceString());
+			logger.warn("Mutation file does not exist: " + idFile);
 		}
+
 		if (filter) {
 			filterMutationsWithResult(mutationsToReturn);
 		}

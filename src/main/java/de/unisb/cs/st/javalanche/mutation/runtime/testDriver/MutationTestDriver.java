@@ -100,7 +100,7 @@ public abstract class MutationTestDriver {
 	 * Timeout for the test. After this time a test is stopped.
 	 */
 	protected long timeout = ConfigurationLocator.getJavalancheConfiguration()
-			.getDefaultTimeoutInSeconds();
+			.getTimeoutInSeconds();
 
 	/**
 	 * The mutation that is currently active.
@@ -153,9 +153,9 @@ public abstract class MutationTestDriver {
 		lastId = 0l;
 		try {
 			String s;
-			String mutationIdFile = configuration.getMutationIdFile();
+			File mutationIdFile = configuration.getMutationIdFile();
 			if (mutationIdFile != null) {
-				s = new File(mutationIdFile).getName();
+				s = mutationIdFile.getName();
 			} else {
 				s = "default";
 			}
@@ -712,7 +712,7 @@ public abstract class MutationTestDriver {
 		future.cancel(true);
 		try {
 			logger.info("Sleeping   ");
-			Thread.sleep(configuration.getDefaultTimeoutInSeconds());
+			Thread.sleep(configuration.getTimeoutInSeconds());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

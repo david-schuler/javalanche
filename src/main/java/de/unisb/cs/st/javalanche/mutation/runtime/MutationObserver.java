@@ -89,7 +89,7 @@ public class MutationObserver implements MutationTestListener {
 	private final static Collection<Mutation> appliedMutations = new HashSet<Mutation>();
 
 	public static final int LIMIT = ConfigurationLocator
-			.getJavalancheConfiguration().getDefaultTimeoutInSeconds() * 1000;
+			.getJavalancheConfiguration().getTimeoutInSeconds() * 1000;
 
 	/**
 	 * This method is called by statements that are added to the mutated code.
