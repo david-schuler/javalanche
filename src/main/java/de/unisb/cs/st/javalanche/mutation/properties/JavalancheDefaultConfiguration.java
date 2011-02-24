@@ -82,11 +82,6 @@ public class JavalancheDefaultConfiguration implements JavalancheConfiguration {
 	}
 
 	@Override
-	public File getTestMap() {
-		return new File(getOutputDir(), "testname-map.xml");
-	}
-
-	@Override
 	public String getTestNames() {
 		return null;
 	}

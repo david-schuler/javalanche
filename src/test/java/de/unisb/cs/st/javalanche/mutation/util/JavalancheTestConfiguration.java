@@ -23,7 +23,6 @@ public class JavalancheTestConfiguration implements JavalancheConfiguration {
 	private RunMode runMode = d.getRunMode();
 	private String sourceDir = d.getProjectSourceDir();
 	private File excludeFile = d.getExcludeFile();
-	private File testMapFile = d.getTestMap();
 	private String testNames = d.getTestNames();
 	private int testPermutations = d.getTestPermutations();
 	private boolean stopAfterFirstFail = d.stopAfterFirstFail();
@@ -107,10 +106,7 @@ public class JavalancheTestConfiguration implements JavalancheConfiguration {
 		return excludeFile;
 	}
 
-	@Override
-	public File getTestMap() {
-		return testMapFile;
-	}
+
 
 	@Override
 	public String getTestNames() {
@@ -187,9 +183,6 @@ public class JavalancheTestConfiguration implements JavalancheConfiguration {
 		this.excludeFile = excludeFile;
 	}
 
-	public void setTestMapFile(File testMapFile) {
-		this.testMapFile = testMapFile;
-	}
 
 	public void setTestNames(String testNames) {
 		this.testNames = testNames;
