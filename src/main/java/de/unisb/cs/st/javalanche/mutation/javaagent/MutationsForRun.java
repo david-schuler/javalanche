@@ -31,14 +31,12 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.HibernateUtil;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
-import de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator;
 
 /**
  * Class that holds all mutations that should be applied and executed during a
@@ -147,7 +145,7 @@ public class MutationsForRun {
 		List<Long> idList = Io.getIDsFromFile(file);
 		List<Mutation> returnList = null;
 		if (idList.size() > 0) {
-			returnList = QueryManager.getMutationsFromDbByID(idList
+			returnList = QueryManager.getMutationsByIds(idList
 					.toArray(new Long[0]));
 		} else {
 			returnList = new ArrayList<Mutation>();

@@ -393,14 +393,10 @@ public class QueryManager {
 	 *            The ids that are used to query.
 	 * @return Return a list of mutations with the given ids.
 	 */
-	public static List<Mutation> getMutationsFromDbByID(Long[] ids) {
+	public static List<Mutation> getMutationsByIds(Long[] ids) {
 		Session session = openSession();
 		Transaction tx = session.beginTransaction();
-		// Query query = session
-		// .createQuery("FROM Mutation m inner join fetch m.mutationResult inner
-		// join fetch m.mutationResult.failures inner join fetch
-		// m.mutationResult.errors inner join fetch m.mutationResult.passing
-		// WHERE m.id IN (:ids)");
+
 		Query query = session
 				.createQuery("FROM Mutation m  WHERE m.id IN (:ids)");
 		query.setParameterList("ids", ids);

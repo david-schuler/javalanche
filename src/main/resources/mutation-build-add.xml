@@ -37,7 +37,7 @@
 		<property name="run.mutations.debug.memory" value="-Xmx1524m"/>
 		<property name="run.mutations.debug.mutation.run.mode" value="-Dmutation.run.mode=mutation"/>
 		<property name="run.mutations.debug.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
-		<property name="run.mutations.debug.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
+		<property name="run.mutations.debug.javalanche.project.tests" value="-Djavalanche.tests=${project.tests}"/>
 		<property name="run.mutations.debug.mutation.file" value="-Djavalanche.mutation.file=${mutation.file}"/>
 		<property name="run.mutations.debug.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
 		<property name="run.mutations.debug.verbose" value="-verbose"/>
@@ -59,7 +59,7 @@
 		<property name="run.mutations.memory" value="-Xmx1524m"/>
 		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=mutation-invariant-per-test"/>
 		<property name="run.mutations.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
-		<property name="run.mutations.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
+		<property name="run.mutations.javalanche.project.tests" value="-Djavalanche.tests=${project.tests}"/>
 		<property name="run.mutations.mutation.file" value="-Djavalanche.mutation.file=${mutation.file}"/>
 		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
 		<property name="run.mutations.verbose" value="-verbose"/>
@@ -90,7 +90,7 @@
 		<property name="run.mutations.memory" value="-Xmx1524m"/>
 		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=mutation-coverage"/>
 		<property name="run.mutations.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
-		<property name="run.mutations.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
+		<property name="run.mutations.javalanche.project.tests" value="-Djavalanche.tests=${project.tests}"/>
 		<property name="run.mutations.mutation.file" value="-Djavalanche.mutation.file=${mutation.file}"/>
 		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
 		<property name="run.mutations.verbose" value="-verbose"/>
@@ -128,7 +128,7 @@
 		<property name="run.mutations.memory" value="-Xmx1524m"/>
 		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=check-per-test"/>
 		<property name="run.mutations.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
-		<property name="run.mutations.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
+		<property name="run.mutations.javalanche.project.tests" value="-Djavalanche.tests=${project.tests}"/>
 		<property name="run.mutations.mutation.file" value="-Djavalanche.mutation.file=${mutation.file}"/>
 		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
 		<property name="run.mutations.verbose" value="-verbose"/>
@@ -159,7 +159,7 @@
 		<property name="run.mutations.memory" value="-Xmx1524m"/>
 		<property name="run.mutations.mutation.run.mode" value="-Dmutation.run.mode=${javalanche.mutaiton.runMode}"/>
 		<property name="run.mutations.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
-		<property name="run.mutations.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
+		<property name="run.mutations.javalanche.project.tests" value="-Djavalanche.tests=${project.tests}"/>
 		<property name="run.mutations.mutation.file" value="-Djavalanche.mutation.file=${mutation.file}"/>
 		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
 		<property name="run.mutations.verbose" value="-verbose"/>

@@ -115,7 +115,7 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 	 * The key for the system property that specifies the tests that are used
 	 * for mutation testing.
 	 */
-	public static final String TEST_NAMES_KEY = "javalanche.test.classes";
+	public static final String TEST_NAMES_KEY = "javalanche.tests";
 
 	static final String TEST_PERMUTATIONS_KEY = "javalanche.test.permutations";
 
@@ -249,10 +249,11 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 		if (!mutationIdFileCalled) {
 			mutationIdFileCalled = true;
 			String mutationIdFileName = getProperty(MUTATION_FILE_KEY);
-			if(mutationIdFileName  != null){
+			if (mutationIdFileName != null) {
 				mutationIdFile = new File(mutationIdFileName);
+			} else {
+				mutationIdFile = super.getMutationIdFile();
 			}
-			mutationIdFile = super.getMutationIdFile();
 		}
 		return mutationIdFile;
 	}

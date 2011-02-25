@@ -16,14 +16,16 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.unisb.cs.st.javalanche.mutation.run.threaded.task;
+package de.unisb.cs.st.javalanche.mutation.run.task;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
@@ -31,6 +33,7 @@ import org.apache.log4j.Logger;
 
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
@@ -66,11 +69,11 @@ public class MutationTaskCreator {
 	 */
 	private static final int DEFAULT_MUTATIONS_PER_TASK = 400;
 
-	private static final String MUTATION_PER_TASK_KEY = "javalanche.mutations.per.task";
+	public static final String MUTATION_PER_TASK_KEY = "javalanche.mutations.per.task";
 
 	private static final String MUTATION_FIXED_NUMBER_OF_TASKS_KEY = "javalanche.fixed.number.of.tasks";
 
-	private static final String TASK_FILENAME_KEY = "javalanche.task.file.name";
+	public static final String TASK_FILENAME_KEY = "javalanche.task.file.name";
 
 	private static final File TASK_DIR = ConfigurationLocator
 			.getJavalancheConfiguration().getOutputDir();

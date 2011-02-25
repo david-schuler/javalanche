@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 import de.unisb.cs.st.ds.util.io.Io;
 import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.properties.PropertyUtil;
-import de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator;
+import de.unisb.cs.st.javalanche.mutation.run.task.MutationTaskCreator;
 
 /**
  * Class that generates Makefiles to execute the mutation testing framework. A

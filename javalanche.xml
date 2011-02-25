@@ -56,19 +56,7 @@
 	</target>	
 
 	
-	<target name="mutationTest" depends="startHsql,schemaexport,scanProject,scan,createSingleTask,runSingleTask,analyzeResults,stopHsql"/>
+	<target name="mutationTest" depends="startHsql,schemaexport,scanProject,scan,createSingleRandomTask,runSingleTask,analyzeResults,stopHsql"/>
 	
-	<target name="createSingleTask" >
-		<antcall target="createTasksFixed">
-			<param name="javalanche.fixed.number.of.tasks" value="1" />
-			<param name="javalanche.task.file.name" value="${javalanche.out.dir}/${project.prefix}_single-task.txt" /> 
-		</antcall>
-	</target>
-	
-	<target name="runSingleTask" >
-		<antcall target="runMutations">
-			<param name="single.task.mode" value="true" />
-		</antcall>
-	</target>
 
 </project>

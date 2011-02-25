@@ -16,7 +16,7 @@
 * You should have received a copy of the GNU Lesser Public License
 * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
 */
-package de.unisb.cs.st.javalanche.mutation.run.threaded.task;
+package de.unisb.cs.st.javalanche.mutation.run.task;
 
 import java.io.File;
 import java.io.FilenameFilter;

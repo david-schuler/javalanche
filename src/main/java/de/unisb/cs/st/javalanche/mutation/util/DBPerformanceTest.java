@@ -82,7 +82,7 @@ public class DBPerformanceTest {
 		StringBuilder sb = new StringBuilder();
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
-		List<Mutation> mutations = QueryManager.getMutationsFromDbByID(ids
+		List<Mutation> mutations = QueryManager.getMutationsByIds(ids
 				.toArray(new Long[0]));
 		for (Mutation mutation : mutations) {
 			sb.append(mutation.getClassName());

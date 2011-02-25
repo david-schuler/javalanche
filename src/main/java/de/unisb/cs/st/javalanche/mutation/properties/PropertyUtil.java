@@ -34,7 +34,7 @@ public class PropertyUtil {
 		return result;
 	}
 
-	static String getProperty(String key) {
+	public static String getProperty(String key) {
 		String result = null;
 		if (System.getProperty(key) != null) {
 			result = System.getProperty(key);

@@ -294,7 +294,12 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 		return true;
 	}
 
+	@Deprecated
 	public boolean isKilled() {
+		return isDetected();
+	}
+
+	public boolean isDetected() {
 		return mutationResult != null
 				&& (mutationResult.getNumberOfErrors() > 0 || mutationResult
 						.getNumberOfFailures() > 0);

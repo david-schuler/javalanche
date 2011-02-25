@@ -7,6 +7,8 @@
 	<property name="javalanche.out.dir" value="${basedir}/mutation-files" />
 	<property name="javalanche.mutation.output.dir" value="${javalanche.out.dir}" />
 		
+	<property name="javalanche.single.task.file.name"  value="${javalanche.out.dir}/${project.prefix}_single-task.txt" />
+	
 		
 	<condition property="javalanche.maxmemory" value="2048m">
 	  	<not>
@@ -39,7 +41,7 @@
 		<property name="test.task.1.memory" value="-Xmx${javalanche.maxmemory}"/> 
 		<property name="test.task.1.javalanche.run.mode" value="-Djavalanche.run.mode=off"/> 
 		<property name="test.task.1.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
-		<property name="test.task.1.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
+		<property name="test.task.1.javalanche.project.tests" value="-Djavalanche.tests=${project.tests}"/>
 	
 		<path id="testTask.javalanche.classpath.add">
 			<path refid="mutation.classpath"/>
@@ -56,7 +58,7 @@
 		<property name="test.task.2.memory" value="-Xmx${javalanche.maxmemory}"/>
 		<property name="test.task.2.javalanche.run.mode" value="-Djavalanche.run.mode=check-tests"/>
 		<property name="test.task.2.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
-		<property name="test.task.2.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
+		<property name="test.task.2.javalanche.project.tests" value="-Djavalanche.tests=${project.tests}"/>
 		
 		<path id="test.task.2.classpath.add">
 			<path refid="mutation.classpath"/>
@@ -74,7 +76,7 @@
 		<property name="test.task.3.memory" value="-Xmx${javalanche.maxmemory}"/>
 		<property name="test.task.3.javalanche.run.mode" value="-Djavalanche.run.mode=check-tests-permuted"/>
 		<property name="test.task.3.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
-		<property name="test.task.3.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
+		<property name="test.task.3.javalanche.project.tests" value="-Djavalanche.tests=${project.tests}"/>
 		
 		<path id="test.task.3.classpath.add">
 			<path refid="mutation.classpath"/>
@@ -94,7 +96,7 @@
 		<property name="scan.project.memory" value="-Xmx${javalanche.maxmemory}"/>
 		<property name="scan.project.javalanche.run.mode" value="-Djavalanche.run.mode=scan-project"/>
 		<property name="scan.project.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
-		<property name="scan.project.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
+		<property name="scan.project.javalanche.project.tests" value="-Djavalanche.tests=${project.tests}"/>
 		<property name="scan.project.verbose" value="-verbose"/>
 
 		
@@ -136,7 +138,7 @@
 		<property name="scan.memory" value="-Xmx${javalanche.maxmemory}"/>
 		<property name="scan.javalanche.run.mode" value="-Djavalanche.run.mode=scan"/>
 		<property name="scan.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
-		<property name="scan.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
+		<property name="scan.javalanche.project.tests" value="-Djavalanche.tests=${project.tests}"/>
 		<!--property name="scan.junit4" value="-Djavalanche.junit4=true"/-->
 		
 		<property name="scan.bootclasspath" value="-Xbootclasspath/a:${javalanche.dist.dir}/javalanche-mutation-bootclasspath.jar"/>
@@ -153,7 +155,7 @@
 	<target name="createTasks" description="* Create mutations task files.">
 		<mkdir dir="${javalanche.mutation.output.dir}"/>
 		
-		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="${javalanche.maxmemory}" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.run.task.MutationTaskCreator" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="javalanche.project.prefix" value="${project.prefix}" />
 			<sysproperty key="javalanche.mutations.per.task" value="400" />
 			<sysproperty key="javalanche.mutation.output.dir" value="${javalanche.mutation.output.dir}" />
@@ -177,7 +179,7 @@
 	  	</not>
 	  </condition>
 		<mkdir dir="${javalanche.mutation.output.dir}"/>
-		<java classname="de.unisb.cs.st.javalanche.mutation.run.threaded.task.MutationTaskCreator" maxmemory="${javalanche.maxmemory}" fork="true">
+		<java classname="de.unisb.cs.st.javalanche.mutation.run.task.MutationTaskCreator" maxmemory="${javalanche.maxmemory}" fork="true">
 			<sysproperty key="javalanche.project.prefix" value="${project.prefix}" />
 			<sysproperty key="javalanche.fixed.number.of.tasks" value="${javalanche.fixed.number.of.tasks}" />
 			<sysproperty key="javalanche.mutation.output.dir" value="${javalanche.mutation.output.dir}" />
@@ -188,39 +190,60 @@
 		</java>
 	</target>
 	
-	
+	<target name="createSingleRandomTask" >
+	  <condition property="javalanche.seed" value="31543551">
+	  	<not>
+			<isset property="javlanche.seed"/>
+	  	</not>
+	  </condition>
+	 <condition property="javalanche.mutations.per.task" value="100">
+	  	<not>
+			<isset property="javalanche.mutations.per.task"/>
+	  	</not>
+	  </condition>
+		<mkdir dir="${javalanche.mutation.output.dir}"/>
+		<java classname="de.unisb.cs.st.javalanche.mutation.run.task.RandomTaskCreator" maxmemory="${javalanche.maxmemory}" fork="true">
+			<sysproperty key="javalanche.project.prefix" value="${project.prefix}" />
+			<sysproperty key="javalanche.mutations.per.task" value="${javalanche.mutations.per.task}" />
+			<sysproperty key="javalanche.mutation.output.dir" value="${javalanche.mutation.output.dir}" />
+			<sysproperty key="javalanche.task.file.name"  value="${javalanche.single.task.file.name}" />
+			<sysproperty key="javalanche.seed" value="${javalanche.seed}" />
+			
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
 	
 	
 	<target name="runMutations" description="* Run the mutation task specified by -Dmutation.file=. ">
 	
 	
-		
-		<condition property="run.mutations.single.task.mode" value="-Djavalanche.single.task.mode=true" else="-Djavalanche.single.task.mode=false">
-			<isset property="single.task.mode"/>
-		</condition>
-		
-
-	
 		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
 		<property name="run.mutations.memory" value="-Xmx${javalanche.maxmemory}"/>
 		<property name="run.mutations.javalanche.run.mode" value="-Djavalanche.run.mode=mutation"/>
 		<property name="run.mutations.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
-		<property name="run.mutations.javalanche.project.tests" value="-Djavalanche.test.classes=${project.tests}"/>
+		<property name="run.mutations.javalanche.project.tests" value="-Djavalanche.tests=${project.tests}"/>
 		<property name="run.mutations.mutation.file" value="-Djavalanche.mutation.file=${mutation.file}"/>
-		<property name="run.mutations.mutation.result.file" value="-Dmutation.result.file=result-${mutation.file}"/>
-		<property name="run.mutations.verbose" value="-verbose"/>
+<!--		<property name="run.mutations.verbose" value="${javalanche.verbose}"/> TODO-->
 		<property name="run.mutations.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.mutation.runtime.jmx.JmxMutationTestListener"/>
 		<path id="run.mutations.classpath.add">
 			<path refid="mutation.classpath"/>
 		</path>
-			<!--${run.mutations.verbose}-->
+
 		<antcall target="test-javalanche">
-			<param name="javalanche.arg.line" value="  ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.javalanche.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.tests} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.listener} ${run.mutations.single.task.mode}" />
+			<param name="javalanche.arg.line" value="  ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.javalanche.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.tests} ${run.mutations.mutation.file} ${run.mutations.listener} " />
 			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
 
 	</target>
 
+
+	<target name="runSingleTask" >
+		<antcall target="runMutations">
+			<param name="mutation.file" value="${javalanche.single.task.file.name}" />
+		</antcall>
+	</target>
 	
 	
 	<target name="createMutationMakefile" description="* Create a Makefile for the mutation tasks.">

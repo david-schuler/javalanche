@@ -92,7 +92,7 @@ public class HtmlAnalyzer {
 		}
 		JavalancheConfiguration javalancheConfiguration = ConfigurationLocator
 				.getJavalancheConfiguration();
-		int i = name.indexOf(javalancheConfiguration.getProjectPrefix());
+		int i = name.lastIndexOf(javalancheConfiguration.getProjectPrefix());
 		if (i < 0) {
 			name = "";
 		} else {
@@ -102,7 +102,6 @@ public class HtmlAnalyzer {
 	}
 
 	private void initFiles() {
-		System.out.println("HtmlAnalyzer.initFiles()");
 		File startDirectory = new File(".");
 		JavalancheConfiguration javalancheConfiguration = ConfigurationLocator
 				.getJavalancheConfiguration();
