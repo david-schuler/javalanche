@@ -21,6 +21,8 @@ public class JavalancheDefaultConfiguration implements JavalancheConfiguration {
 		case REPLACE_CONSTANT:
 			return true;
 		case REPLACE_VARIABLE:
+		case ABSOLUT_VALUE:
+		case UNARY_OPERATOR:
 			return false;
 		}
 		return false;

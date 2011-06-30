@@ -52,6 +52,8 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 
 	public static final String ENABLE_REPLACE_VARIABLE_KEY = "javalanche.enable.replace.variable";
 
+	public static final String ENABLE_ABSOLUTE_VALUE_KEY = "javalanche.enable.absolute.value";
+
 	/**
 	 * Contains fully qualified names of tests that should be excluded (not
 	 * executed). Several tests are separated by a colon.
@@ -206,6 +208,7 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 		setValue(ENABLE_REMOVE_CALL_KEY, REMOVE_CALL);
 		setValue(ENABLE_REPLACE_CONSTANT_KEY, REPLACE_CONSTANT);
 		setValue(ENABLE_REPLACE_VARIABLE_KEY, REPLACE_VARIABLE);
+		setValue(ENABLE_ABSOLUTE_VALUE_KEY, ABSOLUT_VALUE);
 	}
 
 	public void setValue(String key, MutationType type) {

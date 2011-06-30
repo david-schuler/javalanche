@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.util.AbstractVisitor;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.AbstractMutationAdapter;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
@@ -37,6 +38,11 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
  */
 public abstract class AbstractArithmeticMethodAdapter extends
 		AbstractMutationAdapter {
+
+	public static int REMOVE_LEFT_VALUE_SINGLE = -1;
+	public static int REMOVE_RIGHT_VALUE_SINGLE = -2;
+	public static final int REMOVE_LEFT_VALUE_DOUBLE = -3;
+	public static final int REMOVE_RIGHT_VALUE_DOUBLE = -4;
 
 	protected static Map<Integer, Integer> replaceMap = ReplaceMap
 			.getReplaceMap();
@@ -62,14 +68,31 @@ public abstract class AbstractArithmeticMethodAdapter extends
 
 	private void mutate(int opcode) {
 		Mutation mutation = new Mutation(className, getMethodName(),
-				getLineNumber(),
-				getPossibilityForLine(),
+				getLineNumber(), getPossibilityForLine(),
 				Mutation.MutationType.ARITHMETIC_REPLACE);
-		mutation.setAddInfo("Replace " + opcode + " with "
-				+ ReplaceMap.getReplaceMap().get(opcode) + "");
-		mutation.setOperatorAddInfo(ReplaceMap.getReplaceMap().get(opcode) + "");
+		addInfoToMutation(mutation, opcode,
+				ReplaceMap.getReplaceMap().get(opcode));
 		addPossibilityForLine();
 		handleMutation(mutation, opcode);
+	}
+
+	public static void addInfoToMutation(Mutation mutation, int origOpcode,
+			int replaceOpcode) {
+		String replaceString;
+		if (replaceOpcode > 0) {
+			replaceString = AbstractVisitor.OPCODES[replaceOpcode];
+		} else {
+			if (replaceOpcode == REMOVE_LEFT_VALUE_DOUBLE
+					|| replaceOpcode == REMOVE_LEFT_VALUE_SINGLE) {
+				replaceString = "remove left opereand";
+			} else {
+				replaceString = "remove right opereand";
+			}
+		}
+		String origString = AbstractVisitor.OPCODES[origOpcode];
+		mutation.setAddInfo("Replace " + origString + " with " + replaceString);
+
+		mutation.setOperatorAddInfo(replaceOpcode + "");
 	}
 
 	protected abstract void handleMutation(Mutation mutation, int opcode);

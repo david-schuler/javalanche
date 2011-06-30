@@ -61,7 +61,10 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 				"Negate jump condition"), ARITHMETIC_REPLACE(
 				"Replace arithmetic operator"), REMOVE_CALL(
 				"Remove method call"), REPLACE_VARIABLE(
-				"Replace variable reference");
+				"Replace variable reference"), ABSOLUT_VALUE(
+				"Insert absolute value of a variable"),
+				UNARY_OPERATOR("Insert unary operator");
+;
 
 		private String desc;
 
@@ -109,8 +112,14 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private MutationTestResult mutationResult;
 
+	/**
+	 * Additional string representation of the operator.
+	 */
 	private String addInfo;
 
+	/**
+	 * Additional information for the operator that is used internally.
+	 */
 	private String operatorAddInfo;
 
 	private Long baseMutationId;
@@ -394,6 +403,15 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 		return baseMutationId;
 	}
 
+	/**
+	 * Copies the mutation but does not copy the additional info fields.
+	 * @param m the mutation to copy
+	 * @return a copy of the given mutation.
+	 */
+	public static Mutation copyMutation(Mutation m){
+		return new Mutation(m.getClassName(),m.getMethodName(),m.getLineNumber(),m.getMutationForLine(),m.getMutationType());
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -28,12 +28,14 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.util.CheckMethodAdapter;
 
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.absoluteValues.AbsoluteValueMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.ArithmeticReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.RemoveMethodCallsMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.RicMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ProjectVariables;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ReplaceVariablesMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.unaryOperatorInsertion.UnaryOperatorMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.MutationManager;
@@ -53,11 +55,17 @@ public class MutationsClassAdapter extends ClassAdapter {
 
 	private Map<Integer, Integer> removeCallsPossibilities = new HashMap<Integer, Integer>();
 
-	private Map<Integer, Integer> jumpsPossibilities = new HashMap<Integer, Integer>();
+	// private Map<Integer, Integer> jumpsPossibilities = new HashMap<Integer,
+	// Integer>();
 
-	private Map<Integer, Integer> replacePossibilities = new HashMap<Integer, Integer>();
+	// private Map<Integer, Integer> replacePossibilities = new HashMap<Integer,
+	// Integer>();
 
 	private Map<Integer, Integer> replaceVariablePossibilities = new HashMap<Integer, Integer>();
+
+	private Map<Integer, Integer> absolutValuePossibilities = new HashMap<Integer, Integer>();
+
+	private Map<Integer, Integer> unaryOperatorPossibilities = new HashMap<Integer, Integer>();
 
 	private final MutationManager mutationManager;
 
@@ -104,6 +112,16 @@ public class MutationsClassAdapter extends ClassAdapter {
 					access, name, desc, mv);
 			rvAdapter.setAnlyzeAdapter(analyzerAdapter);
 			mv = analyzerAdapter;
+		}
+		if (ConfigurationLocator.getJavalancheConfiguration()
+				.enableMutationType(MutationType.ABSOLUT_VALUE)) {
+			mv = new AbsoluteValueMethodAdapter(mv, className, name,
+					absolutValuePossibilities, mutationManager, desc);
+		}
+		if (ConfigurationLocator.getJavalancheConfiguration()
+				.enableMutationType(MutationType.UNARY_OPERATOR)) {
+			mv = new UnaryOperatorMethodAdapter(mv, className, name,
+					absolutValuePossibilities, mutationManager, desc);
 		}
 		return mv;
 

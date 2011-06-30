@@ -31,6 +31,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.util.CheckMethodAdapter;
 
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.absoluteValues.AbsoluteValuePossibilitiesAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.PossibilitiesArithmeticReplaceMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsPossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.MyAdviceAdapter;
@@ -39,6 +40,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConsta
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ProjectVariables;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ReplaceVariablesPossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.VariableInfo;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.unaryOperatorInsertion.UnaryOperatorPossibilitiesAdapter;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
@@ -63,9 +65,14 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 
 	private Map<Integer, Integer> replaceVariablesPossibilities = new HashMap<Integer, Integer>();
 
-	private Map<Integer, Integer> jumpsCallsPossibilities = new HashMap<Integer, Integer>();
+	private Map<Integer, Integer> absoluteValuePossibilities = new HashMap<Integer, Integer>();
 
-	private Map<Integer, Integer> replaceCallsPossibilities = new HashMap<Integer, Integer>();
+	private Map<Integer, Integer> unaryOperatorPossibilities = new HashMap<Integer, Integer>();
+	// private Map<Integer, Integer> jumpsCallsPossibilities = new
+	// HashMap<Integer, Integer>();
+	//
+	// private Map<Integer, Integer> replaceCallsPossibilities = new
+	// HashMap<Integer, Integer>();
 
 	private ProjectVariables projectVariables = ProjectVariables.read();
 
@@ -122,6 +129,14 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 					access, name, desc, mv);
 			rvAdapter.setAnlyzeAdapter(analyzerAdapter);
 			mv = analyzerAdapter;
+		}
+		if (configuration.enableMutationType(ABSOLUT_VALUE)) {
+			mv = new AbsoluteValuePossibilitiesAdapter(mv, className, name,
+					absoluteValuePossibilities, desc, mpc);
+		}
+		if (configuration.enableMutationType(UNARY_OPERATOR)) {
+			mv = new UnaryOperatorPossibilitiesAdapter(mv, className, name,
+					unaryOperatorPossibilities, desc, mpc);
 		}
 		return mv;
 	}

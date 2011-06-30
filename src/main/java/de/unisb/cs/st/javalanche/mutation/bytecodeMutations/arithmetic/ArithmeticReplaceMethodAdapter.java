@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+
 import java.util.ArrayList;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
@@ -67,8 +69,40 @@ public class ArithmeticReplaceMethodAdapter extends
 		List<MutationCode> mutationCode = new ArrayList<MutationCode>();
 		for (Mutation m : mutations) {
 			if (mutationManager.shouldApplyMutation(m)) {
-				MutationCode mutated = new SingleInsnMutationCode(m,
-						Integer.parseInt(m.getOperatorAddInfo()));
+				final int add = Integer.parseInt(m.getOperatorAddInfo());
+				MutationCode mutated = null;
+				if (add == REMOVE_LEFT_VALUE_SINGLE
+						|| add == REMOVE_RIGHT_VALUE_SINGLE) {
+
+					mutated = new MutationCode(m) {
+
+						@Override
+						public void insertCodeBlock(MethodVisitor mv) {
+							if (add == REMOVE_LEFT_VALUE_SINGLE) {
+								mv.visitInsn(Opcodes.SWAP);
+							}
+							mv.visitInsn(Opcodes.POP);
+						}
+					};
+				} else if (add == REMOVE_LEFT_VALUE_DOUBLE
+						|| add == REMOVE_RIGHT_VALUE_DOUBLE) {
+					mutated = new MutationCode(m) {
+
+						@Override
+						public void insertCodeBlock(MethodVisitor mv) {
+							if (add == REMOVE_LEFT_VALUE_DOUBLE) {
+								mv.visitInsn(Opcodes.DUP2_X2);
+								mv.visitInsn(Opcodes.POP2);
+								mv.visitInsn(Opcodes.POP2);
+							} else {
+								mv.visitInsn(Opcodes.POP2);
+							}
+						}
+					};
+				} else {
+					mutated = new SingleInsnMutationCode(m, Integer.parseInt(m
+							.getOperatorAddInfo()));
+				}
 				mutationCode.add(mutated);
 			}
 		}

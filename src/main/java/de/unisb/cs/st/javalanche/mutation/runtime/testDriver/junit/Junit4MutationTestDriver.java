@@ -243,8 +243,7 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 			notifier.addListener(runListener);
 			r.run(notifier);
 		} catch (NoTestsRemainException e) {
-			e.printStackTrace();
-			logger.warn(e);
+			logger.warn("No test remain for test " + desc, e);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		} catch (InitializationError e) {
