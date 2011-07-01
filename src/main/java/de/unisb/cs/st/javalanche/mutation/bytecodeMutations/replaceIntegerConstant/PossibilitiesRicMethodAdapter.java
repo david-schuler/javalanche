@@ -18,6 +18,8 @@
  */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.objectweb.asm.Label;
@@ -41,58 +43,55 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 	}
 
 	private void countMutation(int i) {
-		if (!mutationCode) {
-			int possibilitiesForLine = getPossibilityForLine();
+		List<String> replaceValues = new ArrayList<String>();
+		replaceValues.add((i + 1) + "");
+		replaceValues.add((i - 1) + "");
+		if (i != 0 && i != 1 && i != -1) {
+			replaceValues.add("0");
+		}
+		countMutation(i + "", replaceValues.toArray(new String[0]));
+	}
 
-			Mutation mutationPlus1 = new Mutation(className, getMethodName(),
-					getLineNumber(), possibilitiesForLine,
-					Mutation.MutationType.REPLACE_CONSTANT);
-			mutationPlus1.setOperatorAddInfo((i + 1) + "");
-			mutationPlus1.setAddInfo("Replace " + i + " with " + (i + 1));
-			QueryManager.saveMutation(mutationPlus1);
-			Long id = mutationPlus1.getId();
-			if (id == null) {
-				id = QueryManager.getMutation(mutationPlus1).getId();
+	private void countMutation(String originalVal, String... replacementValues) {
+		if (!mutationCode) {
+			Mutation baseMutation = null;
+			int possibilitiesForLine = getPossibilityForLine();
+			for (String replaceValue : replacementValues) {
+
+				Mutation mutation = new Mutation(className, getMethodName(),
+						getLineNumber(), possibilitiesForLine,
+						Mutation.MutationType.REPLACE_CONSTANT);
+				setAddInfo(mutation, originalVal, replaceValue);
+				QueryManager.saveMutation(mutation);
+				mutationPossibilityCollector.addPossibility(mutation);
+				// / Long id = mutation.getId();
+				if (baseMutation == null) {
+					baseMutation = mutation;
+				} else {
+					Long baseId = baseMutation.getId();
+					Long mId = mutation.getId();
+					if (baseId == null || mId == null) {
+						throw new RuntimeException(
+								"Expected that no id is null. Base id: "
+										+ baseId + " Mutation id: " + mId);
+					}
+					MutationCoverageFile.addDerivedMutation(baseId, mId);
+				}
 			}
 
-			Mutation mutationMinus1 = new Mutation(className, getMethodName(),
-					getLineNumber(), possibilitiesForLine,
-					Mutation.MutationType.REPLACE_CONSTANT);
-
-			mutationMinus1.setOperatorAddInfo((i - 1) + "");
-			mutationMinus1.setAddInfo("Replace " + i + " with " + (i - 1));
-			mutationMinus1.setBaseMutationId(id);
-
-			QueryManager.saveMutation(mutationMinus1);
-			if (mutationMinus1.getId() != null) {
-				MutationCoverageFile.addDerivedMutation(id,
-						mutationMinus1.getId());
+			if (baseMutation != null) {
+				CoverageDataUtil.insertCoverageCalls(mv, baseMutation);
 			}
 			addPossibilityForLine();
-			mutationPossibilityCollector.addPossibility(mutationPlus1);
-			mutationPossibilityCollector.addPossibility(mutationMinus1);
-			if (i != 0 && i != 1 && i != -1) {
-				Mutation mutationZero = new Mutation(className,
-						getMethodName(), getLineNumber(), possibilitiesForLine,
-						Mutation.MutationType.REPLACE_CONSTANT);
-				mutationZero.setAddInfo("Replace " + i + " with " + 0);
-				mutationZero.setBaseMutationId(id);
-				mutationZero.setOperatorAddInfo("0");
-				QueryManager.saveMutation(mutationZero);
-				mutationPossibilityCollector.addPossibility(mutationZero);
-				if (mutationZero.getId() != null) {
-					MutationCoverageFile.addDerivedMutation(id,
-							mutationZero.getId());
-				}
-				// if (insertCoverageCalls) {
-				// CoverageDataUtil.insertCoverageCalls(mv, mutationZero);
-				// }
-			}
-			if (insertCoverageCalls) {
-				CoverageDataUtil.insertCoverageCalls(mv, mutationPlus1);
-				// CoverageDataUtil.insertCoverageCalls(mv, mutationMinus1);
-			}
 		}
+		// if (i != 0 && i != 1 && i != -1) {
+	}
+
+	public static void setAddInfo(Mutation mutation, String originalValue,
+			String replaceValue) {
+		mutation.setOperatorAddInfo(replaceValue);
+		mutation.setAddInfo("Replace " + originalValue + " with "
+				+ replaceValue);
 	}
 
 	@Override
@@ -122,7 +121,31 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 
 	@Override
 	protected void ldc(Number constant) {
-		countMutation(constant.intValue());
+		Class<? extends Number> clazz = constant.getClass();
+		if (clazz.equals(Double.class)) {
+			double d = (Double) constant;
+			if (d != 0. && d != 1. && d != -1.) {
+				countMutation(constant + "", (d - 1) + "", (d + 1) + "", "0");
+			} else {
+				countMutation(constant + "", (d - 1) + "", (d + 1) + "");
+			}
+		} else if (clazz.equals(Float.class)) {
+			float f = (Float) constant;
+			if (f != 0.f && f != 1.f && f != -1.f) {
+				countMutation(constant + "", (f - 1) + "", (f + 1) + "", "0");
+			} else {
+				countMutation(constant + "", (f - 1) + "", (f + 1) + "");
+			}
+		} else if (clazz.equals(Long.class)) {
+			long l = (Long) constant;
+			if (l != 0l && l != 1l && l != -1l) {
+				countMutation(constant + "", (l - 1) + "", (l + 1) + "", "0");
+			} else {
+				countMutation(constant + "", (l - 1) + "", (l + 1) + "");
+			}
+		} else {
+			countMutation(constant.intValue());
+		}
 	}
 
 	public void visitLineNumber(int line, Label start) {

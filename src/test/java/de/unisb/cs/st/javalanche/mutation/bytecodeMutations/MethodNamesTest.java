@@ -11,6 +11,7 @@ import org.objectweb.asm.ClassReader;
 
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 public class MethodNamesTest {
 
@@ -21,6 +22,8 @@ public class MethodNamesTest {
 						"de.unisb.cs.st.javalanche.mutation.bytecodeMutations."
 								.replace('.', '/')
 								+ "MethodNamesTestData.class");
+		QueryManager
+				.deleteMutations("de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MethodNamesTestData");
 		MutationPossibilityCollector mpc = new MutationPossibilityCollector();
 		BytecodeTransformer bt = new MutationScannerTransformer(mpc);
 		try {

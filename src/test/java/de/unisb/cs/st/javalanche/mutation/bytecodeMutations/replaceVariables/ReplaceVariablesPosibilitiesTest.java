@@ -32,6 +32,7 @@ import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
 public class ReplaceVariablesPosibilitiesTest {
@@ -110,7 +111,7 @@ public class ReplaceVariablesPosibilitiesTest {
 	private List<Mutation> scanForReplaceVariableMutations(Class clazz)
 			throws URISyntaxException, IOException, FileNotFoundException {
 		File file = getFileForClass(clazz);
-
+		QueryManager.deleteMutations(clazz.getName());
 		ScanVariablesTransformer sTransformer = new ScanVariablesTransformer();
 		sTransformer.scanClass(clazz.getCanonicalName().replace('.', '/'),
 				new ClassReader(new FileInputStream(file)));

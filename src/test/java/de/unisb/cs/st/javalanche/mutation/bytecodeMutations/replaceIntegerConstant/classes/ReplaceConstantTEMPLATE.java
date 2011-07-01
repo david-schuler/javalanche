@@ -27,4 +27,9 @@ public class ReplaceConstantTEMPLATE {
 		return (i + myconst) > 10;
 	}
 
+	public double m6(double x) {
+		double addVal = 2.2;
+		return x + addVal;
+	}
+
 }

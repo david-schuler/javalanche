@@ -379,19 +379,19 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 		}
 	}
 
-	private static ConstantMutations getConstantMutations(String className,
-			String methodName, int lineNumber, int mutationForLine,
-			boolean isClassInit, String[] values) {
-		Mutation mutationPlus = new Mutation(className, methodName, lineNumber,
-				mutationForLine, MutationType.REPLACE_CONSTANT);
-		mutationPlus.setOperatorAddInfo(values[0]);
-		Mutation mutationMinus = new Mutation(className, methodName,
-				lineNumber, mutationForLine, MutationType.REPLACE_CONSTANT);
-		mutationMinus.setOperatorAddInfo(values[1]);
-		Mutation mutationZero = new Mutation(className, methodName, lineNumber,
-				mutationForLine, MutationType.REPLACE_CONSTANT);
-		mutationZero.setOperatorAddInfo(values[2]);
-		return new ConstantMutations(mutationPlus, mutationMinus, mutationZero);
-
-	}
+	// private static ConstantMutations getConstantMutations(String className,
+	// String methodName, int lineNumber, int mutationForLine,
+	// boolean isClassInit, String[] values) {
+	// Mutation mutationPlus = new Mutation(className, methodName, lineNumber,
+	// mutationForLine, MutationType.REPLACE_CONSTANT);
+	// mutationPlus.setOperatorAddInfo(values[0]);
+	// Mutation mutationMinus = new Mutation(className, methodName,
+	// lineNumber, mutationForLine, MutationType.REPLACE_CONSTANT);
+	// mutationMinus.setOperatorAddInfo(values[1]);
+	// Mutation mutationZero = new Mutation(className, methodName, lineNumber,
+	// mutationForLine, MutationType.REPLACE_CONSTANT);
+	// mutationZero.setOperatorAddInfo(values[2]);
+	// return new ConstantMutations(mutationPlus, mutationMinus, mutationZero);
+	//
+	// }
 }

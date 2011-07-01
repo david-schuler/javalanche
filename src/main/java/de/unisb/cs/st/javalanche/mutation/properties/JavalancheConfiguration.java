@@ -37,7 +37,7 @@ public interface JavalancheConfiguration {
 	 *            the mutation type to check.
 	 * @return true, when whether mutations of given type should be enabled.
 	 */
-	boolean enableMutationType(MutationType t);
+	boolean enableMutationType(MutationType t); // TODO rename method
 
 	/**
 	 * Returns the timeout for one mutation in seconds.

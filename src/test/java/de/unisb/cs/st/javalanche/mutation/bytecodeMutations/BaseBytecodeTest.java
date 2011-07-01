@@ -150,8 +150,6 @@ public class BaseBytecodeTest {
 		return mpc.getPossibilities();
 	}
 
-
-
 	@After
 	public void tearDown() {
 		ByteCodeTestUtils.deleteTestMutationResult(className);
@@ -259,8 +257,17 @@ public class BaseBytecodeTest {
 			Method method, Class<?> clazz) throws Exception {
 		Object instance = clazz.newInstance();
 		Object invoke = method.invoke(instance, input);
-		assertEquals("Expected different result for unmutated run of method "
-				+ method + " with input " + input + ".", expectedOutput, invoke);
+		if (expectedOutput.getClass().equals(Double.class)) {
+			assertEquals(
+					"Expected different result for unmutated run of method "
+							+ method + " with input " + input + ".",
+					(Double) expectedOutput, (Double) invoke, 1.e-3);
+		} else {
+			assertEquals(
+					"Expected different result for unmutated run of method "
+							+ method + " with input " + input + ".",
+					expectedOutput, invoke);
+		}
 	}
 
 	// protected void checkUnmutated(int input, Object expectedOutput,
@@ -324,9 +331,13 @@ public class BaseBytecodeTest {
 		Object result = method.invoke(instance, input);
 		mutationObserver.mutationEnd(m);
 		System.clearProperty(m.getMutationVariable());
-		assertEquals(
-				"Expected different result when mutation is enabled. Mutation"
-						+ m, expectedResult, result);
+		String message = "Expected different result when mutation is enabled. Mutation"
+				+ m;
+		if (expectedResult.getClass().equals(Double.class)) {
+			assertEquals(message, (Double) expectedResult, (Double) result, 1e-3);
+		} else {
+			assertEquals(message, expectedResult, result);
+		}
 	}
 
 	public JavalancheTestConfiguration getConfig() {

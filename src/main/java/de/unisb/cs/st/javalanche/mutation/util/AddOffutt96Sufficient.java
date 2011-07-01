@@ -40,6 +40,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.ReplaceMa
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.AbstractNegateJumpsAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.JumpReplacements;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.PossibilitiesRicMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
@@ -100,6 +101,68 @@ public class AddOffutt96Sufficient {
 			REMOVE_LEFT_VALUE_SINGLE, REMOVE_RIGHT_VALUE_SINGLE };
 	public static final int[] lorLongOpcodes = new int[] { LOR, LAND, LXOR,
 			REMOVE_RIGHT_VALUE_DOUBLE, REMOVE_LEFT_VALUE_DOUBLE };
+
+	public static final List<String> shiftOpcodes = Arrays.asList(ISHL + "",
+			ISHR + "", LSHL + "", LSHR + "", IUSHR + "", LUSHR + "");
+
+	public static void addUoiForConstants() {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		String projectPrefix = ConfigurationLocator
+				.getJavalancheConfiguration().getProjectPrefix();
+		Query query = session
+				.createQuery("from Mutation as m where className LIKE '"
+						+ projectPrefix + "%' and m.mutationType=:type");
+		query.setParameter("type", MutationType.REPLACE_CONSTANT);
+		@SuppressWarnings("unchecked")
+		List<Mutation> results = query.list();
+		for (Mutation m : results) {
+			if (MutationCoverageFile.isCovered(m.getId())
+					&& m.getBaseMutationId() == null) {
+				String addInfo = m.getAddInfo();
+				String origValue = getRicOriginalValue(addInfo);
+				String[] replaceValues;
+				if (origValue.contains(".")) {
+					Double d = Double.valueOf(origValue);
+					replaceValues = new String[] { -d + "" };
+				} else {
+					Integer i = Integer.valueOf(origValue);
+					replaceValues = new String[] { -i + "", ~i + "" };
+				}
+
+				boolean baseMutationUsed = false;
+				for (String replaceVal : replaceValues) {
+					if (baseMutationUsed) {
+						Mutation m2 = Mutation.copyMutation(m);
+						PossibilitiesRicMethodAdapter.setAddInfo(m2, origValue,
+								replaceVal);
+						QueryManager.saveMutation(m2);
+						MutationCoverageFile.addDerivedMutation(m.getId(),
+								m2.getId());
+					} else {
+						PossibilitiesRicMethodAdapter.setAddInfo(m, origValue,
+								replaceVal);
+						// QueryManager.updateMutation(m, null);
+						session.update(m);
+						baseMutationUsed = true;
+					}
+				}
+			} else {
+				session.delete(m);
+			}
+		}
+		tx.commit();
+		session.close();
+		MutationCoverageFile.update();
+
+	}
+
+	private static String getRicOriginalValue(String addInfo) {
+		String s = addInfo.substring("Replace ".length());
+		int end = s.indexOf(' ');
+		String result = s.substring(0, end);
+		return result;
+	}
 
 	// TODO currently only covered mutations are considered
 	public static void addRorMutations() {
@@ -360,16 +423,87 @@ public class AddOffutt96Sufficient {
 	}
 
 	public static void main(String[] args) {
+		generateOffutt96Sufficient();
+	}
+
+	public static void generateOffutt96Sufficient() {
 		addRorMutations();
 		addAorMutations();
 		addLorMutations();
-
+		addUoiForConstants();
 		removeUnecessaryOperators();
 	}
 
-	private static void removeUnecessaryOperators() {
-		// TODO Auto-generated method stub
+	public static void removeUnecessaryOperators() {
+		deleteMutations(MutationType.REMOVE_CALL);
+		deleteMutations(MutationType.REPLACE_VARIABLE);
+		deleteShiftMutations();
+	}
 
+	private static void deleteShiftMutations() {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		String projectPrefix = ConfigurationLocator
+				.getJavalancheConfiguration().getProjectPrefix();
+		Query query = session
+				.createQuery("from Mutation as m where className LIKE '"
+						+ projectPrefix + "%' and m.mutationType=:type");
+		query.setParameter("type", MutationType.ARITHMETIC_REPLACE);
+		@SuppressWarnings("unchecked")
+		List<Mutation> results = query.list();
+		int deletes = 0;
+		int flushs = 0;
+		for (Mutation m : results) {
+			if (shiftOpcodes.contains(m.getOperatorAddInfo())) {
+				session.delete(m);
+				deletes++;
+				if (deletes % 20 == 0) {
+					// 20, same as the JDBC batch size
+					// flush a batch of inserts and release memory:
+					// see
+					// http://www.hibernate.org/hib_docs/reference/en/html/batch.html
+					long startFlush = System.currentTimeMillis();
+					flushs++;
+					logger.info("Doing temporary flush " + flushs);
+					session.flush();
+				}
+			}
+		}
+		tx.commit();
+		session.close();
+		MutationCoverageFile.update();
+	}
+
+	private static void deleteMutations(MutationType type) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		String projectPrefix = ConfigurationLocator
+				.getJavalancheConfiguration().getProjectPrefix();
+		Query query = session
+				.createQuery("from Mutation as m where className LIKE '"
+						+ projectPrefix + "%' and m.mutationType=:type");
+		query.setParameter("type", type);
+		@SuppressWarnings("unchecked")
+		List<Mutation> results = query.list();
+		int deletes = 0;
+		int flushs = 0;
+		for (Mutation m : results) {
+			session.delete(m);
+			deletes++;
+			if (deletes % 20 == 0) {
+				// 20, same as the JDBC batch size
+				// flush a batch of inserts and release memory:
+				// see
+				// http://www.hibernate.org/hib_docs/reference/en/html/batch.html
+				long startFlush = System.currentTimeMillis();
+				flushs++;
+				logger.info("Doing temporary flush " + flushs);
+				session.flush();
+			}
+		}
+		tx.commit();
+		session.close();
+		MutationCoverageFile.update();
 	}
 
 }

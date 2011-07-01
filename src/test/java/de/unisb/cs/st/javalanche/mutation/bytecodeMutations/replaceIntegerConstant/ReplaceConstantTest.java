@@ -50,9 +50,7 @@ public class ReplaceConstantTest extends BaseBytecodeTest {
 	private List<Mutation> insertAdditionalMutations(Mutation m) {
 		List<Mutation> result = new ArrayList<Mutation>();
 		for (int i = 10; i < 16; i++) {
-			Mutation m2 = new Mutation(m.getClassName(), m.getMethodName(),
-					m.getLineNumber(), m.getMutationForLine(),
-					m.getMutationType());
+			Mutation m2 = Mutation.copyMutation(m);
 			m2.setAddInfo("Generated replace mutation. Value: " + i);
 			m2.setOperatorAddInfo(i + "");
 			m2.setBaseMutationId(m.getId());
@@ -115,7 +113,8 @@ public class ReplaceConstantTest extends BaseBytecodeTest {
 		Mutation mutation = new Mutation(className, m.getName(), 16, 0,
 				MutationType.REPLACE_CONSTANT);
 		check(mutation, "0", m, 2, 0.);
-		check(mutation, "6", m, 2, 12.);
+		check(mutation, "4.0", m, 2, 8.);
+		check(mutation, "6.0", m, 2, 12.);
 		check(mutation, "10", m, 2, 20.);
 		check(mutation, "11", m, 2, 22.);
 		check(mutation, "12", m, 2, 24.);
@@ -131,7 +130,8 @@ public class ReplaceConstantTest extends BaseBytecodeTest {
 		Mutation mutation = new Mutation(className, m.getName(), 21, 0,
 				MutationType.REPLACE_CONSTANT);
 		check(mutation, "0", m, 2, 0.f);
-		check(mutation, "6", m, 2, 12.f);
+		check(mutation, "4.0", m, 2, 8.f);
+		check(mutation, "6.0", m, 2, 12.f);
 		check(mutation, "10", m, 2, 20.f);
 		check(mutation, "11", m, 2, 22.f);
 		check(mutation, "12", m, 2, 24.f);
@@ -155,5 +155,16 @@ public class ReplaceConstantTest extends BaseBytecodeTest {
 		check(mutation, "13", m, 5, true);
 		check(mutation, "14", m, 5, true);
 		check(mutation, "15", m, 5, true);
+	}
+
+	@Test
+	public void testM6() throws Exception {
+		Method m6 = clazz.getMethod("m6", double.class);
+		checkUnmutated(2.1, 4.3, m6, clazz);
+		Mutation mutation = new Mutation(className, m6.getName(), 31, 0,
+				MutationType.REPLACE_CONSTANT);
+		check(mutation, "0", m6, 2.1, 2.1);
+		check(mutation, 2.2 - 1. + "", m6, 2.1, 3.3);
+		check(mutation, 2.2 + 1. + "", m6, 2.1, 5.3);
 	}
 }

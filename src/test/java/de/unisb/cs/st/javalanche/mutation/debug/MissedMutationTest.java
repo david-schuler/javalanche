@@ -24,6 +24,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.properties.TestProperties;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.testutil.TestUtil;
 public class MissedMutationTest {
 
@@ -32,6 +33,7 @@ public class MissedMutationTest {
 	public void testLangUtil() {
 		byte[] classBytes = TestProperties.LANG_UTIL_CLASS.getClassBytes();
 		String className = TestProperties.LANG_UTIL_CLASS.getClassName();
+		QueryManager.deleteMutations(className);
 		int size = TestUtil.getMutations(classBytes, className).size();
 		assertThat(size, greaterThan(40));
 	}
