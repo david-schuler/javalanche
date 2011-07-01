@@ -29,6 +29,7 @@ import org.junit.Test;
 import de.unisb.cs.st.javalanche.mutation.properties.TestProperties;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.testutil.TestUtil;
 
 public class ArtihmeticPossibilitiesTest {
@@ -37,6 +38,7 @@ public class ArtihmeticPossibilitiesTest {
 	public void testPossibilities() throws IOException {
 		byte[] classBytes = TestProperties.ADVICE_CLASS.getClassBytes();
 		String className = TestProperties.ADVICE_CLASS.getClassName();
+		QueryManager.deleteMutations(className);
 		List<Mutation> mutations = TestUtil.getMutations(classBytes, className);
 		int res = TestUtil.filterMutations(mutations,
 				MutationType.ARITHMETIC_REPLACE).size();
