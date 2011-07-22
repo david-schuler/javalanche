@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2011 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2011 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.results;
 
 import java.io.Serializable;
@@ -104,7 +104,6 @@ public class MutationTestResult implements Serializable {
 
 	private int totalViolations;
 
-
 	/**
 	 * @return the violatedInvariants
 	 */
@@ -155,7 +154,6 @@ public class MutationTestResult implements Serializable {
 		this.date = new Date();
 	}
 
-
 	public MutationTestResult(List<TestMessage> passing,
 			List<TestMessage> failures, List<TestMessage> errors,
 			boolean touched) {
@@ -169,14 +167,15 @@ public class MutationTestResult implements Serializable {
 		this.runs = passing.size() + failures.size() + errors.size();
 	}
 
-
 	public String toShortString() {
 		StringBuilder sb = new StringBuilder(String.format(
 				"Runs: %d  Failures: %d  Errors: %d LineTouched: %s", runs,
 				failures.size(), errors.size(), touched ? "yes" : "no"));
-		sb.append(" invariant violations: " + differentViolatedInvariants
-				+ " (" + totalViolations + ") ids["
-				+ Arrays.toString(violatedInvariants) + "]");
+		if (differentViolatedInvariants > 0) {
+			sb.append(" invariant violations: " + differentViolatedInvariants
+					+ " (" + totalViolations + ") ids["
+					+ Arrays.toString(violatedInvariants) + "]");
+		}
 		sb.append(" date: " + date);
 		return sb.toString();
 	}
@@ -321,19 +320,19 @@ public class MutationTestResult implements Serializable {
 		this.differentViolatedInvariants = differentViolatedInvariants;
 	}
 
-//	public void addInvariant(Invariant invariant) {
-//		if (invariants == null) {
-//			invariants = new ArrayList<Invariant>();
-//		}
-//		invariants.add(invariant);
-//	}
+	// public void addInvariant(Invariant invariant) {
+	// if (invariants == null) {
+	// invariants = new ArrayList<Invariant>();
+	// }
+	// invariants.add(invariant);
+	// }
 
-//	/**
-//	 * @return the invariants
+	// /**
+	// * @return the invariants
 	// */
-//	public List<Invariant> getInvariants() {
-//		return invariants;
-//	}
+	// public List<Invariant> getInvariants() {
+	// return invariants;
+	// }
 
 	// /**
 	// * @param invariants

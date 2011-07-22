@@ -42,9 +42,9 @@ import de.unisb.cs.st.javalanche.mutation.results.TestName;
 
 /**
  * Class that provides static method that execute queries.
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 @SuppressWarnings("unchecked")
 public class QueryManager {
@@ -93,6 +93,28 @@ public class QueryManager {
 		Mutation m = _getMutationOrNull(mutation, session);
 		session.close();
 		return m;
+	}
+
+	public static List<Mutation> getMutationsIgnoreAddInfo(Mutation baseMutation) {
+		Session session = openSession();
+		List<Mutation> list = getMutationsIgnoreAddInfo(baseMutation, session);
+		session.close();
+		return list;
+	}
+
+	public static List<Mutation> getMutationsIgnoreAddInfo(
+			Mutation baseMutation,
+			Session session) {
+		Transaction tx = session.beginTransaction();
+		Query query = session
+				.createQuery("from Mutation as m where m.className=:name and m.lineNumber=:number and m.mutationForLine=:mforl and m.mutationType=:type");
+		query.setParameter("name", baseMutation.getClassName());
+		query.setParameter("number", baseMutation.getLineNumber());
+		query.setParameter("type", baseMutation.getMutationType());
+		query.setParameter("mforl", baseMutation.getMutationForLine());
+		List<Mutation> result = query.list();
+		tx.commit();
+		return result;
 	}
 
 	private static Mutation _getMutationOrNull(Mutation mutation,
@@ -582,11 +604,11 @@ public class QueryManager {
 		String queryString = "SELECT distinct(m.id) FROM Mutation m"
 				+ " WHERE "
 				// +"NOT m.classInit AND"
-				+ " m.mutationResult_id IS NULL " + " AND m.mutationType != 0"
+				+ " m.mutationResult_id IS NULL "
+				+ " AND m.mutationType != 0"
 				+ " AND m.className LIKE '"
 				+ ConfigurationLocator.getJavalancheConfiguration()
-						.getProjectPrefix()
-				+ "%'"; // ORDER BY m.id ";
+						.getProjectPrefix() + "%'"; // ORDER BY m.id ";
 		logger.debug("Executing query: " + queryString);
 		Query query = session.createSQLQuery(queryString);
 		List results = query.list();

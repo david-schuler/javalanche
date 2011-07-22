@@ -17,7 +17,7 @@ import org.junit.Test;
 import org.objectweb.asm.Opcodes;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BaseBytecodeTest;
-import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.AbstractNegateJumpsAdapter;
 import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
@@ -110,12 +110,12 @@ public class RorTest2 extends BaseBytecodeTest {
 				checkUnmutated(input, true, m1, clazz);
 				checkMutation(mutation, input, false, m1, clazz);
 			}
-			if (addInfo == NegateJumpsMethodAdapter.POP_TWICE_TRUE) {
+			if (addInfo == AbstractNegateJumpsAdapter.POP_TWICE_TRUE) {
 				Integer[] input = new Integer[] { 2, 1 };
 				checkUnmutated(input, true, m1, clazz);
 				checkMutation(mutation, input, false, m1, clazz);
 			}
-			if (addInfo == NegateJumpsMethodAdapter.POP_TWICE_FALSE) {
+			if (addInfo == AbstractNegateJumpsAdapter.POP_TWICE_FALSE) {
 				Integer[] input = new Integer[] { 1, 2 };
 				checkUnmutated(input, false, m1, clazz);
 				checkMutation(mutation, input, true, m1, clazz);
@@ -157,12 +157,12 @@ public class RorTest2 extends BaseBytecodeTest {
 				checkUnmutated(input, false, m1, clazz);
 				checkMutation(mutation, input, true, m1, clazz);
 			}
-			if (addInfo == NegateJumpsMethodAdapter.POP_ONCE_TRUE) {
+			if (addInfo == AbstractNegateJumpsAdapter.POP_ONCE_TRUE) {
 				Integer[] input = new Integer[] { 1 };
 				checkUnmutated(input, true, m1, clazz);
 				checkMutation(mutation, input, false, m1, clazz);
 			}
-			if (addInfo == NegateJumpsMethodAdapter.POP_ONCE_FALSE) {
+			if (addInfo == AbstractNegateJumpsAdapter.POP_ONCE_FALSE) {
 				Integer[] input = new Integer[] { -1 };
 				checkUnmutated(input, false, m1, clazz);
 				checkMutation(mutation, input, true, m1, clazz);

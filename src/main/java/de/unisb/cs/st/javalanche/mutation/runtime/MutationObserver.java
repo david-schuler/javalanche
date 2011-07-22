@@ -245,4 +245,8 @@ public class MutationObserver implements MutationTestListener {
 		}
 	}
 
+	public static Set<Mutation> getTouchedMutations() {
+		return touchedMutations;
+	}
+
 }

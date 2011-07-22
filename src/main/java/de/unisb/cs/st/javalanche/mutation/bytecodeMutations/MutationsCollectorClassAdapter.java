@@ -18,6 +18,8 @@
  */
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations;
 
+import static de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,8 +46,6 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.unaryOperatorInserti
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
 import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
-import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
-import static de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType.*;
 
 public class MutationsCollectorClassAdapter extends ClassAdapter {
 
@@ -130,7 +130,7 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 			rvAdapter.setAnlyzeAdapter(analyzerAdapter);
 			mv = analyzerAdapter;
 		}
-		if (configuration.enableMutationType(ABSOLUT_VALUE)) {
+		if (configuration.enableMutationType(ABSOLUTE_VALUE)) {
 			mv = new AbsoluteValuePossibilitiesAdapter(mv, className, name,
 					absoluteValuePossibilities, desc, mpc);
 		}

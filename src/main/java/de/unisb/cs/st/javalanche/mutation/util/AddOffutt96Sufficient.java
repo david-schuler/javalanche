@@ -66,6 +66,8 @@ public class AddOffutt96Sufficient {
 	private static SessionFactory sessionFactory = HibernateUtil
 			.getSessionFactory();
 
+	private static final boolean createAllMutations = true;
+
 	private static final int[] aorIntOpcodes = new int[] { IADD, ISUB, IMUL,
 			IDIV, IREM, REMOVE_LEFT_VALUE_SINGLE, REMOVE_RIGHT_VALUE_SINGLE };
 	// ISHL, ISHR, IUSHR, IAND, IOR, IXOR };
@@ -117,7 +119,8 @@ public class AddOffutt96Sufficient {
 		@SuppressWarnings("unchecked")
 		List<Mutation> results = query.list();
 		for (Mutation m : results) {
-			if (MutationCoverageFile.isCovered(m.getId())
+			// System.out.println("Mutation " + m);
+			if (checkCovered(m)
 					&& m.getBaseMutationId() == null) {
 				String addInfo = m.getAddInfo();
 				String origValue = getRicOriginalValue(addInfo);
@@ -127,34 +130,60 @@ public class AddOffutt96Sufficient {
 					replaceValues = new String[] { -d + "" };
 				} else {
 					Integer i = Integer.valueOf(origValue);
+					// if (-i == i || i == ~i || -i == ~i) {
+					//
+					// System.out
+					// .println("AddOffutt96Sufficient.addUoiForConstants() EQUAL CONSTANTS: "
+					// + m);
+					// }
 					replaceValues = new String[] { -i + "", ~i + "" };
+
 				}
 
 				boolean baseMutationUsed = false;
 				for (String replaceVal : replaceValues) {
+
+
 					if (baseMutationUsed) {
 						Mutation m2 = Mutation.copyMutation(m);
 						PossibilitiesRicMethodAdapter.setAddInfo(m2, origValue,
 								replaceVal);
-						QueryManager.saveMutation(m2);
-						MutationCoverageFile.addDerivedMutation(m.getId(),
-								m2.getId());
+						if (QueryManager.getMutationOrNull(m2) == null) {
+							// System.out.println("New mutation " + m2);
+							QueryManager.saveMutation(m2);
+
+							MutationCoverageFile.addDerivedMutation(m.getId(),
+									m2.getId());
+						}
 					} else {
-						PossibilitiesRicMethodAdapter.setAddInfo(m, origValue,
+						Mutation m2 = Mutation.copyMutation(m);
+						PossibilitiesRicMethodAdapter.setAddInfo(m2, origValue,
 								replaceVal);
-						// QueryManager.updateMutation(m, null);
-						session.update(m);
-						baseMutationUsed = true;
+						if (QueryManager.getMutationOrNull(m2) == null) {
+							PossibilitiesRicMethodAdapter.setAddInfo(m,
+									origValue, replaceVal);
+							// QueryManager.updateMutation(m, null);
+							// System.out.println("Updated mutation " + m);
+							session.update(m);
+							baseMutationUsed = true;
+						}
 					}
 				}
 			} else {
 				session.delete(m);
 			}
+			session.flush();
 		}
 		tx.commit();
 		session.close();
 		MutationCoverageFile.update();
+	}
 
+	public static boolean checkCovered(Mutation m) {
+		if (createAllMutations) {
+			return true;
+		}
+		return MutationCoverageFile.isCovered(m.getId());
 	}
 
 	private static String getRicOriginalValue(String addInfo) {
@@ -177,7 +206,7 @@ public class AddOffutt96Sufficient {
 		@SuppressWarnings("unchecked")
 		List<Mutation> results = query.list();
 		for (Mutation m : results) {
-			if (MutationCoverageFile.isCovered(m.getId())
+			if (checkCovered(m)
 					&& m.getBaseMutationId() == null) {
 				String operatorAddinfo = m.getOperatorAddInfo();
 				int standardReplaceOpcode = Integer.parseInt(operatorAddinfo);
@@ -193,9 +222,11 @@ public class AddOffutt96Sufficient {
 						AbstractNegateJumpsAdapter.generateAddInfo(m2,
 								originalOpcode, replaceOpcode);
 						logger.info("Adding mutation" + m2);
+						m2.setBaseMutationId(m.getId());
 						QueryManager.saveMutation(m2);
 						MutationCoverageFile.addDerivedMutation(m.getId(),
 								m2.getId());
+
 					}
 				}
 			}
@@ -232,7 +263,7 @@ public class AddOffutt96Sufficient {
 		@SuppressWarnings("unchecked")
 		List<Mutation> results = query.list();
 		for (Mutation m : results) {
-			if (MutationCoverageFile.isCovered(m.getId())
+			if (checkCovered(m)
 					&& m.getBaseMutationId() == null) {
 				String addInfo = m.getAddInfo();
 				int originalValue = getOriginalValue(addInfo);
@@ -271,7 +302,7 @@ public class AddOffutt96Sufficient {
 		@SuppressWarnings("unchecked")
 		List<Mutation> results = query.list();
 		for (Mutation m : results) {
-			if (MutationCoverageFile.isCovered(m.getId()) // TODO also account
+			if (checkCovered(m)
 															// for not covered
 					&& m.getBaseMutationId() == null) {
 				String addInfo = m.getAddInfo();
@@ -290,6 +321,9 @@ public class AddOffutt96Sufficient {
 					m2.setBaseMutationId(m.getId());
 					logger.info("Adding mutation" + m2);
 					QueryManager.saveMutation(m2);
+					if (m2.getId() == null) {
+						throw new RuntimeException("Got null as id for " + m2);
+					}
 					MutationCoverageFile.addDerivedMutation(m.getId(),
 							m2.getId());
 				}
@@ -347,7 +381,7 @@ public class AddOffutt96Sufficient {
 		@SuppressWarnings("unchecked")
 		List<Mutation> results = query.list();
 		for (Mutation m : results) {
-			if (MutationCoverageFile.isCovered(m.getId()) // TODO also account
+			if (checkCovered(m)
 															// for not covered
 					&& m.getBaseMutationId() == null) {
 				String addInfo = m.getAddInfo();
@@ -505,5 +539,4 @@ public class AddOffutt96Sufficient {
 		session.close();
 		MutationCoverageFile.update();
 	}
-
 }

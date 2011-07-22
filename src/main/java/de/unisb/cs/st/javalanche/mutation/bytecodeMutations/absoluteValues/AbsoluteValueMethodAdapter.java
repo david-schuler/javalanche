@@ -32,8 +32,6 @@ public class AbsoluteValueMethodAdapter extends AbstractAbsoluteValueAdapter {
 
 	@Override
 	protected void handleMutation(Mutation mutation, Integer typeOpcode) {
-
-		final Type type = getType(typeOpcode);
 		MutationCode unMutated = new MutationCode(null) {
 			@Override
 			public void insertCodeBlock(MethodVisitor mv) {
@@ -88,7 +86,7 @@ public class AbsoluteValueMethodAdapter extends AbstractAbsoluteValueAdapter {
 			BytecodeTasks.insertIfElse(mv, unMutated,
 					mutated.toArray(new MutationCode[0]));
 		} else {
-			logger.debug("Not applying mutation");
+			logger.debug("Not applying mutations for base mutation " + mutation);
 		}
 	}
 

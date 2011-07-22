@@ -36,11 +36,6 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 
 public class NegateJumpsMethodAdapter extends AbstractNegateJumpsAdapter {
 
-	public static final int POP_ONCE_TRUE = -2;
-	public static final int POP_ONCE_FALSE = -3;
-	public static final int POP_TWICE_TRUE = -4;
-	public static final int POP_TWICE_FALSE = -5;
-
 	private static Logger logger = Logger
 			.getLogger(NegateJumpsMethodAdapter.class);
 
@@ -56,23 +51,22 @@ public class NegateJumpsMethodAdapter extends AbstractNegateJumpsAdapter {
 	@Override
 	protected void handleMutation(Mutation mutation, final Label label,
 			final int opcode) {
-		if (mutationManager.shouldApplyMutation(mutation)) {
-			logger.debug("Applying mutation for line: " + getLineNumber());
 
-			Mutation dbMutation = QueryManager.getMutation(mutation);
-			MutationCode unMutated = new MutationCode(null) {
-				@Override
-				public void insertCodeBlock(MethodVisitor mv) {
-					mv.visitJumpInsn(opcode, label);
-				}
+		logger.debug("Applying mutation for line: " + getLineNumber());
+		MutationCode unMutated = new MutationCode(null) {
+			@Override
+			public void insertCodeBlock(MethodVisitor mv) {
+				mv.visitJumpInsn(opcode, label);
+			}
 
-			};
-			List<Mutation> mutations = QueryManager.getMutations(
-					mutation.getClassName(), mutation.getMethodName(),
-					mutation.getLineNumber(), mutation.getMutationForLine(),
-					MutationType.NEGATE_JUMP);
-			List<MutationCode> mutationCode = new ArrayList<MutationCode>();
-			for (final Mutation m : mutations) {
+		};
+		List<Mutation> mutations = QueryManager.getMutations(
+				mutation.getClassName(), mutation.getMethodName(),
+				mutation.getLineNumber(), mutation.getMutationForLine(),
+				MutationType.NEGATE_JUMP);
+		List<MutationCode> mutationCode = new ArrayList<MutationCode>();
+		for (final Mutation m : mutations) {
+			if (mutationManager.shouldApplyMutation(m)) {
 				MutationCode mutated = new MutationCode(m) {
 					@Override
 					public void insertCodeBlock(MethodVisitor mv) {
@@ -95,23 +89,10 @@ public class NegateJumpsMethodAdapter extends AbstractNegateJumpsAdapter {
 				};
 				mutationCode.add(mutated);
 			}
-
+		}
+		if (mutationCode.size() > 0) {
 			BytecodeTasks.insertIfElse(mv, unMutated,
 					mutationCode.toArray(new MutationCode[0]));
-			// MutationCode mutated = new MutationCode(dbMutation) {
-			// @Override
-			// public void insertCodeBlock(MethodVisitor mv) {
-			// if (jumpReplacementMap.containsKey(opcode)) {
-			// int insertOpcode = jumpReplacementMap.get(opcode);
-			// mv.visitJumpInsn(insertOpcode, label);
-			// } else {
-			// throw new RuntimeException(
-			// "Invalid opcode key for jump Map");
-			// }
-			// }
-			// };
-			// BytecodeTasks.insertIfElse(mv, unMutated,
-			// new MutationCode[] { mutated });
 		} else {
 			mv.visitJumpInsn(opcode, label);
 		}

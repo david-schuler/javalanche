@@ -20,6 +20,7 @@ package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.util.AbstractVisitor;
@@ -29,6 +30,14 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 
 public abstract class AbstractNegateJumpsAdapter extends
 		AbstractMutationAdapter {
+
+	public static final int POP_ONCE_TRUE = -2;
+	public static final int POP_ONCE_FALSE = -3;
+	public static final int POP_TWICE_TRUE = -4;
+	public static final int POP_TWICE_FALSE = -5;
+
+	private static final Logger logger = Logger
+			.getLogger(AbstractNegateJumpsAdapter.class);
 
 	protected static Map<Integer, Integer> jumpReplacementMap = JumpReplacements
 			.getReplacementMap();
@@ -59,6 +68,8 @@ public abstract class AbstractNegateJumpsAdapter extends
 		int replaceOpcode = JumpReplacements.getReplacementMap().get(opcode);
 		generateAddInfo(mutation, opcode, replaceOpcode);
 		addPossibilityForLine();
+		logger.debug("Found possibility for line " + getLineNumber() + "("
+				+ getPossibilityForLine() + ")");
 		handleMutation(mutation, label, opcode);
 	}
 
@@ -69,7 +80,12 @@ public abstract class AbstractNegateJumpsAdapter extends
 		if (replaceOpcode > 0) {
 			replaceString = AbstractVisitor.OPCODES[replaceOpcode];
 		} else {
-			replaceString = "Always TODO";// TODO
+			String add = "false";
+			if (replaceOpcode == POP_ONCE_TRUE
+					|| replaceOpcode == POP_TWICE_TRUE) {
+				add = "true";
+			}
+			replaceString = "Always " + add;
 		}
 		mutation.setAddInfo("Replace " + AbstractVisitor.OPCODES[opcode]
 				+ " with  " + replaceString);

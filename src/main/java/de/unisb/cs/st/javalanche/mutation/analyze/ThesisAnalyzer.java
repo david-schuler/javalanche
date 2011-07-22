@@ -44,7 +44,7 @@ public class ThesisAnalyzer implements MutationAnalyzer {
 			boolean isCovered = MutationCoverageFile
 					.isCovered(mutation.getId());
 			covered += isCovered ? 1 : 0;
-			detected += mutation.isKilled() ? 1 : 0;
+			detected += mutation.isDetected() ? 1 : 0;
 			MutationType type = mutation.getMutationType();
 			set.add(type);
 		}

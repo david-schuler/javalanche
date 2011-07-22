@@ -71,7 +71,7 @@ public abstract class AbstractAbsoluteValueAdapter extends
 	}
 	private void mutateLocal(Integer type) {
 		Mutation mutation = new Mutation(className, getMethodName(),
-				getLineNumber(), getPossibilityForLine(), ABSOLUT_VALUE);
+				getLineNumber(), getPossibilityForLine(), ABSOLUTE_VALUE);
 		addPossibilityForLine();
 		handleMutation(mutation, type);
 	}

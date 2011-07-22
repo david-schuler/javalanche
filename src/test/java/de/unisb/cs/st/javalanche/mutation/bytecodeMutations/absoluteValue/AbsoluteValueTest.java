@@ -23,7 +23,7 @@ public class AbsoluteValueTest extends BaseBytecodeTest {
 
 	public AbsoluteValueTest() throws Exception {
 		super(AbsoluteValueTEMPLATE.class);
-		config.setMutationType(ABSOLUT_VALUE, true);
+		config.setMutationType(ABSOLUTE_VALUE, true);
 		verbose = true;
 		clazz = prepareTest();
 	}
@@ -34,7 +34,7 @@ public class AbsoluteValueTest extends BaseBytecodeTest {
 		checkUnmutated(1, true, m1, clazz);
 		checkUnmutated(-21, false, m1, clazz);
 		List<Mutation> mutations = QueryManager.getMutations(className,
-				ABSOLUT_VALUE, 7);
+				ABSOLUTE_VALUE, 7);
 		assertEquals(3, mutations.size());
 		for (Mutation m : mutations) {
 			String addInfo = m.getOperatorAddInfo();
@@ -64,7 +64,7 @@ public class AbsoluteValueTest extends BaseBytecodeTest {
 		checkUnmutated(2.2, 4.4, m2, clazz);
 		checkUnmutated(-2.2, -4.4, m2, clazz);
 		List<Mutation> mutations = QueryManager.getMutations(className,
-				ABSOLUT_VALUE, 11);
+				ABSOLUTE_VALUE, 11);
 		assertEquals(3, mutations.size());
 		for (Mutation m : mutations) {
 			String addInfo = m.getOperatorAddInfo();
@@ -94,7 +94,7 @@ public class AbsoluteValueTest extends BaseBytecodeTest {
 		checkUnmutated(2l, -4l, m3, clazz);
 		checkUnmutated(-2l, 4l, m3, clazz);
 		List<Mutation> mutations = QueryManager.getMutations(className,
-				ABSOLUT_VALUE, 17);
+				ABSOLUTE_VALUE, 17);
 		assertEquals(6, mutations.size());
 		for (Mutation m : mutations) {
 			String addInfo = m.getOperatorAddInfo();

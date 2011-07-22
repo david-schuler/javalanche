@@ -21,4 +21,16 @@
 		</java>
 	</target>
 	
+
+	<target name="createSufficient" description="* Create a sufficient mutation set as proposed by Offutt in `An experimental determination of sufficient mutant operators`">
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.AddOffutt96Sufficient" maxmemory="${javalanche.maxmemory}" fork="true">
+			<sysproperty key="javalanche.project.prefix" value="${project.prefix}" />
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+	
+	
+	
 </project>

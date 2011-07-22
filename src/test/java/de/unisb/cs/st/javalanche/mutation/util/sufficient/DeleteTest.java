@@ -37,7 +37,7 @@ public class DeleteTest extends BaseBytecodeTest {
 	public DeleteTest() throws Exception {
 		super(DeleteTEMPLATE.class);
 		config.setMutationType(UNARY_OPERATOR, true);
-		config.setMutationType(ABSOLUT_VALUE, true);
+		config.setMutationType(ABSOLUTE_VALUE, true);
 		clazz = prepareTest();
 	}
 

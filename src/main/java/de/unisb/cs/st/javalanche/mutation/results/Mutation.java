@@ -61,7 +61,7 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 				"Negate jump condition"), ARITHMETIC_REPLACE(
 				"Replace arithmetic operator"), REMOVE_CALL(
 				"Remove method call"), REPLACE_VARIABLE(
-				"Replace variable reference"), ABSOLUT_VALUE(
+				"Replace variable reference"), ABSOLUTE_VALUE(
 				"Insert absolute value of a variable"),
 				UNARY_OPERATOR("Insert unary operator");
 ;

@@ -114,14 +114,14 @@ public class MutationsClassAdapter extends ClassAdapter {
 			mv = analyzerAdapter;
 		}
 		if (ConfigurationLocator.getJavalancheConfiguration()
-				.enableMutationType(MutationType.ABSOLUT_VALUE)) {
+				.enableMutationType(MutationType.ABSOLUTE_VALUE)) {
 			mv = new AbsoluteValueMethodAdapter(mv, className, name,
 					absolutValuePossibilities, mutationManager, desc);
 		}
 		if (ConfigurationLocator.getJavalancheConfiguration()
 				.enableMutationType(MutationType.UNARY_OPERATOR)) {
 			mv = new UnaryOperatorMethodAdapter(mv, className, name,
-					absolutValuePossibilities, mutationManager, desc);
+					unaryOperatorPossibilities, mutationManager, desc);
 		}
 		return mv;
 

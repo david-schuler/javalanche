@@ -65,21 +65,25 @@ public class MutationCoverageFile {
 
 		Set<Entry<Long, Set<String>>> entrySet = coverageData.entrySet();
 		for (Entry<Long, Set<String>> entry : entrySet) {
-			Set<Integer> ids = new HashSet<Integer>();
+			Set<Integer> testIDs = new HashSet<Integer>();
 			for (String testName : entry.getValue()) {
 				if (testName != null) {
-					ids.add(allTests.get(testName));
+					testIDs.add(allTests.get(testName));
 				}
 			}
-			if (ids.size() > 0) {
-				coveredMutations.add(entry.getKey());
-				Collection<Long> collection = baseMutations.get(entry.getKey());
+			Long id = entry.getKey();
+			if (testIDs.size() > 0) {
+				coveredMutations.add(id);
+				logger.debug("Adding covered mutation" + id);
+				Collection<Long> collection = baseMutations.get(id);
 				if (collection.size() > 0) {
+					logger.debug("Adding children of base mutation"
+							+ collection);
 					coveredMutations.addAll(collection);
 				}
 			}
-			SerializeIo.serializeToFile(ids,
-					new File(COVERAGE_DIR, "" + entry.getKey()));
+			SerializeIo.serializeToFile(testIDs,
+					new File(COVERAGE_DIR, "" + id));
 		}
 		logger.info("Saving Ids of Covered Mutations "
 				+ coveredMutations.size());
@@ -93,7 +97,7 @@ public class MutationCoverageFile {
 		return _getCoverageDataId(m.getId());
 	}
 
-	public static Set<String> _getCoverageDataId(long id) {
+	private static Set<String> _getCoverageDataId(long id) {
 		if (idMap == null) {
 			idMap = SerializeIo.get(FILE_MAP);
 		}

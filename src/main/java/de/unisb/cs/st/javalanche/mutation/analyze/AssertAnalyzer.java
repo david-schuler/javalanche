@@ -52,7 +52,7 @@ public class AssertAnalyzer implements MutationAnalyzer {
 		List<Mutation> nonInvariantViolatingMutations = new ArrayList<Mutation>();
 		for (Mutation mutation : mutations) {
 			MutationTestResult mutationResult = mutation.getMutationResult();
-			if (mutation.isKilled()) {
+			if (mutation.isDetected()) {
 				killedMutations.add(mutation);
 				if (mutationResult != null && mutationResult.isTouched()) {
 					killedAndTouchedMutations.add(mutation);

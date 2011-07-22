@@ -40,7 +40,7 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 	private static final String TIMEOUT_IN_SECONDS_KEY = "javalanche.mutation.default.timeout";
 
 	/**
-	 * The variables control whether mutation types are enabled
+	 * The variables control whether mutation types are enabled.
 	 */
 	public static final String ENABLE_ARITHMETIC_REPLACE_KEY = "javalanche.enable.arithmetic.replace";
 
@@ -54,7 +54,7 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 
 	public static final String ENABLE_ABSOLUTE_VALUE_KEY = "javalanche.enable.absolute.value";
 
-	public static final String ENABLE_UNARY_OPERATOR_KEY = "javalanche.enable.absolute.value";
+	public static final String ENABLE_UNARY_OPERATOR_KEY = "javalanche.enable.unary.operator";
 
 	/**
 	 * Contains fully qualified names of tests that should be excluded (not
@@ -210,7 +210,7 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 		setValue(ENABLE_REMOVE_CALL_KEY, REMOVE_CALL);
 		setValue(ENABLE_REPLACE_CONSTANT_KEY, REPLACE_CONSTANT);
 		setValue(ENABLE_REPLACE_VARIABLE_KEY, REPLACE_VARIABLE);
-		setValue(ENABLE_ABSOLUTE_VALUE_KEY, ABSOLUT_VALUE);
+		setValue(ENABLE_ABSOLUTE_VALUE_KEY, ABSOLUTE_VALUE);
 		setValue(ENABLE_UNARY_OPERATOR_KEY, UNARY_OPERATOR);
 	}
 

@@ -328,13 +328,21 @@ public class BaseBytecodeTest {
 		System.setProperty(m.getMutationVariable(), "true");
 		mutationObserver.mutationStart(m);
 		Object instance = clazz.newInstance();
-		Object result = method.invoke(instance, input);
-		mutationObserver.mutationEnd(m);
-		System.clearProperty(m.getMutationVariable());
+		Object result = null;
+		try {
+			result = method.invoke(instance, input);
+		} finally {
+			mutationObserver.mutationEnd(m);
+			System.clearProperty(m.getMutationVariable());
+		}
+		boolean wasExecuted = MutationObserver.getTouchedMutations()
+				.contains(m);
+		assertTrue("Mutation was not covered " + m, wasExecuted);
 		String message = "Expected different result when mutation is enabled. Mutation"
 				+ m;
 		if (expectedResult.getClass().equals(Double.class)) {
-			assertEquals(message, (Double) expectedResult, (Double) result, 1e-3);
+			assertEquals(message, (Double) expectedResult, (Double) result,
+					1e-3);
 		} else {
 			assertEquals(message, expectedResult, result);
 		}

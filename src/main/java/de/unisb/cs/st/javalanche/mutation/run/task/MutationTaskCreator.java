@@ -177,7 +177,6 @@ public class MutationTaskCreator {
 		Set<Long> covered = MutationCoverageFile.getCoveredMutations();
 		List<Long> mutationIds = QueryManager.getMutationsWithoutResult(
 				covered, limit);
-
 		logger.info("Covered Mutations " + covered.size());
 		logger.info("Got " + mutationIds.size() + " mutations");
 		return mutationIds;

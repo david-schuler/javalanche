@@ -62,13 +62,13 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 						getLineNumber(), possibilitiesForLine,
 						Mutation.MutationType.REPLACE_CONSTANT);
 				setAddInfo(mutation, originalVal, replaceValue);
-				QueryManager.saveMutation(mutation);
-				mutationPossibilityCollector.addPossibility(mutation);
-				// / Long id = mutation.getId();
 				if (baseMutation == null) {
 					baseMutation = mutation;
+					QueryManager.saveMutation(mutation);
 				} else {
 					Long baseId = baseMutation.getId();
+					mutation.setBaseMutationId(baseId);
+					QueryManager.saveMutation(mutation);
 					Long mId = mutation.getId();
 					if (baseId == null || mId == null) {
 						throw new RuntimeException(
@@ -77,6 +77,7 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 					}
 					MutationCoverageFile.addDerivedMutation(baseId, mId);
 				}
+				mutationPossibilityCollector.addPossibility(mutation);
 			}
 
 			if (baseMutation != null) {

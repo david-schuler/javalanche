@@ -62,22 +62,19 @@ public class CoverageDataUtil {
 
 	private static int saveCount;
 
-	public static void saveAndEmpty() {
+	private static void save() {
 		Map<Long, Set<String>> coverageData = CoverageDataRuntime
 				.getCoverageData();
-		Set<String> testsRun = CoverageDataRuntime.getTestsRun();
+		// Set<String> testsRun = CoverageDataRuntime.getTestsRun();
 		logger.info("Saving coverage data for " + coverageData.size()
 				+ " mutations");
 		MutationCoverageFile.saveCoverageData(coverageData);
-		// QueryManager.saveCoverageResults(coverageData);
-		// QueryManager.saveTestsWithNoCoverage(testsRun);
-		// XmlIo.toXML(coverageData, "coverageData-" + saveCount + ".xml");
-		saveCount++;
-		coverageData = new HashMap<Long, Set<String>>();
+		// saveCount++;
+		coverageData = null;
 	}
 
 	public static void endCoverage() {
-		saveAndEmpty();
+		save();
 	}
 
 }
