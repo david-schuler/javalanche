@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.Description;
+import org.junit.runner.Runner;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 
@@ -62,11 +63,11 @@ public class JavalancheWrapperTestSuiteTest {
 		ConfigurationLocator.setJavalancheConfiguration(configBack);
 	}
 
-	private void testHelper(Class<?> testClass, int expecedTests) {
-		testHelper(new Class<?>[] { testClass }, expecedTests);
+	private Runner testHelper(Class<?> testClass, int expecedTests) {
+		return testHelper(new Class<?>[] { testClass }, expecedTests);
 	}
 
-	private void testHelper(Class<?>[] testClasses, int expecedTests) {
+	private Runner testHelper(Class<?>[] testClasses, int expecedTests) {
 		config.setTestNames(getTestNames(testClasses));
 		JavalancheWrapperTestSuite javalancheWrapperTestSuite = new JavalancheWrapperTestSuite(
 				null);
@@ -77,6 +78,7 @@ public class JavalancheWrapperTestSuiteTest {
 		// javalancheWrapperTestSuite.run(notifier);
 		// assertEquals(expecedTests, tc.getNumberOfTests());
 		assertEquals(expecedTests, testCount);
+		return javalancheWrapperTestSuite;
 	}
 
 	private String getTestNames(Class<?>[] testClasses) {
@@ -124,7 +126,8 @@ public class JavalancheWrapperTestSuiteTest {
 
 	@Test
 	public void testJunit4Suite() {
-		testHelper(Junit4Suite.class, 7);
+		Runner runner = testHelper(Junit4Suite.class, 7);
+		// TODO: TEST for test classname and methodname
 	}
 
 	@Test

@@ -221,6 +221,7 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 		try {
 			// Runner r = getRunner(desc, false);
 			Runner r = Junit4Util.getRunner();
+			logger.info("Got Tests: " + r.testCount());
 
 			((Filterable) r).filter(new Filter() {
 
@@ -231,6 +232,11 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 
 				@Override
 				public boolean shouldRun(Description description) {
+					logger.debug("1" + description.toString());
+					logger.debug("2" + description.getClassName() + " "
+							+ description.getMethodName());
+					logger.debug("3" + desc.toString());
+
 					if (description.toString().equals(desc.toString())) {
 						return true;
 					}

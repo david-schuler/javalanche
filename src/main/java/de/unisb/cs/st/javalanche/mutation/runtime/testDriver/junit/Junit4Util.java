@@ -89,7 +89,6 @@ public class Junit4Util {
 							true));
 				}
 			} catch (Throwable e) {
-				// e.printStackTrace();
 				throw new RuntimeException(e);
 			}
 		}

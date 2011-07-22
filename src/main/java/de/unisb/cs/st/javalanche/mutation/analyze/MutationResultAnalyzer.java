@@ -146,9 +146,11 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 		sb.append(formatLine(
 				"Mutation score for mutations that were covered: ",
 				AnalyzeUtil.formatPercent(killed, touched)));
-		sb.append(formatLine(
-				"Mutations that where expected to be covered but actually not covered: ",
-				notCovered.size(), notCovered.toString()));
+		if (notCovered.size() > 0) {
+			sb.append(formatLine(
+					"Mutations that where expected to be covered but actually not covered: ",
+					notCovered.size(), notCovered.toString()));
+		}
 		return sb.toString();
 	}
 
