@@ -72,6 +72,7 @@ public class Junit4Util {
 		// }
 		// }
 		if (testSuite.contains(":")) {
+			logger.debug("Using getClassesRunner to get Runner.");
 			r = getClassesRunner(testSuite);
 		} else {
 			logger.info("Getting test suite for name: " + testSuite);
@@ -79,12 +80,15 @@ public class Junit4Util {
 			try {
 				Method suite = getSuiteMethod(forName);
 				if (suite != null) {
+					logger.debug("Using SuiteMethod to get Runner.");
 					r = new SuiteMethod(forName);
 				} else {
+					logger.debug("Using AllDefaultPossibilitiesBuilder to get Runner");
 					r = new AllDefaultPossibilitiesBuilder(true)
 							.runnerForClass(forName);
 				}
 				if (r == null) {
+					logger.debug("Using Suite to get Runner");
 					r = new Suite(forName, new AllDefaultPossibilitiesBuilder(
 							true));
 				}

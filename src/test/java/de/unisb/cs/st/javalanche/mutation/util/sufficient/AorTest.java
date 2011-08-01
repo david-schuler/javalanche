@@ -28,7 +28,7 @@ import de.unisb.cs.st.javalanche.mutation.util.sufficient.classes.AorTEMPLATE;
 
 public class AorTest extends BaseBytecodeTest {
 
-	private Class<?> clazz;
+	protected Class<?> clazz;
 
 	public AorTest() throws Exception {
 		super(AorTEMPLATE.class);
@@ -68,7 +68,7 @@ public class AorTest extends BaseBytecodeTest {
 		coverageMap.put(idLine18, new HashSet<String>(Arrays.asList("test1")));
 		MutationCoverageFile.saveCoverageData(coverageMap);
 		String prefix = config.getProjectPrefix();
-		config.setProjectPrefix("de.unisb.cs.st.javalanche.mutation.util.sufficient");
+		config.setProjectPrefix(className);
 		AddOffutt96Sufficient.addAorMutations();
 		config.setProjectPrefix(prefix);
 		//

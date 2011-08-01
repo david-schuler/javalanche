@@ -113,7 +113,7 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 
 	}
 
-	private static Map<String, Description> getTests(Runner r) {
+	public static Map<String, Description> getTests(Runner r) {
 		Map<String, Description> testMap = new HashMap<String, Description>();
 		List<Description> descs = new ArrayList<Description>();
 		Description description = r.getDescription();
@@ -132,7 +132,7 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 					count++;
 					insertTestName = testName + "-instance-" + count;
 				}
-				logger.debug("Got test case: " + insertTestName + "Desc: " + d);
+				logger.debug("Got test case: " + insertTestName + " Desc: " + d);
 				testMap.put(insertTestName, d);
 			}
 
@@ -219,44 +219,21 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 	private static void runTest(final Description desc,
 			RunListener runListener, Runner masterRunner) {
 		try {
-			// Runner r = getRunner(desc, false);
 			Runner r = Junit4Util.getRunner();
-			logger.info("Got Tests: " + r.testCount());
-
-			((Filterable) r).filter(new Filter() {
-
-				@Override
-				public String describe() {
-					return "Javalanche single tests filter";
-				}
-
-				@Override
-				public boolean shouldRun(Description description) {
-					logger.debug("1" + description.toString());
-					logger.debug("2" + description.getClassName() + " "
-							+ description.getMethodName());
-					logger.debug("3" + desc.toString());
-
-					if (description.toString().equals(desc.toString())) {
-						return true;
-					}
-					return false;
-				}
-
-			});
-
+			Filter f = Filter.matchMethodDescription(desc);
+			((Filterable) r).filter(f);
 			RunNotifier notifier = new RunNotifier();
 			notifier.addListener(runListener);
 			r.run(notifier);
 		} catch (NoTestsRemainException e) {
 			logger.warn("No test remain for test " + desc, e);
+			throw new RuntimeException(e);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		} catch (InitializationError e) {
 			throw new RuntimeException(e);
 		}
 	}
-
 
 	private static class TestRunListener extends RunListener {
 

@@ -17,6 +17,7 @@ import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.SingleTestResult.TestOutcome;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.AllTestsJunit3;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.DebugTestClass;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.Junit4Suite;
 import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 
 public class Junit4MutationTestDriverTest {
@@ -112,5 +113,13 @@ public class Junit4MutationTestDriverTest {
 			}
 		}
 		return null;
+	}
+
+	@Test
+	public void testWithJunit4Suite() {
+		config.setTestNames(Junit4Suite.class.getName());
+		driver = new Junit4MutationTestDriver();
+		runTestHelper("test3", TestOutcome.PASS);
+
 	}
 }

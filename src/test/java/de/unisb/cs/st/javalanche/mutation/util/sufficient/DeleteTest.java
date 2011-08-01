@@ -62,9 +62,8 @@ public class DeleteTest extends BaseBytecodeTest {
 				MutationType.ARITHMETIC_REPLACE, 11);
 		assertEquals(1, mutations11.size());
 
-
 		String prefix = config.getProjectPrefix();
-		config.setProjectPrefix("de.unisb.cs.st.javalanche.mutation.util.sufficient");
+		config.setProjectPrefix(className);
 		AddOffutt96Sufficient.generateOffutt96Sufficient();
 
 		config.setProjectPrefix(prefix);
@@ -91,13 +90,14 @@ public class DeleteTest extends BaseBytecodeTest {
 		List<Mutation> mutations = QueryManager.getMutations(className,
 				MutationType.REMOVE_CALL, 6);
 		assertEquals(0, mutations.size());
+	}
+
+	@Test
+	public void testMutationsLine11() throws Exception {
 		List<Mutation> mutations11 = QueryManager.getMutations(className,
 				MutationType.ARITHMETIC_REPLACE, 11);
 		assertEquals(0, mutations11.size());
-		List<Mutation> mutationsForClass = QueryManager
-				.getMutationsForClass(className);
-		assertEquals(31, mutationsForClass.size());
-
 	}
+
 
 }

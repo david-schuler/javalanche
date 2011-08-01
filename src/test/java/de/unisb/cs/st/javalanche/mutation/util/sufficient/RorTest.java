@@ -57,7 +57,7 @@ public class RorTest extends BaseBytecodeTest {
 		configBack = ConfigurationLocator.getJavalancheConfiguration();
 		config = new JavalancheTestConfiguration();
 		ConfigurationLocator.setJavalancheConfiguration(config);
-		config.setProjectPrefix("de.unisb.cs.st.javalanche.mutation.util.sufficient");
+		config.setProjectPrefix(className);
 		Long id = mutations.get(0).getId();
 		Long idLine10 = mutationsLine10.get(0).getId();
 		Map<Long, Set<String>> coverageMap = new HashMap<Long, Set<String>>();

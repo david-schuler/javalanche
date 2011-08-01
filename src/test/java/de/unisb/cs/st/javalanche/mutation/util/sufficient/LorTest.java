@@ -71,7 +71,7 @@ public class LorTest extends BaseBytecodeTest {
 		// HashSet<String>(Arrays.asList("test1")));
 		MutationCoverageFile.saveCoverageData(coverageMap);
 		String prefix = config.getProjectPrefix();
-		config.setProjectPrefix("de.unisb.cs.st.javalanche.mutation.util.sufficient");
+		config.setProjectPrefix(className);
 		AddOffutt96Sufficient.addLorMutations();
 		config.setProjectPrefix(prefix);
 		//

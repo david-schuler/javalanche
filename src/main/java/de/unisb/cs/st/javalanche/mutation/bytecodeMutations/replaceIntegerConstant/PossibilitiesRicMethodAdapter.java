@@ -19,9 +19,12 @@
 package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import de.unisb.cs.st.javalanche.mutation.mutationPossibilities.MutationPossibilityCollector;
@@ -31,6 +34,9 @@ import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
 
 public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
+
+	private static final Logger logger = Logger
+			.getLogger(PossibilitiesRicMethodAdapter.class);
 
 	MutationPossibilityCollector mutationPossibilityCollector;
 
@@ -53,6 +59,7 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 	}
 
 	private void countMutation(String originalVal, String... replacementValues) {
+		replacementValues = removeDuplicates(replacementValues); // e.g. NaN - 1 = NaN;
 		if (!mutationCode) {
 			Mutation baseMutation = null;
 			int possibilitiesForLine = getPossibilityForLine();
@@ -86,6 +93,12 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 			addPossibilityForLine();
 		}
 		// if (i != 0 && i != 1 && i != -1) {
+	}
+
+	private String[] removeDuplicates(String[] replacementValues) {
+		return (new HashSet<String>(Arrays.asList(replacementValues)))
+				.toArray(new String[0]);
+
 	}
 
 	public static void setAddInfo(Mutation mutation, String originalValue,

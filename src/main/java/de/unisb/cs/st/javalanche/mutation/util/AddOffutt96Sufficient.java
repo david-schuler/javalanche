@@ -120,8 +120,7 @@ public class AddOffutt96Sufficient {
 		List<Mutation> results = query.list();
 		for (Mutation m : results) {
 			// System.out.println("Mutation " + m);
-			if (checkCovered(m)
-					&& m.getBaseMutationId() == null) {
+			if (checkCovered(m) && m.getBaseMutationId() == null) {
 				String addInfo = m.getAddInfo();
 				String origValue = getRicOriginalValue(addInfo);
 				String[] replaceValues;
@@ -129,20 +128,24 @@ public class AddOffutt96Sufficient {
 					Double d = Double.valueOf(origValue);
 					replaceValues = new String[] { -d + "" };
 				} else {
-					Integer i = Integer.valueOf(origValue);
+					Long l = Long.valueOf(origValue);
+					// Long l = Integer.valueOf(origValue);
 					// if (-i == i || i == ~i || -i == ~i) {
 					//
 					// System.out
 					// .println("AddOffutt96Sufficient.addUoiForConstants() EQUAL CONSTANTS: "
 					// + m);
 					// }
-					replaceValues = new String[] { -i + "", ~i + "" };
-
+					if (l < Integer.MAX_VALUE && l > Integer.MIN_VALUE) {
+						int i = l.intValue();
+						replaceValues = new String[] { -i + "", ~i + "" };
+					} else {
+						replaceValues = new String[] { -l + "", ~l + "" };
+					}
 				}
 
 				boolean baseMutationUsed = false;
 				for (String replaceVal : replaceValues) {
-
 
 					if (baseMutationUsed) {
 						Mutation m2 = Mutation.copyMutation(m);
@@ -206,8 +209,7 @@ public class AddOffutt96Sufficient {
 		@SuppressWarnings("unchecked")
 		List<Mutation> results = query.list();
 		for (Mutation m : results) {
-			if (checkCovered(m)
-					&& m.getBaseMutationId() == null) {
+			if (checkCovered(m) && m.getBaseMutationId() == null) {
 				String operatorAddinfo = m.getOperatorAddInfo();
 				int standardReplaceOpcode = Integer.parseInt(operatorAddinfo);
 				int originalOpcode = JumpReplacements.getReplacementMap().get(
@@ -263,8 +265,7 @@ public class AddOffutt96Sufficient {
 		@SuppressWarnings("unchecked")
 		List<Mutation> results = query.list();
 		for (Mutation m : results) {
-			if (checkCovered(m)
-					&& m.getBaseMutationId() == null) {
+			if (checkCovered(m) && m.getBaseMutationId() == null) {
 				String addInfo = m.getAddInfo();
 				int originalValue = getOriginalValue(addInfo);
 				System.out.println(originalValue);
@@ -303,7 +304,7 @@ public class AddOffutt96Sufficient {
 		List<Mutation> results = query.list();
 		for (Mutation m : results) {
 			if (checkCovered(m)
-															// for not covered
+			// for not covered
 					&& m.getBaseMutationId() == null) {
 				String addInfo = m.getAddInfo();
 				int originalValue = getOriginalValue(addInfo);
@@ -382,7 +383,7 @@ public class AddOffutt96Sufficient {
 		List<Mutation> results = query.list();
 		for (Mutation m : results) {
 			if (checkCovered(m)
-															// for not covered
+			// for not covered
 					&& m.getBaseMutationId() == null) {
 				String addInfo = m.getAddInfo();
 				int originalValue = getOriginalValue(addInfo);

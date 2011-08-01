@@ -4,16 +4,25 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
+import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.Filterable;
+import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.Suite;
+import org.junit.runners.model.InitializationError;
 
+import static org.hamcrest.Matchers.*;
 import com.google.common.base.Joiner;
 
 import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
@@ -30,6 +39,8 @@ public class JavalancheWrapperTestSuiteTest {
 
 	private static final String TEST_CLASS_NAME_JUNIT3 = "de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.data.AllTestsJunit3";
 
+	private static final Logger logger = Logger
+			.getLogger(JavalancheWrapperTestSuiteTest.class);
 	private class TestCounter extends RunListener {
 		private int tests = 0;
 
@@ -125,9 +136,92 @@ public class JavalancheWrapperTestSuiteTest {
 	}
 
 	@Test
-	public void testJunit4Suite() {
+	public void testJunit4Suite() throws ClassNotFoundException,
+			InitializationError, NoTestsRemainException {
+		jUnit4Suite();
+		jUnit4Suite();
+	}
+
+	public void jUnit4Suite() throws ClassNotFoundException,
+			InitializationError, NoTestsRemainException {
 		Runner runner = testHelper(Junit4Suite.class, 7);
-		// TODO: TEST for test classname and methodname
+		Description description = runner.getDescription();
+		Class<? extends Description> class1 = description.getClass();
+		ArrayList<Description> children = description.getChildren();
+		assertThat(children, hasSize(2));
+		Map<String, Description> tests = Junit4MutationTestDriver
+				.getTests(runner);
+		assertThat(tests.entrySet(), hasSize(7));
+		assertClassAndMethodNotNull(tests.values());
+		Description descTmp = null;
+		for (Description d : children) {
+			String className = d.getClassName();
+			ArrayList<Description> children2 = d.getChildren();
+			assertClassAndMethodNotNull(children2);
+			if (className.equals(Junit4TestCase2.class.getName())) {
+				assertThat(children2, hasSize(4));
+
+
+			} else if (className.equals(TestCaseForJunit4Test.class.getName())) {
+				assertThat(children2, hasSize(3));
+			} else {
+				fail("Did not expect class " + className);
+			}
+			descTmp = children2.get(2);
+		}
+		final Description desc = descTmp;
+
+		Runner r = Junit4Util.getRunner();
+		Filter f = Filter.matchMethodDescription(desc);
+		((Filterable) r).filter(f);
+
+		// // logger.info("Got Tests: " + r.testCount());
+		// System.out.println(r.getClass());
+		// Suite suite = (Suite) r;
+		//
+		// ((Filterable) r).filter(new Filter() {
+		//
+		// @Override
+		// public String describe() {
+		// return "Javalanche single tests filter";
+		// }
+		//
+		// @Override
+		// public boolean shouldRun(Description description) {
+		// logger.debug("1" + description.toString());
+		// logger.debug("2" + description.getClassName() + " "
+		// + description.getMethodName());
+		// logger.debug("3" + desc.toString());
+		//
+		// if (description.toString().equals(desc.toString())) {
+		// return true;
+		// }
+		// return false;
+		// }
+		//
+		// });
+
+		assertFalse(r.getDescription().isEmpty());
+		assertThat(r.getDescription().getChildren(), hasSize(1));
+
+		// RunNotifier notifier = new RunNotifier();
+		// notifier.addListener(runListener);
+		// r.run(notifier);
+
+	}
+
+	private void assertClassAndMethodNotNull(Iterable<Description> children) {
+		for (Description d : children) {
+			assertNotNull("Expected class name to be not null for: " + d,
+					d.getClassName());
+			assertNotNull("Expected method name to be not null for: " + d,
+					d.getMethodName());
+		}
+	}
+
+	@Test
+	public void test123() {
+
 	}
 
 	@Test

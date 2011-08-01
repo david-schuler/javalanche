@@ -62,7 +62,7 @@ public class RorTest2 extends BaseBytecodeTest {
 		coverageMap.put(idLine10, new HashSet<String>(Arrays.asList("test1")));
 		MutationCoverageFile.saveCoverageData(coverageMap);
 		String prefix = config.getProjectPrefix();
-		config.setProjectPrefix("de.unisb.cs.st.javalanche.mutation.util.sufficient");
+		config.setProjectPrefix(className);
 		AddOffutt96Sufficient.addRorMutations();
 		config.setProjectPrefix(prefix);
 		//
