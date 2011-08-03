@@ -99,7 +99,7 @@ public class Junit4Util {
 		return r;
 	}
 
-	private static Method getSuiteMethod(Class<?> forName) {
+	public static Method getSuiteMethod(Class<?> forName) {
 		Method[] methods = forName.getMethods();
 		for (Method method : methods) {
 			if (method.getName().equals("suite")

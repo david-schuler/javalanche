@@ -41,6 +41,7 @@ import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.Abstract
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.JumpReplacements;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.PossibilitiesRicMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.PossibilitiesRicMethodAdapter.TypeInfo;
 import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
@@ -123,25 +124,24 @@ public class AddOffutt96Sufficient {
 			if (checkCovered(m) && m.getBaseMutationId() == null) {
 				String addInfo = m.getAddInfo();
 				String origValue = getRicOriginalValue(addInfo);
-				String[] replaceValues;
-				if (origValue.contains(".")) {
+				TypeInfo type = getTypeInfo(addInfo);
+				String[] replaceValues = null;
+				if (type.equals(TypeInfo.DOUBLE)) {
 					Double d = Double.valueOf(origValue);
 					replaceValues = new String[] { -d + "" };
-				} else {
+				} else if (type.equals(TypeInfo.FLOAT)) {
+					Float f = Float.valueOf(origValue);
+					replaceValues = new String[] { -f + "" };
+
+				} else if (type.equals(TypeInfo.INT)) {
+					Integer i = Integer.valueOf(origValue);
+					replaceValues = new String[] { -i + "", ~i + "" };
+				} else if (type.equals(TypeInfo.LONG)) {
 					Long l = Long.valueOf(origValue);
-					// Long l = Integer.valueOf(origValue);
-					// if (-i == i || i == ~i || -i == ~i) {
-					//
-					// System.out
-					// .println("AddOffutt96Sufficient.addUoiForConstants() EQUAL CONSTANTS: "
-					// + m);
-					// }
-					if (l < Integer.MAX_VALUE && l > Integer.MIN_VALUE) {
-						int i = l.intValue();
-						replaceValues = new String[] { -i + "", ~i + "" };
-					} else {
-						replaceValues = new String[] { -l + "", ~l + "" };
-					}
+					replaceValues = new String[] { -l + "", ~l + "" };
+				} else {
+					throw new RuntimeException("Did not expect value of type "
+							+ type);
 				}
 
 				boolean baseMutationUsed = false;
@@ -150,7 +150,7 @@ public class AddOffutt96Sufficient {
 					if (baseMutationUsed) {
 						Mutation m2 = Mutation.copyMutation(m);
 						PossibilitiesRicMethodAdapter.setAddInfo(m2, origValue,
-								replaceVal);
+								replaceVal, type);
 						if (QueryManager.getMutationOrNull(m2) == null) {
 							// System.out.println("New mutation " + m2);
 							QueryManager.saveMutation(m2);
@@ -161,10 +161,10 @@ public class AddOffutt96Sufficient {
 					} else {
 						Mutation m2 = Mutation.copyMutation(m);
 						PossibilitiesRicMethodAdapter.setAddInfo(m2, origValue,
-								replaceVal);
+								replaceVal, type);
 						if (QueryManager.getMutationOrNull(m2) == null) {
 							PossibilitiesRicMethodAdapter.setAddInfo(m,
-									origValue, replaceVal);
+									origValue, replaceVal, type);
 							// QueryManager.updateMutation(m, null);
 							// System.out.println("Updated mutation " + m);
 							session.update(m);
@@ -180,6 +180,13 @@ public class AddOffutt96Sufficient {
 		tx.commit();
 		session.close();
 		MutationCoverageFile.update();
+	}
+
+	private static TypeInfo getTypeInfo(String addInfo) {
+		int start = addInfo.indexOf('(');
+		int end = addInfo.indexOf(')');
+		String sub = addInfo.substring(start + 1, end);
+		return TypeInfo.valueOf(sub);
 	}
 
 	public static boolean checkCovered(Mutation m) {
@@ -458,6 +465,7 @@ public class AddOffutt96Sufficient {
 	}
 
 	public static void main(String[] args) {
+
 		generateOffutt96Sufficient();
 	}
 

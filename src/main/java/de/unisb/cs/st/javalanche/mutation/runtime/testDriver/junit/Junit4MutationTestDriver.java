@@ -65,6 +65,8 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 
 	private Runner masterRunner;
 
+	private static Map<Description, Runner> runners = new HashMap<Description, Runner>();
+
 	public Junit4MutationTestDriver() {
 		masterRunner = null;
 		Throwable t = null;
@@ -219,12 +221,15 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 	private static void runTest(final Description desc,
 			RunListener runListener, Runner masterRunner) {
 		try {
-			Runner r = Junit4Util.getRunner();
-			Filter f = Filter.matchMethodDescription(desc);
-			((Filterable) r).filter(f);
+			StopWatch stp = new StopWatch();
+			stp.start();
+			Runner r = getRunner(desc);
+			long time1 = stp.getTime();
+			logger.info("Time to get runner: " + time1);
 			RunNotifier notifier = new RunNotifier();
 			notifier.addListener(runListener);
 			r.run(notifier);
+
 		} catch (NoTestsRemainException e) {
 			logger.warn("No test remain for test " + desc, e);
 			throw new RuntimeException(e);
@@ -233,6 +238,22 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 		} catch (InitializationError e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static Runner getRunner(final Description desc)
+			throws ClassNotFoundException, InitializationError,
+			NoTestsRemainException {
+		if (runners.containsKey(desc)) {
+			Runner runner = runners.get(desc);
+			if (runner != null) {
+				return runner;
+			}
+		}
+		Runner r = Junit4Util.getRunner();
+		Filter f = Filter.matchMethodDescription(desc);
+		((Filterable) r).filter(f);
+		// runners.put(desc, r);
+		return r;
 	}
 
 	private static class TestRunListener extends RunListener {

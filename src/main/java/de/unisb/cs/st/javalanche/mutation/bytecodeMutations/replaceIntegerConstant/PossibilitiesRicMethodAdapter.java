@@ -35,6 +35,10 @@ import de.unisb.cs.st.javalanche.mutation.runtime.CoverageDataUtil;
 
 public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 
+	public enum TypeInfo {
+		INT, LONG, FLOAT, DOUBLE
+	};
+
 	private static final Logger logger = Logger
 			.getLogger(PossibilitiesRicMethodAdapter.class);
 
@@ -48,18 +52,21 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 		this.mutationPossibilityCollector = mutationPossibilityCollector;
 	}
 
-	private void countMutation(int i) {
+	private void countMutation(int i, TypeInfo typeInfo) {
 		List<String> replaceValues = new ArrayList<String>();
 		replaceValues.add((i + 1) + "");
 		replaceValues.add((i - 1) + "");
 		if (i != 0 && i != 1 && i != -1) {
 			replaceValues.add("0");
 		}
-		countMutation(i + "", replaceValues.toArray(new String[0]));
+		countMutation(i + "", typeInfo,
+				replaceValues.toArray(new String[0]));
 	}
 
-	private void countMutation(String originalVal, String... replacementValues) {
-		replacementValues = removeDuplicates(replacementValues); // e.g. NaN - 1 = NaN;
+	private void countMutation(String originalVal, TypeInfo typeInfo,
+			String... replacementValues) {
+		replacementValues = removeDuplicates(replacementValues); // e.g. NaN - 1
+																	// = NaN;
 		if (!mutationCode) {
 			Mutation baseMutation = null;
 			int possibilitiesForLine = getPossibilityForLine();
@@ -68,7 +75,7 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 				Mutation mutation = new Mutation(className, getMethodName(),
 						getLineNumber(), possibilitiesForLine,
 						Mutation.MutationType.REPLACE_CONSTANT);
-				setAddInfo(mutation, originalVal, replaceValue);
+				setAddInfo(mutation, originalVal, replaceValue, typeInfo);
 				if (baseMutation == null) {
 					baseMutation = mutation;
 					QueryManager.saveMutation(mutation);
@@ -102,35 +109,35 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 	}
 
 	public static void setAddInfo(Mutation mutation, String originalValue,
-			String replaceValue) {
+			String replaceValue, TypeInfo typeInfo) {
 		mutation.setOperatorAddInfo(replaceValue);
 		mutation.setAddInfo("Replace " + originalValue + " with "
-				+ replaceValue);
+				+ replaceValue + "(" + typeInfo + ")");
 	}
 
 	@Override
 	protected void biOrSiPush(int operand) {
-		countMutation(operand);
+		countMutation(operand, TypeInfo.INT);
 	}
 
 	@Override
 	protected void doubleConstant(int i) {
-		countMutation(i);
+		countMutation(i, TypeInfo.DOUBLE);
 	}
 
 	@Override
 	protected void floatConstant(int i) {
-		countMutation(i);
+		countMutation(i, TypeInfo.FLOAT);
 	}
 
 	@Override
 	protected void longConstant(int i) {
-		countMutation(i);
+		countMutation(i, TypeInfo.LONG);
 	}
 
 	@Override
 	protected void intConstant(int i) {
-		countMutation(i);
+		countMutation(i, TypeInfo.INT);
 	}
 
 	@Override
@@ -139,26 +146,32 @@ public class PossibilitiesRicMethodAdapter extends AbstractRicMethodAdapter {
 		if (clazz.equals(Double.class)) {
 			double d = (Double) constant;
 			if (d != 0. && d != 1. && d != -1.) {
-				countMutation(constant + "", (d - 1) + "", (d + 1) + "", "0");
+				countMutation(constant + "", TypeInfo.DOUBLE, (d - 1) + "",
+						(d + 1) + "", "0");
 			} else {
-				countMutation(constant + "", (d - 1) + "", (d + 1) + "");
+				countMutation(constant + "", TypeInfo.DOUBLE, (d - 1) + "",
+						(d + 1) + "");
 			}
 		} else if (clazz.equals(Float.class)) {
 			float f = (Float) constant;
 			if (f != 0.f && f != 1.f && f != -1.f) {
-				countMutation(constant + "", (f - 1) + "", (f + 1) + "", "0");
+				countMutation(constant + "", TypeInfo.FLOAT, (f - 1) + "",
+						(f + 1) + "", "0");
 			} else {
-				countMutation(constant + "", (f - 1) + "", (f + 1) + "");
+				countMutation(constant + "", TypeInfo.FLOAT, (f - 1) + "",
+						(f + 1) + "");
 			}
 		} else if (clazz.equals(Long.class)) {
 			long l = (Long) constant;
 			if (l != 0l && l != 1l && l != -1l) {
-				countMutation(constant + "", (l - 1) + "", (l + 1) + "", "0");
+				countMutation(constant + "", TypeInfo.LONG, (l - 1) + "",
+						(l + 1) + "", "0");
 			} else {
-				countMutation(constant + "", (l - 1) + "", (l + 1) + "");
+				countMutation(constant + "", TypeInfo.LONG, (l - 1) + "",
+						(l + 1) + "");
 			}
 		} else {
-			countMutation(constant.intValue());
+			countMutation(constant.intValue(), TypeInfo.INT);
 		}
 	}
 

@@ -349,8 +349,7 @@ public class RicMethodAdapter extends AbstractMutationAdapter {
 
 					@Override
 					public void insertCodeBlock(MethodVisitor mv) {
-						mv.visitLdcInsn(new Integer(new Integer(m
-								.getOperatorAddInfo())));
+						mv.visitLdcInsn(Integer.valueOf(m.getOperatorAddInfo()));
 					}
 				});
 			}

@@ -32,6 +32,7 @@ import org.junit.runners.model.InitializationError;
 
 import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestDriver;
 
 @RunWith(JavalancheWrapperTestSuite.class)
 public class JavalancheWrapperTestSuite extends Runner {
@@ -81,7 +82,11 @@ public class JavalancheWrapperTestSuite extends Runner {
 			Runner runner = getRunner();
 			runner.run(notifier);
 		} else {
-			Junit4MutationTestDriver driver = new Junit4MutationTestDriver();
+			MutationTestDriver driver = new Junit4MutationTestDriver();
+			if (System.getProperty("javalanche.use.junit3runner") != null) {
+				System.out.println("Using Junit3 Mutation Test Driver");
+				driver = new Junit3MutationTestDriver();
+			}
 			// addTraceListener(notifier);
 			driver.run();
 			// Runner runner = getRunner();
