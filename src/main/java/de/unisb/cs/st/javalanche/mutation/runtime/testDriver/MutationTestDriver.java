@@ -143,6 +143,8 @@ public abstract class MutationTestDriver {
 
 	private File controlFile;
 
+	private ResultReporter resultReporter;
+
 	public static void main(String[] args) throws ClassNotFoundException,
 			InstantiationException, IllegalAccessException {
 		runFromProperty();
@@ -160,12 +162,17 @@ public abstract class MutationTestDriver {
 				s = "default";
 			}
 			controlFile = new File(dir, s + "-mutation-id-control-file");
+			logger.info("Control file: " + controlFile + " "
+					+ Util.getStackTraceString());
 			if (controlFile.exists()) {
 				List<String> readLines;
 				readLines = FileUtils.readLines(controlFile);
+				logger.info("Control file has " + readLines.size()
+						+ " entries.");
 				if (readLines.size() > 0) {
 					String lastLine = (String) readLines
 							.get(readLines.size() - 1);
+					logger.info("Last id: " + lastLine);
 					lastId = Long.valueOf(lastLine);
 				}
 			}
@@ -206,7 +213,8 @@ public abstract class MutationTestDriver {
 				addMutationTestListener(new CoverageMutationListener());
 				// runNormalTests();
 			}
-			listeners.addLast(new ResultReporter());
+			resultReporter = new ResultReporter();
+			listeners.addLast(resultReporter);
 			runMutations();
 		} else if (runMode == SCAN) {
 			scanTests();
@@ -463,14 +471,22 @@ public abstract class MutationTestDriver {
 				logger.warn("Skipping mutation. That caused JVM to go down: "
 						+ currentMutation);
 				setShutdownResult(currentMutation);
+				resultReporter.persist();
 				continue;
 			}
 			totalMutations++;
 			checkClasspath(currentMutation);
-			Set<String> coveredTests = MutationCoverageFile
+			boolean runAllTests = ConfigurationLocator
+					.getJavalancheConfiguration().runAllTestsForMutation();
+			Set<String> testsForThisRun = null;
+			if (runAllTests) {
+				testsForThisRun = new HashSet<String>(allTests);
+			} else {
+				Set<String> coveredTests = MutationCoverageFile
 					.getCoverageData(currentMutation);
-			Set<String> testsForThisRun = coveredTests.size() > 0 ? coveredTests
+				testsForThisRun = coveredTests.size() > 0 ? coveredTests
 					: new HashSet<String>(allTests);
+			}
 			String message = "Applying " + totalMutations
 					+ "th mutation with id " + currentMutation.getId()
 					+ ". Running " + testsForThisRun.size() + " tests";
@@ -515,6 +531,8 @@ public abstract class MutationTestDriver {
 	}
 
 	private boolean checkId(Mutation m) {
+		logger.info("Comparing current id with last id:" + m.getId() + " - "
+				+ lastId + "  Result:" + !m.getId().equals(lastId));
 		return !m.getId().equals(lastId);
 	}
 

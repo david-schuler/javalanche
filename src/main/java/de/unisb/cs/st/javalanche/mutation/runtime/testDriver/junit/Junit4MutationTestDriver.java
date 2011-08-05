@@ -221,11 +221,11 @@ public class Junit4MutationTestDriver extends MutationTestDriver {
 	private static void runTest(final Description desc,
 			RunListener runListener, Runner masterRunner) {
 		try {
-			StopWatch stp = new StopWatch();
-			stp.start();
+			// StopWatch stp = new StopWatch();
+			// stp.start();
 			Runner r = getRunner(desc);
-			long time1 = stp.getTime();
-			logger.info("Time to get runner: " + time1);
+			// long time1 = stp.getTime();
+			// logger.info("Time to get runner: " + time1);
 			RunNotifier notifier = new RunNotifier();
 			notifier.addListener(runListener);
 			r.run(notifier);

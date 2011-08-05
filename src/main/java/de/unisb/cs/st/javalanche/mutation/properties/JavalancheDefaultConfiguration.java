@@ -113,4 +113,9 @@ public class JavalancheDefaultConfiguration implements JavalancheConfiguration {
 		return true;
 	}
 
+	@Override
+	public boolean runAllTestsForMutation() {
+		return false;
+	}
+
 }

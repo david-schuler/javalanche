@@ -188,4 +188,13 @@ public interface JavalancheConfiguration {
 	 */
 	boolean useThreadStop();
 
+	/**
+	 * Returns true, when all test should be run instead of only those that
+	 * cover the mutation.
+	 * 
+	 * @return true, when all test should be run instead of only those that
+	 *         cover the mutation.
+	 */
+	boolean runAllTestsForMutation();
+
 }

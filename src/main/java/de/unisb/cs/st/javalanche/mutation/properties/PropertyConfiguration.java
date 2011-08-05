@@ -125,6 +125,8 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 
 	public static final String USE_THREAD_STOP_KEY = "javalanche.use.thread.stop";
 
+	public static final String RUN_ALL_TESTS_FOR_MUTATION_KEY = "javalanche.run.all.tests.for.mutation";
+
 	static {
 		logger.info("Loaded log4j configuration from "
 				+ MutationUtil.getLog4jPropertiesLocation());
@@ -193,6 +195,10 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 	private boolean enableMutationCalled;
 
 	private Map<MutationType, Boolean> mutationTypeMap;
+
+	private boolean allTestsForMutationCalled;
+
+	private boolean runAllTestsForMutationCalled;
 
 	@Override
 	public boolean enableMutationType(MutationType t) {
@@ -391,5 +397,16 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 					super.useThreadStop());
 		}
 		return useThreadStop;
+	}
+
+	@Override
+	public boolean runAllTestsForMutation() {
+		if (!runAllTestsForMutationCalled) {
+			runAllTestsForMutationCalled = true;
+			allTestsForMutationCalled = getPropertyOrDefault(
+					RUN_ALL_TESTS_FOR_MUTATION_KEY,
+					super.runAllTestsForMutation());
+		}
+		return allTestsForMutationCalled;
 	}
 }

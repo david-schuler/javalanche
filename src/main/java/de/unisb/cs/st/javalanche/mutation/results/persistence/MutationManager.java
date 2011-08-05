@@ -73,6 +73,11 @@ public class MutationManager {
 		if (result) {
 			logger.debug("Applying mutation: " + mutationFromDb);
 			MutationObserver.mutationApplied(mutationFromDb);
+			if (mutationFromDb != null) {
+				logger.debug("db mutation: " + mutationFromDb.getId() + "  "
+						+ mutationFromDb.getOperatorAddInfo()
+						+ " query mutation " + mutation);
+			}
 		}
 		return result;
 	}

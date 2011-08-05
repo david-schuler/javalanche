@@ -117,6 +117,11 @@ public class RunResult {
 				+ "%d Mutations where actually touched.",
 				numberOfAppliedMutations, reported,
 				touched);
+
+		List<Long> reportedNotTouched = new ArrayList<Long>(reportedIds);
+		reportedNotTouched.removeAll(touchedIds);
+		s += "\n Mutations that were not touched (but a result was reported): "
+				+ reportedNotTouched;
 		return s;
 	}
 

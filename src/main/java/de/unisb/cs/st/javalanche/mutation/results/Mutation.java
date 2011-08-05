@@ -300,6 +300,11 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 				return false;
 		} else if (!mutationType.equals(other.mutationType))
 			return false;
+		if (operatorAddInfo == null) {
+			if (other.operatorAddInfo != null)
+				return false;
+		} else if (!operatorAddInfo.equals(other.operatorAddInfo))
+			return false;
 		return true;
 	}
 

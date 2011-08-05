@@ -82,10 +82,12 @@ public class JavalancheWrapperTestSuite extends Runner {
 			Runner runner = getRunner();
 			runner.run(notifier);
 		} else {
-			MutationTestDriver driver = new Junit4MutationTestDriver();
+			MutationTestDriver driver = null;
 			if (System.getProperty("javalanche.use.junit3runner") != null) {
 				System.out.println("Using Junit3 Mutation Test Driver");
 				driver = new Junit3MutationTestDriver();
+			} else {
+				driver = new Junit4MutationTestDriver();
 			}
 			// addTraceListener(notifier);
 			driver.run();
