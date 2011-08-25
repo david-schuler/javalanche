@@ -1,21 +1,21 @@
 /*
-* Copyright (C) 2011 Saarland University
-* 
-* This file is part of Javalanche.
-* 
-* Javalanche is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Javalanche is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser Public License for more details.
-* 
-* You should have received a copy of the GNU Lesser Public License
-* along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2011 Saarland University
+ * 
+ * This file is part of Javalanche.
+ * 
+ * Javalanche is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Javalanche is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with Javalanche.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.unisb.cs.st.javalanche.mutation.runtime;
 
 import java.util.ArrayList;
@@ -28,9 +28,9 @@ import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 /**
  * Class that holds the result for one run of the program. Needed when run in
  * several JVMs.
- *
+ * 
  * @author David Schuler
- *
+ * 
  */
 public class RunResult {
 
@@ -75,8 +75,8 @@ public class RunResult {
 	}
 
 	public RunResult(Collection<Mutation> reportedMutations,
-			Collection<Mutation> touchedMutations, Collection<Mutation> appliedMutations,
-			 boolean finishedNormal) {
+			Collection<Mutation> touchedMutations,
+			Collection<Mutation> appliedMutations, boolean finishedNormal) {
 		super();
 		this.finishedNormal = finishedNormal;
 		this.reported = reportedMutations.size();
@@ -115,13 +115,14 @@ public class RunResult {
 		String s = String.format("%d mutations were applied. "
 				+ "%d Mutation results were recorded. "
 				+ "%d Mutations where actually touched.",
-				numberOfAppliedMutations, reported,
-				touched);
+				numberOfAppliedMutations, reported, touched);
 
 		List<Long> reportedNotTouched = new ArrayList<Long>(reportedIds);
 		reportedNotTouched.removeAll(touchedIds);
-		s += "\n Mutations that were not touched (but a result was reported): "
-				+ reportedNotTouched;
+		if (reportedNotTouched != null && reportedNotTouched.size() > 0) {
+			s += "\n Mutations that were not touched (but a result was reported): "
+					+ reportedNotTouched;
+		}
 		return s;
 	}
 

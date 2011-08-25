@@ -9,7 +9,7 @@
 Documentation
 
  Javalanche allows mutation testing of Java projects that come with JUnit 3 or
- JUnit 4 tests. Below you will find a description of the several task of
+ JUnit 4 tests. Below you will find a description of the several tasks of
  Javalanche. 
 
 
@@ -104,7 +104,7 @@ Documentation
  In a next step all classes are scanned for possible mutations with the 
  <<<scan>>> task. In this task all mutation possibilities for classes, which
  match the given prefix and are not excluded, are written to the database. 
- Furthermore, this tasks collects coverage data for each mutation, i.e. which mutations are executed by
+ Furthermore, this task collects coverage data for each mutation, i.e. which mutations are executed by
  which test.
  
 ** Executing Mutations
@@ -147,7 +147,7 @@ Documentation
  
 ** Running tasks in {parallel}
 	
- Instead of running the several task sequentially, they can also be run in parallel
+ Instead of running the several tasks sequentially, they can also be run in parallel
  Therefore, first a script (default name: runMutations.sh) has to be created 
  that calls the runMutations task with its argument.
  

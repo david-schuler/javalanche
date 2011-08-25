@@ -93,7 +93,7 @@ public class JavalancheWrapperTestSuite extends Runner {
 			driver.run();
 			// Runner runner = getRunner();
 			// runner.run(notifier);
-			System.out.println("JavalancheWrapperTestSuite.run() " + runMode);
+
 		}
 	}
 

@@ -84,13 +84,8 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 				} else {
 					message = "Mutation was not considered to be covered by tests, but was actually executed during mutation testing.";
 				}
-				logger.warn("FAIL: " + message + info);
+				logger.warn(message + "  " + info);
 				notCovered.add(mutation.getId());
-			} else if (isCovered == true) {
-				logger.info("OK  " + info);
-				Set<String> coverageData = MutationCoverageFile
-						.getCoverageData(mutation);
-				System.out.println(coverageData.size() + " - " + coverageData);
 			}
 			if (isCovered) {
 				covered++;
@@ -155,15 +150,15 @@ public class MutationResultAnalyzer implements MutationAnalyzer {
 	}
 
 	private static String formatLine(String message, int number, String percent) {
-		return String.format("%-55s %10d (%6s)\n", message, number, percent);
+		return String.format("%-60s %10d (%6s)\n", message, number, percent);
 	}
 
 	private String formatLine(String message, int number) {
-		return String.format("%-55s %10d \n", message, number);
+		return String.format("%-60s %10d \n", message, number);
 	}
 
 	private String formatLine(String message, String number) {
-		return String.format("%-55s %10s \n", message, number);
+		return String.format("%-60s %10s \n", message, number);
 	}
 
 }

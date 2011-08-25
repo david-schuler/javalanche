@@ -85,7 +85,7 @@ ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar -Dt
  Alternatively, we can also specify the single test classes instead of the test suite
 
 +-------------------------------+
-ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar  -Dtests=triangle.tests.Triangle1Test" #:triangle.tests.Triangle2Test:triangle.tests.Triangle3Test -Djavalanche=../../  testTask1
+ant -f javalanche.xml -Dprefix=triangle -Dcp=target/classes/:./lib/junit.jar  -Dtests=triangle.tests.Triangle1Test:triangle.tests.Triangle2Test:triangle.tests.Triangle3Test -Djavalanche=../../  testTask1
 +-------------------------------+
 
  Output:
@@ -214,16 +214,17 @@ scan:
 
 test-javalanche:
     [junit] Scanning for mutations
-    [junit] Running triangle.tests.TriangleTestSuite
-    [junit] Tests run: 0, Failures: 0, Errors: 0, Time elapsed: 0.915 sec
+    [junit] Running de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.JavalancheWrapperTestSuite
+    [junit] Tests run: 0, Failures: 0, Errors: 0, Time elapsed: 1.286 sec
     [junit] Got 0 mutation possibilities before run.
-    [junit] Got 49 mutation possibilities after run.
-    [junit] Added 49 mutation possibilities.
+    [junit] Got 47 mutation possibilities after run.
+    [junit] Added 47 mutation possibilities.
     [junit] Added 18 tests. Total number of tests for project triangle : 18
-    [junit] 49 (100.00 %) mutations are covered by tests.
+    [junit] 47 (100.00 %) mutations are covered by tests.
 
 BUILD SUCCESSFUL
-Total time: 5 seconds
+Total time: 4 seconds
+
 +-------------------------------+
 
 
@@ -265,12 +266,59 @@ Buildfile: javalanche.xml
 runMutations:
 
 test-javalanche:
-    [junit] Run mutation tests (without invariant checks)
-    [junit] Running triangle.tests.TriangleTestSuite
+    [junit] Run mutation testing (without impact detection)
+    [junit] Running de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.JavalancheWrapperTestSuite
+    [junit] Applying 1th mutation with id 1. Running 18 tests
+    [junit] Applying 2th mutation with id 2. Running 16 tests
+    [junit] Applying 3th mutation with id 3. Running 14 tests
+    [junit] Applying 4th mutation with id 4. Running 13 tests
+    [junit] Applying 5th mutation with id 5. Running 13 tests
+    [junit] Applying 6th mutation with id 6. Running 13 tests
+    [junit] Applying 7th mutation with id 7. Running 2 tests
+    [junit] Applying 8th mutation with id 8. Running 2 tests
+    [junit] Applying 9th mutation with id 9. Running 2 tests
+    [junit] Applying 10th mutation with id 10. Running 13 tests
+    [junit] Applying 11th mutation with id 11. Running 3 tests
+    [junit] Applying 12th mutation with id 12. Running 3 tests
+    [junit] Applying 13th mutation with id 13. Running 3 tests
+    [junit] Applying 14th mutation with id 14. Running 3 tests
+    [junit] Applying 15th mutation with id 15. Running 13 tests
+    [junit] Applying 16th mutation with id 16. Running 4 tests
+    [junit] Applying 17th mutation with id 17. Running 4 tests
+    [junit] Applying 18th mutation with id 18. Running 4 tests
+    [junit] Applying 19th mutation with id 19. Running 4 tests
+    [junit] Applying 20th mutation with id 20. Running 13 tests
+    [junit] Applying 21th mutation with id 21. Running 6 tests
+    [junit] Applying 22th mutation with id 22. Running 6 tests
+    [junit] Applying 23th mutation with id 23. Running 4 tests
+    [junit] Applying 24th mutation with id 24. Running 4 tests
+    [junit] Applying 25th mutation with id 25. Running 2 tests
+    [junit] Applying 26th mutation with id 26. Running 2 tests
+    [junit] Applying 27th mutation with id 27. Running 7 tests
+    [junit] Applying 28th mutation with id 28. Running 7 tests
+    [junit] Applying 29th mutation with id 29. Running 7 tests
+    [junit] Applying 30th mutation with id 30. Running 7 tests
+    [junit] Applying 31th mutation with id 31. Running 6 tests
+    [junit] Applying 32th mutation with id 32. Running 6 tests
+    [junit] Applying 33th mutation with id 33. Running 6 tests
+    [junit] Applying 34th mutation with id 34. Running 1 tests
+    [junit] Applying 35th mutation with id 35. Running 1 tests
+    [junit] Applying 36th mutation with id 36. Running 5 tests
+    [junit] Applying 37th mutation with id 37. Running 5 tests
+    [junit] Applying 38th mutation with id 38. Running 5 tests
+    [junit] Applying 39th mutation with id 39. Running 5 tests
+    [junit] Applying 40th mutation with id 40. Running 2 tests
+    [junit] Applying 41th mutation with id 41. Running 2 tests
+    [junit] Applying 42th mutation with id 42. Running 3 tests
+    [junit] Applying 43th mutation with id 43. Running 3 tests
+    [junit] Applying 44th mutation with id 44. Running 3 tests
+    [junit] Applying 45th mutation with id 45. Running 3 tests
+    [junit] Applying 46th mutation with id 46. Running 3 tests
+    [junit] Applying 47th mutation with id 47. Running 3 tests
     [junit] ALL_RESULTS
-    [junit] All mutations have results - this means they have already been aplied and executed
-    [junit] 49 mutations were applied. 49 Mutation results were recorded. 49 Mutations where actually touched.
-    [junit] Tests run: 0, Failures: 0, Errors: 0, Time elapsed: 1.671 sec
+    [junit] All mutations have results - this means they have already been applied and executed
+    [junit] 47 mutations were applied. 47 Mutation results were recorded. 47 Mutations where actually touched.
+
 
 
 +-------------------------------+
@@ -295,14 +343,15 @@ analyzeResults:
      [java] Analyzed Results for mutations with prefix: triangle
      [java] No results for 0 mutations
      [java] --------------------------------------------------------------------------------
-     [java] Results from class de.unisb.cs.st.javalanche.mutation.analyze.MutationResultAnalyzer
-     [java] Total mutations:                                                49 
-     [java] Touched mutations:                                              49 (100.00%)
-     [java] Not touched mutations:                                           0 ( 0.00%)
-     [java] Killed mutations:                                               45 (91.84%)
-     [java] Survived mutations:                                              4 ( 8.16%)
-     [java] Mutation score:                                             91.84% 
-     [java] Mutation score for mutations that were covered:             91.84% 
+     [java] Results from de.unisb.cs.st.javalanche.mutation.analyze.MutationResultAnalyzer
+     [java] Total mutations:                                                47 
+     [java] Covered mutations (in scan step):                               47 (100.00%)
+     [java] Covered mutations (actually executed during mutation testing):  47 (100.00%)
+     [java] Not covered mutations:                                           0 ( 0.00%)
+     [java] Killed mutations:                                               43 (91.49%)
+     [java] Surviving mutations:                                             4 ( 8.51%)
+     [java] Mutation score:                                             91.49% 
+     [java] Mutation score for mutations that were covered:             91.49% 
      [java] 
      [java] --------------------------------------------------------------------------------
      [java] 

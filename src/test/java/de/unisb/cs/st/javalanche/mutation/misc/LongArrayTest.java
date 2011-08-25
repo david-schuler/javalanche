@@ -53,7 +53,7 @@ public class LongArrayTest {
 	private void save(MutationTestResult testResult, int[] array) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
-		testResult.setViolatedInvariants(array);
+		// testResult.setViolatedInvariants(array);
 		session.save(testResult);
 		tx.commit();
 		session.close();

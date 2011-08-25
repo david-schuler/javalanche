@@ -31,6 +31,7 @@ public class JavalancheTestConfiguration implements JavalancheConfiguration {
 	private boolean useThreadStop = d.useThreadStop();
 
 	private Map<MutationType, Boolean> typeEnabled = initializeMap();
+	private boolean runAllTestsForMutation = d.runAllTestsForMutation();
 
 	private Map<MutationType, Boolean> initializeMap() {
 		Map<MutationType, Boolean> map = new HashMap<MutationType, Boolean>();
@@ -206,6 +207,15 @@ public class JavalancheTestConfiguration implements JavalancheConfiguration {
 
 	public void setUseThreadStop(boolean useThreadStop) {
 		this.useThreadStop = useThreadStop;
+	}
+
+	@Override
+	public boolean runAllTestsForMutation() {
+		return runAllTestsForMutation;
+	}
+
+	public void setRunAllTestsForMutation(boolean runAllTestsForMutation) {
+		this.runAllTestsForMutation = runAllTestsForMutation;
 	}
 
 }

@@ -3,7 +3,6 @@
 	<part id="Compiling Javalanche">
 		<title>General</title>
 		<faq id="javalanche_faq">
-			
 			<question>Some jars are missing when compiling Javalanche from source, where can I get them?</question>
 			<answer>
 				<p>
@@ -34,15 +33,76 @@
 [junit] Error occurred during initialization of VM
 [junit] Could not reserve enough space for object heap</source>
     
-    The solution is to tell Javalanche to us less memory, with the option
+    The solution is to tell Javalanche to use less memory, with the option
     <code>-Djavalanche.maxmemory=1024m</code>
 				</p>
-			
 			</answer>
-		
 		</faq>
+		<faq id="StackOverflowError">
+			<question>Javalanche throws a java.lang.StackOverflowError</question>
+			<answer>
+				<p>
+				An exception similar to the one below is thrown.
+				<source>
+[junit] java.lang.StackOverflowError
+[junit]  at org.hibernate.hql.ast.QueryTranslatorImpl$JavaConstantConverter.visit(QueryTranslatorImpl.java:550)
+[junit]  at org.hibernate.hql.ast.util.NodeTraverser.visitDepthFirst(NodeTraverser.java:40)
+[junit]  at org.hibernate.hql.ast.util.NodeTraverser.visitDepthFirst(NodeTraverser.java:41)</source>
+
+				This exception might be caused by a query that is to big for the underlying database.
+				This happens when Javalanche uses a task file that contains too many mutations.
+				The solution for this problem is to produces several task files of smaller
+				size via the <code>createTasks</code> ant task.
+						 
+					</p>
+			</answer>
+		</faq>
+		<faq id="mysql">
+			<question>Javalanche hangs up or crashes on bigger projects. </question>
+			<answer>
+			<p>
+Javalanche uses <a href="http://hsqldb.org/">HSQLDB</a> as default database,
+which might suffer from performance problems for larger projects. Since
+Javalanche uses <a href="http://www.hibernate.org/">Hibernate</a>, the
+underlying database can be changed in a few steps.
+			
+In order to use a mysql database, you will have to install mysql on the machine running 
+Javalanche and adapt Javalanche's hibernate configuration in
+<source>src/main/resources/hibernate.cfg.xml</source>
+For example this is the configuration I am using for mysql:
+<source>
+<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+<property name="hibernate.connection.url">jdbc:mysql://localhost:3308/mutation_test</property>
+<property name="hibernate.connection.username">mutation</property>
+<property name="hibernate.connection.password">mu</property>
+<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+<property name="hibernate.jdbc.batch_size">20</property>
+</source>
+This configuration uses a database called <tt>`mutation_test'</tt> and a user called <tt>`mutation'</tt> that has access to it with the password <tt>`mu'</tt>.
+Of course, the corresponding user and database must exist in the mysql db.
+</p>
+</answer>
+		</faq>
+		<faq id="logj">
+		<question>How can I get more verbose output from Javalanche?</question>
+				<answer>
+					<p>
+ 					Javalanche uses <a href="http://logging.apache.org/log4j/1.2/">log4j</a>. To make the log4j output more verbose,
+					the file following file in the javalanche directory has to be edited. <source>src/main/resources/log4j.properties</source> 
+					For example, changing the line: <source>log4j.rootCategory=WARN, A1</source>
+					to: <source>log4j.rootCategory=DEBUG, A1</source> enables debugging output.
+					</p>
+				</answer>
+			</faq>
+		<!--
+		<faq id="TODO">
+			<question> </question>
+			<answer>
+				<p>
+				<source></source>
+				</p>
+			</answer>
+		</faq>
+		-->
 	</part>
 </faqs>
-
-
-

@@ -100,7 +100,6 @@ public class MutationTaskCreator {
 			int size = mutationIds.size();
 			mutationsPerTask = (int) Math.ceil(size * 1. / numberOfTasks);
 		}
-		System.out.println("MutationTaskCreator.createMutationTasks()");
 		createMutationTasks(numberOfTasks, mutationsPerTask);
 	}
 

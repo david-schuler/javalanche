@@ -64,29 +64,31 @@ public class AnalyzeUtil {
 	 * Comparator that compares mutations regarding their total number of
 	 * invariant violations
 	 */
-	public static final Comparator<Mutation> TOTAL_VIOLATIONS_COMPARATOR = new Comparator<Mutation>() {
-		public int compare(Mutation o1, Mutation o2) {
-			MutationTestResult mutationResult1 = o1.getMutationResult();
-			MutationTestResult mutationResult2 = o2.getMutationResult();
-			return mutationResult1.getTotalViolations()
-					- mutationResult2.getTotalViolations();
-		}
-
-	};
+	// public static final Comparator<Mutation> TOTAL_VIOLATIONS_COMPARATOR =
+	// new Comparator<Mutation>() {
+	// public int compare(Mutation o1, Mutation o2) {
+	// MutationTestResult mutationResult1 = o1.getMutationResult();
+	// MutationTestResult mutationResult2 = o2.getMutationResult();
+	// return mutationResult1.getTotalViolations()
+	// - mutationResult2.getTotalViolations();
+	// }
+	//
+	// };
 
 	/**
 	 * Comparator that compares mutations regarding their total number of
 	 * invariant violations
 	 */
-	public static final Comparator<Mutation> DIFFERENT_VIOLATIONS_COMPARATOR = new Comparator<Mutation>() {
-		public int compare(Mutation o1, Mutation o2) {
-			MutationTestResult mutationResult1 = o1.getMutationResult();
-			MutationTestResult mutationResult2 = o2.getMutationResult();
-			return mutationResult1.getDifferentViolatedInvariants()
-					- mutationResult2.getDifferentViolatedInvariants();
-		}
-
-	};
+	// public static final Comparator<Mutation> DIFFERENT_VIOLATIONS_COMPARATOR
+	// = new Comparator<Mutation>() {
+	// public int compare(Mutation o1, Mutation o2) {
+	// MutationTestResult mutationResult1 = o1.getMutationResult();
+	// MutationTestResult mutationResult2 = o2.getMutationResult();
+	// return mutationResult1.getDifferentViolatedInvariants()
+	// - mutationResult2.getDifferentViolatedInvariants();
+	// }
+	//
+	// };
 
 	/**
 	 * Returns a multimap that contains a mapping between the tests and the

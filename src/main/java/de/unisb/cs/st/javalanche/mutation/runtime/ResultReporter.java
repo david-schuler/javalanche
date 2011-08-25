@@ -82,9 +82,10 @@ public class ResultReporter implements MutationTestListener {
 			logger.info(message);
 			throw new RuntimeException(message);
 		}
-		if (ConfigurationLocator.getJavalancheConfiguration().getRunMode() == RunMode.MUTATION_TEST_INVARIANT) {
-			reportInvariantResults(mutation.getMutationResult());
-		}
+		// if (ConfigurationLocator.getJavalancheConfiguration().getRunMode() ==
+		// RunMode.MUTATION_TEST_INVARIANT) {
+		// reportInvariantResults(mutation.getMutationResult());
+		// }
 	}
 
 	/**
@@ -93,20 +94,20 @@ public class ResultReporter implements MutationTestListener {
 	 * @param mutationTestResult
 	 *            the result to add the invariant results
 	 */
-	private static void reportInvariantResults(
-			MutationTestResult mutationTestResult) {
-		InvariantObserver instance = InvariantObserver.getInstance();
-		if (instance != null) {
-			int totalViolatedInvariants = instance
-					.getTotalInvariantViolations();
-			int[] violatedInvariants = instance.getViolatedInvariantsArray();
-			mutationTestResult.setTotalViolations(totalViolatedInvariants);
-			mutationTestResult.setViolatedInvariants(violatedInvariants);
-			mutationTestResult
-					.setDifferentViolatedInvariants(violatedInvariants.length);
-			InvariantObserver.reset();
-		}
-	}
+	// private static void reportInvariantResults(
+	// MutationTestResult mutationTestResult) {
+	// InvariantObserver instance = InvariantObserver.getInstance();
+	// if (instance != null) {
+	// int totalViolatedInvariants = instance
+	// .getTotalInvariantViolations();
+	// int[] violatedInvariants = instance.getViolatedInvariantsArray();
+	// mutationTestResult.setTotalViolations(totalViolatedInvariants);
+	// mutationTestResult.setViolatedInvariants(violatedInvariants);
+	// mutationTestResult
+	// .setDifferentViolatedInvariants(violatedInvariants.length);
+	// InvariantObserver.reset();
+	// }
+	// }
 
 	/**
 	 * Persists the reported mutations to the database.

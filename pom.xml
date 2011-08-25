@@ -213,7 +213,7 @@
 				<configuration>
 					<downloadSources>true</downloadSources>
 					<downloadJavadocs>true</downloadJavadocs>
-		          <useProjectReferences>false</useProjectReferences>
+		           <useProjectReferences>false</useProjectReferences>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -238,7 +238,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit-dep</artifactId>
-			<version>4.9.b3</version>
+			<version>4.8.2</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.hamcrest</groupId>

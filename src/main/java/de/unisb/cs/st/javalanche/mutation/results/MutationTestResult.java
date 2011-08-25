@@ -20,13 +20,11 @@ package de.unisb.cs.st.javalanche.mutation.results;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -37,7 +35,6 @@ import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
 
 import com.google.common.base.Preconditions;
@@ -48,7 +45,7 @@ public class MutationTestResult implements Serializable {
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	public static final MutationTestResult NO_RESULT = new MutationTestResult();
 
@@ -94,46 +91,47 @@ public class MutationTestResult implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 
-	@CollectionOfElements
-	@JoinTable(name = "ViolatedInvariants", joinColumns = { @JoinColumn(name = "result_id") })
-	@Column(name = "violatedInvariant", nullable = true)
-	@IndexColumn(name = "violated_index")
-	private int[] violatedInvariants;
-
-	private int differentViolatedInvariants;
-
-	private int totalViolations;
-
-	/**
-	 * @return the violatedInvariants
-	 */
-	public int[] getViolatedInvariants() {
-		return violatedInvariants;
-	}
-
-	/**
-	 * @return the totalViolations
-	 */
-	public int getTotalViolations() {
-		return totalViolations;
-	}
-
-	/**
-	 * @param violatedInvariants
-	 *            the violatedInvariants to set
-	 */
-	public void setViolatedInvariants(int[] violatedInvariants) {
-
-		this.violatedInvariants = violatedInvariants;
-	}
-
-	/**
-	 * @param totalViolations
-	 *            the totalViolations to set
-	 */
-	public void setTotalViolations(int totalViolations) {
-		this.totalViolations = totalViolations;
-	}
+	// @CollectionOfElements
+	// @JoinTable(name = "ViolatedInvariants", joinColumns = { @JoinColumn(name
+	// = "result_id") })
+	// @Column(name = "violatedInvariant", nullable = true)
+	// @IndexColumn(name = "violated_index")
+	// private int[] violatedInvariants;
+	//
+	// private int differentViolatedInvariants;
+	//
+	// private int totalViolations;
+	//
+	// /**
+	// * @return the violatedInvariants
+	// */
+	// public int[] getViolatedInvariants() {
+	// return violatedInvariants;
+	// }
+	//
+	// /**
+	// * @return the totalViolations
+	// */
+	// public int getTotalViolations() {
+	// return totalViolations;
+	// }
+	//
+	// /**
+	// * @param violatedInvariants
+	// * the violatedInvariants to set
+	// */
+	// public void setViolatedInvariants(int[] violatedInvariants) {
+	//
+	// this.violatedInvariants = violatedInvariants;
+	// }
+	//
+	// /**
+	// * @param totalViolations
+	// * the totalViolations to set
+	// */
+	// public void setTotalViolations(int totalViolations) {
+	// this.totalViolations = totalViolations;
+	// }
 
 	/**
 	 * @return the date
@@ -171,11 +169,11 @@ public class MutationTestResult implements Serializable {
 		StringBuilder sb = new StringBuilder(String.format(
 				"Runs: %d  Failures: %d  Errors: %d LineTouched: %s", runs,
 				failures.size(), errors.size(), touched ? "yes" : "no"));
-		if (differentViolatedInvariants > 0) {
-			sb.append(" invariant violations: " + differentViolatedInvariants
-					+ " (" + totalViolations + ") ids["
-					+ Arrays.toString(violatedInvariants) + "]");
-		}
+		// if (differentViolatedInvariants > 0) {
+		// sb.append(" invariant violations: " + differentViolatedInvariants
+		// + " (" + totalViolations + ") ids["
+		// + Arrays.toString(violatedInvariants) + "]");
+		// }
 		sb.append(" date: " + date);
 		return sb.toString();
 	}
@@ -305,20 +303,21 @@ public class MutationTestResult implements Serializable {
 		this.touched = touched;
 	}
 
-	/**
-	 * @return the differentViolatedInvariants
-	 */
-	public int getDifferentViolatedInvariants() {
-		return differentViolatedInvariants;
-	}
-
-	/**
-	 * @param differentViolatedInvariants
-	 *            the differentViolatedInvariants to set
-	 */
-	public void setDifferentViolatedInvariants(int differentViolatedInvariants) {
-		this.differentViolatedInvariants = differentViolatedInvariants;
-	}
+	// /**
+	// * @return the differentViolatedInvariants
+	// */
+	// public int getDifferentViolatedInvariants() {
+	// return differentViolatedInvariants;
+	// }
+	//
+	// /**
+	// * @param differentViolatedInvariants
+	// * the differentViolatedInvariants to set
+	// */
+	// public void setDifferentViolatedInvariants(int
+	// differentViolatedInvariants) {
+	// this.differentViolatedInvariants = differentViolatedInvariants;
+	// }
 
 	// public void addInvariant(Invariant invariant) {
 	// if (invariants == null) {
@@ -362,9 +361,9 @@ public class MutationTestResult implements Serializable {
 			failures.size();
 		// if (invariants != null)
 		// invariants.size();
-		if (violatedInvariants != null) {
-			@SuppressWarnings("unused")
-			int length = violatedInvariants.length;
-		}
+		// if (violatedInvariants != null) {
+		// @SuppressWarnings("unused")
+		// int length = violatedInvariants.length;
+		// }
 	}
 }

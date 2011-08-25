@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 
 public class ClassReportFactory {
 
@@ -88,11 +87,4 @@ public class ClassReportFactory {
 		return m.getLineNumber() + "(" + m.getMutationForLine() + ")";
 	}
 
-	private static String getImpact(Mutation m) {
-		if (m.getMutationResult() != null) {
-			MutationTestResult mr = m.getMutationResult();
-			return "" + mr.getDifferentViolatedInvariants();
-		}
-		return "not executed by tests";
-	}
 }

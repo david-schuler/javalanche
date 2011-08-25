@@ -30,7 +30,7 @@
 	-->
 	<target name="test-javalanche">
 		<mkdir dir="mutation-files/junit-reports"></mkdir>
-		<junit dir="." printSummary="yes" fork="true" forkmode="once" showoutput="true">
+		<junit dir="." printSummary="no" fork="true" forkmode="once" showoutput="true">
 			<classpath>
 				<path refid="javalanche.classpath.add" />
 				<pathelement path="${cp}"></pathelement>

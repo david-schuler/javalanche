@@ -62,7 +62,7 @@ public class EclipseCoverageAnalyzer {
 					impact = impactMap.get(m.getId());
 				}
 				logger.info("Seting impact " + impact + " for " + m.getId());
-				result.setDifferentViolatedInvariants(impact);
+				// result.setDifferentViolatedInvariants(impact);
 			}
 
 		}

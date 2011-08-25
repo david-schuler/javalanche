@@ -132,39 +132,5 @@ public class Junit4MutationTestDriverTest {
 
 	}
 
-	@Test
-	public void testUnfilter() throws ClassNotFoundException,
-			InitializationError, NoTestsRemainException {
-		config.setTestNames(Junit4Suite.class.getName());
-		Runner master = Junit4Util.getRunner();
-		Filter f = Filter.matchMethodDescription(Description
-				.createTestDescription(TestCaseForJunit4Test.class, "test3"));
-		Request req = Request.runner(master);
-		Request filteredReq = req.filterWith(f);
-		assertEquals(7, master.testCount());
-		// ((Filterable) r).filter(f);
-		assertEquals(1, filteredReq.getRunner().testCount());
-
-		Filter allPass = new Filter() {
-
-			@Override
-			public boolean shouldRun(Description description) {
-				return true;
-			}
-
-			@Override
-			public String describe() {
-				return "filter none";
-			}
-
-		};
-		// ((Filterable) r).filter(allPass);
-
-		Request req2 = Request.runner(master);
-		Request filteredAll = req2.filterWith(allPass);
-
-		assertEquals(7, filteredAll.getRunner().testCount());
-		// TODO copy runner
-	}
 
 }
