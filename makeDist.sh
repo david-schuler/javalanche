@@ -20,10 +20,10 @@ cp -r target/javalanche-${VERSION}-dist/ ${DIST}/
 cp javalanche.xml ${DIST}/
 cp import.xml ${DIST}/
 mkdir -p ${DIST}/src/main/resources/
-cp src/main/resources/mutation-build.xml ${DIST}/src/main/resources/
+cp src/main/resources/javalanche-tasks.xml ${DIST}/src/main/resources/
 cp src/main/resources/hibernate.cfg.xml ${DIST}/src/main/resources/
 cp src/main/resources/log4j.properties ${DIST}/src/main/resources/
-cp src/main/resources/mutation-add-tasks.xml ${DIST}/src/main/resources/
+cp src/main/resources/javalanche-add-tasks.xml ${DIST}/src/main/resources/
 cp src/main/resources/coverage-include.xml ${DIST}/src/main/resources/
 cp ../adabu2-check-invariants/src/main/resources/invariant-build.xml  ${DIST}/src/main/resources/
 

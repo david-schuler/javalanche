@@ -11,7 +11,7 @@
 			<item name="Running Javalanche" href="documentation.html"/>
 			<item name="Invariant Checking" href="doc-invariants.html"/>
 			<item name="Coverage Impact" href="doc-coverage.html"/>
-			<item name="Additional Tasks" href="add-tasks.html"/>
+			<item name="Javalanche Tasks" href="add-tasks.html"/>
 		</menu>
 	
 		<menu name="Examples">

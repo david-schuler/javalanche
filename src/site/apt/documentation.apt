@@ -148,8 +148,8 @@ Documentation
 ** Running tasks in {parallel}
 	
  Instead of running the several tasks sequentially, they can also be run in parallel
- Therefore, first a script (default name: runMutations.sh) has to be created 
- that calls the runMutations task with its argument.
+ Therefore, first a script (default name: <<<runMutations.sh>>>) has to be created 
+ that calls the <<<runMutations>>> task with its argument.
  
  This script gets three inputs:
 
@@ -179,7 +179,7 @@ do
 done
 +-------------------------------+
 
- The task <<<createMutationMakefile>>> then creates a makefile with different
+ The task <<<createMutationMakefile>>> then creates a <<<Makefile>>> with different
  targets (one for each task file) that call this script.
 
 +-------------------------------+

@@ -1,0 +1,94 @@
+            ------
+            Javalanche Tasks
+            ------
+            David Schuler
+            ------
+            Date
+
+
+Javalanche Tasks
+
+ Javalanche provides several tasks. Most of them are described in
+ the documentation on how to run Javalanche and in the examples. This list
+ provides an overview over all tasks.
+ 
+* analyzeResults         
+
+ Analyzes the mutation test results. Own analyzers can be specified with <<<javalanche.mutation.analyzers>>>. 
+ Note that the own analyzers must be on the classpath.
+
+* cleanJavalanche
+
+ Deletes all files produced by Javalanche. In its standard
+ settings these are all files in the folder <<<mutation-files>>>. Note that this
+ task does not delete data from the database. This is done in other tasks.
+
+* createMutationMakefile
+
+ Creates a Makefile for the mutation tasks. The created Makefile calls a 
+ script called <<<runMutations.sh>>>. TODO
+
+* createTasks
+
+ Creates mutations task files. 
+
+* createTasksFixed        
+
+ Create a fixed number of tasks. In its standard configuration it creates 10 
+ tasks. A different number of tasks can be specified with the property
+ <<<javalanche.fixed.number.of.tasks>>>.
+
+* deleteMutations 
+
+ Delete mutations for this project. TODO
+
+* deleteResults           
+
+ Delete mutation results from the database. Either an id of a mutation or file 
+ with ids is passed via the property <<<javalanche.delete.results.arg>>>.
+ If no arg is passed to this task, all mutation results for this project are
+ deleted.
+
+* runMutations            
+
+ Run the mutation task specified by <<<mutation.file>>>.
+
+* scan                    
+
+ Scan the project for mutations.
+
+* scanProject             
+
+ Scan this project for classes to mutate and tests, that are not mutated. 
+ This tasks searches recursively for <<<.java>>> from this directory in order 
+ to detect test classes. If the sources are not reachable from this directory, 
+ a different start directory can be supplied with property <<<javalanche.test.base.dir>>>
+
+* schemaexport
+
+ Exports the hibernate schema to the database. This task needs to be run once 
+ after a database was set up.
+
+* showMutation            
+
+ Show the mutation with given id (-Dmutation.id= ) and its results. 
+
+*  startHsql
+
+ Starts a HSQL database.
+
+* stopHsql
+
+ Stops the HSQL database.
+
+* testTask1               
+
+ Tests the Javalanche task. The task should behave in the same way as a regular test task.
+
+* testTask2               
+
+ Tests the Javalanche test runner without any bytecode modifications. All tests should pass in the Javalanche test runner.
+
+* testTask3               
+
+ Run the tests multiple times in different order. The outcome of the tests should not depend on the execution order.

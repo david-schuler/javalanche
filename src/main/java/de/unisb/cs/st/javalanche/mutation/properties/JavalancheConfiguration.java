@@ -21,6 +21,7 @@ package de.unisb.cs.st.javalanche.mutation.properties;
 import java.io.File;
 
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
+import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.junit.Junit3MutationTestDriver;
 
 /**
  * Class that supplies the the configuration for Javalanche.
@@ -196,5 +197,14 @@ public interface JavalancheConfiguration {
 	 *         cover the mutation.
 	 */
 	boolean runAllTestsForMutation();
+
+	/**
+	 * Returns true, when {@link Junit3MutationTestDriver} should be used to run
+	 * the tests.
+	 * 
+	 * @return true, when {@link Junit3MutationTestDriver} should be used to run
+	 *         the tests.
+	 */
+	boolean useJunit3Runner();
 
 }

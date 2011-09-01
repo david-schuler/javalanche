@@ -23,8 +23,10 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType;
 import static de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType.*;
 import de.unisb.cs.st.javalanche.mutation.util.MutationUtil;
@@ -33,6 +35,8 @@ import static de.unisb.cs.st.javalanche.mutation.properties.PropertyUtil.*;
 public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 
 	// TODO store read properties in variables.
+
+	private static final String USE_JUNIT3_RUNNER_KEY = "javalanche.use.junit3runner";
 
 	/**
 	 * The period each test is allowed to run in seconds.
@@ -128,8 +132,16 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 	public static final String RUN_ALL_TESTS_FOR_MUTATION_KEY = "javalanche.run.all.tests.for.mutation";
 
 	static {
+
 		logger.info("Loaded log4j configuration from "
 				+ MutationUtil.getLog4jPropertiesLocation());
+		String logPropery = System.getProperty("javalanche.log.level");
+		if (logPropery != null && !logPropery.equals("notSet")) {
+			Logger rootLogger = Logger.getRootLogger();
+			Level l = Level.toLevel(logPropery);
+			rootLogger.setLevel(l);
+		}
+
 	}
 
 	private boolean timeoutInSecondsCalled;
@@ -199,6 +211,10 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 	private boolean allTestsForMutationCalled;
 
 	private boolean runAllTestsForMutationCalled;
+
+	private boolean useJunit3RunnerCalled;
+
+	private boolean useJunit3Runner;
 
 	@Override
 	public boolean enableMutationType(MutationType t) {
@@ -408,5 +424,15 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 					super.runAllTestsForMutation());
 		}
 		return allTestsForMutationCalled;
+	}
+
+	@Override
+	public boolean useJunit3Runner() {
+		if (!useJunit3RunnerCalled) {
+			useJunit3RunnerCalled = true;
+			useJunit3Runner = PropertyUtil.getPropertyOrDefault(
+					USE_JUNIT3_RUNNER_KEY, super.useJunit3Runner());
+		}
+		return useJunit3Runner;
 	}
 }

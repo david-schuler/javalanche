@@ -1,6 +1,6 @@
-<project name="mutation-include" default="">
+<project name="javalanche-add-tasks" default="">
 	
-	<import file="./mutation-build.xml" />
+	<import file="./javalanche-tasks.xml" />
 	
 	<property name="invariant.dir" value="invariant-files/" />
 	<property name="field.file" value="${invariant.dir}/field-results.ser" />
@@ -47,7 +47,7 @@
 			<path refid="mutation.classpath"/>
 		</path>
 			<!--${run.mutations.debug.verbose}-->
-		<antcall target="test-javalanche">
+		<antcall target="${javalanche.task}">
 			<param name="javalanche.arg.line" value="${run.mutations.debug.mutation.javaagent} ${run.mutations.debug.memory} ${run.mutations.debug.mutation.run.mode} ${run.mutations.debug.javalanche.package.prefix} ${run.mutations.debug.javalanche.project.tests} ${run.mutations.debug.mutation.file} ${run.mutations.debug.mutation.result.file} ${run.mutations.debug.listener} ${run.mutations.debug.debug}" />
 			<reference refid="run.mutations.debug.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
@@ -77,7 +77,7 @@
 			<path refid="mutation.invariant.classpath"/>
 		</path>
 		<!--${run.mutations.verbose}-->
-		<antcall target="test-javalanche">
+		<antcall target="${javalanche.task}">
 			<param name="javalanche.arg.line" value=" ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.tests} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode} ${run.mutations.listener} " />
 			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
@@ -104,7 +104,7 @@
 		</path>
 
 		<!--${run.mutations.verbose}-->
-		<antcall target="test-javalanche">
+		<antcall target="${javalanche.task}">
 			<param name="javalanche.arg.line" value=" -verify ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.tests} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode}" />
 			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
@@ -146,7 +146,7 @@
 			<path refid="invariant.classpath"/>
 		</path>
 		<!--${run.mutations.verbose}-->
-		<antcall target="test-javalanche">
+		<antcall target="${javalanche.task}">
 			<param name="javalanche.arg.line" value=" ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.tests} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} ${run.mutations.field.file.arg} ${run.mutations.checker.file} ${run.mutations.verbose.summary} ${run.mutations.javalanche.invariant.mode} ${run.mutations.listener} " />
 			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>
 		</antcall>
@@ -169,7 +169,7 @@
 			<path refid="mutation.classpath"/>
 		</path>
 		
-		<antcall target="test-javalanche">
+		<antcall target="${javalanche.task}">
 			<!--${run.mutations.verbose}-->
 			<param name="javalanche.arg.line" value="  ${run.mutations.mutation.javaagent} ${run.mutations.memory} ${run.mutations.mutation.run.mode} ${run.mutations.javalanche.package.prefix} ${run.mutations.javalanche.project.tests} ${run.mutations.mutation.file} ${run.mutations.mutation.result.file} " />
 			<reference refid="run.mutations.classpath.add" torefid="javalanche.classpath.add"/>

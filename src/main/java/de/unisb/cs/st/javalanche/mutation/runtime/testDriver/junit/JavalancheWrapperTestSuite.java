@@ -30,7 +30,10 @@ import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
+import de.unisb.cs.st.ds.util.Util;
 import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
+import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
+import de.unisb.cs.st.javalanche.mutation.properties.PropertyUtil;
 import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestDriver;
 
@@ -40,20 +43,11 @@ public class JavalancheWrapperTestSuite extends Runner {
 	private Runner r;
 
 	public JavalancheWrapperTestSuite(Class<?> c) {
-
-		// if (MutationProperties.TEST_CLASSES == null
-		// && MutationProperties.TEST_METHODS == null) {
-		// throw new IllegalStateException(
-		// String
-		// .format(
-		// "Either property %s or %s has to be set when running this test suite",
-		// TEST_CLASSES_KEY, TEST_METHODS_KEY));
-		// }
 	}
 
 	@Test
 	public void testMethod() {
-		System.out.println("PlaceholderTestSuite.testMethod()");
+		System.out.println("JavalancheWrapperTestSuite.testMethod()");
 	}
 
 	@Override
@@ -76,14 +70,15 @@ public class JavalancheWrapperTestSuite extends Runner {
 
 	@Override
 	public void run(RunNotifier notifier) {
-		RunMode runMode = ConfigurationLocator.getJavalancheConfiguration()
-				.getRunMode();
+		JavalancheConfiguration config = ConfigurationLocator
+				.getJavalancheConfiguration();
+		RunMode runMode = config.getRunMode();
 		if (runMode == RunMode.OFF) {
 			Runner runner = getRunner();
 			runner.run(notifier);
 		} else {
 			MutationTestDriver driver = null;
-			if (System.getProperty("javalanche.use.junit3runner") != null) {
+			if (config.useJunit3Runner()) {
 				System.out.println("Using Junit3 Mutation Test Driver");
 				driver = new Junit3MutationTestDriver();
 			} else {

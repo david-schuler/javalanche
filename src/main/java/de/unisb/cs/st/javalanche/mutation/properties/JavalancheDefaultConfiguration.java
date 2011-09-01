@@ -118,4 +118,9 @@ public class JavalancheDefaultConfiguration implements JavalancheConfiguration {
 		return false;
 	}
 
+	@Override
+	public boolean useJunit3Runner() {
+		return false;
+	}
+
 }

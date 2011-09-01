@@ -6,7 +6,7 @@ public class DebugProperties {
 
 	/**
 	 * 
-	 * Debugging Properties
+	 * Debugging Properties. Enable some debugging functionality of Javalanche.
 	 * 
 	 * */
 	public static String INSERT_ORIGINAL_INSTEAD_OF_MUTATION_KEY = "javalanche.debug.insert.original.code";
@@ -25,7 +25,7 @@ public class DebugProperties {
 	public static final boolean MUTATION_PRINT_STATEMENTS_ENABLED = getPropertyOrDefault(
 			MUTATION_PRINT_STATEMENTS_ENABLED_KEY, false);
 
-	public static final boolean TRACE_BYTECODE = false;
-
+	public static final boolean TRACE_BYTECODE = getPropertyOrDefault(
+			"javalanche.trace.bytecode", false);;
 
 }

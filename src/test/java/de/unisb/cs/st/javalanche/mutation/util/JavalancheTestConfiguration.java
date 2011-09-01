@@ -32,6 +32,7 @@ public class JavalancheTestConfiguration implements JavalancheConfiguration {
 
 	private Map<MutationType, Boolean> typeEnabled = initializeMap();
 	private boolean runAllTestsForMutation = d.runAllTestsForMutation();
+	private boolean useJunit3Runner = d.useJunit3Runner();
 
 	private Map<MutationType, Boolean> initializeMap() {
 		Map<MutationType, Boolean> map = new HashMap<MutationType, Boolean>();
@@ -216,6 +217,19 @@ public class JavalancheTestConfiguration implements JavalancheConfiguration {
 
 	public void setRunAllTestsForMutation(boolean runAllTestsForMutation) {
 		this.runAllTestsForMutation = runAllTestsForMutation;
+	}
+
+	@Override
+	public boolean useJunit3Runner() {
+		return this.useJunit3Runner;
+	}
+
+	public boolean isUseJunit3Runner() {
+		return useJunit3Runner;
+	}
+
+	public void setUseJunit3Runner(boolean useJunit3Runner) {
+		this.useJunit3Runner = useJunit3Runner;
 	}
 
 }
