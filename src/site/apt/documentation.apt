@@ -15,39 +15,39 @@ Documentation
 
 * Installing Javalanche
  
- Download an unpack the latest release (see
+ Download and unpack the latest release (see
  {{{download.html}Downloads}}). The Release contains Javalanche and all its 
  dependencies.
- In order to run Javalanche, Java 6 is and ant will be needed {{{http://ant.apache.org/}
- ant}}, which are not included in the release.
+ In order to run Javalanche, Java 6 is and the {{{http://ant.apache.org/}
+ ant}} build tool will be needed, which are not included in the release.
  
 * Running Javalanche
 
  In order to run Javalanche, you first need to copy the file
  <<<javalanche.xml>>> from the Javalanche distribution to the root directory of
  project that you want to test. This file makes the different tasks of
- Javalanche available.When running Javalanche, these four properties have to be
+ Javalanche available. When running Javalanche, these four properties have to be
  defined:
  
  [[1]] Tests (<<<-Dtests>>>) The name of a JUnit test suite, or JUnit test classes that should
        be used for mutation testing. Multiple classes can be separated with a colon ":". The tests
-	   can either be JUnit 3 or JUnit 4 tests. Javalanche uses Junit 4 classes
+	   can either be JUnit 3 or JUnit 4 tests. Javalanche uses parts of the Junit 4 library
 	   that can handle both types of tests.
  
  [[1]] Classpath (<<<-Dcp>>>) The classpath needed to execute the test suite. 
  Note: If there is already an ant task for the project that executes the test suite, the
- <<<-v>>> switch prints out the classpath. Similar for for maven projects the <<<-X>>> switch can be used.
+ <<<-v>>> switch prints out the classpath, and for maven projects the <<<-X>>> switch can be used.
  
  [[1]] Prefix (<<<-Dprefix>>>) The package prefix of the project. This prefix is
  used to distinguish classes from the project from library classes. Only classes
  in packages starting with this prefix are mutated.
 
- [[1]] Javalanche Location (<<<-Djavalanche>>>). The directory were Javalanche 
+ [[1]] Javalanche Location (<<<-Djavalanche>>>). The directory where Javalanche 
  is installed.
  
  []
  
- These properties have to specified for all following steps.
+ These properties have to be specified for all following steps.
  They can either be set on the command
  line or in the <<<javalanche.xml>>> file.
  
@@ -67,8 +67,8 @@ Documentation
  The database can be shutdown with the <<<stopHsql>>> task.
  
  Note: 
- If you want to check the your configuration, you can run the
- <<<testParameters>>> task. This task simply prints out the parameters as they
+ If you want to check your configuration, you can run the
+ <<<testParameters>>> task. This task simply prints out the parameters, as they
  will be used for the following steps. 
  
 ** Checking Tests
@@ -142,8 +142,8 @@ Documentation
 
  [[1]] <<<cleanJavalanche>>> Deletes all produced files. 
 
- Note: If you run deleteMutations you should also run cleanJavalanche and vice 
- versa.
+ Note: If you run <<<deleteMutations>>> you should also run
+ <<<cleanJavalanche>>> and vice versa.
  
 ** Running tasks in {parallel}
 	
@@ -196,4 +196,3 @@ make -j4
  This task, for example, runs four tasks in parallel. 
 
 
- 

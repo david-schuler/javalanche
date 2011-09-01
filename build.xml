@@ -22,7 +22,7 @@
 	<taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" classpathref="project.classpath" />
 
 	<!-- Export the database schema -->
-	<target name="schemaexport" depends="" description="Exports a generated schema to DB and file">
+	<target name="schemaexport" depends="" description="Export a schema to the databas and file">
 		<hibernatetool destdir="${basedir}">
 			<classpath>
 				<pathelement path="target/classes/" />

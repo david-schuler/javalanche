@@ -1,6 +1,10 @@
 <project name="Javalanche">
 	
-<!-- Properties can either be supplied on the command line or specified here -->
+<!-- Properties can either be supplied on the command line, via a properties file or specified here -->
+
+<!--
+ <property file="javalanche.properties" />
+-->
 <!--
 	<property name="prefix" value=""/>
 	<property name="tests" value=""/>
@@ -16,11 +20,10 @@
 	
 		
 	<import file="${javalanche.location}/import.xml"/>
-	<import file="${javalanche.location}/src/main/resources/mutation-build.xml" />
-
-<!--	<import file="${javalanche.location}/src/main/resources/mutation-add-tasks.xml"/> -->
+	<import file="${javalanche.location}/src/main/resources/javalanche-tasks.xml" />
+    <import file="${javalanche.location}/src/main/resources/javalanche-add-tasks.xml"/>
 	
-<!-- To compute the coverage or invariant impact of the mutations, one of these files has to be included. -->
+<!-- To compute the coverage or invariant impact (not supported in current version) of the mutations, one of these files has to be included. -->
 <!--	<import file="${javalanche.location}/src/main/resources/invariant-build.xml" /> -->
 <!--	<import file="${javalanche.location}/src/main/resources/coverage-include.xml" /> -->
 
@@ -28,7 +31,7 @@
 	Task that is called by the different stages of Javalanche.
 	This task should not be called directly.
 	-->
-	<target name="test-javalanche">
+	<target name="javalancheTask">
 		<mkdir dir="mutation-files/junit-reports"></mkdir>
 		<junit dir="." printSummary="no" fork="true" forkmode="once" showoutput="true">
 			<classpath>
@@ -55,7 +58,6 @@
 		</echo>
 	</target>	
 
-	
 	<target name="mutationTest" depends="startHsql,schemaexport,scanProject,scan,createSingleRandomTask,runSingleTask,analyzeResults,stopHsql"/>
 	
 

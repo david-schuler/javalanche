@@ -22,7 +22,7 @@
 	</target>
 	
 	
-	<target name="startHsql" depends="" description="* Starts a HSQL database.">
+	<target name="startHsql" depends="" description="* Start the HSQL database.">
 		<java classname="org.hsqldb.Server" fork="true" spawn="true">
 			<arg line="-database.0 file:${javalanche.dir}/db-data/mutation_test -dbname.0 mt" />
 			<classpath>
@@ -31,7 +31,7 @@
 		</java>
 	</target>
 	
-	<target name="stopHsql" description="* Stops the HSQL database.">
+	<target name="stopHsql" description="* Stop the HSQL database.">
 		<sql classpathref="mutation.classpath" driver="org.hsqldb.jdbcDriver" 
 		url="jdbc:hsqldb:hsql://127.0.0.1/mt" userid="sa" password="" autocommit="true">SHUTDOWN</sql>
 	</target>
@@ -42,7 +42,7 @@
 	<taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" classpathref="mutation.classpath" />
 
 	<!-- Export the database schema -->
-	<target name="schemaexport" depends="" description="* Exports the hibernate schema to the database.">
+	<target name="schemaexport" depends="" description="* Export the hibernate schema to the database.">
 		<hibernatetool destdir="${basedir}">
 			<classpath refid="mutation.classpath"/>
 			<annotationconfiguration configurationfile="${javalanche.dir}/src/main/resources/hibernate.cfg.xml" />
@@ -50,7 +50,6 @@
 			<hbm2ddl drop="true" create="true" export="true" delimiter=";" format="true" />
 		</hibernatetool>
 	</target>
-	
 	
 
 </project>
