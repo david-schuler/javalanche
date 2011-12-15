@@ -25,7 +25,7 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 
 import de.unisb.cs.st.javalanche.coverage.CoverageTransformer;
-import de.unisb.cs.st.javalanche.invariants.javaagent.InvariantTransformer;
+//import de.unisb.cs.st.javalanche.invariants.javaagent.InvariantTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.DistanceTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationScanner;
@@ -64,14 +64,14 @@ public class MutationPreMain {
 						new MutationFileTransformer());
 				return;
 
-			} else if (runMode == MUTATION_TEST_INVARIANT) {
-				sysout.println("Run mutation tests with invariant checks");
-				addClassFileTransformer(instrumentation,
-						new InvariantTransformer());
-				addClassFileTransformer(instrumentation,
-						new MutationFileTransformer());
-				return;
-
+				/*
+				 * } else if (runMode == MUTATION_TEST_INVARIANT) {
+				 * sysout.println("Run mutation tests with invariant checks");
+				 * addClassFileTransformer(instrumentation, new
+				 * InvariantTransformer());
+				 * addClassFileTransformer(instrumentation, new
+				 * MutationFileTransformer()); return;
+				 */
 			} else if (runMode == MUTATION_TEST_COVERAGE) {
 				sysout.println("Run mutation tests with tracing of coverage data per test");
 				addClassFileTransformer(instrumentation,
@@ -84,7 +84,7 @@ public class MutationPreMain {
 				addClassFileTransformer(instrumentation, new MutationScanner());
 				return;
 			} else if (runMode == CHECK_TESTS || runMode == TEST_PERMUTED) {
-				sysout.println("Integrating RandomPermutationTestSuite");
+				sysout.println("Running tests in random order.");
 				// addClassFileTransformer(instrumentation, new
 				// PrintTransformer());
 				addClassFileTransformer(instrumentation,

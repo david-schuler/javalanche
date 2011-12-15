@@ -25,7 +25,7 @@ cp src/main/resources/hibernate.cfg.xml ${DIST}/src/main/resources/
 cp src/main/resources/log4j.properties ${DIST}/src/main/resources/
 cp src/main/resources/javalanche-add-tasks.xml ${DIST}/src/main/resources/
 cp src/main/resources/coverage-include.xml ${DIST}/src/main/resources/
-cp ../adabu2-check-invariants/src/main/resources/invariant-build.xml  ${DIST}/src/main/resources/
+#cp ../adabu2-check-invariants/src/main/resources/invariant-build.xml  ${DIST}/src/main/resources/
 
 mkdir -p ${DIST}/examples/triangle
 cp ../Triangle/build.xml ${DIST}/examples/triangle/ 
@@ -38,18 +38,18 @@ cp ../TriangleJunit4/build.xml ${DIST}/examples/triangleJunit4/
 cp -r ../TriangleJunit4/src ${DIST}/examples/triangleJunit4/
 cp -r ../TriangleJunit4/lib ${DIST}/examples/triangleJunit4/
 
-mkdir -p ${DIST}/examples/invariantExample
-cp ../InvariantExample/build.xml ${DIST}/examples/invariantExample/
-cp -r ../InvariantExample/src ${DIST}/examples/invariantExample/
+#mkdir -p ${DIST}/examples/invariantExample
+#cp ../InvariantExample/build.xml ${DIST}/examples/invariantExample/
+#cp -r ../InvariantExample/src ${DIST}/examples/invariantExample/
 
 rm ${DIST}/javalanche-${VERSION}.jar
 
 
 JARJAR=/scratch/schuler/java/jarjar-1.0.jar
-java -jar ${JARJAR} process jarjar-rules.txt ${DIST}/lib/ds-util-0.3.2.jar ${DIST}/lib/ds-util-trans.jar
-rm ${DIST}/lib/ds-util-0.3.2.jar
-java -jar ${JARJAR} process jarjar-rules.txt ${DIST}/lib/xstream-1.3.1.jar ${DIST}/lib/xstream-trans.jar
-rm ${DIST}/lib/xstream-1.3.1.jar
+java -jar ${JARJAR} process jarjar-rules.txt ${DIST}/lib/ds-util-0.3.2.1.jar ${DIST}/lib/ds-util-trans.jar
+rm ${DIST}/lib/ds-util-0.3.2.1.jar
+java -jar ${JARJAR} process jarjar-rules.txt ${DIST}/lib/xstream-1.4.1.jar ${DIST}/lib/xstream-trans.jar
+rm ${DIST}/lib/xstream-1.4.1.jar
 
 #rm ${DIST}/lib/daikon-local.jar
 if [  $1 ]; then
@@ -80,7 +80,7 @@ if [  $1 ]; then
 		cp ${TAR_SRC} ../src/site/builds/
 		cp ${TAR_SRC} site/builds/
 		cd ..
-	#	rsync  --verbose  --progress --stats --compress --recursive --times --perms --links    target/site/ kubrick:Sites/st_chair/javalanche/ 
+		#rsync  --verbose  --progress --stats --compress --recursive --times --perms --links    target/site/ kubrick:Sites/st_chair/javalanche/ 
 	fi
 fi
 

@@ -12,7 +12,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.coverage.CoverageTransformer;
-import de.unisb.cs.st.javalanche.invariants.javaagent.InvariantTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.DistanceTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationFileTransformer;
 import de.unisb.cs.st.javalanche.mutation.javaagent.classFileTransfomer.MutationScanner;
@@ -67,14 +66,14 @@ public class MutationPreMainTest {
 	}
 
 
-	private void checkInvariantTransformer() {
-		Instrumentation mock = createMock(Instrumentation.class);
-		mock.addTransformer(isA(InvariantTransformer.class));
-		mock.addTransformer(isA(MutationFileTransformer.class));
-		replay(mock);
-		MutationPreMain.premain("", mock);
-		verify(mock);
-	}
+// private void checkInvariantTransformer() {
+	// Instrumentation mock = createMock(Instrumentation.class);
+	// mock.addTransformer(isA(InvariantTransformer.class));
+	// mock.addTransformer(isA(MutationFileTransformer.class));
+	// replay(mock);
+	// MutationPreMain.premain("", mock);
+	// verify(mock);
+	// }
 
 	@Test
 	public void testCoverageTransformerIsAdded() {

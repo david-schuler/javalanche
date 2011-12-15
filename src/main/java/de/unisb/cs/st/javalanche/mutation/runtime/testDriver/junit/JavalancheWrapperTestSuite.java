@@ -75,7 +75,13 @@ public class JavalancheWrapperTestSuite extends Runner {
 		RunMode runMode = config.getRunMode();
 		if (runMode == RunMode.OFF) {
 			Runner runner = getRunner();
+			Result r = new Result();
+			RunListener listener = r.createListener();
+			notifier.addListener(listener);
 			runner.run(notifier);
+			System.out.println("Tests run: " + r.getRunCount()
+					+ "\nFailing Tests: " + r.getFailureCount());
+
 		} else {
 			MutationTestDriver driver = null;
 			if (config.useJunit3Runner()) {

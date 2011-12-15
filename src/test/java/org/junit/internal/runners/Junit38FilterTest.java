@@ -11,7 +11,8 @@ public class Junit38FilterTest {
 
 	@Test(expected = NoTestsRemainException.class)
 	public void testNoTestsRemainException() throws Exception {
-		JUnit38ClassRunner runner = new JUnit38ClassRunner(Junit38Suite.class);
+			JUnit38ClassRunner runner = new JUnit38ClassRunner(
+					Junit38Suite.suite());
 		runner.filter(new Filter() {
 
 			@Override
@@ -24,6 +25,7 @@ public class Junit38FilterTest {
 				return "test filter";
 			}
 		});
+		
 	}
 
 	@Test
@@ -38,9 +40,10 @@ public class Junit38FilterTest {
 				String descClass = description.getClassName();
 				String descMethod = description.getMethodName();
 				System.out.println("DESC" + descClass + descMethod);
-				return descClass != null && descMethod != null
+				boolean result = descClass != null && descMethod != null
 						&& descClass.equals(Junit38Test.class.getName())
 						&& descMethod.equals("test1");
+				return result;
 			}
 
 			@Override

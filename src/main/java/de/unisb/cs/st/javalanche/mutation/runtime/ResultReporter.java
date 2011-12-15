@@ -23,11 +23,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.unisb.cs.st.javalanche.invariants.runtime.InvariantObserver;
 import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
-import de.unisb.cs.st.javalanche.mutation.properties.RunMode;
 import de.unisb.cs.st.javalanche.mutation.results.Mutation;
-import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.persistence.QueryManager;
 import de.unisb.cs.st.javalanche.mutation.runtime.testDriver.MutationTestListener;
 
