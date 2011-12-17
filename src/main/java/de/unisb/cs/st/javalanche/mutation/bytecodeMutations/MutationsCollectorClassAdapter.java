@@ -35,10 +35,13 @@ import org.objectweb.asm.util.CheckMethodAdapter;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.absoluteValues.AbsoluteValuePossibilitiesAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.arithmetic.PossibilitiesArithmeticReplaceMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.monitor.MonitorRemovePossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.negateJumps.NegateJumpsPossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.MyAdviceAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeCalls.RemoveCallsPossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceIntegerConstant.PossibilitiesRicMethodAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceThreadCalls.ReplaceAdviceAdapter;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceThreadCalls.ReplaceThreadCallsPossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ProjectVariables;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.ReplaceVariablesPossibilitiesMethodAdapter;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceVariables.VariableInfo;
@@ -68,6 +71,11 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 	private Map<Integer, Integer> absoluteValuePossibilities = new HashMap<Integer, Integer>();
 
 	private Map<Integer, Integer> unaryOperatorPossibilities = new HashMap<Integer, Integer>();
+
+	private Map<Integer, Integer> monitorPossibilities = new HashMap<Integer, Integer>();
+
+	private Map<Integer, Integer> replaceThreadCallsPossibilities = new HashMap<Integer, Integer>();
+
 	// private Map<Integer, Integer> jumpsCallsPossibilities = new
 	// HashMap<Integer, Integer>();
 	//
@@ -137,6 +145,16 @@ public class MutationsCollectorClassAdapter extends ClassAdapter {
 		if (configuration.enableMutationType(UNARY_OPERATOR)) {
 			mv = new UnaryOperatorPossibilitiesAdapter(mv, className, name,
 					unaryOperatorPossibilities, desc, mpc);
+		}
+
+		if (configuration.enableMutationType(MONITOR_REMOVE)) {
+			mv = new MonitorRemovePossibilitiesMethodAdapter(mv, className,
+					name, mpc, monitorPossibilities, desc);
+		}
+		if (configuration.enableMutationType(REPLACE_THREAD_CALL)) {
+			mv = new ReplaceThreadCallsPossibilitiesMethodAdapter(
+					new ReplaceAdviceAdapter(mv, access, name, desc),
+					className, name, mpc, replaceThreadCallsPossibilities, desc);
 		}
 		return mv;
 	}

@@ -63,7 +63,13 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 				"Remove method call"), REPLACE_VARIABLE(
 				"Replace variable reference"), ABSOLUTE_VALUE(
 				"Insert absolute value of a variable"),
-				UNARY_OPERATOR("Insert unary operator");
+				UNARY_OPERATOR("Insert unary operator"),
+				
+				/* Concurrent Operators start*/
+				REPLACE_THREAD_CALL("Replace thread method call (join/sleep/lock/unlock)"),
+				MONITOR_REMOVE("Remove monitor enter/exit")
+				/* Concurrent Operators end*/
+				;
 ;
 
 		private String desc;

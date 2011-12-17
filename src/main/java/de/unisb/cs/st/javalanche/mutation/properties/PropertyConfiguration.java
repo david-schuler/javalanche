@@ -60,6 +60,10 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 
 	public static final String ENABLE_UNARY_OPERATOR_KEY = "javalanche.enable.unary.operator";
 
+	public static final String ENABLE_MONITOR_REMOVE_KEY = "javalanche.enable.monitor.remove";
+
+	public static final String ENABLE_REPLACE_THREAD_CALL_KEY = "javalanche.enable.replace.thread.call";
+
 	/**
 	 * Contains fully qualified names of tests that should be excluded (not
 	 * executed). Several tests are separated by a colon.
@@ -234,6 +238,8 @@ public class PropertyConfiguration extends JavalancheDefaultConfiguration {
 		setValue(ENABLE_REPLACE_VARIABLE_KEY, REPLACE_VARIABLE);
 		setValue(ENABLE_ABSOLUTE_VALUE_KEY, ABSOLUTE_VALUE);
 		setValue(ENABLE_UNARY_OPERATOR_KEY, UNARY_OPERATOR);
+		setValue(ENABLE_MONITOR_REMOVE_KEY, MONITOR_REMOVE);
+		setValue(ENABLE_REPLACE_THREAD_CALL_KEY, REPLACE_THREAD_CALL);
 	}
 
 	public void setValue(String key, MutationType type) {

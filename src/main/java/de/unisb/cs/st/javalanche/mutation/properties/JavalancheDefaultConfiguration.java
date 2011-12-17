@@ -41,6 +41,8 @@ public class JavalancheDefaultConfiguration implements JavalancheConfiguration {
 		case REPLACE_VARIABLE:
 		case ABSOLUTE_VALUE:
 		case UNARY_OPERATOR:
+		case REPLACE_THREAD_CALL:
+		case MONITOR_REMOVE:
 			return false;
 		}
 		return false;
