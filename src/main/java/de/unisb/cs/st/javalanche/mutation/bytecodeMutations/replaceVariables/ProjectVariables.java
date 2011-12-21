@@ -66,8 +66,13 @@ public class ProjectVariables {
 
 	public static ProjectVariables read() {
 		// if (fromDefault == null) {
-		fromDefault = (ProjectVariables) XmlIo.fromXml(DEFAULT_LOCATION);
-		// }
+		if (DEFAULT_LOCATION.exists()) {
+			fromDefault = (ProjectVariables) XmlIo.fromXml(DEFAULT_LOCATION);
+		} else {
+			logger.warn("File with variable information not found. Expected file location: "
+					+ DEFAULT_LOCATION.getAbsolutePath());
+			fromDefault = new ProjectVariables();
+		}
 		return fromDefault;
 	}
 
