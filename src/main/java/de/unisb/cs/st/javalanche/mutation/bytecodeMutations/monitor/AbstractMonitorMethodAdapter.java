@@ -27,8 +27,10 @@ abstract class AbstractMonitorMethodAdapter extends AbstractMutationAdapter {
 
 	@Override
 	public void visitInsn(int opcode) {
-		if (replaceMap.containsKey(opcode) && !mutationCode) {
+		if (opcode == Opcodes.MONITORENTER && !mutationCode) {
 			mutate(opcode);
+		} else if (opcode == Opcodes.MONITOREXIT && !mutationCode) {
+			handleMonitorExit(opcode);
 		} else {
 			if (opcode == Opcodes.ATHROW) {
 				handleAthrow();
@@ -43,7 +45,7 @@ abstract class AbstractMonitorMethodAdapter extends AbstractMutationAdapter {
 	}
 
 	private void mutate(int opcode) {
-		Mutation mutation = new Mutation(className, methodName,
+		Mutation mutation = new Mutation(className, getMethodName(),
 				getLineNumber(), getPossibilityForLine(),
 				Mutation.MutationType.MONITOR_REMOVE);
 		addPossibilityForLine();
@@ -54,6 +56,10 @@ abstract class AbstractMonitorMethodAdapter extends AbstractMutationAdapter {
 
 	protected void handleAthrow() {
 		// subclassed
+	}
+
+	protected void handleMonitorExit(int opcode) {
+		super.visitInsn(opcode);
 	}
 
 }

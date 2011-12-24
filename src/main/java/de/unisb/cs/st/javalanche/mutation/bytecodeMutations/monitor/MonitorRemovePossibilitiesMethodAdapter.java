@@ -30,7 +30,7 @@ public class MonitorRemovePossibilitiesMethodAdapter extends
 			String className, String methodName,
 			MutationPossibilityCollector mpc,
 			Map<Integer, Integer> possibilities, String desc) {
-		super(mv, className, className, possibilities, desc);
+		super(mv, className, methodName, possibilities, desc);
 		this.mpc = mpc;
 	}
 

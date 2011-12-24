@@ -27,6 +27,10 @@ public class MonitorRemoveMethodAdapter extends AbstractMonitorMethodAdapter {
 
 	private MutationManager mutationManager;
 
+	private Mutation actualMutation;
+
+	private boolean hasMonitorEnterSeen;
+
 	public MonitorRemoveMethodAdapter(MethodVisitor mv, String className,
 			String methodName, Map<Integer, Integer> possibilities,
 			MutationManager mutationManager, String desc) {
@@ -57,11 +61,10 @@ public class MonitorRemoveMethodAdapter extends AbstractMonitorMethodAdapter {
 		logger.debug("Querying mutation " + mutation);
 		if (mutationManager.shouldApplyMutation(mutation)) {
 			Mutation mutationFromDB = QueryManager.getMutation(mutation);
+			actualMutation = mutationFromDB;
+			hasMonitorEnterSeen = true;
 			if (opcode == Opcodes.MONITORENTER) {
 				monitorEnterMutantIds.addLast(mutationFromDB.getId());
-			} else if (opcode == Opcodes.MONITOREXIT) {
-				hasMonitorExitSeen = true;
-				mutationFromDB.setId(monitorEnterMutantIds.getLast());
 			}
 			MutationCode unMutated = new SingleInsnMutationCode(null, opcode);
 			MutationCode mutated = new SingleInsnMutationCode(mutationFromDB,
@@ -74,10 +77,26 @@ public class MonitorRemoveMethodAdapter extends AbstractMonitorMethodAdapter {
 	}
 
 	@Override
+	protected void handleMonitorExit(int opcode) {
+		if (opcode == Opcodes.MONITOREXIT && hasMonitorEnterSeen) {
+			assert actualMutation != null;
+			hasMonitorExitSeen = true;
+			MutationCode unMutated = new SingleInsnMutationCode(null, opcode);
+			MutationCode mutated = new SingleInsnMutationCode(actualMutation,
+					replaceMap.get(opcode));
+			BytecodeTasks.insertIfElse(mv, unMutated,
+					new MutationCode[] { mutated });
+		}else{
+			super.handleMonitorExit(opcode);
+		}
+	}
+
+	@Override
 	protected void handleAthrow() {
 		if (hasMonitorExitSeen) {
 			monitorEnterMutantIds.removeLast();
 			hasMonitorExitSeen = false;
+			hasMonitorEnterSeen = false;
 		}
 	}
 
