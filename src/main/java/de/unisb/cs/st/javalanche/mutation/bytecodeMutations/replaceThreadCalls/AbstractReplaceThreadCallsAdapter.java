@@ -42,6 +42,10 @@ public abstract class AbstractReplaceThreadCallsAdapter extends
 			final String name, final String desc) {
 		Mutation queryMutation = new Mutation(className, methodName,
 				getLineNumber(), getPossibilityForLine(), REPLACE_THREAD_CALL);
+		String replacement = ThreadCallReplacements.getReplaceMap().get(
+				owner + "." + name + "." + desc);
+		queryMutation.setAddInfo("Replace call to " + name + " with "
+				+ replacement);
 		logger.debug("Found possibility for line " + getLineNumber());
 		addPossibilityForLine();
 		handleMutation(queryMutation, opcode, owner, name, desc);
