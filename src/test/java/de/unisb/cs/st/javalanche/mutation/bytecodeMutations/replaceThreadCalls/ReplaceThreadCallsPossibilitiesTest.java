@@ -21,11 +21,14 @@ package de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceThreadCalls;
 import static de.unisb.cs.st.javalanche.mutation.results.Mutation.MutationType.*;
 import static junit.framework.Assert.*;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.ByteCodeTestUtils;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceThreadCalls.classes.JoinSleepTEMPLATE;
+import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceThreadCalls.classes.LockUnlockTEMPLATE;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.replaceThreadCalls.classes.WaitNotifyTEMPLATE;
 import de.unisb.cs.st.javalanche.mutation.properties.ConfigurationLocator;
 import de.unisb.cs.st.javalanche.mutation.properties.JavalancheConfiguration;
@@ -36,21 +39,41 @@ import de.unisb.cs.st.javalanche.mutation.util.JavalancheTestConfiguration;
 public class ReplaceThreadCallsPossibilitiesTest {
 
 	@Test
-	public void testForOneClass() throws Exception {
+	public void testWaitNotifyPossibilities() throws Exception {
+		Class<?> clazz = WaitNotifyTEMPLATE.class;
+		int expectedMutations = 4;
+		checkClass(clazz, expectedMutations);
+	}
+
+	@Test
+	public void testLockUnlockPossibilities() throws Exception {
+		Class<?> clazz = LockUnlockTEMPLATE.class;
+		int expectedMutations = 3;
+		checkClass(clazz, expectedMutations);
+	}
+
+	@Test
+	public void testJoinSleepPossibilities() throws Exception {
+		Class<?> clazz = JoinSleepTEMPLATE.class;
+		int expectedMutations = 2;
+		checkClass(clazz, expectedMutations);
+	}
+
+	public void checkClass(Class<?> clazz, int expectedMutations)
+			throws IOException {
 		JavalancheConfiguration back = ConfigurationLocator
 				.getJavalancheConfiguration();
 		try {
 			JavalancheTestConfiguration config = new JavalancheTestConfiguration();
 			config.setMutationType(REPLACE_THREAD_CALL, true);
 			ConfigurationLocator.setJavalancheConfiguration(config);
-			Class<?> clazz = WaitNotifyTEMPLATE.class; // TODO not all replace
-														// types in class.
+
 			ByteCodeTestUtils.deleteMutations(clazz.getCanonicalName());
 			List<Mutation> possibilities = TestUtil
 					.getMutationsForClazzOnClasspath(clazz);
 			int possibilityCount = TestUtil.filterMutations(possibilities,
 					REPLACE_THREAD_CALL).size();
-			int expectedMutations = 8;
+
 			assertEquals("Expected different number of mutations for class "
 					+ clazz, expectedMutations, possibilityCount);
 		} finally {
