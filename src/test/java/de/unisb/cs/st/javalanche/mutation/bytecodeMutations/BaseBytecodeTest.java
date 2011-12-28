@@ -19,6 +19,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -239,6 +240,17 @@ public class BaseBytecodeTest {
 
 	}
 
+	public <T> void checkUnmutated(Matcher<T> matcher, Method method,
+			Class<?> clazz) throws Exception {
+		Object instance = clazz.newInstance();
+		Object result = method.invoke(instance);
+
+		// if (result.getClass() instanceof T) {
+		T castedRes = (T) result;
+		assertThat(castedRes, matcher);
+		// }
+	}
+
 	public void checkUnmutated(Object expectedOutput, Method method,
 			Class<?> clazz) throws Exception {
 		Object instance = clazz.newInstance();
@@ -334,10 +346,10 @@ public class BaseBytecodeTest {
 		} finally {
 			mutationObserver.mutationEnd(m);
 			System.clearProperty(m.getMutationVariable());
+			boolean wasExecuted = MutationObserver.getTouchedMutations()
+					.contains(m);
+			assertTrue("Mutation was not covered " + m, wasExecuted);
 		}
-		boolean wasExecuted = MutationObserver.getTouchedMutations()
-				.contains(m);
-		assertTrue("Mutation was not covered " + m, wasExecuted);
 		String message = "Expected different result when mutation is enabled. Mutation"
 				+ m;
 		if (expectedResult.getClass().equals(Double.class)) {
@@ -346,6 +358,31 @@ public class BaseBytecodeTest {
 		} else {
 			assertEquals(message, expectedResult, result);
 		}
+	}
+
+	public <T> void checkMutationWithMatcher(Mutation mutation, Object[] input,
+			Matcher<T> matcher, Method method, Class<?> clazz)
+			throws IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException, InstantiationException {
+		Mutation m = QueryManager.getMutation(mutation);
+		System.setProperty(m.getMutationVariable(), "true");
+		mutationObserver.mutationStart(m);
+		Object instance = clazz.newInstance();
+		Object result = null;
+		try {
+			if (input == null) {
+				result = method.invoke(instance);
+			} else {
+				result = method.invoke(instance, input);
+			}
+		} finally {
+			mutationObserver.mutationEnd(m);
+			System.clearProperty(m.getMutationVariable());
+		}
+		boolean wasExecuted = MutationObserver.getTouchedMutations()
+				.contains(m);
+		assertTrue("Mutation was not covered " + m, wasExecuted);
+		assertThat((T) result, matcher);
 	}
 
 	public JavalancheTestConfiguration getConfig() {
