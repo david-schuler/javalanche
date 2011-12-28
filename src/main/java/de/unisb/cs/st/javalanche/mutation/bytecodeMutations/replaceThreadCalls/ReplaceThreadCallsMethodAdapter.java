@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.BytecodeTasks;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationCode;
@@ -51,8 +52,14 @@ public class ReplaceThreadCallsMethodAdapter extends
 			MutationCode mutated = new MutationCode(dbMutation) {
 				@Override
 				public void insertCodeBlock(MethodVisitor mv) {
-					mv.visitMethodInsn(opcode, replacementParts[0],
-							replacementParts[1], desc);
+					String replaceMethodName = replacementParts[1];
+					int invokeOpcode = getInvokeOpcode(replaceMethodName);
+					mv.visitMethodInsn(invokeOpcode, replacementParts[0],
+							replaceMethodName, desc);
+					if (invokeOpcode == Opcodes.INVOKESTATIC
+							&& opcode == Opcodes.INVOKEVIRTUAL) {
+						mv.visitInsn(Opcodes.POP);
+					}
 				}
 			};
 
@@ -62,6 +69,15 @@ public class ReplaceThreadCallsMethodAdapter extends
 			logger.debug("Not applying mutation");
 			mv.visitMethodInsn(opcode, owner, name, desc);
 		}
+	}
+
+	private static int getInvokeOpcode(String replaceMethodName) {
+		if (replaceMethodName.equals("sleep")) {
+			return Opcodes.INVOKESTATIC;
+		} else {
+			return Opcodes.INVOKEVIRTUAL;
+		}
+
 	}
 
 }

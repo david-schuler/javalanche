@@ -19,7 +19,9 @@ public class ThreadCallReplacements {
 	private static final String notifyName = ".notify";
 	private static final String objectName = "java/lang/Object";
 	private static final String threadName = "java/lang/Thread";
-	private static final String reentrantLockName = "java/lang/concurrent/ReentrantLock";
+	// private static final String reentrantLockName =
+	// "java/lang/concurrent/ReentrantLock";
+	private static final String reentrantLockName = "java/util/concurrent/locks/ReentrantLock";
 	private static final String longIntVoidDesc = ".(JI)V";
 	private static final String longVoidDesc = ".(J)V";
 	private static final String noArgsVoidDesc = ".()V";
@@ -33,10 +35,10 @@ public class ThreadCallReplacements {
 					threadName + sleepName + longIntVoidDesc },
 			{ threadName + joinName + longVoidDesc,
 					threadName + sleepName + longVoidDesc },
-			{ threadName + sleepName + longIntVoidDesc,
-					threadName + joinName + longIntVoidDesc },
-			{ threadName + sleepName + longVoidDesc,
-					threadName + joinName + longVoidDesc },
+			// { threadName + sleepName + longIntVoidDesc,
+			// threadName + joinName + longIntVoidDesc },
+			// { threadName + sleepName + longVoidDesc,
+			// threadName + joinName + longVoidDesc },
 			{ reentrantLockName + lockName + noArgsVoidDesc,
 					reentrantLockName + unlockName + noArgsVoidDesc },
 			{ reentrantLockName + unlockName + noArgsVoidDesc,
