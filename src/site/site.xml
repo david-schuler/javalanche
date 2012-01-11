@@ -12,6 +12,7 @@
 			<item name="Invariant Checking" href="doc-invariants.html"/>
 			<item name="Coverage Impact" href="doc-coverage.html"/>
 			<item name="Javalanche Tasks" href="add-tasks.html"/>
+            <item name="Mutation Operators" href="mutation-operators.html"/>
 		</menu>
 	
 		<menu name="Examples">

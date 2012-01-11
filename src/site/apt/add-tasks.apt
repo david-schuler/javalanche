@@ -10,7 +10,8 @@ Javalanche Tasks
 
  Javalanche provides several tasks. Most of them are described in
  the documentation on how to run Javalanche and in the examples. This list
- provides an overview over all tasks.
+ provides an overview over all tasks. The tasks rely on the properties as
+ explained in the section on  {{{documentation.html} running Javalanche}}. 
  
 * analyzeResults         
 
@@ -26,7 +27,38 @@ Javalanche Tasks
 * createMutationMakefile
 
  Creates a Makefile for the mutation tasks. The created Makefile calls a 
- script called <<<runMutations.sh>>>. TODO
+ script called <<<runMutations.sh>>>. 3 Arguments are passed to this script.
+ The first is the name of the task file. The second is the the task number.
+ The third is an optional argument, that can be passed to the <<<createMutationMakefile>>> task via the property <<<makefile.add>>> 
+ An example <<<runMutations.sh>>> file looks like follows:
+
+
++-------------------------------+
+#!/bin/sh
+MYANT="ant"
+export JAVA_HOME=/opt/sun-jdk-1.6.0.20/
+OUTPUTFILE=mutation-files/output-runMutations-${2}.txt
+BACKOUTPUTFILE=mutation-files/back-output-runMutations-${2}.txt
+if [ -e $OUTPUTFILE ]
+then
+	mv $OUTPUTFILE ${BACKOUTPUTFILE}
+fi
+NICE_VAL='-10'
+X=0
+while  ! grep -q ALL_RESULTS ${OUTPUTFILE}
+do
+        then
+                echo "Task ${2} not completed - Starting again ${X}"
+        else
+                echo "Starting Task ${2} "
+        fi
+
+	nice ${NICE_VAL} $MYANT -f javalanche.xml runMutations ${3} -Dmutation.file=${1}  2>&1 >> $OUTPUTFILE
+        X=$(($X+1))
+        sleep 1
+done
++-------------------------------+
+
 
 * createTasks
 
@@ -40,7 +72,7 @@ Javalanche Tasks
 
 * deleteMutations 
 
- Delete mutations for this project. TODO
+ Delete mutations for this project.
 
 * deleteResults           
 

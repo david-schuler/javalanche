@@ -121,7 +121,7 @@ public class Mutation implements Serializable, Comparable<Mutation> {
 	/**
 	 * Additional string representation of the operator.
 	 */
-	private String addInfo;
+	private String addInfo; //TODO rename to description
 
 	/**
 	 * Additional information for the operator that is used internally.
