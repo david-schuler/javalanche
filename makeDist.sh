@@ -14,8 +14,7 @@ fi
 mvn -Dmaven.test.skip=true   assembly:assembly
 mkdir ${DIST}
 
-
-cp -r target/javalanche-${VERSION}-dist/ ${DIST}/
+cp -r target/javalanche-${VERSION}-dist/* ${DIST}/
 
 cp javalanche.xml ${DIST}/
 cp import.xml ${DIST}/
@@ -27,29 +26,17 @@ cp src/main/resources/javalanche-add-tasks.xml ${DIST}/src/main/resources/
 cp src/main/resources/coverage-include.xml ${DIST}/src/main/resources/
 #cp ../adabu2-check-invariants/src/main/resources/invariant-build.xml  ${DIST}/src/main/resources/
 
-mkdir -p ${DIST}/examples/triangle
-cp ../Triangle/build.xml ${DIST}/examples/triangle/ 
-cp -r ../Triangle/src ${DIST}/examples/triangle/
-cp -r ../Triangle/lib ${DIST}/examples/triangle/
-
-
-mkdir -p ${DIST}/examples/triangleJunit4
-cp ../TriangleJunit4/build.xml ${DIST}/examples/triangleJunit4/ 
-cp -r ../TriangleJunit4/src ${DIST}/examples/triangleJunit4/
-cp -r ../TriangleJunit4/lib ${DIST}/examples/triangleJunit4/
-
-#mkdir -p ${DIST}/examples/invariantExample
-#cp ../InvariantExample/build.xml ${DIST}/examples/invariantExample/
-#cp -r ../InvariantExample/src ${DIST}/examples/invariantExample/
+# Copy example programs to test the generated version of Javalanche
+cp -r examples/ ${DIST}/
 
 rm ${DIST}/javalanche-${VERSION}.jar
 
-
-JARJAR=/scratch/schuler/java/jarjar-1.0.jar
-java -jar ${JARJAR} process jarjar-rules.txt ${DIST}/lib/ds-util-0.3.2.1.jar ${DIST}/lib/ds-util-trans.jar
-rm ${DIST}/lib/ds-util-0.3.2.1.jar
-java -jar ${JARJAR} process jarjar-rules.txt ${DIST}/lib/xstream-1.4.1.jar ${DIST}/lib/xstream-trans.jar
-rm ${DIST}/lib/xstream-1.4.1.jar
+# Not needed as it removes necessary .jars from the DIST/lib
+#JARJAR=/scratch/schuler/java/jarjar-1.0.jar
+#java -jar ${JARJAR} process jarjar-rules.txt ${DIST}/lib/ds-util-0.3.2.1.jar ${DIST}/lib/ds-util-trans.jar
+#rm ${DIST}/lib/ds-util-0.3.2.1.jar
+#java -jar ${JARJAR} process jarjar-rules.txt ${DIST}/lib/xstream-1.4.1.jar ${DIST}/lib/xstream-trans.jar
+#rm ${DIST}/lib/xstream-1.4.1.jar
 
 #rm ${DIST}/lib/daikon-local.jar
 if [  $1 ]; then
