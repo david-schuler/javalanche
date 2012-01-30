@@ -1,0 +1,59 @@
+<project name="Integration Test for Javalanche Mutation Test" default="" basedir=".">
+	
+	
+	<property name="dest" value="target/classes" />
+	<property name="test.reports.dir" value="target/test-reports" />
+	
+	<path id="cp">
+		<pathelement location="../triangle/lib/junit.jar"/>
+	</path>
+	
+	
+	<target name="compile">
+		<mkdir dir="${dest}"/>
+		<javac destdir="${dest}" debug="true" source="1.6" target="1.6">
+			<src>
+				<pathelement path="src/main"/>
+			</src>
+			<classpath refid="cp" />
+		</javac>
+	</target>
+	
+	
+	<target name="compileTests" depends="compile">
+		<mkdir dir="${dest}"/>
+		<javac destdir="${dest}" debug="true" source="1.6" target="1.6">
+			<src>
+				<pathelement path="src/test"/>
+			</src>
+			<classpath refid="cp" />
+		</javac>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${dest}"/>
+	</target>
+	
+	
+	<target name="test" depends="compileTests" description="- run the test suite">
+		<mkdir dir="${test.reports.dir}"/>
+		<junit dir="./" failureproperty="test.failure" haltonerror="true" haltonfailure="true" printsummary="true" fork="true" forkmode="perTest">
+			<classpath>
+				<pathelement path="${dest}"/>
+				<pathelement location="../triangle/lib/junit.jar"/>
+			</classpath>
+			<batchtest todir="${test.reports.dir}">
+				<fileset dir="src/test">
+					<include name="**/InvariantExampleTestSuite.java"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	
+	<target name="jar" depends="test,compile,compileTests" >
+		<jar destfile="invariantExample.jar">
+			<fileset dir="${dest}"/>
+		</jar>
+	</target>
+
+</project>

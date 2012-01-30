@@ -1,0 +1,41 @@
+<project name="Triangle Junit 4 (example project for Javalanche)" default="" basedir=".">
+	
+	<property name="dest" value="target/classes" />
+	<property name="test.reports.dir" value="target/test-reports" />
+	
+	<path id="cp">
+		<pathelement location="lib/junit-4.7.jar"/>
+	</path>
+	
+	<target name="compile">
+		<mkdir dir="${dest}"/>
+		<javac destdir="${dest}" debug="true" source="1.6" target="1.6">
+			<src>
+				<pathelement path="src/"/>
+			</src>
+			<classpath refid="cp" />
+		</javac>
+	</target>
+	
+	<target name="clean">
+		<delete dir="target/"/>
+	</target>
+	
+	
+	<target name="test" depends="compile" description="- run the test suite">
+		<mkdir dir="${test.reports.dir}"/>
+		<junit dir="./" failureproperty="test.failure" haltonerror="true" haltonfailure="true" printsummary="true" fork="true" forkmode="once">
+			<classpath>
+				<pathelement path="${dest}"/>
+				<pathelement location="lib/junit.jar"/>
+			</classpath>
+			<batchtest todir="${test.reports.dir}">
+				<fileset dir="src/">
+					<include name="**/TriangleTestSuite.java"/>
+				</fileset>
+			</batchtest>
+			<formatter type="xml"/>
+		</junit>
+	</target>
+	
+</project>
