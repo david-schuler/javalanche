@@ -27,7 +27,7 @@ cp src/main/resources/coverage-include.xml ${DIST}/src/main/resources/
 #cp ../adabu2-check-invariants/src/main/resources/invariant-build.xml  ${DIST}/src/main/resources/
 
 # Copy example programs to test the generated version of Javalanche
-cp -r examples/ ${DIST}/
+cp -r examples ${DIST}/
 
 rm ${DIST}/javalanche-${VERSION}.jar
 
@@ -37,8 +37,8 @@ rm ${DIST}/javalanche-${VERSION}.jar
 #rm ${DIST}/lib/ds-util-0.3.2.1.jar
 #java -jar ${JARJAR} process jarjar-rules.txt ${DIST}/lib/xstream-1.4.1.jar ${DIST}/lib/xstream-trans.jar
 #rm ${DIST}/lib/xstream-1.4.1.jar
-
 #rm ${DIST}/lib/daikon-local.jar
+
 if [  $1 ]; then
  if [ $1 == "tgz"  ]
 	then
