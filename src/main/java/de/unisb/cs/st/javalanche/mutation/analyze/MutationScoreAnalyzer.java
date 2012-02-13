@@ -234,11 +234,11 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 		try {
 			FileUtils.writeLines(new File(ConfigurationLocator
 					.getJavalancheConfiguration().getOutputDir()
-					+ "/class-scores.txt"),
+					+ "/class-scores.csv"),
 					classScores);
 			FileUtils.writeLines(new File(ConfigurationLocator
 					.getJavalancheConfiguration().getOutputDir()
-					+ "/method-scores.txt"),
+					+ "/method-scores.csv"),
 					methodScores);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
