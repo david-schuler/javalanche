@@ -46,15 +46,33 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 
 	private static final boolean WRITE_FILES = false;
 
+	public class MutationTypeCount {
+
+		Map<String, Integer> types = new HashMap<String, Integer>();
+
+		public MutationTypeCount(){
+			for (Mutation.MutationType mutationType : Mutation.MutationType.values()) {
+				types.put(mutationType.toString(), 0);
+			}
+		}
+
+		public void addType(String mutationType){
+			Integer count = types.get(mutationType);
+			types.put(mutationType, count + 1);
+		}
+	}
+
 	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 
 		Map<String, Integer> classKilledMutations = new HashMap<String, Integer>();
 		Map<String, Integer> classCoveredMutations = new HashMap<String, Integer>();
 		Map<String, Integer> classTotalMutations = new HashMap<String, Integer>();
+		Map<String, MutationTypeCount> classMutationTypes = new HashMap<String, MutationTypeCount>();
 
 		Map<String, Integer> methodKilledMutations = new HashMap<String, Integer>();
 		Map<String, Integer> methodCoveredMutations = new HashMap<String, Integer>();
 		Map<String, Integer> methodTotalMutations = new HashMap<String, Integer>();
+		Map<String, MutationTypeCount> methodMutationTypes = new HashMap<String, MutationTypeCount>();
 
 		Map<String, Set<String>> classMutantTests = new HashMap<String, Set<String>>();
 		Map<String, Set<String>> methodMutantTests = new HashMap<String, Set<String>>();
@@ -62,6 +80,12 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 		List<String> classScores = new ArrayList<String>();
 		List<String> methodScores = new ArrayList<String>();
 		List<String> coveredTests = new ArrayList<String>();
+
+		// Acquire the CSV list of mutation types
+		String mutationTypeString = "";
+		for (Mutation.MutationType mutationType : Mutation.MutationType.values()) {
+			mutationTypeString += mutationType.toString() + ",";
+		}
 
 		for (Mutation mutation : mutations) {
 
@@ -110,9 +134,14 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 				classTotalMutations.put(mutantClassName, 1);
 				classCoveredMutations.put(mutantClassName, 0);
 				classKilledMutations.put(mutantClassName, 0);
+
+				MutationTypeCount mutationTypeCount = new MutationTypeCount();
+				mutationTypeCount.addType(mutation.getMutationType().toString());
+				classMutationTypes.put(mutantClassName, mutationTypeCount);
 			}
 			else {
 				classTotalMutations.put(mutantClassName, count + 1);
+				classMutationTypes.get(mutantClassName).addType(mutation.getMutationType().toString());
 			}
 
 			// Handle counting the number of mutations per method
@@ -121,9 +150,14 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 				methodTotalMutations.put(mutantMethodName, 1);
 				methodCoveredMutations.put(mutantMethodName, 0);
 				methodKilledMutations.put(mutantMethodName, 0);
+
+				MutationTypeCount mutationTypeCount = new MutationTypeCount();
+				mutationTypeCount.addType(mutation.getMutationType().toString());
+				methodMutationTypes.put(mutantMethodName, mutationTypeCount);
 			}
 			else {
 				methodTotalMutations.put(mutantMethodName, count + 1);
+				methodMutationTypes.get(mutantMethodName).addType(mutation.getMutationType().toString());
 			}
 
 			// Handle counting covered mutants
@@ -149,7 +183,7 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 		StringBuilder sb = new StringBuilder();
 		sb.append(formatTitle("----------Class Mutation Score----------"));
 		sb.append(formatHeading("Class Name:", "Of Covered", "Of Generated"));
-		classScores.add("CLASS_NAME,KILLED_MUTANTS,COVERED_MUTANTS,GENERATED_MUTANTS,MUTATION_SCORE_OF_COVERED_MUTANTS,MUTATION_SCORE_OF_GENERATED_MUTANTS,TESTS_TOUCHED");
+		classScores.add("CLASS_NAME,KILLED_MUTANTS,COVERED_MUTANTS,GENERATED_MUTANTS,MUTATION_SCORE_OF_COVERED_MUTANTS,MUTATION_SCORE_OF_GENERATED_MUTANTS," + mutationTypeString + "TESTS_TOUCHED");
 		for (String className : classTotalMutations.keySet()) {
 
 			int killed = classKilledMutations.get(className);
@@ -182,6 +216,12 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 			}
 			tests.trim();
 
+			String typeCounts = "";
+			MutationTypeCount unitTypes = classMutationTypes.get(className);
+			for (String type : unitTypes.types.keySet()) {
+				typeCounts += unitTypes.types.get(type).toString() + ",";
+			}
+
 			classScores.add(
 				className + "," +
 				killed + "," +
@@ -189,7 +229,7 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 				total + "," +
 				coveredScore + "," +
 				totalScore + "," +
-				tests
+				typeCounts + tests
 			);
 
 			sb.append(formatLine(className + ": ",
@@ -200,7 +240,7 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 
 		sb.append(formatTitle("----------Method Mutation Score----------"));
 		sb.append(formatHeading("Method Name:", "Of Covered", "Of Generated"));
-		methodScores.add("CLASS_NAME,METHOD_NAME,KILLED_MUTANTS,COVERED_MUTANTS,GENERATED_MUTANTS,MUTATION_SCORE_OF_COVERED_MUTANTS,MUTATION_SCORE_OF_GENERATED_MUTANTS,TESTS_TOUCHED");
+		methodScores.add("CLASS_NAME,METHOD_NAME,KILLED_MUTANTS,COVERED_MUTANTS,GENERATED_MUTANTS,MUTATION_SCORE_OF_COVERED_MUTANTS,MUTATION_SCORE_OF_GENERATED_MUTANTS," + mutationTypeString + "TESTS_TOUCHED");
 		for (String methodName : methodTotalMutations.keySet()) {
 
 			int killed = methodKilledMutations.get(methodName);
@@ -233,6 +273,12 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 			}
 			tests.trim();
 
+			String typeCounts = "";
+			MutationTypeCount unitTypes =  methodMutationTypes.get(methodName);
+			for (String type : unitTypes.types.keySet()) {
+				typeCounts += unitTypes.types.get(type).toString() + ",";
+			}
+
 			String className = methodName.substring(0, methodName.lastIndexOf('.'));
 			methodScores.add(
 				className + "," +
@@ -242,7 +288,7 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 				total + "," +
 				coveredScore + "," +
 				totalScore + "," +
-				tests
+				typeCounts + tests
 			);
 
 			sb.append(formatLine(methodName.substring(0, methodName.lastIndexOf('(')) + ": ",
