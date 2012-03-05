@@ -248,10 +248,7 @@
 
 
 	<target name="runMutations" description="* Run the mutation task specified by -Dmutation.file=. ">
-
-
 		<property name="run.mutations.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}" />
-		<property name="run.mutations.memory" value="-Xmx${javalanche.maxmemory}" />
 		<property name="run.mutations.javalanche.run.mode" value="-Djavalanche.run.mode=mutation" />
 		<property name="run.mutations.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}" />
 		<property name="run.mutations.javalanche.project.tests" value="-Djavalanche.tests=${project.tests}" />
@@ -318,7 +315,7 @@
 
 
 	<target name="deleteResults" description="* Delete mutation results. Either an id of a mutation or file with ids is passed via the property `-Djavalanche.delete.results.arg=` or all mutation results for this project are deleted.">
-		<!--echo> Deleting mutation result with prefix: ${project.prefix} </echo!-->
+		<echo> Deleting mutation result with prefix: ${project.prefix} </echo>
 		<condition property="javalanche.delete.results.arg" value="">
 			<not>
 				<isset property="javalanche.delete.results.arg" />
