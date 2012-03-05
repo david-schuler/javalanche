@@ -108,6 +108,8 @@ public class MutationPreMain {
 				addClassFileTransformer(instrumentation,
 						new ScanProjectTransformer());
 				return;
+			}else{
+				System.err.println("Unexpected run mode: " + runMode);
 			}
 
 		} catch (Throwable t) {
