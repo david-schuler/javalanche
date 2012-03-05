@@ -48,17 +48,24 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 
 	public class MutationTypeCount {
 
-		Map<String, Integer> types = new HashMap<String, Integer>();
+		Map<String, Integer> typesTotal = new HashMap<String, Integer>();
+		Map<String, Integer> typesKilled = new HashMap<String, Integer>();
 
 		public MutationTypeCount(){
 			for (Mutation.MutationType mutationType : Mutation.MutationType.values()) {
-				types.put(mutationType.toString(), 0);
+				typesTotal.put(mutationType.toString(), 0);
+				typesKilled.put(mutationType.toString(), 0);
 			}
 		}
 
-		public void addType(String mutationType){
-			Integer count = types.get(mutationType);
-			types.put(mutationType, count + 1);
+		public void addTypeTotal(String mutationType){
+			Integer count = typesTotal.get(mutationType);
+			typesTotal.put(mutationType, count + 1);
+		}
+
+		public void addTypeKilled(String mutationType){
+			Integer count = typesKilled.get(mutationType);
+			typesKilled.put(mutationType, count + 1);
 		}
 	}
 
@@ -81,10 +88,11 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 		List<String> methodScores = new ArrayList<String>();
 		List<String> coveredTests = new ArrayList<String>();
 
-		// Acquire the CSV list of mutation types
+		// Acquire the CSV list of mutation types (KILLED and TOTAL)
 		String mutationTypeString = "";
 		for (Mutation.MutationType mutationType : Mutation.MutationType.values()) {
-			mutationTypeString += mutationType.toString() + ",";
+			mutationTypeString += "KILLED_" + mutationType.toString() + ",";
+			mutationTypeString += "TOTAL_" + mutationType.toString() + ",";
 		}
 
 		for (Mutation mutation : mutations) {
@@ -136,12 +144,12 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 				classKilledMutations.put(mutantClassName, 0);
 
 				MutationTypeCount mutationTypeCount = new MutationTypeCount();
-				mutationTypeCount.addType(mutation.getMutationType().toString());
+				mutationTypeCount.addTypeTotal(mutation.getMutationType().toString());
 				classMutationTypes.put(mutantClassName, mutationTypeCount);
 			}
 			else {
 				classTotalMutations.put(mutantClassName, count + 1);
-				classMutationTypes.get(mutantClassName).addType(mutation.getMutationType().toString());
+				classMutationTypes.get(mutantClassName).addTypeTotal(mutation.getMutationType().toString());
 			}
 
 			// Handle counting the number of mutations per method
@@ -152,12 +160,12 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 				methodKilledMutations.put(mutantMethodName, 0);
 
 				MutationTypeCount mutationTypeCount = new MutationTypeCount();
-				mutationTypeCount.addType(mutation.getMutationType().toString());
+				mutationTypeCount.addTypeTotal(mutation.getMutationType().toString());
 				methodMutationTypes.put(mutantMethodName, mutationTypeCount);
 			}
 			else {
 				methodTotalMutations.put(mutantMethodName, count + 1);
-				methodMutationTypes.get(mutantMethodName).addType(mutation.getMutationType().toString());
+				methodMutationTypes.get(mutantMethodName).addTypeTotal(mutation.getMutationType().toString());
 			}
 
 			// Handle counting covered mutants
@@ -177,6 +185,9 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 
 				count = methodKilledMutations.get(mutantMethodName);
 				methodKilledMutations.put(mutantMethodName, count + 1);
+
+				classMutationTypes.get(mutantClassName).addTypeKilled(mutation.getMutationType().toString());
+				methodMutationTypes.get(mutantMethodName).addTypeKilled(mutation.getMutationType().toString());
 			}
 		}
 
@@ -218,8 +229,9 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 
 			String typeCounts = "";
 			MutationTypeCount unitTypes = classMutationTypes.get(className);
-			for (String type : unitTypes.types.keySet()) {
-				typeCounts += unitTypes.types.get(type).toString() + ",";
+			for (String type : unitTypes.typesKilled.keySet()) {
+				typeCounts += unitTypes.typesKilled.get(type).toString() + ",";
+				typeCounts += unitTypes.typesTotal.get(type).toString() + ",";
 			}
 
 			classScores.add(
@@ -275,8 +287,9 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 
 			String typeCounts = "";
 			MutationTypeCount unitTypes =  methodMutationTypes.get(methodName);
-			for (String type : unitTypes.types.keySet()) {
-				typeCounts += unitTypes.types.get(type).toString() + ",";
+			for (String type : unitTypes.typesKilled.keySet()) {
+				typeCounts += unitTypes.typesKilled.get(type).toString() + ",";
+				typeCounts += unitTypes.typesTotal.get(type).toString() + ",";
 			}
 
 			String className = methodName.substring(0, methodName.lastIndexOf('.'));
