@@ -46,10 +46,27 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 
 	private static final boolean WRITE_FILES = false;
 
+	private Map<String, Integer> classKilledMutations = new HashMap<String, Integer>();
+	private Map<String, Integer> classCoveredMutations = new HashMap<String, Integer>();
+	private Map<String, Integer> classTotalMutations = new HashMap<String, Integer>();
+	private Map<String, MutationTypeCount> classMutationTypes = new HashMap<String, MutationTypeCount>();
+
+	private Map<String, Integer> methodKilledMutations = new HashMap<String, Integer>();
+	private Map<String, Integer> methodCoveredMutations = new HashMap<String, Integer>();
+	private Map<String, Integer> methodTotalMutations = new HashMap<String, Integer>();
+	private Map<String, MutationTypeCount> methodMutationTypes = new HashMap<String, MutationTypeCount>();
+
+	private Map<String, Set<String>> classMutantTests = new HashMap<String, Set<String>>();
+	private Map<String, Set<String>> methodMutantTests = new HashMap<String, Set<String>>();
+
+	private List<String> classScores = new ArrayList<String>();
+	private List<String> methodScores = new ArrayList<String>();
+	private List<String> coveredTests = new ArrayList<String>();
+
 	public class MutationTypeCount {
 
-		Map<String, Integer> typesTotal = new HashMap<String, Integer>();
-		Map<String, Integer> typesKilled = new HashMap<String, Integer>();
+		public Map<String, Integer> typesTotal = new HashMap<String, Integer>();
+		public Map<String, Integer> typesKilled = new HashMap<String, Integer>();
 
 		public MutationTypeCount(){
 			for (Mutation.MutationType mutationType : Mutation.MutationType.values()) {
@@ -69,31 +86,7 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 		}
 	}
 
-	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
-
-		Map<String, Integer> classKilledMutations = new HashMap<String, Integer>();
-		Map<String, Integer> classCoveredMutations = new HashMap<String, Integer>();
-		Map<String, Integer> classTotalMutations = new HashMap<String, Integer>();
-		Map<String, MutationTypeCount> classMutationTypes = new HashMap<String, MutationTypeCount>();
-
-		Map<String, Integer> methodKilledMutations = new HashMap<String, Integer>();
-		Map<String, Integer> methodCoveredMutations = new HashMap<String, Integer>();
-		Map<String, Integer> methodTotalMutations = new HashMap<String, Integer>();
-		Map<String, MutationTypeCount> methodMutationTypes = new HashMap<String, MutationTypeCount>();
-
-		Map<String, Set<String>> classMutantTests = new HashMap<String, Set<String>>();
-		Map<String, Set<String>> methodMutantTests = new HashMap<String, Set<String>>();
-
-		List<String> classScores = new ArrayList<String>();
-		List<String> methodScores = new ArrayList<String>();
-		List<String> coveredTests = new ArrayList<String>();
-
-		// Acquire the CSV list of mutation types (KILLED and TOTAL)
-		String mutationTypeString = "";
-		for (Mutation.MutationType mutationType : Mutation.MutationType.values()) {
-			mutationTypeString += "KILLED_" + mutationType.toString() + ",";
-			mutationTypeString += "TOTAL_" + mutationType.toString() + ",";
-		}
+	private void collectClassMethodData(Iterable<Mutation> mutations) {
 
 		for (Mutation mutation : mutations) {
 
@@ -190,11 +183,10 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 				methodMutationTypes.get(mutantMethodName).addTypeKilled(mutation.getMutationType().toString());
 			}
 		}
+	}
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(formatTitle("----------Class Mutation Score----------"));
-		sb.append(formatHeading("Class Name:", "Of Covered", "Of Generated"));
-		classScores.add("CLASS_NAME,KILLED_MUTANTS,COVERED_MUTANTS,GENERATED_MUTANTS,MUTATION_SCORE_OF_COVERED_MUTANTS,MUTATION_SCORE_OF_GENERATED_MUTANTS," + mutationTypeString + "TESTS_TOUCHED");
+	private void addClassData(StringBuilder sb) {
+		
 		for (String className : classTotalMutations.keySet()) {
 
 			int killed = classKilledMutations.get(className);
@@ -202,23 +194,17 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 			int total = classTotalMutations.get(className);
 
 			double coveredScore = 0;
-			if (covered > 0) {
+			if (killed > covered) {
+				coveredScore = 1.0;  // Limits score when more kills then covered exists (weird case)
+			} else if (covered > 0) {
 				coveredScore = (double) killed/covered;
 			}
 
 			double totalScore = 0;
-			if (total > 0) {
-				totalScore = (double) killed/total;
-			}
-
-			// Handle weird situation where the number killed > covered
-			if (killed > covered) {
-				coveredScore = 1.0;
-			}
-
-			// Handle weird situation where the number killed > total
 			if (killed > total) {
-				totalScore = 1.0;
+				totalScore = 1.0;  // Limits score when more kills then total exists (weird case)
+			} else if (total > 0) {
+				totalScore = (double) killed/total;
 			}
 
 			String tests = "";
@@ -249,10 +235,9 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 				AnalyzeUtil.formatPercent(killed, total))
 			);
 		}
+	}
 
-		sb.append(formatTitle("----------Method Mutation Score----------"));
-		sb.append(formatHeading("Method Name:", "Of Covered", "Of Generated"));
-		methodScores.add("CLASS_NAME,METHOD_NAME,KILLED_MUTANTS,COVERED_MUTANTS,GENERATED_MUTANTS,MUTATION_SCORE_OF_COVERED_MUTANTS,MUTATION_SCORE_OF_GENERATED_MUTANTS," + mutationTypeString + "TESTS_TOUCHED");
+	private void addMethodData(StringBuilder sb) {
 		for (String methodName : methodTotalMutations.keySet()) {
 
 			int killed = methodKilledMutations.get(methodName);
@@ -260,23 +245,17 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 			int total = methodTotalMutations.get(methodName);
 
 			double coveredScore = 0;
-			if (covered > 0) {
+			if (killed > covered) {
+				coveredScore = 1.0;  // Limits score when more kills then covered exists (weird case)
+			} else if (covered > 0) {
 				coveredScore = (double) killed/covered;
 			}
 
 			double totalScore = 0;
-			if (total > 0) {
-				totalScore = (double) killed/total;
-			}
-
-			// Handle weird situation where the number killed > covered
-			if (killed > covered) {
-				coveredScore = 1.0;
-			}
-
-			// Handle weird situation where the number killed > total
 			if (killed > total) {
-				totalScore = 1.0;
+				totalScore = 1.0;  // Limits score when more kills then total exists (weird case)
+			} else if (total > 0) {
+				totalScore = (double) killed/total;
 			}
 
 			String tests = "";
@@ -309,7 +288,36 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 				AnalyzeUtil.formatPercent(killed, total))
 			);
 		}
+	}
 
+	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
+
+		// Acquire the CSV list of mutation types (KILLED and TOTAL)
+		String mutationTypeString = "";
+		for (Mutation.MutationType mutationType : Mutation.MutationType.values()) {
+			mutationTypeString += "KILLED_" + mutationType.toString() + ",";
+			mutationTypeString += "TOTAL_" + mutationType.toString() + ",";
+		}
+
+		collectClassMethodData(mutations);
+
+		// Build up output for class and method data
+		StringBuilder sb = new StringBuilder();
+		sb.append(formatTitle("----------Class Mutation Score----------"));
+		sb.append(formatHeading("Class Name:", "Of Covered", "Of Generated"));
+		classScores.add("CLASS_NAME,KILLED_MUTANTS,COVERED_MUTANTS,GENERATED_MUTANTS," +
+				"MUTATION_SCORE_OF_COVERED_MUTANTS,MUTATION_SCORE_OF_GENERATED_MUTANTS," + 
+				mutationTypeString + "TESTS_TOUCHED");
+		addClassData(sb);
+
+		sb.append(formatTitle("----------Method Mutation Score----------"));
+		sb.append(formatHeading("Method Name:", "Of Covered", "Of Generated"));
+		methodScores.add("CLASS_NAME,METHOD_NAME,KILLED_MUTANTS,COVERED_MUTANTS,GENERATED_MUTANTS," +
+				"MUTATION_SCORE_OF_COVERED_MUTANTS,MUTATION_SCORE_OF_GENERATED_MUTANTS," + 
+				mutationTypeString + "TESTS_TOUCHED");
+		addMethodData(sb);
+
+		// Write collected data to CSV
 		try {
 			FileUtils.writeLines(new File(ConfigurationLocator
 					.getJavalancheConfiguration().getOutputDir()
@@ -322,18 +330,19 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+
 		return sb.toString();
 	}
 
 	private static String formatLine(String message, String percent, String percent1) {
-		return String.format("%-56s %8s, %8s\n", message, percent, percent1);
+		return String.format("%-53s %12s, %12s\n", message, percent, percent1);
 	}
 
 	private String formatTitle(String message) {
-		return String.format("%-60s \n", message);
+		return String.format("%55s \n", message);
 	}
 
 	private String formatHeading(String message, String message1, String message2) {
-		return String.format("%-50s %14s, %14s\n", message, message1, message2);
+		return String.format("%-53s %12s, %12s\n", message, message1, message2);
 	}
 }
