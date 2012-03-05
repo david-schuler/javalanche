@@ -154,31 +154,35 @@ public class ResultDeleter {
 	public static void main(String[] args) throws IOException {
 		String projectPrefix = ConfigurationLocator
 				.getJavalancheConfiguration().getProjectPrefix();
-
+		boolean alreadyDeletedResults = false;
 		if (args.length >= 1) {
-			handleArgument(args[0], projectPrefix);
-		} else {
+			alreadyDeletedResults = handleArgument(args[0], projectPrefix);
+		}
+		if (!alreadyDeletedResults) {
 			if (projectPrefix != null) {
-				System.out.println("Deleting all mutation results with prefix "
-						+ projectPrefix);
 				deleteAllWithPrefix(projectPrefix);
+			} else {
+				System.out
+						.println("Did not delete results. No project prefix given.");
 			}
 		}
 	}
 
-	public static void handleArgument(String argument, String projectPrefix)
+	public static boolean handleArgument(String argument, String projectPrefix)
 			throws IOException {
 		if (argument.toLowerCase().equals("all")) {
 			if (projectPrefix != null) {
 				System.out.println("Deleting all mutation results with prefix "
 						+ projectPrefix);
 				deleteAllWithPrefix(projectPrefix);
+				return true;
 			} else {
 				System.out
 						.println("Deleting all mutation results in database.");
 				deleteAllMutationResults();
+				return true;
 			}
-			return;
+
 		}
 
 		long mutationId = 0;
@@ -190,7 +194,7 @@ public class ResultDeleter {
 			System.out.println("Deleting result for single mutation with id "
 					+ mutationId);
 			deleteMutationsResultsForId(mutationId);
-			return;
+			return true;
 		}
 
 		File f = new File(argument);
@@ -199,9 +203,9 @@ public class ResultDeleter {
 					.println("Deleting results for mutations with ids from file "
 							+ f.getAbsolutePath());
 			deleteResultsFromFile(f);
-			return;
+			return true;
 		}
-
+		return false;
 	}
 
 	private static void deleteResultsFromFile(File f) throws IOException {
