@@ -39,35 +39,56 @@ import de.unisb.cs.st.javalanche.mutation.results.MutationCoverageFile;
 import de.unisb.cs.st.javalanche.mutation.results.MutationTestResult;
 import de.unisb.cs.st.javalanche.mutation.results.TestMessage;
 
+/**
+ * This analyzer class calculates the mutation score of the class/method units
+ * of the system under test. The mutation scores are displayed in the HTML
+ * report and the command line interface, though additional information is
+ * added to an exported CSV file.
+ *
+ * The CSV file contains the exact number of mutants generated/covered/killed,
+ * the total/killed number of mutation types, the tests that were touched and
+ * basic information of the code unit.
+ *
+ * @author Kevin Jalbert <kevin.j.jalbert@gmail.com>
+ */
 public class MutationScoreAnalyzer implements MutationAnalyzer {
 
-	private static final Logger logger = Logger
-			.getLogger(MutationResultAnalyzer.class);
+	private static final Logger logger = Logger.getLogger(MutationResultAnalyzer.class);
 
 	private static final boolean WRITE_FILES = false;
 
+	// Set of maps to hold the data relevant to classes
 	private Map<String, Integer> classKilledMutations = new HashMap<String, Integer>();
 	private Map<String, Integer> classCoveredMutations = new HashMap<String, Integer>();
 	private Map<String, Integer> classTotalMutations = new HashMap<String, Integer>();
+	private Map<String, Set<String>> classMutantTests = new HashMap<String, Set<String>>();
 	private Map<String, MutationTypeCount> classMutationTypes = new HashMap<String, MutationTypeCount>();
 
+	// Set of maps to hold the data relevant to methods
 	private Map<String, Integer> methodKilledMutations = new HashMap<String, Integer>();
 	private Map<String, Integer> methodCoveredMutations = new HashMap<String, Integer>();
 	private Map<String, Integer> methodTotalMutations = new HashMap<String, Integer>();
+	private Map<String, Set<String>> methodMutantTests = new HashMap<String, Set<String>>();
 	private Map<String, MutationTypeCount> methodMutationTypes = new HashMap<String, MutationTypeCount>();
 
-	private Map<String, Set<String>> classMutantTests = new HashMap<String, Set<String>>();
-	private Map<String, Set<String>> methodMutantTests = new HashMap<String, Set<String>>();
-
+	// Set of lists to hold the output of the class/method data
 	private List<String> classScores = new ArrayList<String>();
 	private List<String> methodScores = new ArrayList<String>();
-	private List<String> coveredTests = new ArrayList<String>();
 
+	/**
+	 * A data class to aid in the collection of mutation type information. The 
+	 * total number of occurrences and kills for a mutation type are here.
+	 *
+	 * @author Kevin Jalbert <kevin.j.jalbert@gmail.com>
+	 */
 	public class MutationTypeCount {
 
 		public Map<String, Integer> typesTotal = new HashMap<String, Integer>();
 		public Map<String, Integer> typesKilled = new HashMap<String, Integer>();
 
+		/**
+		 * Constructor that creates maps to hold the total/killed mutation types 
+		 */
 		public MutationTypeCount(){
 			for (Mutation.MutationType mutationType : Mutation.MutationType.values()) {
 				typesTotal.put(mutationType.toString(), 0);
@@ -75,17 +96,33 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 			}
 		}
 
-		public void addTypeTotal(String mutationType){
+		/**
+		 * Increment the passed mutation type by one for the total count.
+		 *
+		 * @param mutationType the mutation type to increment
+		 */
+		public void incTypeTotal(String mutationType) {
 			Integer count = typesTotal.get(mutationType);
 			typesTotal.put(mutationType, count + 1);
 		}
 
-		public void addTypeKilled(String mutationType){
+		/**
+		 * Increment the passed mutation type by one for the killed count.
+		 *
+		 * @param mutationType the mutation type to increment
+		 */
+		public void incTypeKilled(String mutationType) {
 			Integer count = typesKilled.get(mutationType);
 			typesKilled.put(mutationType, count + 1);
 		}
 	}
 
+	/**
+	 * Iterates through all the mutations and extracts the important data from
+	 * them. The class and method maps are populated with the extracted data 
+	 *
+	 * @param mutations iterable set of mutations from system under test
+	 */
 	private void collectClassMethodData(Iterable<Mutation> mutations) {
 
 		for (Mutation mutation : mutations) {
@@ -105,8 +142,7 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 			Set<String> tests = methodMutantTests.get(mutantMethodName);
 			if (tests == null) {
 				tests = new HashSet<String>();
-			}
-			else {
+			}	else {
 				if (mutationResult != null) {
 					for (TestMessage testMessage : mutationResult.getAllTestMessages()) {
 						tests.add(testMessage.getTestCaseName());
@@ -119,8 +155,7 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 			tests = classMutantTests.get(mutantClassName);
 			if (tests == null) {
 				tests = new HashSet<String>();
-			}
-			else {
+			}	else {
 				if (mutationResult != null) {
 					for (TestMessage testMessage : mutationResult.getAllTestMessages()) {
 						tests.add(testMessage.getTestCaseName());
@@ -137,12 +172,11 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 				classKilledMutations.put(mutantClassName, 0);
 
 				MutationTypeCount mutationTypeCount = new MutationTypeCount();
-				mutationTypeCount.addTypeTotal(mutation.getMutationType().toString());
+				mutationTypeCount.incTypeTotal(mutation.getMutationType().toString());
 				classMutationTypes.put(mutantClassName, mutationTypeCount);
-			}
-			else {
+			}	else {
 				classTotalMutations.put(mutantClassName, count + 1);
-				classMutationTypes.get(mutantClassName).addTypeTotal(mutation.getMutationType().toString());
+				classMutationTypes.get(mutantClassName).incTypeTotal(mutation.getMutationType().toString());
 			}
 
 			// Handle counting the number of mutations per method
@@ -153,12 +187,11 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 				methodKilledMutations.put(mutantMethodName, 0);
 
 				MutationTypeCount mutationTypeCount = new MutationTypeCount();
-				mutationTypeCount.addTypeTotal(mutation.getMutationType().toString());
+				mutationTypeCount.incTypeTotal(mutation.getMutationType().toString());
 				methodMutationTypes.put(mutantMethodName, mutationTypeCount);
-			}
-			else {
+			}	else {
 				methodTotalMutations.put(mutantMethodName, count + 1);
-				methodMutationTypes.get(mutantMethodName).addTypeTotal(mutation.getMutationType().toString());
+				methodMutationTypes.get(mutantMethodName).incTypeTotal(mutation.getMutationType().toString());
 			}
 
 			// Handle counting covered mutants
@@ -179,14 +212,22 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 				count = methodKilledMutations.get(mutantMethodName);
 				methodKilledMutations.put(mutantMethodName, count + 1);
 
-				classMutationTypes.get(mutantClassName).addTypeKilled(mutation.getMutationType().toString());
-				methodMutationTypes.get(mutantMethodName).addTypeKilled(mutation.getMutationType().toString());
+				classMutationTypes.get(mutantClassName).incTypeKilled(mutation.getMutationType().toString());
+				methodMutationTypes.get(mutantMethodName).incTypeKilled(mutation.getMutationType().toString());
 			}
 		}
 	}
 
+	/**
+	 * Perform mutation score calculations on the collected class data. The
+	 * collected data is added into the global list to be outputted into a CSV.
+	 * The data is also appended to the StringBuilder to be outputted to the
+	 * display.
+	 *
+	 * @param sb the StringBuilder to be append all the class data for display
+	 */
 	private void addClassData(StringBuilder sb) {
-		
+
 		for (String className : classTotalMutations.keySet()) {
 
 			int killed = classKilledMutations.get(className);
@@ -237,6 +278,14 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 		}
 	}
 
+	/**
+	 * Perform mutation score calculations on the collected method data. The
+	 * collected data is added into the global list to be outputted into a CSV.
+	 * The data is also appended to the StringBuilder to be outputted to the
+	 * display.
+	 *
+	 * @param sb the StringBuilder to be append all the method data for display
+	 */
 	private void addMethodData(StringBuilder sb) {
 		for (String methodName : methodTotalMutations.keySet()) {
 
@@ -290,6 +339,15 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 		}
 	}
 
+	/**
+	 * The analyze method that is called by the analyzeResults task. This method
+	 * calculates the mutation scores as well as additional test/type information
+	 * and outputs it to the display and a CSV file.
+	 *
+	 * @param mutations iterable set of mutations from system under test
+	 * @param report the HTML report that is being produced (untouched)
+	 * @return the class/method mutation score data in a string format
+	 */
 	public String analyze(Iterable<Mutation> mutations, HtmlReport report) {
 
 		// Acquire the CSV list of mutation types (KILLED and TOTAL)
@@ -319,14 +377,10 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 
 		// Write collected data to CSV
 		try {
-			FileUtils.writeLines(new File(ConfigurationLocator
-					.getJavalancheConfiguration().getOutputDir()
-					+ "/class-scores.csv"),
-					classScores);
-			FileUtils.writeLines(new File(ConfigurationLocator
-					.getJavalancheConfiguration().getOutputDir()
-					+ "/method-scores.csv"),
-					methodScores);
+			FileUtils.writeLines(new File(ConfigurationLocator.getJavalancheConfiguration().getOutputDir()
+					+ "/class-scores.csv"),	classScores);
+			FileUtils.writeLines(new File(ConfigurationLocator.getJavalancheConfiguration().getOutputDir()
+					+ "/method-scores.csv"), methodScores);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -334,15 +388,37 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 		return sb.toString();
 	}
 
-	private static String formatLine(String message, String percent, String percent1) {
-		return String.format("%-53s %12s, %12s\n", message, percent, percent1);
+	/**
+	 * Formats a single line for the class/method mutation score title.
+	 *
+	 * @param title the current section title (class/method)
+	 * @return the formatted string
+	 */
+	private String formatTitle(String title) {
+		return String.format("%55s \n", title);
 	}
 
-	private String formatTitle(String message) {
-		return String.format("%55s \n", message);
+	/**
+	 * Formats a single line for the class/method mutation score headings.
+	 *
+	 * @param type the class/method name
+	 * @param covered the mutation score of the covered mutants
+	 * @param generated the mutation score of the generated mutants
+	 * @return the formatted string
+	 */
+	private String formatHeading(String type, String covered, String generated) {
+		return String.format("%-53s %12s, %12s\n", type, covered, generated);
 	}
 
-	private String formatHeading(String message, String message1, String message2) {
-		return String.format("%-53s %12s, %12s\n", message, message1, message2);
+	/**
+	 * Formats a single line for the class/method mutation score result.
+	 *
+	 * @param name the class/method name
+	 * @param covered the mutation score of the covered mutants
+	 * @param generated the mutation score of the generated mutants
+	 * @return the formatted string
+	 */
+	private static String formatLine(String name, String covered, String generated) {
+		return String.format("%-53s %12s, %12s\n", name, covered, generated);
 	}
 }
