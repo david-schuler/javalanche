@@ -166,6 +166,16 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 				totalScore = (double) killed/total;
 			}
 
+			// Handle weird situation where the number killed > covered
+			if (killed > covered) {
+				coveredScore = 1.0;
+			}
+
+			// Handle weird situation where the number killed > total
+			if (killed > total) {
+				totalScore = 1.0;
+			}
+
 			String tests = "";
 			for (String test : classMutantTests.get(className)) {
 				tests += test + " ";
@@ -205,6 +215,16 @@ public class MutationScoreAnalyzer implements MutationAnalyzer {
 			double totalScore = 0;
 			if (total > 0) {
 				totalScore = (double) killed/total;
+			}
+
+			// Handle weird situation where the number killed > covered
+			if (killed > covered) {
+				coveredScore = 1.0;
+			}
+
+			// Handle weird situation where the number killed > total
+			if (killed > total) {
+				totalScore = 1.0;
 			}
 
 			String tests = "";
