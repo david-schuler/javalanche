@@ -1,9 +1,9 @@
 <project name="Javalanche">
-	
+
 <!-- Properties can either be supplied on the command line, via a properties file or specified here -->
 
 <!--
- <property file="javalanche.properties" />
+	<property file="javalanche.properties" />
 -->
 <!--
 	<property name="prefix" value=""/>
@@ -12,21 +12,20 @@
 	<property name="cp" value=""/>
 -->
 
-
 	<property name="project.prefix" value="${prefix}"/>
 	<property name="project.tests" value="${tests}"/>
 	<property name="javalanche.location" value="${javalanche}" />
 	<property name="javalanche.dist.dir" value="${javalanche}" />
-	
-		
+	<property name="javalanche.properties" value="${javalanche.properties}" />
+
 	<import file="${javalanche.location}/import.xml"/>
 	<import file="${javalanche.location}/src/main/resources/javalanche-tasks.xml" />
-    <import file="${javalanche.location}/src/main/resources/javalanche-add-tasks.xml"/>
-	
+	<import file="${javalanche.location}/src/main/resources/javalanche-add-tasks.xml"/>
+
 <!-- To compute the coverage or data impact of mutations, one this files has to be included. -->
 <!--	<import file="${javalanche.location}/src/main/resources/coverage-include.xml" /> -->
 
-	<!-- 
+	<!--
 	Task that is called by the different stages of Javalanche.
 	This task should not be called directly.
 	-->
@@ -37,27 +36,26 @@
 				<path refid="javalanche.classpath.add" />
 				<pathelement path="${cp}"></pathelement>
 			</classpath>
-			
-			<jvmarg line="${javalanche.arg.line}" />
-			
+
+			<jvmarg line="${javalanche.properties} ${javalanche.arg.line}" />
+
 			<formatter type="xml"/>
 			<formatter usefile="true" type="plain"/>
 			<test todir="${javalanche.out.dir}/junit-reports" name="${javalanche.wrapper.testsuite}" />
 		</junit>
-	</target>	
+	</target>
 
-	
 	<target name="testParameters">
 		<echo>
-			project.prefix     : ${project.prefix} 
-			project.tests 	   : ${project.tests} 
-			cp                 : ${cp} 
-			javalanche.location: ${javalanche.location}
-			javalanche.dist.dir: ${javalanche.dist.dir}
+			project.prefix        : ${project.prefix}
+			project.tests 	      : ${project.tests}
+			cp                    : ${cp}
+			javalanche.location   : ${javalanche.location}
+			javalanche.dist.dir   : ${javalanche.dist.dir}
+			javalanche.properties : ${javalanche.properties}
 		</echo>
-	</target>	
+	</target>
 
 	<target name="mutationTest" depends="startHsql,schemaexport,scanProject,scan,createSingleRandomTask,runSingleTask,analyzeResults,stopHsql"/>
-	
 
 </project>
