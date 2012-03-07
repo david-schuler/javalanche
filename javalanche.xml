@@ -16,7 +16,11 @@
 	<property name="project.tests" value="${tests}"/>
 	<property name="javalanche.location" value="${javalanche}" />
 	<property name="javalanche.dist.dir" value="${javalanche}" />
-	<property name="javalanche.properties" value="${javalanche.properties}" />
+
+	<!-- Allows additional properties from (de.unisb.cs.st.javalanche.mutation.properties.PropertyConfiguration) -->
+	<condition property="javalanche.config.properties" value="${javalanche.properties}" else="">
+			<isset property="javalanche.properties" />
+	</condition>
 
 	<import file="${javalanche.location}/import.xml"/>
 	<import file="${javalanche.location}/src/main/resources/javalanche-tasks.xml" />
@@ -37,7 +41,7 @@
 				<pathelement path="${cp}"></pathelement>
 			</classpath>
 
-			<jvmarg line="${javalanche.properties} ${javalanche.arg.line}" />
+			<jvmarg line="${javalanche.config.properties} ${javalanche.arg.line}" />
 
 			<formatter type="xml"/>
 			<formatter usefile="true" type="plain"/>
@@ -52,7 +56,7 @@
 			cp                    : ${cp}
 			javalanche.location   : ${javalanche.location}
 			javalanche.dist.dir   : ${javalanche.dist.dir}
-			javalanche.properties : ${javalanche.properties}
+			javalanche.config.properties : ${javalanche.config.properties}
 		</echo>
 	</target>
 
