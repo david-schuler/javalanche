@@ -123,7 +123,7 @@ public class MutationScanner implements ClassFileTransformer {
 					cr.accept(cv, ClassReader.SKIP_FRAMES);
 					classfileBuffer = cw.toByteArray();
 
-					 AsmUtil.checkClass2(classfileBuffer);
+					 AsmUtil.checkClass(classfileBuffer);
 
 					// classfileBuffer = mutationScannerTransformer
 					// .transformBytecode(classfileBuffer);

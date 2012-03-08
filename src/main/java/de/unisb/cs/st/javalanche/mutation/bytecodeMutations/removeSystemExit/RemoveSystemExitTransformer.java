@@ -56,7 +56,6 @@ public class RemoveSystemExitTransformer extends BytecodeTransformer {
 
 	@Override
 	protected ClassVisitor classVisitorFactory(ClassWriter cw) {
-		ClassVisitor cc = new CheckClassAdapter(cw);
-		return new RemoveSystemExitClassAdapter(cc);
+		return new RemoveSystemExitClassAdapter(cw);
 	}
 }

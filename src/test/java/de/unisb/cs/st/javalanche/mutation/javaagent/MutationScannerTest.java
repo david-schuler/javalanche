@@ -106,7 +106,7 @@ public class MutationScannerTest {
 		ClassReader cr = new ClassReader(byteArray);
 		cr.accept(mcca, ClassReader.EXPAND_FRAMES);
 		byte[] transformed = cw.toByteArray();
-		AsmUtil.checkClass2(transformed);
+		AsmUtil.checkClass(transformed);
 	}
 
 	@Test

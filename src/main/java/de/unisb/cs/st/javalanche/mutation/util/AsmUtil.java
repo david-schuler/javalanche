@@ -117,7 +117,7 @@ public class AsmUtil {
 	}
 
 
-	public static void checkClass2(byte[] classfileBuffer) {
+	public static void checkClass(byte[] classfileBuffer) {
 		ClassReader cr2 = new ClassReader(classfileBuffer);
 		CheckClassAdapter check = new CheckClassAdapter(new ClassWriter(
 				ClassWriter.COMPUTE_MAXS));

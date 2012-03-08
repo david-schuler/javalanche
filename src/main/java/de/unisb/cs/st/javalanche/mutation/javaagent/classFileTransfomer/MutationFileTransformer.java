@@ -91,6 +91,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 							+ classNameWithDots);
 					classfileBuffer = systemExitTransformer
 							.transformBytecode(classfileBuffer);
+					AsmUtil.checkClass(classfileBuffer);
 				}
 				if (mutationDecision.shouldBeHandled(classNameWithDots)) {
 					logger.info("Transforming: " + classNameWithDots);
@@ -103,9 +104,8 @@ public class MutationFileTransformer implements ClassFileTransformer {
 						logger.info("Exception thrown: " + e);
 						e.printStackTrace();
 					}
-					AsmUtil.checkClass2(transformedBytecode);
 					logger.debug("Class transformed: " + classNameWithDots);
-					AsmUtil.checkClass2(transformedBytecode);
+					AsmUtil.checkClass(transformedBytecode);
 					return transformedBytecode;
 				}
 			} catch (Throwable t) {

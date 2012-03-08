@@ -35,6 +35,13 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.MutationMarker;
 
+/**
+ * Removes calls to {@link System}.exit and replaces them with a {@link RuntimeException}.
+ * 
+ * TODO Maybe this can be rewritten to use the core API instead of the tree API of ASM.
+ * @author david.schuler
+ *
+ */
 public class RemoveSystemExitMethodNode extends MethodAdapter {
 	private static Logger logger = Logger
 			.getLogger(RemoveSystemExitMethodNode.class);
