@@ -27,6 +27,7 @@ import org.junit.BeforeClass;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import de.unisb.cs.st.javalanche.mutation.bytecodeMutations.removeSystemExit.RemoveSystemExitTransformer;
@@ -127,6 +128,7 @@ public class BaseBytecodeTest {
 			String transformed = AsmUtil.classToString(result);
 			System.out.println(transformed);
 		}
+		AsmUtil.checkClass(result);
 		FileUtils.writeByteArrayToFile(classFile, result);
 	}
 

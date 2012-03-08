@@ -54,7 +54,7 @@ public class TestProperties {
 
 		private byte[] classBytes;
 
-		TestClass(String className) {
+		public TestClass(String className) {
 			this.className = className;
 			int index = className.lastIndexOf('.');
 			String simpleClassName = className.substring(index + 1);
