@@ -25,9 +25,7 @@
 	<import file="${javalanche.location}/import.xml"/>
 	<import file="${javalanche.location}/src/main/resources/javalanche-tasks.xml" />
 	<import file="${javalanche.location}/src/main/resources/javalanche-add-tasks.xml"/>
-
-<!-- To compute the coverage or data impact of mutations, one this files has to be included. -->
-<!--	<import file="${javalanche.location}/src/main/resources/coverage-include.xml" /> -->
+	<import file="${javalanche.location}/src/main/resources/coverage-include.xml" />
 
 	<!--
 	Task that is called by the different stages of Javalanche.
