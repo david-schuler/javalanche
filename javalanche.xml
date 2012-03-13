@@ -26,7 +26,7 @@
 	<import file="${javalanche.location}/src/main/resources/javalanche-tasks.xml" />
 	<import file="${javalanche.location}/src/main/resources/javalanche-add-tasks.xml"/>
 
-<!-- To compute the coverage or data impact of mutations, this files has to be included. -->
+<!-- To compute the coverage or data impact of mutations, this file has to be included. -->
 <!--	<import file="${javalanche.location}/src/main/resources/coverage-include.xml" /> -->
 
 	<!--
