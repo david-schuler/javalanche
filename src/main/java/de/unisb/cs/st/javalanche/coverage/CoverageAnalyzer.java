@@ -78,6 +78,7 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 			mc.killed = m.isKilled();
 			//mc.classInit = m.isClassInit();
 			mc.className = m.getClassName();
+			mc.methodName = m.getMethodName();
 			mc.lineNumber = m.getLineNumber();
 			mc.mutationForLine = m.getMutationForLine();
 			mc.mutationType = m.getMutationType().toString();
@@ -254,17 +255,17 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 
 		if (firstCallToWriteOut) {
 			out
-					.println("ID;KILLED;"
-							+ "CLASSES_TOTAL;CLASSES_MODIFIED;"
-							+ "METHODS_TOTAL;"
-							+ "METHODS_MODIFIED_LINE;METHODS_MODIFIED_DATA;METHODS_MODIFIED_ALL;"
-							+ "METHODS_MODIFIED_LINE_WOS;METHODS_MODIFIED_DATA_WOS;METHODS_MODIFIED_ALL_WOS;"
-							+ "METHODS_MODIFIED_LINE_NAMES;METHODS_MODIFIED_DATA_NAMES;"
-							+ "LINES_TOTAL;LINES_MODIFIED;"
-							+ "DATA_TOTAL;DATA_MODIFIED;"
-							+ "TESTS_TOTAL;TESTS_EXECUTED;"
-							+ "MUTATION_TYPE;CLASS_NAME;METHOD_NAME;LINE_NUMBER;MUTATION_FOR_LINE;"
-							+ "CLASS_INIT;MUTATION_RESULT");
+					.println("ID,KILLED,"
+							+ "CLASSES_TOTAL,CLASSES_MODIFIED,"
+							+ "METHODS_TOTAL,"
+							+ "METHODS_MODIFIED_LINE,METHODS_MODIFIED_DATA,METHODS_MODIFIED_ALL,"
+							+ "METHODS_MODIFIED_LINE_WOS,METHODS_MODIFIED_DATA_WOS,METHODS_MODIFIED_ALL_WOS,"
+							+ "METHODS_MODIFIED_LINE_NAMES,METHODS_MODIFIED_DATA_NAMES,"
+							+ "LINES_TOTAL,LINES_MODIFIED,"
+							+ "DATA_TOTAL,DATA_MODIFIED,"
+							+ "TESTS_TOTAL,TESTS_EXECUTED,"
+							+ "MUTATION_TYPE,CLASS_NAME,METHOD_NAME,LINE_NUMBER,MUTATION_FOR_LINE,"
+							+ "CLASS_INIT,MUTATION_RESULT");
 			firstCallToWriteOut = false;
 		}
 		logger.debug("ID: " + mutation.id + "\tKilled: " + mutation.killed
@@ -274,22 +275,22 @@ public class CoverageAnalyzer implements MutationAnalyzer {
 		if (outcount % 500 == 0) {
 			logger.info("Written results for " + outcount + " mutations");
 		}
-		out.println(mutation.id + ";" + mutation.killed + ";"
-				+ results.classesTotal + ";" + results.classesModified + ";"
-				+ results.methodsTotal + ";" + results.methodsModifiedLine
-				+ ";" + results.methodsModifiedData + ";"
-				+ results.methodsModifiedAll + ";"
-				+ results.methodsModifiedLineWOS + ";"
-				+ results.methodsModifiedDataWOS + ";"
-				+ results.methodsModifiedAllWOS + ";" + "\""
-				+ results.methodsModifiedLineNames + "\";\""
-				+ results.methodsModifiedDataNames + "\";" + results.linesTotal
-				+ ";" + results.linesModified + ";" + results.dataTotal + ";"
-				+ results.dataModified + ";" + results.testsTotal + ";"
-				+ results.testsExecuted + ";" + mutation.mutationType + ";"
-				+ mutation.className + ";" + mutation.methodName + ";"
-				+ mutation.lineNumber + ";" + mutation.mutationForLine + ";"
-				+ mutation.classInit + ";" + mutation.mutationResult);
+		out.println(mutation.id + "," + mutation.killed + ","
+				+ results.classesTotal + "," + results.classesModified + ","
+				+ results.methodsTotal + "," + results.methodsModifiedLine
+				+ "," + results.methodsModifiedData + ","
+				+ results.methodsModifiedAll + ","
+				+ results.methodsModifiedLineWOS + ","
+				+ results.methodsModifiedDataWOS + ","
+				+ results.methodsModifiedAllWOS + "," + "\""
+				+ results.methodsModifiedLineNames + "\",\""
+				+ results.methodsModifiedDataNames + "\"," + results.linesTotal
+				+ "," + results.linesModified + "," + results.dataTotal + ","
+				+ results.dataModified + "," + results.testsTotal + ","
+				+ results.testsExecuted + "," + mutation.mutationType + ","
+				+ mutation.className + "," + mutation.methodName + ","
+				+ mutation.lineNumber + "," + mutation.mutationForLine + ","
+				+ mutation.classInit + "," + mutation.mutationResult);
 
 	}
 
