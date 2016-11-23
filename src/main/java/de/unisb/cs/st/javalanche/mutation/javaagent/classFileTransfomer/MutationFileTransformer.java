@@ -115,8 +115,7 @@ public class MutationFileTransformer implements ClassFileTransformer {
 				t.printStackTrace(new PrintWriter(writer));
 				logger.fatal(writer.getBuffer().toString());
 				t.printStackTrace();
-				System.exit(0);
-				// throw new RuntimeException(e.getMessage());
+				throw new RuntimeException(t.getMessage());
 			}
 		}
 		return classfileBuffer;
