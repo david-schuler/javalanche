@@ -38,7 +38,7 @@
 			</snapshots>
 			<id>titaniaPublic</id>
 			<name>Titania Public Repositories</name>
-			<url>http://titania.fs.uni-saarland.de/nexus/content/groups/public/</url>
+			<url>https://titania.fs.uni-saarland.de/nexus/content/groups/public/</url>
 			<layout>default</layout>
 		</repository>
 	</repositories>
@@ -467,7 +467,7 @@
 		<repository>
 			<id>stchair</id>
 			<name>Titania</name>
-			<url>http://titania.fs.uni-saarland.de/nexus/content/repositories/stchair/</url>
+			<url>https://titania.fs.uni-saarland.de/nexus/content/repositories/stchair/</url>
 		</repository>
 	</distributionManagement>
 </project>
